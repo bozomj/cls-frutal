@@ -1,113 +1,117 @@
-import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
+import Header from "@/components/Header";
+import Produtos from "@/layout/produtos/Produtos";
+import { faWhatsapp } from "@fortawesome/free-brands-svg-icons/faWhatsapp";
+import { faPhone } from "@fortawesome/free-solid-svg-icons/faPhone";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+export default function home() {
+  const imgs = [
+    {
+      link: "https://m.media-amazon.com/images/I/51JtliveScL._SR480,440_.jpg",
+      description: "Batman: Urban Legends (2021-) Vol. 1 (English Edition) ",
+      value: 96.53,
+      contato: 34997668902,
+    },
+    {
+      link: "https://m.media-amazon.com/images/I/41xt3WmyP3L._SR480,440_.jpg",
+      description:
+        "Zatanna by Paul Dini (2024 Edition) (Zatanna (2010-2011)) (English Edition)",
+      value: 199.0,
+    },
+    {
+      link: "https://m.media-amazon.com/images/I/51PsNE6TjjL._SR480,440_.jpg",
+      description: "1984 em quadrinhos - HQ ",
+      value: 64.9,
+    },
+    {
+      link: "https://m.media-amazon.com/images/I/51-Nw2f5v8L._SR480,440_.jpg",
+      description: "A Torre do Elefante (Graphic novel - Volume único)",
+      value: 55.93,
+    },
+    {
+      link: "https://m.media-amazon.com/images/I/51bTFuqIdqL._SR480,440_.jpg",
+      description: "O Rei de Amarelo – HQ",
+      value: 66,
+    },
+    {
+      link: "https://m.media-amazon.com/images/I/51YV2ODVOEL._SR480,440_.jpg",
+      description: "O livro da política",
+      value: 60.07,
+    },
+    {
+      link: "https://m.media-amazon.com/images/I/41TohBVA+oL._AC_SY300_SX300_.jpg",
+      description: `Samsung Celular Galaxy S24 FE 5G 128GB 8GB RAM Tela 6.7" Galaxy AI (Grafite)`,
+      value: 2799,
+    },
+  ];
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              pages/index.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const imgss = imgs.map((item, v) => {
+    return (
+      <div
+        key={v}
+        className=" md:max-w-[250px] bg-gray-100  md:min-w-[250px] min-w-full p-2 rounded-2xl flex justify-center"
+      >
+        <div className="flex flex-col w-full overflow-hidden h-full gap-2 ">
+          <span
+            className="flex-1  block bg-contain bg-no-repeat bg-center  bg-gray-200 rounded-2xl min-h-[250px]"
+            style={{
+              backgroundImage: `url(${item.link})`,
+            }}
+          ></span>
+          
+          <div className=" flex text-gray-900 gap-2 w-[100%] truncate overflow-hidden flex-col">
+            <span className="h-5 block">{item.description ?? ""}</span>
+            <span className="h-5 block">R$: {item.value?.toFixed(2)}</span>
+            <div className=" flex items-center gap-4">
+              <a
+                href={`https://wa.me/55${item.contato}?text=[Classificados Frutal] - fiquei interessado em seu produto \n`}
+                target="_blank"
+              >
+                <FontAwesomeIcon
+                  icon={faWhatsapp}
+                  className="text-3xl text-green-900"
+                />
+              </a>
+              <a href="#">
+                <FontAwesomeIcon
+                  icon={faPhone}
+                  className="text-1xl text-blue-500"
+                />
+                {` ${item.contato}`}
+              </a>
+            </div>
+          </div>
         </div>
+      </div>
+    );
+  });
+  return (
+    <>
+      <header className="">
+        <Header />
+        
+      </header>
+      <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center">
+        <div className="md:max-w-[100rem] w-full">
+          <img
+            src={
+              "https://m.media-amazon.com/images/G/32/kindle/email/2025/03_Marco/Pagina_Recomendacoes_para_voce/1500x200_Narrow.jpg"
+            }
+            alt={""}
+          />
+          <Produtos />
+          <section className="flex  flex-wrap bg-gray-50 p-4 gap-4 justify-center ">
+            {...imgss}
+          </section>
+        </div>
+        <footer className="min-h-[10rem] min-w-full bg-cyan-950 p-4">
+          CLF-Frutal Classificados &copy;
+          <img
+            src="https://www.assistechso.com.br/_next/image?url=%2Fimg%2Flogo.png&w=256&q=75"
+            alt=""
+          />
+        </footer>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+    </>
   );
 }
