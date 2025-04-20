@@ -1,5 +1,6 @@
 //endpoint para listar todos os usuários
 
+import autenticator from "@/models/autenticator";
 import User from "@/models/user";
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
@@ -16,6 +17,7 @@ export default router.handler();
     try{
         const users = await User.findAll();
         
+        
         res.status(200).json(users);
     }catch(error){
         res.status(500).json({ error: 'Erro ao buscar usuários', cause: error });
@@ -26,29 +28,32 @@ export default router.handler();
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
 
     
-    const body = JSON.parse(req.body);
+    const body = req.body;
+    const name = body.name;
     const email = body.email;
     const password = body.password;
     
-    const cookie = req.cookies;
-    console.log('cookies', cookie);
+    const use = {name: name,email: email, password: password};
+    
     
     try{
-
-        const token = await User.login(email, password);
+        const user = await User.create(use);
         
+        const token = autenticator.createToken(user.id);
         res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Max-Age=3600;`);
-
-        res.status(200).json({message: 'Usuário logado com sucesso'});
+        
+        res.status(201).json({message: 'Usuario criado com sucesso', user: user[0],  status: 201, cause: ''});
     }catch(error: any){
-    
-        res.status(500).json({ error: 'Erro ao logar usuário', cause: error });
+        
+        res.status(409).json({ 
+            status: 409,
+            message: 'Erro ao criar usuario', 
+            cause: error.message 
+        });
     }
-    
-    
-    
-    
 
+            
+        
 
 }
 

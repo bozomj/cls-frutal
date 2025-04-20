@@ -1,6 +1,5 @@
 import database from "@/database/database";
 import password from "@/models/password";
-import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import autenticator from "@/models/autenticator";
 
@@ -8,10 +7,14 @@ dotenv.config({path: '.env.development'});
 
 
 
+
 const User = {
+
+    
     findAll: async () => {
         try{
-            const result = await database.query('SELECT * from users;');
+            const result = await database.query('SELECT * FROM users;');
+
             
             return result;
         }catch(error){
@@ -54,7 +57,7 @@ const User = {
     },
 
     findByEmail: async (email: string) => {
-        const result = await database.query('SELECT * from users where LOWER(email) = LOWER($1);', [email]);
+        const result = await database.query('SELECT * from users where LOWER(email) = LOWER($1) limit 1;', [email]);
         return result;
     },
     
@@ -63,10 +66,15 @@ const User = {
 
     create: async (userInputValues: any) => {
         
-        await validateUniqueEmail(userInputValues.email);
+        try{
+            await validateUniqueEmail(userInputValues.email);
+        }catch(error){
+            throw error;
+        }
 
         try{
-            await runInsertQuery(userInputValues);
+          return  await runInsertQuery(userInputValues);
+          
         }catch(error){
             throw {
                 message: new Error("Erro ao criar usuário"),
@@ -79,17 +87,18 @@ const User = {
             const user = await User.findByEmail(email);
             if(user.length > 0){
                 throw {
-                    message: new Error("O email informado já está sendo utilizado"),
-                    cause: { CAUSE: user }
+                    message: "O email informado já está sendo utilizado",
+                    cause: user
                 };
             }
         }
 
 
         async function runInsertQuery(userImputValues: any){
+            
             let result;
             try{
-                result = await database.query(
+            return    result = await database.query(
                     'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *;', 
                     [
                     userImputValues.name, 
@@ -117,7 +126,7 @@ const User = {
                 cause: { CAUSE: user }
             };
         }
-        console.log('user', user);
+        
         
         const passwordMatch = await password.comparePassword(senha, user[0].password);
 

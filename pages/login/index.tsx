@@ -1,9 +1,13 @@
 
 import Link from 'next/link';
 import Header from '@/components/Header';
-import { useState, useEffect } from 'react';
-import router from 'next/router';
+import { useState} from 'react';
+
 import autenticator from '@/models/autenticator';
+import { GetServerSideProps, GetServerSidePropsContext } from 'next';
+import router from 'next/router';
+
+
 
 
 
@@ -14,27 +18,14 @@ const  Login = ()=>{
 const [email, setEmail] = useState('');
 const [password, setPassword] = useState('');
 const [error, setError] = useState('');
-const [isAuthenticated, setIsAuthenticated] = useState(false);
 
 
-  useEffect( () => {
-    console.log('isAuthenticated', isAuthenticated);
-     getLogin();
-  }, []);
+
+  
 
    
 
-  async function getLogin(){
-    const authenticated = await autenticator.isAuthenticated();
-    
-    if(authenticated){
-      setIsAuthenticated(true);
-      router.replace('/');
-    }else{
-      // setError('E-mail ou senha inválidos');
-    }
-    
-  }
+
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -47,7 +38,7 @@ const [isAuthenticated, setIsAuthenticated] = useState(false);
     console.log('event', event);
 
     
-    const response = await fetch('/api/v1/user', {
+    const response = await fetch('/api/v1/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
@@ -58,15 +49,12 @@ const [isAuthenticated, setIsAuthenticated] = useState(false);
       setError('E-mail ou senha inválidos');
     }else{
       setError('');
-      // router.push('/');
+      router.push('/');
       
     }
   }
   
-  if(isAuthenticated) {
-    return null
-  }
-  else{
+  
 
     return (
       <>
@@ -87,6 +75,28 @@ const [isAuthenticated, setIsAuthenticated] = useState(false);
   )
 }
 
-} 
+
+
+
+
+export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
+  const token = context.req.cookies.token || '';
+  let auth = null;
+  try{
+    auth =  autenticator.verifyToken(token);
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      }
+    }
+    
+  }catch(error){
+  }
+
+  return {
+    props: {},
+  }
+}
 
 export default Login;

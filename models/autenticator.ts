@@ -9,17 +9,21 @@ function createToken(id: string){
 
 function verifyToken(token: string){
     const secret = process.env.JWT_SECRET || '';
-    const decoded = jwt.verify(token, secret) as any;
+    const decoded = jwt.verify(token, secret) as { id: string };
+    
     return decoded;
 }
 
 async function isAuthenticated(){
+
+    
     const response =  await fetch('http://localhost:3000/api/v1/login', {
         method: 'GET',
         
       }) as any;
       const data = await response.json();
-      return data.status;
+      console.log(data);
+      return data;
 }
 
 const autenticator = {
