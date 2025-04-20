@@ -15,7 +15,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = () => {
   const [toggle, setToggle] = useState(true);
   const [subH, alter] = useState(0);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState({status: false, user: null});
   const itemsMenu = [
     { label: "produtos", link: "" },
     { label: "serviços", link: "" },
@@ -27,22 +27,29 @@ const Header: React.FC<HeaderProps> = () => {
 
   return (
     <header className="bg-cyan-900 p-4 relative w-full z-[1] flex flex-col gap-2  md:items-stretch ">
-      <div className="flex justify-between px-2">
+      <div className="flex justify-between px-2 ">
         <Link href={"/"} className="">
           <Image src="./img/logo.svg" width="240" height={"120"} alt={""} />
         </Link>
+        <div className="flex items-center gap-4 px-2">
+      {isAuthenticated.status ?
+
         <Link 
-          href="/login" 
-          className="flex items-center gap-2 text-white hover:text-cyan-300 transition-colors"
+        href={isAuthenticated.status ? '/dashboard' : '/login'} 
+        className="flex items-center gap-2 text-white hover:text-cyan-300 transition-colors"
         >
           <FontAwesomeIcon
             icon={faUser}
             className="text-2xl"
-          />
-          <span className="hidden md:inline">
-            {isAuthenticated ? 'Sair' : 'Entrar'}
+            />
+        </Link> : ''
+          }
+        <Link href={isAuthenticated.status ? '/api/v1/logout' : '/login'}>
+          <span className="hidden md:inline hover:text-cyan-300 transition-colors">
+            {isAuthenticated.status ? 'Sair' : 'Entrar'}
             </span>
         </Link>
+        </div>
       </div>
       <div className="flex justify-end items-center gap-4 flex-[1]">
         <input

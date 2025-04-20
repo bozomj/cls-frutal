@@ -9,8 +9,7 @@ dotenv.config({path: '.env.development'});
 
 
 const User = {
-
-    
+   
     findAll: async () => {
         try{
             const result = await database.query('SELECT * FROM users;');
@@ -26,6 +25,7 @@ const User = {
     },
 
     findById: async (id: string) => {
+        console.log('ID:::: ',id);
         let result;
         result = await database.query('SELECT * from users where id = $1;', [id]);    
         if(result < 1){
