@@ -1,3 +1,4 @@
+import autenticator from "@/models/autenticator";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { faBars } from "@fortawesome/free-solid-svg-icons/faBars";
@@ -14,13 +15,14 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = () => {
   const [toggle, setToggle] = useState(true);
   const [subH, alter] = useState(0);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const itemsMenu = [
     { label: "produtos", link: "" },
     { label: "serviços", link: "" },
     { label: "vagas", link: "" },
   ];
 
-  useEffect(init, [subH]);
+  useEffect(init, []);
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
 
   return (
@@ -37,7 +39,9 @@ const Header: React.FC<HeaderProps> = () => {
             icon={faUser}
             className="text-2xl"
           />
-          <span className="hidden md:inline">Entrar</span>
+          <span className="hidden md:inline">
+            {isAuthenticated ? 'Sair' : 'Entrar'}
+            </span>
         </Link>
       </div>
       <div className="flex justify-end items-center gap-4 flex-[1]">
@@ -70,18 +74,7 @@ const Header: React.FC<HeaderProps> = () => {
           style={{ height: isMobile && !toggle ? `${subH}px` : undefined }}
         >
           <ul className="flex flex-col justify-end pb-4 md:pb-0  w-full  md:gap-4 md:flex-row ">
-            {itemsMenu.map((key, value) => {
-              return (
-                <li key={value}>
-                  <label
-                    htmlFor="activeSubmenu"
-                    className="hover:text-cyan-300 font-bold cursor-pointer"
-                  >
-                    {key.label}
-                  </label>
-                </li>
-              );
-            })}
+            {mapItemsMenu()}          
           </ul>
         </nav>
         <label
@@ -104,11 +97,28 @@ const Header: React.FC<HeaderProps> = () => {
     </header>
   );
 
+  function mapItemsMenu(){
+    let itens = itemsMenu.map((key, value) => {
+      return (
+        <li key={value}>
+          <label
+            htmlFor="activeSubmenu"
+            className="hover:text-cyan-300 font-bold cursor-pointer"
+          >
+            {key.label}
+          </label>
+        </li>
+      );
+    })
+    return itens;
+  }
+
+
   function change() {
     setToggle(!toggle);
   }
 
-  function init() {
+   function init() {
     const submenu = document.getElementById("submenu");
     const sub = {
       height: submenu?.scrollHeight ?? 0,
@@ -117,8 +127,16 @@ const Header: React.FC<HeaderProps> = () => {
 
     alter(sub.height);
 
-    console.log("submenu: ", sub, subH);
+    
+
+    
+    autenticator.isAuthenticated().then((result)=>{
+      setIsAuthenticated(result);
+    });
   }
 };
+
+
+
 
 export default Header;

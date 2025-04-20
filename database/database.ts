@@ -19,11 +19,12 @@ async function getNewClient(){
 }
 
 
-async function query(sql: string, params: any[] = []){
+async function query(sql: string, params: any[] = []): Promise<any>{
     let client;
     try{
 
         client = await getNewClient();
+            
         const result = await client.query(sql, params);
         return result.rows;
     }

@@ -20,7 +20,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-    await cleanDatabase();
+    // await cleanDatabase();
 });
 
 describe('database', () => {

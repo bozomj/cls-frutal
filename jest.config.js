@@ -1,6 +1,6 @@
 module.exports = {
   testEnvironment: "node",
-  roots: ["<rootDir>/test"],
+  // roots: ["<rootDir>/test", "<rootDir>/models", "<rootDir>/pages"],
   testMatch: ["**/*.test.ts"],
   transform: {
     "^.+\\.tsx?$": "ts-jest",
@@ -8,7 +8,15 @@ module.exports = {
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
   },
-  watchPathIgnorePatterns: ["node_modules"],
+  watchPathIgnorePatterns: [
+    "node_modules",
+    "dist",
+    "build",
+    "public",
+    ".next",
+    ".swc",
+  ],
+
   collectCoverageFrom: [
     "**/*.{ts,tsx}",
     "!**/node_modules/**",

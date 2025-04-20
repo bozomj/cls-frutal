@@ -7,7 +7,7 @@ const router = createRouter<NextApiRequest, NextApiResponse>();
 
  router.get(getHandler);
  router.post(postHandler);
-
+ 
 export default router.handler();
 
 async function getHandler(req: NextApiRequest, res: NextApiResponse){
