@@ -17,7 +17,7 @@ function verifyToken(token: string){
 async function isAuthenticated(){
 
     
-    const response =  await fetch('http://localhost:3000/api/v1/login', {
+    const response =  await fetch('/api/v1/login', {
         method: 'GET',
         
       }) as any;

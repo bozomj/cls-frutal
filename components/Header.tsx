@@ -45,7 +45,7 @@ const Header: React.FC<HeaderProps> = () => {
         </Link> : ''
           }
         <Link href={isAuthenticated.status ? '/api/v1/logout' : '/login'}>
-          <span className="hidden md:inline hover:text-cyan-300 transition-colors">
+          <span className=" md:inline hover:text-cyan-300 transition-colors">
             {isAuthenticated.status ? 'Sair' : 'Entrar'}
             </span>
         </Link>
