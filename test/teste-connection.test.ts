@@ -1,58 +1,36 @@
 // teste para verificar se a conexão com o banco de dados está ok
-import database from '@/database/database';
+import database from "@/database/database";
 
-import migrator  from '@/models/migrator';
-import User from '@/models/user';
+import migrator from "@/models/migrator";
+import User from "@/models/user";
 
-
-async function cleanDatabase(){
-    const client = await database.getNewClient();
-    await client.query("drop schema public cascade; create schema public;");
-    await client.end();
-    
+async function cleanDatabase() {
+  const client = await database.getNewClient();
+  await client.query("drop schema public cascade; create schema public;");
+  await client.end();
 }
 
 beforeAll(async () => {
-    
-    await cleanDatabase();
-    
-    
+  await cleanDatabase();
 });
 
 afterAll(async () => {
-    // await cleanDatabase();
+  // await cleanDatabase();
 });
 
-describe('database', () => {
-    
+describe("database", () => {
+  it("Listar migrações pendentes", async () => {
+    const result = await migrator.listPendingMigrations();
+    expect(result).toEqual(expect.any(Array));
+  });
 
-    it('Listar migrações pendentes', async () => {
-        const result = await migrator.listPendingMigrations();
-        expect(result).toEqual(expect.any(Array));
-        
-        
-        
-    });
-    
-    it('Rodar migrações pendentes', async () => {
-        
-        const result = await migrator.runPendingMigrations();
-        expect(result).toEqual(expect.any(Array));
-        
-        
-    });
-    
-    
-    
-    
-    it('Buscar usuários', async () => {
-        
-        const result = await User.findAll();
-        expect(result).toEqual(expect.any(Array));
-        
-       
-       
-    });
+  it("Rodar migrações pendentes", async () => {
+    const result = await migrator.runPendingMigrations();
+    expect(result).toEqual(expect.any(Array));
+  });
 
-    
+  it("Buscar usuários", async () => {
+    const result = await User.findAll();
+    expect(result).toEqual(expect.any(Array));
+  });
 });

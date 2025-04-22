@@ -4,17 +4,12 @@ import {
   faEnvelope,
   faUser,
   faClipboard,
-  faArrowAltCircleRight,
 } from "@fortawesome/free-regular-svg-icons";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Header from "@/components/Header";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBars,
-  faRightFromBracket,
-  faRightToBracket,
-} from "@fortawesome/free-solid-svg-icons";
+
 import ListTile from "@/components/ListTile";
 
 function Dashboard({ ctx }: { ctx: any }) {
@@ -35,10 +30,7 @@ function Dashboard({ ctx }: { ctx: any }) {
             tabIndex={0}
             className="  group bg-cyan-950 max-w-[5rem] overflow-x-hidden   p-4 flex items-start flex-col gap-2 hover:max-w-[25rem]   transition-all duration-500 border-r-2 
         focus:max-w-[25rem]
-        fixed h-full
-        
-        
-        "
+        fixed h-full"
           >
             <div className="flex flex-col  gap-2">
               <span className="group-focus:w-[8rem] group-focus:h-[8rem] rounded-full  w-[3rem] h-[3rem] group-hover:block   bg-white   group-hover:w-[8rem] group-hover:h-[8rem] transition-all duration-500"></span>
@@ -132,8 +124,6 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     };
   }
-
-  console.log("aui", auth.id);
 
   return {
     props: {

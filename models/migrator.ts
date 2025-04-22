@@ -1,48 +1,39 @@
 import database from "@/database/database";
-import migrationRunner from 'node-pg-migrate';
-
-
+import migrationRunner from "node-pg-migrate";
 
 const defaultMigrationOptions = {
   dryRun: true,
-  dir:"./migrations",
+  dir: "./migrations",
   direction: "up" as const,
   migrationsTable: "pgmigrations",
-  log: ()=>{},
+  log: () => {},
   noLock: true,
-  
 };
 
 async function listPendingMigrations() {
   let dbClient;
 
   try {
-    
     dbClient = await database.getNewClient();
     const pendingMigrations = await migrationRunner({
       ...defaultMigrationOptions,
       dbClient,
     });
 
-    
     return pendingMigrations;
   } catch (error) {
-    
     throw {
-      message: "Erro ao buscar migrações pendentes", 
-      cause: error 
+      message: "Erro ao buscar migrações pendentes",
+      cause: error,
     };
   } finally {
-    
-      await dbClient?.end();
-    
+    await dbClient?.end();
   }
 }
 
 async function runPendingMigrations() {
   let dbClient;
   try {
-    
     dbClient = await database.getNewClient();
     const runMigrations = await migrationRunner({
       ...defaultMigrationOptions,
@@ -50,18 +41,15 @@ async function runPendingMigrations() {
       dryRun: false,
     });
 
-    
     return runMigrations;
   } catch (error) {
-    
+    console.log("MIGRACAO: ", error);
     throw {
-      message: "Erro ao executar migrações pendentes", 
-      cause: error 
+      message: "Erro ao executar migrações pendentes",
+      cause: error,
     };
   } finally {
-    
-      await dbClient?.end();
-    
+    await dbClient?.end();
   }
 }
 
