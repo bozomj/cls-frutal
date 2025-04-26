@@ -2,9 +2,9 @@
 
 import autenticator from "@/models/autenticator";
 import User from "@/models/user";
+import createAdminUser from "@/seeds/createAminUser";
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
-import { cookies } from 'next/headers';
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
@@ -13,47 +13,44 @@ router.post(postHandler);
 
 export default router.handler();
 
- async function getHandler(req: NextApiRequest, res: NextApiResponse) {
-    try{
-        const users = await User.findAll();
-        
-        
-        res.status(200).json(users);
-    }catch(error){
-        res.status(500).json({ error: 'Erro ao buscar usuários', cause: error });
-    }
-}
+async function getHandler(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    const users = await User.findAll();
 
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar usuários", cause: error });
+  }
+}
 
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
+  const body = req.body;
+  const name = body.name;
+  const email = body.email;
+  const password = body.password;
 
-    
-    const body = req.body;
-    const name = body.name;
-    const email = body.email;
-    const password = body.password;
-    
-    const use = {name: name,email: email, password: password};
-    
-    
-    try{
-        const user = await User.create(use);
-        
-        const token = autenticator.createToken(user.id);
-        res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Max-Age=3600;`);
-        
-        res.status(201).json({message: 'Usuario criado com sucesso', user: user[0],  status: 201, cause: ''});
-    }catch(error: any){
-        
-        res.status(409).json({ 
-            status: 409,
-            message: 'Erro ao criar usuario', 
-            cause: error.message 
-        });
-    }
+  const use = { name: name, email: email, password: password };
 
-            
-        
+  try {
+    const user = await User.create(use);
 
+    const token = autenticator.createToken(user.id);
+    res.setHeader(
+      "Set-Cookie",
+      `token=${token}; HttpOnly; Path=/; Max-Age=3600;`
+    );
+
+    res.status(201).json({
+      message: "Usuario criado com sucesso",
+      user: user[0],
+      status: 201,
+      cause: "",
+    });
+  } catch (error: any) {
+    res.status(409).json({
+      status: 409,
+      message: "Erro ao criar usuario",
+      cause: error.message,
+    });
+  }
 }
-
