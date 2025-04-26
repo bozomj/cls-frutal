@@ -17,6 +17,13 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "models/migrator.ts", "migrations/1744676531213_create-table-post.js", "migrations/1744414431860_create-table-users.js"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "models/migrator.ts",
+    "migrations/1744676531213_create-table-post.js",
+    "migrations/1744414431860_create-table-users.js"
+  ],
   "exclude": ["node_modules"]
 }

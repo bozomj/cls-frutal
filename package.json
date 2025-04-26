@@ -15,7 +15,8 @@
     "migrate": "node-pg-migrate",
     "migrate:create": "node-pg-migrate create",
     "migrate:up": "node-pg-migrate up",
-    "migrate:down": "node-pg-migrate down"
+    "migrate:down": "node-pg-migrate down",
+    "seed": "ts-node seeds/createAminUser.ts"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
@@ -39,7 +40,7 @@
     "@tailwindcss/postcss": "^4.1.0",
     "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.9",
-    "@types/node": "^20",
+    "@types/node": "^20.17.31",
     "@types/pg": "^8.11.12",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -51,6 +52,7 @@
     "postcss": "^8.5.3",
     "tailwindcss": "^4.1.0",
     "ts-jest": "^29.3.1",
-    "typescript": "^5"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   }
 }

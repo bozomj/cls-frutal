@@ -17,6 +17,7 @@ function Dashboard({ ctx }: { ctx: any }) {
 
   useEffect(() => {
     getUser(ctx);
+    console.log(user);
   }, []);
 
   return (
@@ -46,7 +47,7 @@ function Dashboard({ ctx }: { ctx: any }) {
             <ul>
               <li>
                 <ListTile
-                  title={user.email ?? ""}
+                  title={user.email}
                   icon={faEnvelope}
                   onClick={() => {}}
                 />
@@ -105,6 +106,7 @@ function Dashboard({ ctx }: { ctx: any }) {
     const response = await fetch(query);
     const data = await response.json();
 
+    // console.log("DATA", data);
     setUser(data);
   }
 }

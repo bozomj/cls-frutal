@@ -23,14 +23,18 @@ describe("database", () => {
     const result = await migrator.listPendingMigrations();
     expect(result).toEqual(expect.any(Array));
   });
-
   it("Rodar migrações pendentes", async () => {
     const result = await migrator.runPendingMigrations();
     expect(result).toEqual(expect.any(Array));
   });
 
-  it("Buscar usuários", async () => {
-    const result = await User.findAll();
-    expect(result).toEqual(expect.any(Array));
+  it("Mostrar zero migrações pendentes", async () => {
+    const result = await migrator.listPendingMigrations();
+    expect(result).toEqual([]);
+  });
+
+  it("Insert user Admin", async () => {
+    const user = await fetch("http://localhost:3000/api/v1/user/insertadmin_");
+    console.log(user);
   });
 });
