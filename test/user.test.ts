@@ -1,5 +1,4 @@
 import database from "@/database/database";
-import User from "@/models/user";
 
 describe("User", () => {
   it("mostrar tabelas", async () => {

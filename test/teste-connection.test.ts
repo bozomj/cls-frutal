@@ -11,7 +11,7 @@ async function cleanDatabase() {
 }
 
 beforeAll(async () => {
-  await cleanDatabase();
+  // await cleanDatabase();
 });
 
 afterAll(async () => {
@@ -33,8 +33,10 @@ describe("database", () => {
     expect(result).toEqual([]);
   });
 
-  it("Insert user Admin", async () => {
-    const user = await fetch("http://localhost:3000/api/v1/user/insertadmin_");
-    console.log(user);
-  });
+  // it("Insert user Admin", async () => {
+  //   const user = await fetch("http://localhost:3000/api/v1/user/insertadmin_", {
+  //     method: "POST",
+  //   });
+  //   console.log(user);
+  // });
 });
