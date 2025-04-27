@@ -1,0 +1,63 @@
+import Card from "@/components/card";
+import Header from "@/components/Header";
+import autenticator from "@/models/autenticator";
+import { faHandshake } from "@fortawesome/free-regular-svg-icons";
+import { faCar, faShoppingBag } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
+
+function NewPost() {
+  return (
+    <>
+      <Header />
+      <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center">
+        <section className="w-full">
+          <span className="h-[10rem] w-full flex justify-evenly bg-cyan-700 relative">
+            <h1>Ola! Antes de mais nada, o que você vai publicar?</h1>
+            <span className="absolute top-[70%] grid grid-cols-[repeat(auto-fit,minmax(8rem,1fr))] p-1 gap-2  w-full md:w-[920px]">
+              <Card>
+                <FontAwesomeIcon icon={faShoppingBag} className="text-5xl" />
+                Produto
+              </Card>
+              <Card>
+                <FontAwesomeIcon icon={faCar} className="text-5xl" />
+                Imóveis
+              </Card>
+              <Card>
+                <FontAwesomeIcon icon={faHandshake} className="text-5xl" />
+                Serviços
+              </Card>
+            </span>
+          </span>
+        </section>
+      </main>
+    </>
+  );
+}
+
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const token = context.req.cookies.token || "";
+  let auth = null;
+  try {
+    auth = autenticator.verifyToken(token);
+  } catch (error) {
+    console.log(error);
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      ctx: auth.id,
+    },
+  };
+};
+
+export default NewPost;
