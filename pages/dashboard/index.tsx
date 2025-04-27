@@ -65,6 +65,7 @@ function Dashboard({ ctx }: { ctx: any }) {
                   title="Produtos"
                   icon={faClipboard}
                   onClick={() => {}}
+                  url="/newpost"
                 />
               </li>
             </ul>

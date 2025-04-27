@@ -18,7 +18,7 @@ function NewPost() {
             <span className="absolute top-[70%] grid grid-cols-[repeat(auto-fit,minmax(8rem,1fr))] p-1 gap-2  w-full md:w-[920px]">
               <Card>
                 <FontAwesomeIcon icon={faShoppingBag} className="text-5xl" />
-                Produto
+                <a href="">Produto</a>
               </Card>
               <Card>
                 <FontAwesomeIcon icon={faCar} className="text-5xl" />
