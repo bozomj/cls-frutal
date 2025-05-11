@@ -2,7 +2,7 @@
 
 import autenticator from "@/models/autenticator";
 import User from "@/models/user";
-import createAdminUser from "@/seeds/createAminUser";
+
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
@@ -46,11 +46,13 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
       status: 201,
       cause: "",
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as Error;
+
     res.status(409).json({
       status: 409,
       message: "Erro ao criar usuario",
-      cause: error.message,
+      cause: err.message,
     });
   }
 }

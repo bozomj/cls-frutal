@@ -6,6 +6,7 @@ import { faCar, faShoppingBag } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import Link from "next/link";
 
 function NewPost() {
   return (
@@ -18,7 +19,7 @@ function NewPost() {
             <span className="absolute top-[70%] grid grid-cols-[repeat(auto-fit,minmax(8rem,1fr))] p-1 gap-2  w-full md:w-[920px]">
               <Card>
                 <FontAwesomeIcon icon={faShoppingBag} className="text-5xl" />
-                <a href="">Produto</a>
+                <Link href="/newpost/produto">Produto</Link>
               </Card>
               <Card>
                 <FontAwesomeIcon icon={faCar} className="text-5xl" />

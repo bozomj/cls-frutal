@@ -6,16 +6,11 @@ beforeAll(async () => {
 });
 
 describe("teste da tabela post", () => {
-  it("listar posts", async () => {
-    const post = await Post.listAllPost();
-    expect(post).toEqual(expect.any(Array));
-  });
-
   it("inserir post com sucesso", async () => {
     const pst = {
       userId: "6d8b9b3c-854f-4563-b72c-cd721f121784",
       title: "testando um post 2",
-      description: "tomate cerja com abacate",
+      description: "tomate cerja com abacates",
       content: "corpo do post",
     };
 
@@ -47,5 +42,11 @@ describe("teste da tabela post", () => {
     });
 
     expect(post.status).toBe(500);
+  });
+
+  it("listar posts", async () => {
+    const post = await Post.listAllPost();
+    console.log(post);
+    expect(post).toEqual(expect.any(Array));
   });
 });

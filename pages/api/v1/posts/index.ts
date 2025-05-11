@@ -21,7 +21,6 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   const body = req.body;
-  console.log("corpo>>>", body);
 
   try {
     const post = await Post.create(body);

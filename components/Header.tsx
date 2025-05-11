@@ -15,7 +15,10 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = () => {
   const [toggle, setToggle] = useState(true);
   const [subH, alter] = useState(0);
-  const [isAuthenticated, setIsAuthenticated] = useState({status: false, user: null});
+  const [isAuthenticated, setIsAuthenticated] = useState({
+    status: false,
+    user: null,
+  });
   const itemsMenu = [
     { label: "produtos", link: "" },
     { label: "serviços", link: "" },
@@ -29,26 +32,24 @@ const Header: React.FC<HeaderProps> = () => {
     <header className="bg-cyan-900 p-4 relative w-full z-[1] flex flex-col gap-2  md:items-stretch ">
       <div className="flex justify-between px-2 ">
         <Link href={"/"} className="">
-          <Image src="./img/logo.svg" width="240" height={"120"} alt={""} />
+          <Image src="/img/logo.svg" width="240" height={"120"} alt={""} />
         </Link>
         <div className="flex items-center gap-4 px-2">
-      {isAuthenticated.status ?
-
-        <Link 
-        href={isAuthenticated.status ? '/dashboard' : '/login'} 
-        className="flex items-center gap-2 text-white hover:text-cyan-300 transition-colors"
-        >
-          <FontAwesomeIcon
-            icon={faUser}
-            className="text-2xl"
-            />
-        </Link> : ''
-          }
-        <Link href={isAuthenticated.status ? '/api/v1/logout' : '/login'}>
-          <span className=" md:inline hover:text-cyan-300 transition-colors">
-            {isAuthenticated.status ? 'Sair' : 'Entrar'}
+          {isAuthenticated.status ? (
+            <Link
+              href={isAuthenticated.status ? "/dashboard" : "/login"}
+              className="flex items-center gap-2 text-white hover:text-cyan-300 transition-colors"
+            >
+              <FontAwesomeIcon icon={faUser} className="text-2xl" />
+            </Link>
+          ) : (
+            ""
+          )}
+          <Link href={isAuthenticated.status ? "/api/v1/logout" : "/login"}>
+            <span className=" md:inline hover:text-cyan-300 transition-colors">
+              {isAuthenticated.status ? "Sair" : "Entrar"}
             </span>
-        </Link>
+          </Link>
         </div>
       </div>
       <div className="flex justify-end items-center gap-4 flex-[1]">
@@ -81,7 +82,7 @@ const Header: React.FC<HeaderProps> = () => {
           style={{ height: isMobile && !toggle ? `${subH}px` : undefined }}
         >
           <ul className="flex flex-col justify-end pb-4 md:pb-0  w-full  md:gap-4 md:flex-row ">
-            {mapItemsMenu()}          
+            {mapItemsMenu()}
           </ul>
         </nav>
         <label
@@ -104,7 +105,7 @@ const Header: React.FC<HeaderProps> = () => {
     </header>
   );
 
-  function mapItemsMenu(){
+  function mapItemsMenu() {
     let itens = itemsMenu.map((key, value) => {
       return (
         <li key={value}>
@@ -116,16 +117,15 @@ const Header: React.FC<HeaderProps> = () => {
           </label>
         </li>
       );
-    })
+    });
     return itens;
   }
-
 
   function change() {
     setToggle(!toggle);
   }
 
-   function init() {
+  function init() {
     const submenu = document.getElementById("submenu");
     const sub = {
       height: submenu?.scrollHeight ?? 0,
@@ -134,16 +134,10 @@ const Header: React.FC<HeaderProps> = () => {
 
     alter(sub.height);
 
-    
-
-    
-    autenticator.isAuthenticated().then((result)=>{
+    autenticator.isAuthenticated().then((result) => {
       setIsAuthenticated(result);
     });
   }
 };
-
-
-
 
 export default Header;
