@@ -12,8 +12,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import ListTile from "@/components/ListTile";
 
-function Dashboard({ ctx }: { ctx: any }) {
-  const [user, setUser] = useState<any>({});
+type UserType = {
+  name?: string;
+  email?: string;
+  title?: string;
+  createdAt?: string;
+};
+
+function Dashboard({ ctx }: { ctx: string }) {
+  const [user, setUser] = useState<UserType>({});
 
   useEffect(() => {
     getUser(ctx);
@@ -47,7 +54,7 @@ function Dashboard({ ctx }: { ctx: any }) {
             <ul>
               <li>
                 <ListTile
-                  title={user.email}
+                  title={user.email || ""}
                   icon={faEnvelope}
                   onClick={() => {}}
                 />
@@ -119,7 +126,9 @@ export const getServerSideProps: GetServerSideProps = async (
   let auth = null;
   try {
     auth = autenticator.verifyToken(token);
-  } catch (error) {
+  } catch (error: unknown) {
+    console.log(error);
+
     return {
       redirect: {
         destination: "/login",
