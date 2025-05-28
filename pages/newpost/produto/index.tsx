@@ -1,5 +1,8 @@
 import Card from "@/components/card";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Header from "@/components/Header";
+import autenticator from "@/models/autenticator";
+import { postType } from "@/models/post";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
@@ -7,11 +10,40 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
+const post: postType = {
+  title: "",
+  content: "",
+  description: "",
+  userId: "",
+  valor: 0,
+  categoria_id: "",
+  createdAt: Date.now(),
+};
+
 export default function Produto() {
   const [categoria, setCategoria] = useState("");
   const [valor, setValor] = useState("");
   const [urls, setImg] = useState<string[]>([]);
   const [imagens, setImagens] = useState<File[]>([]);
+  const [postError, setError] = useState<{
+    title: string;
+    description: string;
+    userId: string;
+    valor: string;
+    categoria_id: string;
+    createdAt: string;
+    content: string;
+    id: string;
+  }>({
+    title: "",
+    categoria_id: "",
+    content: "",
+    description: "",
+    userId: "",
+    valor: "",
+    createdAt: "",
+    id: "",
+  });
 
   const categoriasValues = [
     { value: "", label: "Selecione a categoria" },
@@ -33,44 +65,90 @@ export default function Produto() {
 
   const formatarMoeda = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
-    const apenasNumeros = input.replace(/\D/g, "");
+    const apenasNumeros = extractNumberInString(input);
 
-    const numero = parseInt(apenasNumeros || "0", 10) / 100;
-    const formatado = numero.toLocaleString("pt-BR", {
+    const numero = stringForDecimalNumber(apenasNumeros);
+    const formatado = formatNumberForMoedaString(numero);
+
+    setValor(formatado);
+    post.valor = numero;
+  };
+
+  function extractNumberInString(str: string): string {
+    return str.replace(/\D/g, "");
+  }
+
+  function stringForDecimalNumber(str: string): number {
+    return parseInt(str || "0", 10) / 100;
+  }
+
+  function formatNumberForMoedaString(number: number): string {
+    return number.toLocaleString("pt-BR", {
       style: "currency",
       currency: "BRL",
     });
+  }
 
-    setValor(formatado);
-  };
-
-  const salvar = async () => {
-    const newValor = valor
-      .replace("R$", "")
-      .trim()
-      .replace(/\./g, "")
-      .replace(",", ".");
-
-    console.log("IMAGENS PARA UPLOAD", newValor);
-    imagens.forEach((img) => {
-      console.log("imagem::_", img);
-    });
-
+  async function uploadImage() {
     const formdata = new FormData();
-    for (const file of imagens) {
-      console.log("IMAGENS: ", imagens);
-      formdata.append("file", file);
+    for (const image of imagens) {
+      formdata.append("image", image);
+    }
+    if (imagens.length > 0) {
+      const uploadedImagens = await fetch("/api/v1/uploadImages", {
+        method: "POST",
+        body: formdata,
+      });
+
+      return uploadedImagens.json();
     }
 
-    const result = await fetch("/api/v1/uploadImages", {
+    return null;
+  }
+
+  async function getIdUserAuthenticated() {
+    return (await autenticator.isAuthenticated()).result.id;
+  }
+
+  const salvar = async () => {
+    setError({ ...postError });
+
+    post.content = "valor padraro";
+    post.createdAt = Date.now();
+    post.userId = await getIdUserAuthenticated();
+
+    postError.description = post.description == "" ? "campo obrigatorio" : "";
+    postError.title = post.title == "" ? "Campo obrigatorio" : "";
+
+    console.log("POSTAGEM: ", post);
+
+    const posted = await fetch("/api/v1/posts", {
       method: "POST",
-      body: formdata,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(post),
     });
 
-    const d = await result.json();
+    const jsonresult = await posted.json();
+
+    if (jsonresult.message == "erro ao inserir post") {
+      console.log("meu post>>>>", jsonresult);
+      throw jsonresult;
+    }
+    console.log("meu post>>>>", jsonresult);
+
+    const uploadedImagens = await uploadImage();
     setImagens([]);
     setImg([]);
-    console.log("resultados:: ", d);
+
+    console.log("UPLOADED:: ", uploadedImagens);
+
+    if (uploadedImagens?.files) {
+      for (const file of uploadedImagens.files.image) {
+        console.log("CAMINHO DA IMAGE: ", file.filepath);
+      }
+    }
   };
 
   return (
@@ -84,18 +162,29 @@ export default function Produto() {
           <input
             type="text"
             placeholder="Titulo"
-            className="p-3 bg-cyan-50 text-gray-900 outline-0"
+            className="p-3 bg-cyan-50 text-gray-900 outline-0 "
+            onChange={(e) => {
+              post.title = e.target.value.trim();
+            }}
           />
+          <span className="text-red-800">{postError.title}</span>
           <textarea
             placeholder="Descrição"
             className="p-3 bg-cyan-50 text-gray-900 outline-0"
+            onChange={(e) => {
+              post.description = e.target.value.trim();
+            }}
           />
+          <span className="text-red-800">{postError.description}</span>
           <select
             name=""
             id=""
             className={`p-3 bg-cyan-50  outline-0 
               ${categoria === "" ? "text-gray-400" : "text-gray-800"}`}
-            onChange={(e) => setCategoria(e.target.value)}
+            onChange={(e) => {
+              setCategoria(e.target.value);
+              post.categoria_id = e.target.value;
+            }}
           >
             {categoriasValues.map((e) => (
               <option
@@ -115,7 +204,9 @@ export default function Produto() {
             placeholder="R$: 0,00"
             value={valor}
             className="text-gray-900 outline-0 p-3 bg-cyan-50"
-            onChange={formatarMoeda}
+            onChange={(e) => {
+              formatarMoeda(e);
+            }}
           />
 
           <label>
@@ -183,3 +274,29 @@ export default function Produto() {
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const token = context.req.cookies.token || "";
+  let auth = null;
+  try {
+    auth = autenticator.verifyToken(token);
+  } catch (error) {
+    console.log({
+      error: error,
+    });
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      ctx: auth.id,
+    },
+  };
+};
