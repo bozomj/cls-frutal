@@ -1,3 +1,4 @@
+import autenticator from "@/models/autenticator";
 import Post from "@/models/post";
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
@@ -20,6 +21,12 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    autenticator.verifyToken(req.cookies.token || "");
+  } catch (e) {
+    res.status(401).json({ message: "Unauthorized", cause: e });
+  }
+
   const body = req.body;
   try {
     const post = await Post.create(body);
