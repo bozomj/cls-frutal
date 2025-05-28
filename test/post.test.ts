@@ -12,6 +12,8 @@ describe("teste da tabela post", () => {
       title: "testando um post 2",
       description: "tomate cerja com abacates",
       content: "corpo do post",
+      categoria_id: "1",
+      valor: 10.5,
     };
 
     const post = await fetch("http://localhost:3000/api/v1/posts", {
