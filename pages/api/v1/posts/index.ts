@@ -22,16 +22,19 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
+    console.log("token>>>> ", req.cookies.token);
     autenticator.verifyToken(req.cookies.token || "");
   } catch (e) {
-    res.status(401).json({ message: "Unauthorized", cause: e });
+    return res.status(401).json({ message: "Unauthorized", cause: e });
   }
 
   const body = req.body;
   try {
     const post = await Post.create(body);
-    res.status(201).json(post);
+    return res.status(201).json(post);
   } catch (error) {
-    res.status(500).json({ message: "erro ao inserir post", cause: error });
+    return res
+      .status(500)
+      .json({ message: "erro ao inserir post", cause: error });
   }
 }

@@ -111,14 +111,13 @@ export default function Produto() {
   }
 
   const salvar = async () => {
-    setError({ ...postError });
-
     post.content = "valor padraro";
     post.createdAt = Date.now();
     post.userId = await getIdUserAuthenticated();
 
     postError.description = post.description == "" ? "campo obrigatorio" : "";
     postError.title = post.title == "" ? "Campo obrigatorio" : "";
+    setError({ ...postError });
 
     console.log("POSTAGEM: ", post);
 
@@ -133,10 +132,8 @@ export default function Produto() {
     const jsonresult = await posted.json();
 
     if (jsonresult.message == "erro ao inserir post") {
-      console.log("meu post>>>>", jsonresult);
       throw jsonresult;
     }
-    console.log("meu post>>>>", jsonresult);
 
     const uploadedImagens = await uploadImage();
     setImagens([]);
