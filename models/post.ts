@@ -1,6 +1,6 @@
 import database from "@/database/database";
 
-export type postType = {
+export type PostType = {
   id?: string;
   userId: string;
   title: string;
@@ -8,10 +8,11 @@ export type postType = {
   valor: number;
   categoria_id: string;
   content: string;
+  url: string;
   createdAt?: EpochTimeStamp;
 };
 
-function isPostType(obj: unknown): obj is postType {
+function isPostType(obj: unknown): obj is PostType {
   if (typeof obj !== "object" || obj === null) return false;
   const o = obj as Record<string, unknown>;
   return (
@@ -24,7 +25,7 @@ function isPostType(obj: unknown): obj is postType {
   );
 }
 
-async function create(pst: postType) {
+async function create(pst: PostType) {
   if (!isPostType(pst)) {
     throw {
       message: "JSON incorreto",
@@ -57,7 +58,10 @@ async function create(pst: postType) {
 
 async function listAllPost() {
   try {
-    const posts = await database.query("select * from posts");
+    // const posts = await database.query("select * from posts");
+    const posts = await database.query(
+      "select distinct on (posts.id) posts.*, imagens.url from posts left join imagens on imagens.post_id = posts.id"
+    );
     return posts;
   } catch (error) {
     throw {

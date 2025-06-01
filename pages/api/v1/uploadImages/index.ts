@@ -10,7 +10,7 @@ const router = createRouter<NextApiRequest, NextApiResponse>();
 router.post(postHandler);
 router.get(getHandler);
 
-const uploadDir = path.join(process.cwd(), "/uploads");
+const uploadDir = path.join(process.cwd(), "/public/uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
@@ -36,6 +36,7 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     const postid = fields.postid;
+    console.log("arquivo>>>>> ", fields);
 
     if (!files || Object.keys(files).length === 0) {
       return res.status(400).json({ error: "Nenhum arquivo enviado" });
@@ -47,13 +48,28 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     if (files.image) {
+      const imagensbanco = [];
       for (const file of files.image) {
-        await imagem.save(file.filepath || "", postid![0] || "");
+        try {
+          const n1 = (
+            await imagem.save(file.filepath || "", postid![0] || "")
+          )[0];
+
+          imagensbanco.push(n1);
+        } catch (error) {
+          for (const img of imagensbanco) {
+            await imagem.del(img.id);
+          }
+          return res.status(500).json({
+            message: "erro ao salvar imagem no banco",
+            cause: error,
+          });
+        }
       }
     }
 
     return res.status(200).json({
-      message: "upload de imagens",
+      message: "upload de imagens SUCESSO!!",
       files,
     });
   });

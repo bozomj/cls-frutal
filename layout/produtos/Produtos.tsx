@@ -1,15 +1,15 @@
-import Post, { postType } from "@/models/post";
+import { PostType } from "@/models/post";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons/faWhatsapp";
 import { faPhone } from "@fortawesome/free-solid-svg-icons/faPhone";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 
 interface ProdutosProps {
   titulo?: string;
 }
 
 const Produtos: React.FC<ProdutosProps> = () => {
-  const [postagem, setPostagem] = useState<unknown[]>([]);
+  const [postagem, setPostagem] = useState<JSX.Element[]>([]);
 
   useEffect(() => {
     getAllPosts();
@@ -30,7 +30,7 @@ const Produtos: React.FC<ProdutosProps> = () => {
     return path?.split(/[/\\]/).pop() || "";
   }
 
-  function makeItens(items: postType[]) {
+  function makeItens(items: PostType[]) {
     return items.map((item, v) => {
       return (
         <div

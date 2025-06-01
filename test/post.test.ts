@@ -13,7 +13,7 @@ beforeAll(async () => {
 describe("teste da tabela post", () => {
   let post_id: string;
   const token =
-    "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZkOGI5YjNjLTg1NGYtNDU2My1iNzJjLWNkNzIxZjEyMTc4NCIsImlhdCI6MTc0ODczOTA0OSwiZXhwIjoxNzQ4NzQyNjQ5fQ.ovR01_t1hv-rrR43XbTJN8htSNk_-j1smuhOINE5PmI";
+    "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZkOGI5YjNjLTg1NGYtNDU2My1iNzJjLWNkNzIxZjEyMTc4NCIsImlhdCI6MTc0ODc5MzkwMCwiZXhwIjoxNzQ4Nzk3NTAwfQ.ES00BJhpd61pRxAv9rZZvI-BEEsx0nenZCSzDwc_2GE";
   it("inserir post com sucesso", async () => {
     const pst = {
       userId: "6d8b9b3c-854f-4563-b72c-cd721f121784",
@@ -66,8 +66,6 @@ describe("teste da tabela post", () => {
   });
 
   it("insert imagem", async () => {
-    // const result = await imagem.save(randomUUID(), post_id!);
-
     const formdata = new FormData();
     const conteudoArquivo = Buffer.from([0x89, 0x50, 0x4e, 0x47]);
     const imagens = [
@@ -75,8 +73,6 @@ describe("teste da tabela post", () => {
         type: "image/png",
       }),
     ];
-
-    // Simula um arquivo Blob usando buffer
 
     for (const image of imagens) {
       formdata.append("image", image);
@@ -87,6 +83,8 @@ describe("teste da tabela post", () => {
       method: "POST",
       body: formdata,
     });
+
+    console.log(await imagens2.json());
   });
 
   it("listar todas imagens", async () => {
