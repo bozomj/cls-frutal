@@ -2,6 +2,7 @@ import database from "@/database/database";
 import imagem from "@/models/imagem";
 import Post from "@/models/post";
 import { randomUUID } from "crypto";
+import { stringify } from "querystring";
 
 beforeAll(async () => {
   await database.query("delete from imagens");
@@ -10,7 +11,9 @@ beforeAll(async () => {
 });
 
 describe("teste da tabela post", () => {
-  let post_id;
+  let post_id: string;
+  const token =
+    "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZkOGI5YjNjLTg1NGYtNDU2My1iNzJjLWNkNzIxZjEyMTc4NCIsImlhdCI6MTc0ODczOTA0OSwiZXhwIjoxNzQ4NzQyNjQ5fQ.ovR01_t1hv-rrR43XbTJN8htSNk_-j1smuhOINE5PmI";
   it("inserir post com sucesso", async () => {
     const pst = {
       userId: "6d8b9b3c-854f-4563-b72c-cd721f121784",
@@ -25,11 +28,12 @@ describe("teste da tabela post", () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Cookie: `token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZkOGI5YjNjLTg1NGYtNDU2My1iNzJjLWNkNzIxZjEyMTc4NCIsImlhdCI6MTc0ODU2MjM2MiwiZXhwIjoxNzQ4NTY1OTYyfQ.HBcpNamvL0CBMYzq50sXUu5Z0HB4CX2gO9coB7THoSY`,
+        Cookie: token,
       },
       body: JSON.stringify(pst),
     });
     post_id = (await post.json())[0].id;
+
     expect(post.status).toBe(201);
   });
 
@@ -47,7 +51,7 @@ describe("teste da tabela post", () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Cookie: `token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZkOGI5YjNjLTg1NGYtNDU2My1iNzJjLWNkNzIxZjEyMTc4NCIsImlhdCI6MTc0ODU2MjM2MiwiZXhwIjoxNzQ4NTY1OTYyfQ.HBcpNamvL0CBMYzq50sXUu5Z0HB4CX2gO9coB7THoSY`,
+        Cookie: token,
       },
       body: JSON.stringify(pst),
     });
@@ -62,12 +66,30 @@ describe("teste da tabela post", () => {
   });
 
   it("insert imagem", async () => {
-    const result = await imagem.save(randomUUID(), post_id!);
-    console.log(result);
+    // const result = await imagem.save(randomUUID(), post_id!);
+
+    const formdata = new FormData();
+    const conteudoArquivo = Buffer.from([0x89, 0x50, 0x4e, 0x47]);
+    const imagens = [
+      new File([conteudoArquivo], "teste.png", {
+        type: "image/png",
+      }),
+    ];
+
+    // Simula um arquivo Blob usando buffer
+
+    for (const image of imagens) {
+      formdata.append("image", image);
+    }
+    formdata.append("postid", post_id);
+
+    const imagens2 = await fetch("http://localhost:3000/api/v1/uploadImages", {
+      method: "POST",
+      body: formdata,
+    });
   });
 
   it("listar todas imagens", async () => {
     const result = await imagem.getAll();
-    console.log("todas imagens::: ", result);
   });
 });
