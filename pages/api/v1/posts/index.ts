@@ -31,6 +31,7 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   const body = req.body;
   try {
     const post = await Post.create(body);
+
     return res.status(201).json(post);
   } catch (error) {
     return res
