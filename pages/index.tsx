@@ -58,7 +58,7 @@ export default function home() {
               backgroundImage: `url(${item.link})`,
             }}
           ></span>
-          
+
           <div className=" flex text-gray-900 gap-2 w-[100%] truncate overflow-hidden flex-col">
             <span className="h-5 block">{item.description ?? ""}</span>
             <span className="h-5 block">R$: {item.value?.toFixed(2)}</span>
@@ -85,11 +85,11 @@ export default function home() {
       </div>
     );
   });
+
   return (
     <>
       <header className="">
         <Header />
-        
       </header>
       <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center">
         <div className="md:max-w-[100rem] w-full">
@@ -103,6 +103,7 @@ export default function home() {
           <section className="flex  flex-wrap bg-gray-50 p-4 gap-4 justify-center ">
             {...imgss}
           </section>
+          <section>{""}</section>
         </div>
         <footer className="min-h-[10rem] min-w-full bg-cyan-950 p-4">
           CLF-Frutal Classificados &copy;
