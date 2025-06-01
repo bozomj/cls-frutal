@@ -89,11 +89,13 @@ export default function Produto() {
     });
   }
 
-  async function uploadImage() {
+  async function uploadImage(id: string) {
     const formdata = new FormData();
     for (const image of imagens) {
       formdata.append("image", image);
     }
+    formdata.append("postid", id || "idcorreto");
+
     if (imagens.length > 0) {
       const uploadedImagens = await fetch("/api/v1/uploadImages", {
         method: "POST",
@@ -119,8 +121,6 @@ export default function Produto() {
     postError.title = post.title == "" ? "Campo obrigatorio" : "";
     setError({ ...postError });
 
-    console.log("POSTAGEM: ", post);
-
     const posted = await fetch("/api/v1/posts", {
       method: "POST",
       headers: {
@@ -135,17 +135,9 @@ export default function Produto() {
       throw jsonresult;
     }
 
-    const uploadedImagens = await uploadImage();
+    await uploadImage(jsonresult[0].id);
     setImagens([]);
     setImg([]);
-
-    console.log("UPLOADED:: ", uploadedImagens);
-
-    if (uploadedImagens?.files) {
-      for (const file of uploadedImagens.files.image) {
-        console.log("CAMINHO DA IMAGE: ", file.filepath);
-      }
-    }
   };
 
   return (
