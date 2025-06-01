@@ -21,8 +21,16 @@ async function getAll() {
   return result;
 }
 
+async function del(id: string) {
+  const result = await database.query("delete from imagens where id = $1", [
+    id,
+  ]);
+  return result;
+}
+
 const imagem = {
   save,
+  del,
   getAll,
 };
 
