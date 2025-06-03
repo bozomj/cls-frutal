@@ -2,7 +2,7 @@ import Card from "@/components/card";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Header from "@/components/Header";
 import autenticator from "@/models/autenticator";
-import { postType } from "@/models/post";
+import { PostType } from "@/models/post";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
@@ -10,7 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
-const post: postType = {
+const post: PostType = {
   title: "",
   content: "",
   description: "",
@@ -273,7 +273,7 @@ export const getServerSideProps: GetServerSideProps = async (
     auth = autenticator.verifyToken(token);
   } catch (error) {
     console.log({
-      error: error,
+      redirect: error,
     });
     return {
       redirect: {

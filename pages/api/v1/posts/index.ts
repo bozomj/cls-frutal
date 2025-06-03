@@ -22,7 +22,6 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    console.log("token>>>> ", req.cookies.token);
     autenticator.verifyToken(req.cookies.token || "");
   } catch (e) {
     return res.status(401).json({ message: "Unauthorized", cause: e });

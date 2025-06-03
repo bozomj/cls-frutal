@@ -6,7 +6,6 @@ describe("User", () => {
       "select table_name from information_schema.tables where table_schema = 'public';"
     );
 
-    console.log("tables", tables);
     expect(tables).toEqual(expect.any(Array));
   });
 });

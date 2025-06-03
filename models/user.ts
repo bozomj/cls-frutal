@@ -20,8 +20,9 @@ const User = {
   },
 
   findById: async (id: string) => {
-    let result;
-    result = await database.query("SELECT * from users where id = $1;", [id]);
+    const result = await database.query("SELECT * from users where id = $1;", [
+      id,
+    ]);
 
     if (result < 1) {
       throw {
@@ -40,7 +41,7 @@ const User = {
         "SELECT * from users where name = $1;",
         [username]
       );
-      console.log(result);
+
       return result;
     } catch (error) {
       throw {
@@ -62,9 +63,9 @@ const User = {
     return result;
   },
 
-  create: async (userInputValues: any) => {
+  create: async (userInputValues: Record<string, string | number>) => {
     try {
-      await validateUniqueEmail(userInputValues.email);
+      await validateUniqueEmail(userInputValues.email as string);
     } catch (error) {
       throw error;
     }
@@ -88,7 +89,9 @@ const User = {
       }
     }
 
-    async function runInsertQuery(userImputValues: any) {
+    async function runInsertQuery(
+      userImputValues: Record<string, string | number>
+    ) {
       let result;
       try {
         return (result = await database.query(
@@ -96,7 +99,7 @@ const User = {
           [
             userImputValues.name,
             userImputValues.email,
-            await password.hashPassword(userInputValues.password),
+            await password.hashPassword(userInputValues.password as string),
             userImputValues.is_admin || false,
           ]
         ));

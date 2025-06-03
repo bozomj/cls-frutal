@@ -14,11 +14,11 @@ function verifyToken(token: string) {
 }
 
 async function isAuthenticated() {
-  const response = (await fetch("/api/v1/login", {
+  const response = await fetch("/api/v1/login", {
     method: "GET",
-  })) as any;
+  });
   const data = await response.json();
-  console.log(data);
+
   return data;
 }
 

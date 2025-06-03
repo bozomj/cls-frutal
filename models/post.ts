@@ -8,7 +8,7 @@ export type PostType = {
   valor: number;
   categoria_id: string;
   content: string;
-  url: string;
+  url?: string;
   createdAt?: EpochTimeStamp;
 };
 
@@ -34,7 +34,7 @@ async function create(pst: PostType) {
 
   Object.values(pst).forEach((v) => {
     if (v == "" || v == null) {
-      throw "campo com valores incorretos";
+      throw { cause: "campo com valores incorretos", valores: pst };
     }
   });
 

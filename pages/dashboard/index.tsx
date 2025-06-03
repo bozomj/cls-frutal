@@ -24,7 +24,6 @@ function Dashboard({ ctx }: { ctx: string }) {
 
   useEffect(() => {
     getUser(ctx);
-    console.log(user);
   }, []);
 
   return (
@@ -114,7 +113,6 @@ function Dashboard({ ctx }: { ctx: string }) {
     const response = await fetch(query);
     const data = await response.json();
 
-    // console.log("DATA", data);
     setUser(data);
   }
 }
@@ -126,8 +124,10 @@ export const getServerSideProps: GetServerSideProps = async (
   let auth = null;
   try {
     auth = autenticator.verifyToken(token);
-  } catch (error: unknown) {
-    console.log(error);
+  } catch (error) {
+    console.log({
+      redirect: error,
+    });
 
     return {
       redirect: {

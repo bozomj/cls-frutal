@@ -12,24 +12,22 @@ router.post(postHandler);
 
 async function getLogin(req: NextApiRequest, res: NextApiResponse) {
   const token = req.cookies.token || "";
-  console.log("token>>>", token);
 
   try {
     const result = autenticator.verifyToken(token);
-    console.log(result);
+
     res.status(200).json({ status: true, result: result });
   } catch (error) {
-    res.status(200).json({ status: false, result: "Não autorizado" });
+    res
+      .status(200)
+      .json({ status: false, result: "Não autorizado", cause: error });
   }
 }
 
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
-  const body = JSON.parse(req.body);
-  const email = body.email;
-  const password = body.password;
+  const { email, password } = req.body;
 
-  const cookie = req.cookies;
-  console.log("cookies", cookie);
+  // const cookie = req.cookies;
 
   try {
     const token = await User.login(email, password);
@@ -40,7 +38,10 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
     );
 
     res.status(200).json({ message: "Usuário logado com sucesso" });
-  } catch (error: any) {
-    res.status(500).json({ error: "Erro ao logar usuário", cause: error });
+  } catch (error) {
+    console.log({
+      redirect: error,
+    });
+    res.status(500).json({ error: "Erro ao logar usuário" });
   }
 }

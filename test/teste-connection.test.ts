@@ -2,7 +2,6 @@
 import database from "@/database/database";
 
 import migrator from "@/models/migrator";
-import User from "@/models/user";
 
 async function cleanDatabase() {
   const client = await database.getNewClient();
@@ -11,11 +10,11 @@ async function cleanDatabase() {
 }
 
 beforeAll(async () => {
-  // await cleanDatabase();
+  await cleanDatabase();
 });
 
 afterAll(async () => {
-  // await cleanDatabase();
+  await cleanDatabase();
 });
 
 describe("database", () => {
@@ -32,11 +31,4 @@ describe("database", () => {
     const result = await migrator.listPendingMigrations();
     expect(result).toEqual([]);
   });
-
-  // it("Insert user Admin", async () => {
-  //   const user = await fetch("http://localhost:3000/api/v1/user/insertadmin_", {
-  //     method: "POST",
-  //   });
-  //   console.log(user);
-  // });
 });

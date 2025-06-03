@@ -45,7 +45,9 @@ export const getServerSideProps: GetServerSideProps = async (
   try {
     auth = autenticator.verifyToken(token);
   } catch (error) {
-    console.log(error);
+    console.log({
+      redirect: error,
+    });
     return {
       redirect: {
         destination: "/login",

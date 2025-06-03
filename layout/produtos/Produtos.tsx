@@ -23,7 +23,6 @@ const Produtos: React.FC<ProdutosProps> = () => {
     const result = await all.json();
     const r = makeItens(result);
     setPostagem(r);
-    console.log(result);
   }
 
   function getFileName(path: string): string {
@@ -77,7 +76,7 @@ const Produtos: React.FC<ProdutosProps> = () => {
     <>
       <div className="h-[300] bg-cyan-50 flex items-center  overflow-x-scroll max-w-full ">
         <section className="flex items-center gap-4 p-4">
-          <div className="flex gap-2">{postagem}</div>
+          <div className="flex gap-2">{...postagem}</div>
           <div className="h-[200px] w-[80vw] md:w-[400px] bg-cyan-800"></div>
           <div className="h-[200px] w-[80vw] md:w-[400px] bg-cyan-900"></div>
           <div className="h-[200px] w-[80vw] md:w-[400px] bg-cyan-700"></div>

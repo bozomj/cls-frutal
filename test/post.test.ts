@@ -1,8 +1,6 @@
 import database from "@/database/database";
 import imagem from "@/models/imagem";
 import Post from "@/models/post";
-import { randomUUID } from "crypto";
-import { stringify } from "querystring";
 
 beforeAll(async () => {
   await database.query("delete from imagens");
@@ -13,7 +11,8 @@ beforeAll(async () => {
 describe("teste da tabela post", () => {
   let post_id: string;
   const token =
-    "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZkOGI5YjNjLTg1NGYtNDU2My1iNzJjLWNkNzIxZjEyMTc4NCIsImlhdCI6MTc0ODc5MzkwMCwiZXhwIjoxNzQ4Nzk3NTAwfQ.ES00BJhpd61pRxAv9rZZvI-BEEsx0nenZCSzDwc_2GE";
+    "token=" +
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZkOGI5YjNjLTg1NGYtNDU2My1iNzJjLWNkNzIxZjEyMTc4NCIsImlhdCI6MTc0ODk4ODI4OCwiZXhwIjoxNzQ4OTkxODg4fQ.K4RnzkJI5VFtLmRZeSrcHz11Hj2LZj3MxFEx-4SaQ-k";
   it("inserir post com sucesso", async () => {
     const pst = {
       userId: "6d8b9b3c-854f-4563-b72c-cd721f121784",
@@ -79,15 +78,13 @@ describe("teste da tabela post", () => {
     }
     formdata.append("postid", post_id);
 
-    const imagens2 = await fetch("http://localhost:3000/api/v1/uploadImages", {
+    await fetch("http://localhost:3000/api/v1/uploadImages", {
       method: "POST",
       body: formdata,
     });
-
-    console.log(await imagens2.json());
   });
 
   it("listar todas imagens", async () => {
-    const result = await imagem.getAll();
+    await imagem.getAll();
   });
 });

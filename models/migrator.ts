@@ -43,7 +43,6 @@ async function runPendingMigrations() {
 
     return runMigrations;
   } catch (error) {
-    console.log("MIGRACAO: ", error);
     throw {
       message: "Erro ao executar migrações pendentes",
       cause: error,
