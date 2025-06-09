@@ -20,8 +20,7 @@ function isPostType(obj: unknown): obj is PostType {
     typeof o.title === "string" &&
     typeof o.description === "string" &&
     typeof o.valor === "number" &&
-    typeof o.categoria_id === "string" &&
-    typeof o.content === "string"
+    typeof o.categoria_id === "string"
   );
 }
 
@@ -39,14 +38,14 @@ async function create(pst: PostType) {
   });
 
   const query =
-    'INSERT INTO posts ("userId", title, description, content) VALUES ($1,$2,$3,$4) RETURNING *;';
+    'INSERT INTO posts ("userId", title, description, valor) VALUES ($1,$2,$3,$4) RETURNING *;';
 
   try {
     return await database.query(query, [
       pst.userId,
       pst.title,
       pst.description,
-      pst.content,
+      pst.valor,
     ]);
   } catch (error) {
     throw {

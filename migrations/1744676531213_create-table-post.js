@@ -18,8 +18,8 @@ exports.up = (pgm) => {
       type: "text",
       notNull: true,
     },
-    content: {
-      type: "text",
+    valor: {
+      type: "decimal(10, 2)",
       notNull: true,
     },
     createdAt: {

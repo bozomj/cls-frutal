@@ -40,13 +40,13 @@ const Produtos: React.FC<ProdutosProps> = () => {
             <span
               className="flex-1  block bg-contain bg-no-repeat bg-center  bg-gray-200 rounded-2xl min-h-[250px]"
               style={{
-                backgroundImage: `url(/uploads/${getFileName(item.url)})`,
+                backgroundImage: `url(/uploads/${getFileName(item.url || "")})`,
               }}
             ></span>
 
             <div className=" flex text-gray-900 gap-2 w-[100%] truncate overflow-hidden flex-col">
               <span className="h-5 block">{item.description ?? ""}</span>
-              <span className="h-5 block">R$: {item.valor?.toFixed(2)}</span>
+              <span className="h-5 block">R$: {item.valor}</span>
               <div className=" flex items-center gap-4">
                 <a
                   href={`https://wa.me/55${item.createdAt}?text=[Classificados Frutal] - fiquei interessado em seu produto \n`}
