@@ -3,8 +3,13 @@ import Produtos from "@/layout/produtos/Produtos";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons/faWhatsapp";
 import { faPhone } from "@fortawesome/free-solid-svg-icons/faPhone";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useState } from "react";
 
-export default function home() {
+interface HomeProps {
+  title?: string;
+}
+
+const Home: React.FC<HomeProps> = () => {
   const imgs = [
     {
       link: "https://m.media-amazon.com/images/I/51JtliveScL._SR480,440_.jpg",
@@ -44,6 +49,8 @@ export default function home() {
       value: 2799,
     },
   ];
+
+  const [search, setSearch] = useState("");
 
   const imgss = imgs.map((item, v) => {
     return (
@@ -91,9 +98,10 @@ export default function home() {
       <header className="">
         <Header
           onSubmit={async (e) => {
-            const result = await fetch("/api/v1/posts?search=" + e);
-            const posts = await result.json();
-            console.log(posts);
+            // const result = await fetch("/api/v1/posts?search=" + e);
+            // const posts = await result.json();
+            // console.log(posts);
+            setSearch(e);
           }}
         />
       </header>
@@ -105,11 +113,10 @@ export default function home() {
             }
             alt={""}
           />
-          <Produtos />
-          <section className="flex  flex-wrap bg-gray-50 p-4 gap-4 justify-center ">
+          <Produtos pesquisa={search.trim()} />
+          {/* <section className="flex  flex-wrap bg-gray-50 p-4 gap-4 justify-center ">
             {...imgss}
-          </section>
-          <section>{""}</section>
+          </section> */}
         </div>
         <footer className="min-h-[10rem] min-w-full bg-cyan-950 p-4">
           CLF-Frutal Classificados &copy;
@@ -121,4 +128,6 @@ export default function home() {
       </main>
     </>
   );
-}
+};
+
+export default Home;

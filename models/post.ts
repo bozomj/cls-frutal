@@ -118,7 +118,7 @@ async function search(txt: string) {
         posts.*,
         imagens.url
         from posts left join imagens on imagens.post_id = posts.id
-        where posts.title like $1
+        where posts.title ilike $1
         `,
       [`%${txt}%`]
     );

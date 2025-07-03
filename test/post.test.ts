@@ -1,11 +1,10 @@
-import database from "@/database/database";
 import imagem from "@/models/imagem";
 import Post from "@/models/post";
 import { promises as fs } from "fs";
 
 beforeAll(async () => {
-  await database.query("delete from imagens");
-  await database.query("delete from posts");
+  // await database.query("delete from imagens");
+  // await database.query("delete from posts");
 });
 
 describe("teste da tabela post", () => {

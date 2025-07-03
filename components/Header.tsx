@@ -11,7 +11,7 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 interface HeaderProps {
   titulo?: string;
-  onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
+  onSubmit?: (event: string) => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
@@ -68,7 +68,8 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
           // action={"/"}
           onSubmit={(e) => {
             e.preventDefault();
-            onSubmit(searchTerm);
+
+            onSubmit?.(searchTerm);
           }}
           className=" flex gap-2  flex-[1] justify-end  items-center"
         >
