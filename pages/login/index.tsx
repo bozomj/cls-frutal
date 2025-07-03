@@ -19,27 +19,32 @@ const Login = () => {
       return;
     }
 
-    const response = await fetch("/api/v1/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await response.json();
+    try {
+      const response = await fetch("/api/v1/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
 
-    if (data.error) {
-      setError("E-mail ou senha inválidos");
-    } else {
-      setError("");
-      router.push("/");
+      if (data.error) {
+        setError("E-mail ou senha inválidos");
+        console.log(data);
+      } else {
+        setError("");
+        router.push("/");
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
   return (
     <>
       <Header />
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-50">
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-50 ">
         <form
           onSubmit={handleSubmit}
           className="flex flex-col gap-4 bg-cyan-900 p-8 rounded-md w-full max-w-md "
@@ -86,18 +91,20 @@ const Login = () => {
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const token = context.req.cookies.token || "";
+  const token = context.req.cookies.token || null;
 
-  try {
-    autenticator.verifyToken(token);
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  } catch (error) {
-    console.log({ error: error });
+  if (token != null) {
+    try {
+      autenticator.verifyToken(token);
+      return {
+        redirect: {
+          destination: "/",
+          permanent: false,
+        },
+      };
+    } catch (error) {
+      console.log({ error: error });
+    }
   }
 
   return {

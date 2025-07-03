@@ -1,23 +1,23 @@
 import database from "@/database/database";
 import imagem from "@/models/imagem";
 import Post from "@/models/post";
+import { promises as fs } from "fs";
 
 beforeAll(async () => {
   await database.query("delete from imagens");
-
   await database.query("delete from posts");
 });
 
 describe("teste da tabela post", () => {
   let post_id: string;
   const token =
-    "token=" +
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZkOGI5YjNjLTg1NGYtNDU2My1iNzJjLWNkNzIxZjEyMTc4NCIsImlhdCI6MTc0ODk4ODI4OCwiZXhwIjoxNzQ4OTkxODg4fQ.K4RnzkJI5VFtLmRZeSrcHz11Hj2LZj3MxFEx-4SaQ-k";
+    "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlNTlkMDBmLTdjYzItNGYyNy05NGJlLTc2YzM3ODM1ZTY0NSIsImlhdCI6MTc1MTIzNzAxNiwiZXhwIjoxNzUxMjgwMjE2fQ.nF97677S_CiUZwY9_ITH9uCPABc6wXfwQwDofFl8iSs";
+
   it("inserir post com sucesso", async () => {
     const pst = {
-      userId: "6d8b9b3c-854f-4563-b72c-cd721f121784",
+      userId: "acd3af4e-14b2-4393-8c90-f2455fd5abf6",
       title: "testando um post 3",
-      description: "tomate cerja com abacates",
+      description: "tomate cereja com abacates",
       content: "corpo do post",
       categoria_id: "1",
       valor: 10.5,
@@ -38,7 +38,7 @@ describe("teste da tabela post", () => {
 
   it("erro ao inserir post com userId inexistente", async () => {
     const pst = {
-      userId: "6d8b9b3c-854f-4563-b72c-cd721f121788",
+      userId: "48a47280-6272-42b8-b92d-ed0bac719de3",
       title: "testando um post 2",
       description: "tomate cerja com abacate",
       content: "corpo do post",
@@ -84,7 +84,40 @@ describe("teste da tabela post", () => {
     });
   });
 
+  let imagensup: { [key: string]: string }[];
+
   it("listar todas imagens", async () => {
-    await imagem.getAll();
+    imagensup = await imagem.getAll();
+  });
+
+  it("deletar imagem", async () => {
+    for (const img of imagensup) {
+      const pth = img.url.replace(/\\/g, "/");
+
+      try {
+        await fs.access(pth);
+        await fs.unlink(pth);
+      } catch (e: unknown) {
+        const err = e as { code: string };
+        if (err.code !== "ENOENT") {
+          console.log({
+            message: "erro ao deletar imagem",
+            cause: e,
+          });
+        }
+      }
+    }
+  });
+
+  it("exibir post do usuario logado", async () => {
+    const posts = await fetch("http://localhost:3000/api/v1/posts/user", {
+      method: "GET",
+      headers: {
+        Cookie: token,
+      },
+    });
+    const result = await posts.json();
+
+    console.log({ resultado: result.length });
   });
 });

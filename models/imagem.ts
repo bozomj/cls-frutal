@@ -28,9 +28,19 @@ async function del(id: string) {
   return result;
 }
 
+async function delByPostId(id: string) {
+  const result = await database.query(
+    "delete from imagens where post_id = $1",
+    [id]
+  );
+
+  return result;
+}
+
 const imagem = {
   save,
   del,
+  delByPostId,
   getAll,
 };
 

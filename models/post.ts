@@ -7,7 +7,6 @@ export type PostType = {
   description: string;
   valor: number;
   categoria_id: string;
-  content: string;
   url?: string;
   createdAt?: EpochTimeStamp;
 };
@@ -38,7 +37,7 @@ async function create(pst: PostType) {
   });
 
   const query =
-    'INSERT INTO posts ("userId", title, description, valor) VALUES ($1,$2,$3,$4) RETURNING *;';
+    "INSERT INTO posts (user_id, title, description, valor) VALUES ($1,$2,$3,$4) RETURNING *;";
 
   try {
     return await database.query(query, [
@@ -57,7 +56,6 @@ async function create(pst: PostType) {
 
 async function listAllPost() {
   try {
-    // const posts = await database.query("select * from posts");
     const posts = await database.query(
       "select distinct on (posts.id) posts.*, imagens.url from posts left join imagens on imagens.post_id = posts.id"
     );
@@ -70,9 +68,72 @@ async function listAllPost() {
   }
 }
 
+async function deletePost(id: string, userId: string) {
+  try {
+    const posts = await database.query(
+      "delete from posts where id = $1 and user_id = $2 RETURNING *",
+      [id, userId]
+    );
+    return posts;
+  } catch (error) {
+    throw {
+      message: "Erro ao deletar",
+      cause: error,
+    };
+  }
+}
+
+async function getByUserID(id: string) {
+  console.log(">>>", id);
+  try {
+    const posts = await database.query(
+      `SELECT distinct on (posts.id)
+        posts.*,
+        imagens.url,
+        users.email
+      from posts
+      left join
+       imagens on imagens.post_id = posts.id
+      left join users on users.id = posts.user_id
+      where posts.user_id = $1
+      order by posts.id, imagens.id
+      `,
+      [id]
+    );
+
+    return posts;
+  } catch (e) {
+    throw {
+      id: id,
+      message: "Erro ao listar posts por userId",
+      cause: e,
+    };
+  }
+}
+
+async function search(txt: string) {
+  try {
+    const posts = await database.query(
+      `select distinct on (posts.id) 
+        posts.*,
+        imagens.url
+        from posts left join imagens on imagens.post_id = posts.id
+        where posts.title like $1
+        `,
+      [`%${txt}%`]
+    );
+    return posts;
+  } catch (error) {
+    return { message: error };
+  }
+}
+
 const Post = {
   create,
+  search,
+  deletePost,
   listAllPost,
+  getByUserID,
 };
 
 export default Post;

@@ -31,14 +31,20 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   });
 
   form.parse(req, async (err, fields, files) => {
-    for (const file of files.file || []) {
-      console.log({ imagens: file });
-    }
+    // for (const file of files.file || []) {
+    //   console.log({ imagens: file });
+    // }
 
     const postid = fields.postid;
 
     if (!files || Object.keys(files).length === 0) {
       return res.status(400).json({ error: "Nenhum arquivo enviado" });
+    }
+
+    if ((files.image?.length ?? 0) > 3) {
+      return res
+        .status(400)
+        .json({ error: "O numero de imagens devem ser no maximo 3" });
     }
 
     if (err) {

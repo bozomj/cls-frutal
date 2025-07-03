@@ -89,7 +89,13 @@ export default function home() {
   return (
     <>
       <header className="">
-        <Header />
+        <Header
+          onSubmit={async (e) => {
+            const result = await fetch("/api/v1/posts?search=" + e);
+            const posts = await result.json();
+            console.log(posts);
+          }}
+        />
       </header>
       <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center">
         <div className="md:max-w-[100rem] w-full">

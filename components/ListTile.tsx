@@ -1,3 +1,4 @@
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const ListTile = ({
@@ -7,7 +8,7 @@ const ListTile = ({
   onClick,
 }: {
   title: string;
-  icon: any;
+  icon?: IconProp;
   url?: string;
   onClick: () => void;
 }) => {
@@ -17,11 +18,11 @@ const ListTile = ({
       onClick={onClick}
     >
       <span>
-        <FontAwesomeIcon icon={icon} className="text-2xl" />
+        <FontAwesomeIcon icon={icon!} className="text-3xl" />
       </span>
       <span
         tabIndex={0}
-        className="opacity-0 group-focus:block whitespace-nowrap group-focus:opacity-100 transition-all duration-500 group-hover:opacity-100"
+        className=" group-focus:block whitespace-nowrap group-focus:opacity-100 transition-all duration-500 group-hover:opacity-100 opacity-0"
       >
         {url ? <a href={url || ""}>{title}</a> : title}
       </span>

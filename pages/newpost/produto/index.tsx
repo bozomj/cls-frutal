@@ -12,7 +12,6 @@ import { useState } from "react";
 
 const post: PostType = {
   title: "",
-  content: "",
   description: "",
   userId: "",
   valor: 0,
@@ -22,6 +21,8 @@ const post: PostType = {
 
 export default function Produto() {
   const [categoria, setCategoria] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [valor, setValor] = useState("");
   const [urls, setImg] = useState<string[]>([]);
   const [imagens, setImagens] = useState<File[]>([]);
@@ -32,12 +33,10 @@ export default function Produto() {
     valor: string;
     categoria_id: string;
     createdAt: string;
-    content: string;
     id: string;
   }>({
     title: "",
     categoria_id: "",
-    content: "",
     description: "",
     userId: "",
     valor: "",
@@ -90,6 +89,8 @@ export default function Produto() {
   }
 
   async function uploadImage(id: string) {
+    if (imagens.length > 3)
+      return { error: "O numero de imagens devem ser no maximo 3!!" };
     const formdata = new FormData();
     for (const image of imagens) {
       formdata.append("image", image);
@@ -113,12 +114,14 @@ export default function Produto() {
   }
 
   const salvar = async () => {
-    post.content = "valor padraro";
     post.createdAt = Date.now();
     post.userId = await getIdUserAuthenticated();
 
     postError.description = post.description == "" ? "campo obrigatorio" : "";
     postError.title = post.title == "" ? "Campo obrigatorio" : "";
+    postError.valor = post.valor <= 0 ? "Campo obrigatorio" : "";
+    postError.categoria_id = post.categoria_id == "" ? "Campo obrigatorio" : "";
+
     setError({ ...postError });
 
     const posted = await fetch("/api/v1/posts", {
@@ -136,6 +139,21 @@ export default function Produto() {
     }
 
     await uploadImage(jsonresult[0].id);
+
+    post.categoria_id = "";
+    post.description = "";
+    post.title = "";
+    post.valor = 0;
+    post.createdAt = 0;
+    post.id = "";
+    post.userId = "";
+    post.url = "";
+
+    setValor("");
+    setCategoria("");
+    setTitle("");
+    setDescription("");
+
     setImagens([]);
     setImg([]);
   };
@@ -143,28 +161,35 @@ export default function Produto() {
   return (
     <>
       <Header />
-      <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center">
+      <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center p-2">
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-4 bg-cyan-950 rounded p-4 w-[480px] m-4"
+          className="flex flex-col gap-4 bg-cyan-950 rounded p-4 md:w-[480px] m-4 w-full "
         >
+          <span className="text-red-800">{postError.title}</span>
           <input
             type="text"
+            value={title}
             placeholder="Titulo"
             className="p-3 bg-cyan-50 text-gray-900 outline-0 "
             onChange={(e) => {
-              post.title = e.target.value.trim();
-            }}
-          />
-          <span className="text-red-800">{postError.title}</span>
-          <textarea
-            placeholder="Descrição"
-            className="p-3 bg-cyan-50 text-gray-900 outline-0"
-            onChange={(e) => {
-              post.description = e.target.value.trim();
+              post.title = e.target.value;
+              setTitle(post.title);
             }}
           />
           <span className="text-red-800">{postError.description}</span>
+          <textarea
+            placeholder="Descrição"
+            value={description}
+            className={`p-3 bg-cyan-50 text-gray-900 outline-0 ${
+              postError.description ? "border-2 border-red-600" : "border-none"
+            } `}
+            onChange={(e) => {
+              post.description = e.target.value;
+              setDescription(post.description);
+            }}
+          />
+          <span className="text-red-800">{postError.categoria_id}</span>
           <select
             name=""
             id=""
@@ -180,6 +205,7 @@ export default function Produto() {
                 key={e.value}
                 value={e.value}
                 disabled={e.value === ""}
+                selected={e.value === ""}
                 className={`${
                   e.value === "" ? "text-gray-400" : "text-gray-800"
                 }`}
@@ -188,6 +214,7 @@ export default function Produto() {
               </option>
             ))}
           </select>
+          <span className="text-red-800">{postError.valor}</span>
           <input
             type="text"
             placeholder="R$: 0,00"

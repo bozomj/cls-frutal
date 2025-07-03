@@ -1,12 +1,13 @@
 import User from "@/models/user";
-import createAdminUser from "@/seeds/createAminUser";
+import createAdminUser from "@/seeds/createAdminUser";
+
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
-// router.get(getHandler);
-router.get(postHandler);
+router.get(getHandler);
+router.post(postHandler);
 
 export default router.handler();
 
@@ -22,7 +23,7 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const user = await createAdminUser();
+    const user = await createAdminUser;
     res.status(201).json(user);
   } catch (e) {
     res.status(500).json({

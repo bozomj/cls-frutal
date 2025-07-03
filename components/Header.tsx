@@ -6,15 +6,19 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons/faXmark";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import Link from "next/link";
+
 import React, { useEffect } from "react";
 import { useState } from "react";
 interface HeaderProps {
   titulo?: string;
+  onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
 }
 
-const Header: React.FC<HeaderProps> = () => {
+const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
   const [toggle, setToggle] = useState(true);
   const [subH, alter] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+
   const [isAuthenticated, setIsAuthenticated] = useState({
     status: false,
     user: null,
@@ -61,13 +65,19 @@ const Header: React.FC<HeaderProps> = () => {
         />
 
         <form
-          action={"/"}
+          // action={"/"}
+          onSubmit={(e) => {
+            e.preventDefault();
+            onSubmit(searchTerm);
+          }}
           className=" flex gap-2  flex-[1] justify-end  items-center"
         >
           <input
             type="text"
             className="bg-cyan-50 rounded  flex-[1] px-2 p-1 text-gray-900"
             placeholder="Pesquisar"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
           <button type="submit">
             <FontAwesomeIcon
@@ -106,7 +116,7 @@ const Header: React.FC<HeaderProps> = () => {
   );
 
   function mapItemsMenu() {
-    let itens = itemsMenu.map((key, value) => {
+    return itemsMenu.map((key, value) => {
       return (
         <li key={value}>
           <label
@@ -118,7 +128,6 @@ const Header: React.FC<HeaderProps> = () => {
         </li>
       );
     });
-    return itens;
   }
 
   function change() {

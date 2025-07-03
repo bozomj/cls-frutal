@@ -5,12 +5,16 @@ import {
   faUser,
   faClipboard,
 } from "@fortawesome/free-regular-svg-icons";
+
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Header from "@/components/Header";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import ListTile from "@/components/ListTile";
+import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
+import { faPhone } from "@fortawesome/free-solid-svg-icons/faPhone";
+import { faRemove } from "@fortawesome/free-solid-svg-icons";
 
 type UserType = {
   name?: string;
@@ -19,12 +23,50 @@ type UserType = {
   createdAt?: string;
 };
 
+async function getMyPost() {
+  const myPosts = await fetch(`api/v1/posts/user`, {
+    method: "GET",
+  });
+
+  const pst = await myPosts.json();
+  console.log({ posts: pst });
+  return pst;
+}
+function getFileName(path: string): string {
+  return path?.split(/[/\\]/).pop() || "";
+}
+
+async function deletePost(id: string, callback: (e: []) => void) {
+  const resposta = confirm("Deseja deletar este post?");
+
+  if (resposta) {
+    const result = await fetch(`api/v1/posts/${id}`, {
+      method: "DELETE",
+    });
+    console.log(await result.json());
+
+    callback(await getMyPost());
+  }
+}
+
 function Dashboard({ ctx }: { ctx: string }) {
   const [user, setUser] = useState<UserType>({});
+  const [listPost, setPosts] = useState([]);
 
   useEffect(() => {
     getUser(ctx);
-  }, []);
+    getMyPost().then((e) => setPosts(e));
+  }, [ctx]);
+
+  interface Item {
+    id: string;
+    userId: string;
+    url: string;
+    description: string;
+    email: string;
+    valor: number;
+    createdAt: string;
+  }
 
   return (
     <>
@@ -35,7 +77,7 @@ function Dashboard({ ctx }: { ctx: string }) {
         <div className="w-full h-[100vh] flex">
           <section
             tabIndex={0}
-            className="  group bg-cyan-950 max-w-[5rem] overflow-x-hidden   p-4 flex items-start flex-col gap-2 hover:max-w-[25rem]   transition-all duration-500 border-r-2 
+            className=" z-[999] group bg-cyan-950 max-w-[5rem] overflow-x-hidden   p-4 flex items-start flex-col gap-2 hover:max-w-[25rem]   transition-all duration-500 border-r-2 
         focus:max-w-[25rem]
         fixed h-full"
           >
@@ -49,7 +91,6 @@ function Dashboard({ ctx }: { ctx: string }) {
                 </p>
               </span>
             </div>
-
             <ul>
               <li>
                 <ListTile
@@ -78,30 +119,58 @@ function Dashboard({ ctx }: { ctx: string }) {
           </section>
 
           <section className="flex-1 p-2 h-full ml-[5rem] flex flex-col gap-2">
-            <div className="h-[250px] bg-gray-400 rounded-lg overflow-hidden p-2  ">
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Numquam
-              repellendus nihil pariatur cum perferendis soluta cupiditate eum
-              libero quis error, perspiciatis repellat velit qui magnam
-              reprehenderit nostrum, consequuntur, adipisci illum.
-            </div>
-            <div className="h-[250px] bg-gray-400 rounded-lg overflow-hidden  p-2 ">
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Numquam
-              repellendus nihil pariatur cum perferendis soluta cupiditate eum
-              libero quis error, perspiciatis repellat velit qui magnam
-              reprehenderit nostrum, consequuntur, adipisci illum.
-            </div>
-            <div className="h-[250px] bg-gray-400 rounded-lg overflow-hidden  p-2 ">
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Numquam
-              repellendus nihil pariatur cum perferendis soluta cupiditate eum
-              libero quis error, perspiciatis repellat velit qui magnam
-              reprehenderit nostrum, consequuntur, adipisci illum.
-            </div>
-            <div className="h-[250px] bg-gray-400 rounded-lg overflow-hidden  p-2 ">
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Numquam
-              repellendus nihil pariatur cum perferendis soluta cupiditate eum
-              libero quis error, perspiciatis repellat velit qui magnam
-              reprehenderit nostrum, consequuntur, adipisci illum.
-            </div>
+            {listPost.map((item: Item, v) => {
+              return (
+                <div
+                  key={v}
+                  className=" md:max-w-[250px] bg-gray-100 relative  md:min-w-[250px] min-w-full p-2 rounded-2xl flex justify-center"
+                >
+                  <div
+                    className="  bg-red-700 rounded-full h-8 w-8 right-2 top-[-0.2rem] flex justify-center items-center absolute"
+                    onClick={async () => {
+                      await deletePost(item.id, setPosts);
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faRemove} />
+                  </div>
+                  <div className="flex flex-col w-full overflow-hidden h-full gap-2 ">
+                    <span
+                      className="flex-1  block bg-contain bg-no-repeat bg-center  bg-gray-200 rounded-2xl min-h-[250px]"
+                      style={{
+                        backgroundImage: `url(/uploads/${getFileName(
+                          item.url || ""
+                        )})`,
+                      }}
+                    ></span>
+
+                    <div className=" flex text-gray-900 gap-2 w-[100%] truncate overflow-hidden flex-col">
+                      <span className="h-5 block">
+                        {item.description ?? ""}
+                      </span>
+                      <span className="h-5 block">R$: {item.valor}</span>
+                      <div className=" flex items-center gap-4">
+                        <a
+                          href={`https://wa.me/55${item.createdAt}?text=[Classificados Frutal] - fiquei interessado em seu produto \n`}
+                          target="_blank"
+                        >
+                          <FontAwesomeIcon
+                            icon={faWhatsapp}
+                            className="text-3xl text-green-900"
+                          />
+                        </a>
+                        <a href="#">
+                          <FontAwesomeIcon
+                            icon={faPhone}
+                            className="text-1xl text-blue-500"
+                          />
+                          {` ${item.email}`}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </section>
         </div>
       </main>
@@ -109,18 +178,21 @@ function Dashboard({ ctx }: { ctx: string }) {
   );
 
   async function getUser(id: string) {
-    const query = `/api/v1/user/id/${id}`;
-    const response = await fetch(query);
-    const data = await response.json();
-
-    setUser(data);
+    const response = await fetch(`/api/v1/user/id/${id}`);
+    setUser(await response.json());
   }
 }
 
+//executa antes de carregar
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
-) => {
-  const token = context.req.cookies.token || "";
+) => redirectNotToken(context, "/login");
+
+export default Dashboard;
+
+function redirectNotToken(ctx: GetServerSidePropsContext, destination: string) {
+  const token = ctx.req.cookies.token || "";
+  console.log(token);
   let auth = null;
   try {
     auth = autenticator.verifyToken(token);
@@ -131,7 +203,7 @@ export const getServerSideProps: GetServerSideProps = async (
 
     return {
       redirect: {
-        destination: "/login",
+        destination: destination,
         permanent: false,
       },
     };
@@ -142,6 +214,4 @@ export const getServerSideProps: GetServerSideProps = async (
       ctx: auth.id,
     },
   };
-};
-
-export default Dashboard;
+}

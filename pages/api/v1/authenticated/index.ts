@@ -1,9 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
 const getToken = (req: NextApiRequest, res: NextApiResponse) => {
-  const token = "token=" + req.cookies.token || "";
+  const token = req.cookies.token;
 
-  res.status(200).json({ token });
+  res.status(200).json({ token: "token=" + token });
 };
 
 export default getToken;

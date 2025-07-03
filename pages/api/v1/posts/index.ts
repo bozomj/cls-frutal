@@ -11,6 +11,19 @@ router.post(postHandler);
 export default router.handler();
 
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
+  const search = req.query.search as string;
+
+  if (search) {
+    console.log({ search: search });
+
+    try {
+      const posts = await Post.search(search || "");
+      res.status(200).json(posts);
+    } catch (error) {
+      throw { message: "erro com a pesquisa", cause: error };
+    }
+  }
+
   try {
     const posts = await Post.listAllPost();
 
