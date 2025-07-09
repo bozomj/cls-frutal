@@ -110,6 +110,32 @@ async function getByUserID(id: string) {
     };
   }
 }
+async function getById(id: string) {
+  try {
+    const posts = await database.query(
+      `SELECT distinct on (posts.id)
+        posts.*,
+        imagens.url,
+        users.email
+      from posts
+      left join
+       imagens on imagens.post_id = posts.id
+      left join users on users.id = posts.user_id
+      where posts.id = $1
+      order by posts.id, imagens.id
+      `,
+      [id]
+    );
+
+    return posts;
+  } catch (e) {
+    throw {
+      id: id,
+      message: "Erro ao listar posts por userId",
+      cause: e,
+    };
+  }
+}
 
 async function search(txt: string) {
   try {
@@ -129,6 +155,7 @@ async function search(txt: string) {
 }
 
 const Post = {
+  getById,
   create,
   search,
   deletePost,

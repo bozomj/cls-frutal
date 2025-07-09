@@ -56,11 +56,13 @@ async function getSearch(pesquisa: string) {
 function makeItens(items: PostType[]) {
   return items.map((item, v) => {
     return (
-      <div
+      <a
+        href={`/posts/${item.id}`}
         key={v}
-        className=" md:max-w-[250px] bg-gray-100  md:min-w-[250px] min-w-[220px] max-w-10/12  p-2 rounded-2xl flex justify-center"
+        className="cursor-pointer md:max-w-[250px] bg-gray-100  md:min-w-[250px] min-w-[220px] max-w-10/12  p-2 rounded-2xl flex justify-center hover:bg-gray-300"
       >
         <div className="flex flex-col w-full overflow-hidden h-full gap-2 ">
+          {item.id}
           <span
             className="flex-1  block bg-contain bg-no-repeat bg-center  bg-gray-200 rounded-2xl min-h-[250px]"
             style={{
@@ -91,7 +93,7 @@ function makeItens(items: PostType[]) {
             </div>
           </div>
         </div>
-      </div>
+      </a>
     );
   });
 }
