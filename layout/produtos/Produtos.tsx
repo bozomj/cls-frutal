@@ -38,9 +38,7 @@ async function getAllPosts() {
     method: "GET",
   });
 
-  const result = await all.json();
-  const r = makeItens(result);
-  return r;
+  return makeItens(await all.json());
 }
 
 function getFileName(path: string): string {
@@ -51,8 +49,8 @@ async function getSearch(pesquisa: string) {
   const result = await fetch("/api/v1/posts?search=" + pesquisa, {
     method: "GET",
   });
-  const posts = makeItens(await result.json());
-  return posts;
+
+  return makeItens(await result.json());
 }
 
 function makeItens(items: PostType[]) {

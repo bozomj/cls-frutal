@@ -138,6 +138,7 @@ export default function Produto() {
       throw jsonresult;
     }
 
+    console.log(">>", jsonresult[0].id ?? "nada");
     await uploadImage(jsonresult[0].id);
 
     post.categoria_id = "";
@@ -166,35 +167,52 @@ export default function Produto() {
           onSubmit={handleSubmit}
           className="flex flex-col gap-4 bg-cyan-950 rounded p-4 md:w-[480px] m-4 w-full "
         >
-          <span className="text-red-800">{postError.title}</span>
+          {Object.values(postError).some((msg) => msg != "") && (
+            <span className="text-red-800 font-bold ">
+              Todos os campos são obrigatorios
+            </span>
+          )}
+
           <input
             type="text"
             value={title}
             placeholder="Titulo"
-            className="p-3 bg-cyan-50 text-gray-900 outline-0 "
+            className={`p-3 bg-cyan-50 text-gray-900 outline-0  focus:outline-cyan-500 focus:outline-4
+              ${postError.title ? "border-2 border-red-600" : "border-none"}
+              `}
             onChange={(e) => {
               post.title = e.target.value;
               setTitle(post.title);
             }}
           />
-          <span className="text-red-800">{postError.description}</span>
+          {/* <span className="text-red-800">{postError.description}</span> */}
           <textarea
             placeholder="Descrição"
             value={description}
-            className={`p-3 bg-cyan-50 text-gray-900 outline-0 ${
-              postError.description ? "border-2 border-red-600" : "border-none"
-            } `}
+            className={`p-3 bg-cyan-50 text-gray-900 outline-0
+               focus:outline-cyan-500 focus:outline-4
+               ${
+                 postError.description
+                   ? "border-2 border-red-600"
+                   : "border-none"
+               } `}
             onChange={(e) => {
               post.description = e.target.value;
               setDescription(post.description);
             }}
           />
-          <span className="text-red-800">{postError.categoria_id}</span>
+          {/* <span className="text-red-800">{postError.categoria_id}</span> */}
           <select
             name=""
             id=""
-            className={`p-3 bg-cyan-50  outline-0 
-              ${categoria === "" ? "text-gray-400" : "text-gray-800"}`}
+            className={`p-3 bg-cyan-50  outline-0 focus:outline-cyan-500 focus:outline-4
+              ${categoria === "" ? "text-gray-400" : "text-gray-800"} 
+              ${
+                postError.categoria_id
+                  ? "border-2 border-red-600"
+                  : "border-none"
+              }
+              `}
             onChange={(e) => {
               setCategoria(e.target.value);
               post.categoria_id = e.target.value;
@@ -214,19 +232,24 @@ export default function Produto() {
               </option>
             ))}
           </select>
-          <span className="text-red-800">{postError.valor}</span>
+          {/* <span className="text-red-800">{postError.valor}</span> */}
           <input
             type="text"
             placeholder="R$: 0,00"
             value={valor}
-            className="text-gray-900 outline-0 p-3 bg-cyan-50"
+            className={`text-gray-900 outline-0 p-3 bg-cyan-50  focus:outline-cyan-500 focus:outline-4
+              ${postError.valor ? "border-2 border-red-600" : "border-none"}
+              `}
             onChange={(e) => {
               formatarMoeda(e);
             }}
           />
 
           <label>
-            <span className="bg-cyan-700 block w-fit p-2 rounded">
+            <span
+              tabIndex={0}
+              className="bg-cyan-700 block w-fit p-2 rounded focus:outline-cyan-500 focus:outline-4"
+            >
               <FontAwesomeIcon icon={faImage} className="text-3xl" />
             </span>
             <input
@@ -256,7 +279,7 @@ export default function Produto() {
             />
           </label>
 
-          <div id="preview" className="flex gap-2 flex-col">
+          <div id="preview" className="flex gap-2 flex-wrap justify-center">
             {urls.map((e, index) => {
               return (
                 <div key={index} className="relative w-fit">
