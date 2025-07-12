@@ -37,11 +37,20 @@ async function delByPostId(id: string) {
   return result;
 }
 
+async function getByPostID(id: string) {
+  const result = await database.query(
+    "select * from imagens where post_id = $1",
+    [id]
+  );
+  return result;
+}
+
 const imagem = {
   save,
   del,
   delByPostId,
   getAll,
+  getByPostID,
 };
 
 export default imagem;

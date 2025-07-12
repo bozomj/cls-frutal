@@ -1,7 +1,8 @@
 import { PostType } from "@/models/post";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons/faWhatsapp";
-import { faPhone } from "@fortawesome/free-solid-svg-icons/faPhone";
+// import { faPhone } from "@fortawesome/free-solid-svg-icons/faPhone";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import { JSX, useEffect, useState } from "react";
 
 interface ProdutosProps {
@@ -23,8 +24,8 @@ const Produtos: React.FC<ProdutosProps> = ({ pesquisa }) => {
   return (
     <>
       <div className="h-[300] bg-cyan-50 flex items-center  overflow-x-scroll max-w-full ">
-        <section className="flex items-center gap-4 p-4">
-          <div className="flex gap-2">{...postagem}</div>
+        <section className="flex flex-col gap-4 p-4 w-full">
+          {...postagem}
         </section>
       </div>
     </>
@@ -55,45 +56,41 @@ async function getSearch(pesquisa: string) {
 
 function makeItens(items: PostType[]) {
   return items.map((item, v) => {
+    if (items.length < 1) return <h3 key={1}> Nada encontrado</h3>;
+
     return (
-      <a
-        href={`/posts/${item.id}`}
+      <div
         key={v}
-        className="cursor-pointer md:max-w-[250px] bg-gray-100  md:min-w-[250px] min-w-[220px] max-w-10/12  p-2 rounded-2xl flex justify-center hover:bg-gray-300"
+        className="cursor-pointer 
+        
+        
+        bg-gray-300  
+        
+          p-2 rounded-2xl flex justify-center hover:bg-gray-300"
       >
         <div className="flex flex-col w-full overflow-hidden h-full gap-2 ">
-          {item.id}
-          <span
-            className="flex-1  block bg-contain bg-no-repeat bg-center  bg-gray-200 rounded-2xl min-h-[250px]"
+          <a
+            className="flex-1   block bg-contain bg-no-repeat bg-center  bg-gray-200 rounded-2xl min-h-[250px]"
+            href={`/posts/${item.id}`}
             style={{
               backgroundImage: `url(/uploads/${getFileName(item.url || "")})`,
             }}
-          ></span>
+          ></a>
 
           <div className=" flex text-gray-900 gap-2 w-[100%] truncate overflow-hidden flex-col">
-            <span className="h-5 block">{item.title ?? ""}</span>
-            <span className="h-5 block">R$: {item.valor}</span>
+            <h2 className="h-5 font-bold block">{item.title ?? ""}</h2>
+            <span className="h-5 text-green-700 block">R$: {item.valor}</span>
             <div className=" flex items-center gap-4">
-              <a
-                href={`https://wa.me/55/?text=[Classificados Frutal] - fiquei interessado em seu produto \n`}
-                target="_blank"
-              >
+              <a href="#" target="_blank">
                 <FontAwesomeIcon
                   icon={faWhatsapp}
                   className="text-3xl text-green-900"
                 />
               </a>
-              <a href="#">
-                <FontAwesomeIcon
-                  icon={faPhone}
-                  className="text-1xl text-blue-500"
-                />
-                {` ${item.createdAt}`}
-              </a>
             </div>
           </div>
         </div>
-      </a>
+      </div>
     );
   });
 }

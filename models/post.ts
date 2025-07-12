@@ -113,16 +113,16 @@ async function getByUserID(id: string) {
 async function getById(id: string) {
   try {
     const posts = await database.query(
-      `SELECT distinct on (posts.id)
+      `SELECT 
         posts.*,
-        imagens.url,
-        users.email
-      from posts
-      left join
-       imagens on imagens.post_id = posts.id
-      left join users on users.id = posts.user_id
-      where posts.id = $1
-      order by posts.id, imagens.id
+        users.email,
+        MIN(users.name) as name,
+        json_agg(imagens.*) AS imagens
+      FROM posts
+      LEFT JOIN imagens ON imagens.post_id = posts.id
+      LEFT JOIN users ON users.id = posts.user_id
+      WHERE posts.id = $1
+      GROUP BY posts.id, users.email
       `,
       [id]
     );

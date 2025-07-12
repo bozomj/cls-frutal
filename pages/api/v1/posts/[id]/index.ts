@@ -41,6 +41,7 @@ async function gethandler(req: NextApiRequest, res: NextApiResponse) {
     return res.status(400).json({ message: "ID invalido. Deve ser um UUID" });
   } else {
     const posts = await Post.getById(id);
+    // const imagens = await imagem.getByPostID(id);
 
     return res.status(200).json(posts);
   }
