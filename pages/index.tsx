@@ -37,7 +37,7 @@ const Home: React.FC<HomeProps> = () => {
             CLF-Frutal Classificados &copy;
           </p>
           <section className="flex-1 flex items-center">
-            <a href="https://www.assistechso.com.br">
+            <a href="https://www.assistechso.com.br" className="">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 className="w-[150px] md:w-[200px]"

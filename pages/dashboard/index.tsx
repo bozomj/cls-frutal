@@ -74,7 +74,7 @@ function Dashboard({ ctx }: { ctx: string }) {
         <Header titulo="Dashboard" />
       </header>
       <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between  items-center">
-        <div className="w-full h-[100vh] flex">
+        <div className="flex-1  flex w-full">
           <section
             tabIndex={0}
             className=" z-[999] group bg-cyan-950 max-w-[5rem] overflow-x-hidden   p-4 flex items-start flex-col gap-2 hover:max-w-[25rem]   transition-all duration-500 border-r-2 
@@ -118,24 +118,24 @@ function Dashboard({ ctx }: { ctx: string }) {
             </ul>
           </section>
 
-          <section className="flex-1 p-2 h-full ml-[5rem] flex flex-col gap-2">
+          <section className="flex-1 p-2  pl-[5.5rem] flex flex-col gap-2 w-full">
             {listPost.map((item: Item, v) => {
               return (
                 <div
                   key={v}
-                  className=" md:max-w-[250px] bg-gray-100 relative  md:min-w-[250px] min-w-full p-2 rounded-2xl flex justify-center"
+                  className="  bg-gray-100 relative  p-2 rounded-2xl flex justify-center"
                 >
-                  <div
+                  <span
                     className="  bg-red-700 rounded-full h-8 w-8 right-2 top-[-0.2rem] flex justify-center items-center absolute"
                     onClick={async () => {
                       await deletePost(item.id, setPosts);
                     }}
                   >
                     <FontAwesomeIcon icon={faRemove} />
-                  </div>
-                  <div className="flex flex-col w-full overflow-hidden h-full gap-2 ">
+                  </span>
+                  <div className="flex flex-col w-full  overflow-hidden h-full gap-2 ">
                     <span
-                      className="flex-1  block bg-contain bg-no-repeat bg-center  bg-gray-200 rounded-2xl min-h-[250px]"
+                      className=" bg-contain bg-no-repeat bg-center  bg-gray-200 rounded-2xl min-h-[250px]"
                       style={{
                         backgroundImage: `url(/uploads/${getFileName(
                           item.url || ""
@@ -143,14 +143,14 @@ function Dashboard({ ctx }: { ctx: string }) {
                       }}
                     ></span>
 
-                    <div className=" flex text-gray-900 gap-2 w-[100%] truncate overflow-hidden flex-col">
+                    <div className=" flex text-gray-900 gap-2 truncate overflow-hidden flex-col">
                       <span className="h-5 block">
                         {item.description ?? ""}
                       </span>
                       <span className="h-5 block">R$: {item.valor}</span>
                       <div className=" flex items-center gap-4">
                         <a
-                          href={`https://wa.me/55${item.createdAt}?text=[Classificados Frutal] - fiquei interessado em seu produto \n`}
+                          href={`https://wa.me/55${item.createdAt}?text=[Classificados Frutal] - fiquei interessado em seu produto `}
                           target="_blank"
                         >
                           <FontAwesomeIcon

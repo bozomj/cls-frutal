@@ -61,7 +61,7 @@ function makeItens(items: PostType[]) {
     return (
       <div
         key={v}
-        className="cursor-pointer 
+        className=" 
         
         
         bg-gray-300  
@@ -69,25 +69,26 @@ function makeItens(items: PostType[]) {
           p-2 rounded-2xl flex justify-center hover:bg-gray-300"
       >
         <div className="flex flex-col w-full overflow-hidden h-full gap-2 ">
-          <a
-            className="flex-1   block bg-contain bg-no-repeat bg-center  bg-gray-200 rounded-2xl min-h-[250px]"
-            href={`/posts/${item.id}`}
-            style={{
-              backgroundImage: `url(/uploads/${getFileName(item.url || "")})`,
-            }}
-          ></a>
+          <a href={`/posts/${item.id}`}>
+            <div
+              className="flex-1   block bg-contain bg-no-repeat bg-center  bg-gray-200 rounded-2xl min-h-[250px]"
+              style={{
+                backgroundImage: `url(/uploads/${getFileName(item.url || "")})`,
+              }}
+            ></div>
 
-          <div className=" flex text-gray-900 gap-2 w-[100%] truncate overflow-hidden flex-col">
-            <h2 className="h-5 font-bold block">{item.title ?? ""}</h2>
-            <span className="h-5 text-green-700 block">R$: {item.valor}</span>
-            <div className=" flex items-center gap-4">
-              <a href="#" target="_blank">
-                <FontAwesomeIcon
-                  icon={faWhatsapp}
-                  className="text-3xl text-green-900"
-                />
-              </a>
+            <div className=" flex text-gray-900 gap-2 w-[100%] truncate overflow-hidden flex-col">
+              <h2 className="h-5 font-bold block">{item.title ?? ""}</h2>
+              <span className="h-5 text-green-700 block">R$: {item.valor}</span>
             </div>
+          </a>
+          <div className=" flex items-center  py-2">
+            <a href="#" target="_blank" className="">
+              <FontAwesomeIcon
+                icon={faWhatsapp}
+                className="text-3xl text-green-900 hover:text-green-700"
+              />
+            </a>
           </div>
         </div>
       </div>
