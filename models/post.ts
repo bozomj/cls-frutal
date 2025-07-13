@@ -57,8 +57,13 @@ async function create(pst: PostType) {
 async function listAllPost() {
   try {
     const posts = await database.query(
-      "select distinct on (posts.id) posts.*, imagens.url from posts left join imagens on imagens.post_id = posts.id"
+      `SELECT * FROM (
+        select distinct on (posts.id) posts.*,
+       imagens.url from posts left join imagens on imagens.post_id = posts.id
+      ) AS sub ORDER BY sub."createdAt" desc
+       `
     );
+
     return posts;
   } catch (error) {
     throw {
