@@ -23,6 +23,7 @@ const Home: React.FC<HomeProps> = () => {
         <div className="md:max-w-[100rem] w-full">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
+            className="w-full"
             src={
               "https://m.media-amazon.com/images/G/32/kindle/email/2025/03_Marco/Pagina_Recomendacoes_para_voce/1500x200_Narrow.jpg"
             }

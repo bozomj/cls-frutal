@@ -9,6 +9,7 @@ import Image from "next/image";
 
 import Link from "next/link";
 import { useState } from "react";
+import Alert from "@/components/Alert";
 
 const post: PostType = {
   title: "",
@@ -26,6 +27,10 @@ export default function Produto() {
   const [valor, setValor] = useState("");
   const [urls, setImg] = useState<string[]>([]);
   const [imagens, setImagens] = useState<File[]>([]);
+
+  const [showModal, setShowModal] = useState(false);
+  const [Alertmsg, setAlertmsg] = useState("");
+
   const [postError, setError] = useState<{
     title: string;
     description: string;
@@ -114,6 +119,18 @@ export default function Produto() {
   }
 
   const salvar = async () => {
+    if (imagens.length > 3) {
+      setAlertmsg("Escolha no máximo 3 imagens");
+      setShowModal(true);
+      return;
+    }
+
+    if (imagens.length < 1) {
+      setAlertmsg("Escolha Pelo menos uma imagem");
+      setShowModal(true);
+      return;
+    }
+
     post.createdAt = Date.now();
     post.userId = await getIdUserAuthenticated();
 
@@ -309,6 +326,13 @@ export default function Produto() {
             <button className="bg-cyan-600 p-2 flex-1 rounded">Salvar</button>
           </span>
         </form>
+        {/* MODAL------------------------- */}
+
+        <Alert
+          msg={Alertmsg}
+          show={showModal}
+          onClose={() => setShowModal(false)}
+        />
       </main>
     </>
   );
