@@ -8,7 +8,7 @@ export type PostType = {
   valor: number;
   email: string;
   categoria_id: number;
-  url?: string;
+  imageurl?: string;
   phone: string;
   name: string;
   created_at?: EpochTimeStamp;
@@ -67,7 +67,7 @@ async function listAllPost() {
          posts.*, 
          users.phone AS phone,
          users.name as name,
-         imagens.url 
+         imagens.url as imageUrl
         from posts
         left join imagens on imagens.post_id = posts.id
         LEFT JOIN users ON users.id = posts.user_id
@@ -104,7 +104,7 @@ async function getByUserID(id: string) {
     const posts = await database.query(
       `SELECT distinct on (posts.id)
         posts.*,
-        imagens.url,
+        imagens.url as imageurl,
         users.email,
         users.phone as phone
       from posts
@@ -160,7 +160,7 @@ async function search(txt: string) {
     const posts = await database.query(
       `select distinct on (posts.id) 
         posts.*,
-        imagens.url
+        imagens.url as imageurl
         from posts left join imagens on imagens.post_id = posts.id
         where posts.title ilike $1
         `,

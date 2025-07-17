@@ -129,7 +129,7 @@ function Dashboard({ ctx }: { ctx: string }) {
                       className=" bg-contain bg-no-repeat bg-center  bg-gray-200 rounded-2xl min-h-[250px]"
                       style={{
                         backgroundImage: `url(/uploads/${getFileName(
-                          item.url || ""
+                          item.imageurl || ""
                         )})`,
                       }}
                     ></span>

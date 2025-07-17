@@ -69,9 +69,9 @@ function makeItens(items: PostType[]) {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 className="flex-1   bg-gray-200  max-w-[200px] min-h-[200px]"
-                src={utils.getUrlImage(item.url)}
+                src={utils.getUrlImage(item.imageurl)}
                 alt=""
-              ></img>
+              />
             </div>
 
             <div className=" flex text-gray-900 gap-2 w-[100%] truncate overflow-hidden flex-col py-2">
