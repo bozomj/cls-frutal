@@ -15,8 +15,10 @@ import ListTile from "@/components/ListTile";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 import { faPhone } from "@fortawesome/free-solid-svg-icons/faPhone";
 import { faRemove } from "@fortawesome/free-solid-svg-icons";
+import Modal from "@/components/Modal";
 
 type UserType = {
+  id?: string;
   name?: string;
   email?: string;
   title?: string;
@@ -37,21 +39,18 @@ function getFileName(path: string): string {
 }
 
 async function deletePost(id: string, callback: (e: []) => void) {
-  const resposta = confirm("Deseja deletar este post?");
+  const result = await fetch(`api/v1/posts/${id}`, {
+    method: "DELETE",
+  });
+  console.log(await result.json());
 
-  if (resposta) {
-    const result = await fetch(`api/v1/posts/${id}`, {
-      method: "DELETE",
-    });
-    console.log(await result.json());
-
-    callback(await getMyPost());
-  }
+  callback(await getMyPost());
 }
 
 function Dashboard({ ctx }: { ctx: string }) {
   const [user, setUser] = useState<UserType>({});
   const [listPost, setPosts] = useState([]);
+  const [showmodal, showModal] = useState(<></>);
 
   useEffect(() => {
     getUser(ctx);
@@ -86,9 +85,9 @@ function Dashboard({ ctx }: { ctx: string }) {
               <span className="flex gap-2 p-3  group-hover:flex">
                 <FontAwesomeIcon icon={faUser} className="text-2xl" />
 
-                <p className="text-white whitespace-nowrap  opacity-0 group-focus:opacity-100 transition-all duration-500 group-hover:block group-hover:opacity-100">
-                  {user.name ?? ""}
-                </p>
+                <h2 className="text-white whitespace-nowrap  opacity-0 group-focus:opacity-100 transition-all duration-500 group-hover:block group-hover:opacity-100">
+                  <a href={`/profile/${user.id}`}>{user.name ?? ""}</a>
+                </h2>
               </span>
             </div>
             <ul>
@@ -128,7 +127,8 @@ function Dashboard({ ctx }: { ctx: string }) {
                   <span
                     className="  bg-red-700 rounded-full h-8 w-8 right-2 top-[-0.2rem] flex justify-center items-center absolute"
                     onClick={async () => {
-                      await deletePost(item.id, setPosts);
+                      // await deletePost(item.id, setPosts);
+                      deletePostId(item.id);
                     }}
                   >
                     <FontAwesomeIcon icon={faRemove} />
@@ -174,8 +174,26 @@ function Dashboard({ ctx }: { ctx: string }) {
           </section>
         </div>
       </main>
+      {showmodal}
     </>
   );
+
+  async function deletePostId(id: string) {
+    showModal(
+      <Modal
+        show={true}
+        onConfirm={async function (): Promise<void> {
+          await deletePost(id, setPosts);
+          showModal(<></>);
+        }}
+        onClose={function (): void {
+          showModal(<></>);
+        }}
+      >
+        {"Deseja deletar este post?"}
+      </Modal>
+    );
+  }
 
   async function getUser(id: string) {
     const response = await fetch(`/api/v1/user/id/${id}`);

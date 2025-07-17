@@ -6,6 +6,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons/faXmark";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import Link from "next/link";
+import router from "next/router";
 
 import React, { useEffect } from "react";
 import { useState } from "react";
@@ -65,11 +66,11 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
         />
 
         <form
-          // action={"/"}
           onSubmit={(e) => {
             e.preventDefault();
 
             onSubmit?.(searchTerm);
+            router.replace(`/?q=${encodeURIComponent(searchTerm)}`);
           }}
           className=" flex gap-2  flex-[1] justify-end  items-center"
         >

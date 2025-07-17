@@ -10,15 +10,14 @@ beforeAll(async () => {
 describe("teste da tabela post", () => {
   let post_id: string;
   const token =
-    "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlNTlkMDBmLTdjYzItNGYyNy05NGJlLTc2YzM3ODM1ZTY0NSIsImlhdCI6MTc1MTIzNzAxNiwiZXhwIjoxNzUxMjgwMjE2fQ.nF97677S_CiUZwY9_ITH9uCPABc6wXfwQwDofFl8iSs";
+    "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFjOTRlMmZkLTY5ZmMtNDVmZi1iZDVlLWFiOTA3YzljNjlhYSIsImlhdCI6MTc1MjY5NTE2NiwiZXhwIjoxNzUyNzM4MzY2fQ._1E6E8KEeEbtDM9mOfB2lCaeZaa7frTcpTQxIS6eE3g";
 
   it("inserir post com sucesso", async () => {
     const pst = {
-      userId: "acd3af4e-14b2-4393-8c90-f2455fd5abf6",
+      user_id: "1c94e2fd-69fc-45ff-bd5e-ab907c9c69aa",
       title: "testando um post 3",
       description: "tomate cereja com abacates",
-      content: "corpo do post",
-      categoria_id: "1",
+      categoria_id: 18,
       valor: 10.5,
     };
 
@@ -30,6 +29,7 @@ describe("teste da tabela post", () => {
       },
       body: JSON.stringify(pst),
     });
+
     post_id = (await post.json())[0].id;
 
     expect(post.status).toBe(201);
@@ -83,29 +83,28 @@ describe("teste da tabela post", () => {
     });
   });
 
-  let imagensup: { [key: string]: string }[];
+  // let imagensup: { [key: string]: string }[];
 
   it("listar todas imagens", async () => {
     imagensup = await imagem.getAll();
   });
 
   it("deletar imagem", async () => {
-    for (const img of imagensup) {
-      const pth = img.url.replace(/\\/g, "/");
-
-      try {
-        await fs.access(pth);
-        await fs.unlink(pth);
-      } catch (e: unknown) {
-        const err = e as { code: string };
-        if (err.code !== "ENOENT") {
-          console.log({
-            message: "erro ao deletar imagem",
-            cause: e,
-          });
-        }
-      }
-    }
+    // for (const img of imagensup) {
+    //   const pth = img.url.replace(/\\/g, "/");
+    //   try {
+    //     await fs.access(pth);
+    //     await fs.unlink(pth);
+    //   } catch (e: unknown) {
+    //     const err = e as { code: string };
+    //     if (err.code !== "ENOENT") {
+    //       console.log({
+    //         message: "erro ao deletar imagem",
+    //         cause: e,
+    //       });
+    //     }
+    //   }
+    // }
   });
 
   it("exibir post do usuario logado", async () => {

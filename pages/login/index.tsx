@@ -5,11 +5,13 @@ import { useState } from "react";
 import autenticator from "@/models/autenticator";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import router from "next/router";
+import Alert from "@/components/Alert";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -31,10 +33,9 @@ const Login = () => {
 
       if (data.error) {
         setError("E-mail ou senha inválidos");
-        console.log(data);
       } else {
         setError("");
-        router.push("/");
+        setShowAlert(true);
       }
     } catch (error) {
       console.log(error);
@@ -44,7 +45,7 @@ const Login = () => {
   return (
     <>
       <Header />
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-50 ">
+      <div className="flex flex-col items-center p-2 justify-center h-screen bg-gray-50 ">
         <form
           onSubmit={handleSubmit}
           className="flex flex-col gap-4 bg-cyan-900 p-8 rounded-md w-full max-w-md "
@@ -84,6 +85,11 @@ const Login = () => {
           </Link>
         </form>
       </div>
+      <Alert
+        msg={"Login efetuado com sucesso!"}
+        show={showAlert}
+        onClose={() => router.push("/")}
+      />
     </>
   );
 };

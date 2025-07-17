@@ -4,7 +4,7 @@ exports.up = (pgm) => {
       type: "serial",
       primaryKey: true,
     },
-    desccricao: {
+    descricao: {
       type: "varchar(255)",
       notNull: true,
       unique: true,

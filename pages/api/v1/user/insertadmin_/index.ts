@@ -23,7 +23,8 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const user = await createAdminUser;
+    const user = await createAdminUser();
+    console.log(user);
     res.status(201).json(user);
   } catch (e) {
     res.status(500).json({

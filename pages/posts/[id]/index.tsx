@@ -2,6 +2,10 @@ import { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 import Header from "@/components/Header";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from "@fortawesome/free-regular-svg-icons";
+import { faShare } from "@fortawesome/free-solid-svg-icons";
+import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 
 async function getPost(id: string) {
   const res = await fetch(`/api/v1/posts/${id}`);
@@ -22,10 +26,11 @@ export default function DetailsPostPage() {
     id: "",
     title: "",
     valor: "",
-    createdAt: "",
+    created_at: "",
     imagens: [],
     description: "",
     name: "",
+    phone: "",
   });
 
   useEffect(() => {
@@ -36,25 +41,23 @@ export default function DetailsPostPage() {
 
       setImagens(v[0].imagens);
       setImgPrincipal(v[0].imagens[0]?.url ?? null);
+
+      console.log(v[0]);
     });
   }, [id]);
-
-  function setSearch(e: string) {
-    throw new Error(`Function not implemented. ${e}`);
-  }
 
   return (
     <>
       <header className="">
         <Header
           onSubmit={async (e) => {
-            setSearch(e);
+            console.log(e);
           }}
         />
       </header>
       <main className=" p-2 flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center text-black">
         <section className="flex flex-col gap-2 w-full">
-          <div className="flex gap-1">
+          <div className="flex gap-1 border-3 border-cyan-900 p-2 rounded-2xl">
             <span className="w-[400px] block  order-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -81,21 +84,41 @@ export default function DetailsPostPage() {
               })}
             </div>
           </div>
-          <div className="flex justify-between items-center">
+          <section className="flex justify-between items-center py-4">
             <div className="flex items-center gap-2">
-              <span className="rounded-full h-10 w-10 bg-gray-400"></span>
+              <span className="rounded-full h-10 w-10 bg-gray-400 flex items-center justify-center text-gray-300">
+                <FontAwesomeIcon icon={faUser} className="text-2xl" />{" "}
+              </span>
               <span className="text-[1em]">{item.name}</span>
             </div>
-            <div className="rounded bg-cyan-800 w-fit p-2 text-white self-end">
-              compartilhar
+
+            <div className="flex gap-2 items-center">
+              <a
+                target="_blank"
+                href={`https://wa.me/55${item.phone}?text=ola gostariad e falar com voce`}
+                className="rounded-3xl bg-green-800 w-10 h-10 flex items-center justify-center p-2 text-white self-end "
+              >
+                <FontAwesomeIcon icon={faWhatsapp} className="text-2xl" />
+              </a>
+              <a
+                href=""
+                target="_blank"
+                className="rounded-3xl bg-cyan-800 w-10 h-10 flex items-center justify-center p-2 text-white self-end "
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.href);
+                }}
+              >
+                {/* compartilhar */}
+                <FontAwesomeIcon icon={faShare} />
+              </a>
             </div>
-          </div>
+          </section>
 
           <div>
             <div className="flex justify-between items-center">
               <h1 className="text-xl font-bold  ">{item.title}</h1>
-              <h2 className="text-[0.8em]   ">
-                {formatarData(item.createdAt)}
+              <h2 className="text-[0.8em]">
+                <span>Publicado {formatarData(item.created_at)} </span>
               </h2>
             </div>
             <span className="font-bold text-green-700">R$: {item.valor}</span>

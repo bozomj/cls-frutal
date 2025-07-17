@@ -18,6 +18,10 @@ exports.up = (pgm) => {
       type: "varchar(255)",
       notNull: true,
     },
+    phone: {
+      type: "varchar(15)",
+      notNull: true,
+    },
     createdAt: {
       type: "timestamp",
       notNull: true,

@@ -8,16 +8,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Alert from "@/components/Alert";
+import { CategoriaType } from "@/models/categoria";
 
 const post: PostType = {
   title: "",
   description: "",
-  userId: "",
+  user_id: "",
   valor: 0,
-  categoria_id: "",
-  createdAt: Date.now(),
+  categoria_id: 0,
+  created_at: Date.now(),
 };
 
 export default function Produto() {
@@ -31,13 +32,17 @@ export default function Produto() {
   const [showModal, setShowModal] = useState(false);
   const [Alertmsg, setAlertmsg] = useState("");
 
+  const [categoriasValues, setCategoriasValues] = useState<
+    { value: string; label: string }[]
+  >([]);
+
   const [postError, setError] = useState<{
     title: string;
     description: string;
     userId: string;
     valor: string;
     categoria_id: string;
-    createdAt: string;
+    created_at: string;
     id: string;
   }>({
     title: "",
@@ -45,22 +50,23 @@ export default function Produto() {
     description: "",
     userId: "",
     valor: "",
-    createdAt: "",
+    created_at: "",
     id: "",
   });
 
-  const categoriasValues = [
-    { value: "", label: "Selecione a categoria" },
-    { value: "veiculos", label: "Veículos" },
-    { value: "imoveis", label: "Imóveis" },
-    { value: "eletronicos", label: "Eletrônicos" },
-    { value: "roupas", label: "Roupas e Acessórios" },
-    { value: "moveis", label: "Móveis" },
-    { value: "servicos", label: "Serviços" },
-    { value: "animais", label: "Animais" },
-    { value: "empregos", label: "Empregos" },
-    { value: "outros", label: "Outros" },
-  ];
+  useEffect(() => {
+    if (categoriasValues.length < 2) getCategorias();
+  }, [categoriasValues.length]);
+
+  async function getCategorias() {
+    const categorias = await (await fetch("/api/v1/categorias")).json();
+
+    const c = categorias.map((e: CategoriaType) => {
+      return { value: e.id, label: e.descricao };
+    });
+
+    setCategoriasValues([...c]);
+  }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>): void {
     event.preventDefault();
@@ -119,6 +125,8 @@ export default function Produto() {
   }
 
   const salvar = async () => {
+    console.log(post);
+
     if (imagens.length > 3) {
       setAlertmsg("Escolha no máximo 3 imagens");
       setShowModal(true);
@@ -131,13 +139,13 @@ export default function Produto() {
       return;
     }
 
-    post.createdAt = Date.now();
-    post.userId = await getIdUserAuthenticated();
+    post.created_at = Date.now();
+    post.user_id = await getIdUserAuthenticated();
 
     postError.description = post.description == "" ? "campo obrigatorio" : "";
     postError.title = post.title == "" ? "Campo obrigatorio" : "";
     postError.valor = post.valor <= 0 ? "Campo obrigatorio" : "";
-    postError.categoria_id = post.categoria_id == "" ? "Campo obrigatorio" : "";
+    postError.categoria_id = post.categoria_id == 0 ? "Campo obrigatorio" : "";
 
     setError({ ...postError });
 
@@ -158,22 +166,22 @@ export default function Produto() {
     console.log(">>", jsonresult[0].id ?? "nada");
     await uploadImage(jsonresult[0].id);
 
-    post.categoria_id = "";
+    post.categoria_id = 0;
     post.description = "";
     post.title = "";
     post.valor = 0;
-    post.createdAt = 0;
+    post.created_at = 0;
     post.id = "";
-    post.userId = "";
+    post.user_id = "";
     post.url = "";
 
-    setValor("");
-    setCategoria("");
-    setTitle("");
-    setDescription("");
+    // setValor("");
+    // setCategoria("");
+    // setTitle("");
+    // setDescription("");
 
-    setImagens([]);
-    setImg([]);
+    // setImagens([]);
+    // setImg([]);
   };
 
   return (
@@ -232,9 +240,13 @@ export default function Produto() {
               `}
             onChange={(e) => {
               setCategoria(e.target.value);
-              post.categoria_id = e.target.value;
+              console.log(e.target.value);
+              post.categoria_id = parseInt(e.target.value);
             }}
           >
+            <option key={0} value={""}>
+              Selecione a categoria
+            </option>
             {categoriasValues.map((e) => (
               <option
                 key={e.value}

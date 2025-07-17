@@ -5,6 +5,15 @@ import autenticator from "@/models/autenticator";
 
 dotenv.config({ path: ".env.development" });
 
+export type UserType = {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+  createdAt: string;
+  is_admin: boolean;
+};
+
 const User = {
   findAll: async () => {
     try {
@@ -63,7 +72,9 @@ const User = {
     return result;
   },
 
-  create: async (userInputValues: Record<string, string | number>) => {
+  create: async (
+    userInputValues: Record<string, string | number | boolean>
+  ) => {
     try {
       await validateUniqueEmail(userInputValues.email as string);
     } catch (error) {
@@ -90,17 +101,18 @@ const User = {
     }
 
     async function runInsertQuery(
-      userImputValues: Record<string, string | number>
+      userImputValues: Record<string, string | number | boolean>
     ) {
       let result;
       try {
         return (result = await database.query(
-          "INSERT INTO users (name, email, password, is_admin) VALUES ($1, $2, $3, $4) RETURNING *;",
+          "INSERT INTO users (name, email, password, is_admin, phone) VALUES ($1, $2, $3, $4, $5) RETURNING *;",
           [
             userImputValues.name,
             userImputValues.email,
             await password.hashPassword(userInputValues.password as string),
             userImputValues.is_admin || false,
+            userImputValues.phone,
           ]
         ));
         return result.rows[0];

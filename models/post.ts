@@ -2,28 +2,29 @@ import database from "@/database/database";
 
 export type PostType = {
   id?: string;
-  userId: string;
+  user_id: string;
   title: string;
   description: string;
   valor: number;
-  categoria_id: string;
+  categoria_id: number;
   url?: string;
-  createdAt?: EpochTimeStamp;
+  created_at?: EpochTimeStamp;
 };
 
 function isPostType(obj: unknown): obj is PostType {
   if (typeof obj !== "object" || obj === null) return false;
   const o = obj as Record<string, unknown>;
   return (
-    typeof o.userId === "string" &&
+    typeof o.user_id === "string" &&
     typeof o.title === "string" &&
     typeof o.description === "string" &&
     typeof o.valor === "number" &&
-    typeof o.categoria_id === "string"
+    typeof o.categoria_id === "number"
   );
 }
 
 async function create(pst: PostType) {
+  console.log("JSON", pst);
   if (!isPostType(pst)) {
     throw {
       message: "JSON incorreto",
@@ -37,14 +38,15 @@ async function create(pst: PostType) {
   });
 
   const query =
-    "INSERT INTO posts (user_id, title, description, valor) VALUES ($1,$2,$3,$4) RETURNING *;";
+    "INSERT INTO posts (user_id, title, description, valor, categoria_id) VALUES ($1,$2,$3,$4,$5) RETURNING *;";
 
   try {
     return await database.query(query, [
-      pst.userId,
+      pst.user_id,
       pst.title,
       pst.description,
       pst.valor,
+      pst.categoria_id,
     ]);
   } catch (error) {
     throw {
@@ -60,7 +62,7 @@ async function listAllPost() {
       `SELECT * FROM (
         select distinct on (posts.id) posts.*,
        imagens.url from posts left join imagens on imagens.post_id = posts.id
-      ) AS sub ORDER BY sub."createdAt" desc
+      ) AS sub ORDER BY sub.created_at desc
        `
     );
 
@@ -115,19 +117,21 @@ async function getByUserID(id: string) {
     };
   }
 }
+
 async function getById(id: string) {
   try {
     const posts = await database.query(
       `SELECT 
         posts.*,
         users.email,
+        users.phone as phone,
         MIN(users.name) as name,
         json_agg(imagens.*) AS imagens
       FROM posts
       LEFT JOIN imagens ON imagens.post_id = posts.id
       LEFT JOIN users ON users.id = posts.user_id
       WHERE posts.id = $1
-      GROUP BY posts.id, users.email
+      GROUP BY posts.id, users.email, phone
       `,
       [id]
     );
