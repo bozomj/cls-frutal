@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { faShare } from "@fortawesome/free-solid-svg-icons";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
+import utils from "@/utils";
 
 async function getPost(id: string) {
   const res = await fetch(`/api/v1/posts/${id}`);
@@ -152,5 +153,5 @@ function getFileName(path?: string): string {
     "https://www2.camara.leg.br/atividade-legislativa/comissoes/comissoes-permanentes/cindra/imagens/sem.jpg.gif/image"
   )
     return path;
-  return "/uploads/" + path?.split(/[/\\]/).pop() || "";
+  return utils.getUrlImage(path);
 }

@@ -1,4 +1,5 @@
 import { PostType } from "@/models/post";
+import utils from "@/utils";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons/faWhatsapp";
 import { faShare } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -48,10 +49,6 @@ const Produtos: React.FC<ProdutosProps> = ({ pesquisa }) => {
   }
 };
 
-function getFileName(path: string): string {
-  return path?.split(/[/\\]/).pop() || "";
-}
-
 function makeItens(items: PostType[]) {
   if (items.length < 1)
     return [
@@ -64,16 +61,18 @@ function makeItens(items: PostType[]) {
     return (
       <div
         key={v}
-        className="bg-gray-300  p-2 rounded-2xl flex justify-center hover:bg-gray-300"
+        className="bg-gray-300  p-2 rounded-2xl flex justify-center hover:bg-gray-300 text-gray-800"
       >
         <div className="flex flex-col w-full overflow-hidden h-full gap-2 ">
           <a href={`/posts/${item.id}`} target="_blank">
-            <div
-              className="flex-1   block bg-contain bg-no-repeat bg-center  bg-gray-200 rounded-2xl min-h-[250px]"
-              style={{
-                backgroundImage: `url(/uploads/${getFileName(item.url || "")})`,
-              }}
-            ></div>
+            <div className="flex justify-center bg-gray-200 rounded-2xl">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                className="flex-1   bg-gray-200  max-w-[200px] min-h-[200px]"
+                src={utils.getUrlImage(item.url)}
+                alt=""
+              ></img>
+            </div>
 
             <div className=" flex text-gray-900 gap-2 w-[100%] truncate overflow-hidden flex-col py-2">
               <h2 className="h-5 font-bold block">{item.title ?? ""}</h2>
@@ -82,17 +81,16 @@ function makeItens(items: PostType[]) {
               </span>
             </div>
           </a>
-          <div className=" flex items-center  py-2 justify-between">
-            <a
-              href={`https://wa.me/55${item.phone}`}
-              target="_blank"
-              className=""
-            >
-              <FontAwesomeIcon
-                icon={faWhatsapp}
-                className="text-3xl text-green-900 hover:text-green-700"
-              />
-            </a>
+          <div className=" flex items-center  justify-between">
+            <div className="flex flex-col">
+              <span>{item.name}</span>
+              <a href={`https://wa.me/55${item.phone}`} target="_blank">
+                <FontAwesomeIcon
+                  icon={faWhatsapp}
+                  className="text-3xl text-green-900 hover:text-green-700"
+                />
+              </a>
+            </div>
             <button>
               <FontAwesomeIcon
                 icon={faShare}

@@ -10,6 +10,7 @@ export type PostType = {
   categoria_id: number;
   url?: string;
   phone: string;
+  name: string;
   created_at?: EpochTimeStamp;
 };
 
@@ -65,6 +66,7 @@ async function listAllPost() {
         select distinct on (posts.id)
          posts.*, 
          users.phone AS phone,
+         users.name as name,
          imagens.url 
         from posts
         left join imagens on imagens.post_id = posts.id
