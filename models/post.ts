@@ -6,8 +6,10 @@ export type PostType = {
   title: string;
   description: string;
   valor: number;
+  email: string;
   categoria_id: number;
   url?: string;
+  phone: string;
   created_at?: EpochTimeStamp;
 };
 
@@ -60,8 +62,13 @@ async function listAllPost() {
   try {
     const posts = await database.query(
       `SELECT * FROM (
-        select distinct on (posts.id) posts.*,
-       imagens.url from posts left join imagens on imagens.post_id = posts.id
+        select distinct on (posts.id)
+         posts.*, 
+         users.phone AS phone,
+         imagens.url 
+        from posts
+        left join imagens on imagens.post_id = posts.id
+        LEFT JOIN users ON users.id = posts.user_id
       ) AS sub ORDER BY sub.created_at desc
        `
     );
@@ -91,13 +98,13 @@ async function deletePost(id: string, userId: string) {
 }
 
 async function getByUserID(id: string) {
-  console.log(">>>", id);
   try {
     const posts = await database.query(
       `SELECT distinct on (posts.id)
         posts.*,
         imagens.url,
-        users.email
+        users.email,
+        users.phone as phone
       from posts
       left join
        imagens on imagens.post_id = posts.id
@@ -112,7 +119,7 @@ async function getByUserID(id: string) {
   } catch (e) {
     throw {
       id: id,
-      message: "Erro ao listar posts por userId",
+      message: "Erro ao listar posts por user_id",
       cause: e,
     };
   }

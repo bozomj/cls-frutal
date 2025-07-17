@@ -16,6 +16,7 @@ import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 import { faPhone } from "@fortawesome/free-solid-svg-icons/faPhone";
 import { faRemove } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@/components/Modal";
+import { PostType } from "@/models/post";
 
 type UserType = {
   id?: string;
@@ -56,16 +57,6 @@ function Dashboard({ ctx }: { ctx: string }) {
     getUser(ctx);
     getMyPost().then((e) => setPosts(e));
   }, [ctx]);
-
-  interface Item {
-    id: string;
-    userId: string;
-    url: string;
-    description: string;
-    email: string;
-    valor: number;
-    createdAt: string;
-  }
 
   return (
     <>
@@ -118,7 +109,7 @@ function Dashboard({ ctx }: { ctx: string }) {
           </section>
 
           <section className="flex-1 p-2  pl-[5.5rem] flex flex-col gap-2 w-full">
-            {listPost.map((item: Item, v) => {
+            {listPost.map((item: PostType, v) => {
               return (
                 <div
                   key={v}
@@ -128,7 +119,7 @@ function Dashboard({ ctx }: { ctx: string }) {
                     className="  bg-red-700 rounded-full h-8 w-8 right-2 top-[-0.2rem] flex justify-center items-center absolute"
                     onClick={async () => {
                       // await deletePost(item.id, setPosts);
-                      deletePostId(item.id);
+                      deletePostId(item.id ?? "");
                     }}
                   >
                     <FontAwesomeIcon icon={faRemove} />
@@ -150,7 +141,7 @@ function Dashboard({ ctx }: { ctx: string }) {
                       <span className="h-5 block">R$: {item.valor}</span>
                       <div className=" flex items-center gap-4">
                         <a
-                          href={`https://wa.me/55${item.createdAt}?text=[Classificados Frutal] - fiquei interessado em seu produto `}
+                          href={`https://wa.me/55${item.phone}?text=[Classificados Frutal] - fiquei interessado em seu produto `}
                           target="_blank"
                         >
                           <FontAwesomeIcon

@@ -1,21 +1,20 @@
 import { PostType } from "@/models/post";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons/faWhatsapp";
 import { faShare } from "@fortawesome/free-solid-svg-icons";
-// import { faPhone } from "@fortawesome/free-solid-svg-icons/faPhone";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { JSX, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface ProdutosProps {
   pesquisa?: string;
 }
 
 const Produtos: React.FC<ProdutosProps> = ({ pesquisa }) => {
-  const [postagem, setPostagem] = useState<JSX.Element[]>([]);
+  const [postagem, setPostagem] = useState<PostType[]>([]);
 
   const getPosts = useCallback(async () => {
     const items = !pesquisa ? await getAllPosts() : await getSearch(pesquisa);
-    setPostagem(makeItens(items));
+    setPostagem(items);
   }, [pesquisa]);
 
   useEffect(() => {
@@ -26,7 +25,7 @@ const Produtos: React.FC<ProdutosProps> = ({ pesquisa }) => {
     <>
       <div className="h-[300] bg-cyan-50 flex items-center  overflow-x-scroll max-w-full ">
         <section className="flex flex-col gap-4 p-4 w-full">
-          {...postagem}
+          {...makeItens(postagem)}
         </section>
       </div>
     </>
@@ -61,6 +60,7 @@ function makeItens(items: PostType[]) {
       </h3>,
     ];
   return items.map((item, v) => {
+    // console.log(item);
     return (
       <div
         key={v}
@@ -83,7 +83,11 @@ function makeItens(items: PostType[]) {
             </div>
           </a>
           <div className=" flex items-center  py-2 justify-between">
-            <a href="#" target="_blank" className="">
+            <a
+              href={`https://wa.me/55${item.phone}`}
+              target="_blank"
+              className=""
+            >
               <FontAwesomeIcon
                 icon={faWhatsapp}
                 className="text-3xl text-green-900 hover:text-green-700"
