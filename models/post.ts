@@ -63,7 +63,7 @@ async function getTotal(search: string) {
   try {
     const total = await database.query(
       `
-          SELECT COUNT(title) as total FROM posts where title ilike $1;
+          SELECT COUNT(title) as total FROM posts where title ilike $1 or description ilike $1;
         `,
       [`%${search}%`]
     );

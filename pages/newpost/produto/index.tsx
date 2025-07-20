@@ -2,7 +2,6 @@ import Card from "@/components/card";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Header from "@/components/Header";
 import autenticator from "@/models/autenticator";
-import { PostType } from "@/models/post";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
@@ -12,7 +11,7 @@ import { useEffect, useState } from "react";
 import Alert from "@/components/Alert";
 import { CategoriaType } from "@/models/categoria";
 
-const post: PostType = {
+const post = {
   title: "",
   description: "",
   user_id: "",
@@ -179,17 +178,16 @@ export default function Produto() {
     post.title = "";
     post.valor = 0;
     post.created_at = 0;
-    post.id = "";
     post.user_id = "";
     // post.url = "";
 
-    // setValor("");
-    // setCategoria("");
-    // setTitle("");
-    // setDescription("");
+    setValor("");
+    setCategoria("");
+    setTitle("");
+    setDescription("");
 
-    // setImagens([]);
-    // setImg([]);
+    setImagens([]);
+    setImg([]);
   };
 
   return (

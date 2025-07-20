@@ -6,14 +6,15 @@ interface AlertProps {
 
 const Alert: React.FC<AlertProps> = ({ msg, show, onClose }) => {
   const shw = show ? "block" : "hidden";
+  setTimeout(onClose, 1500);
   return (
     <div
-      className={`absolute bg-gray-300/80 h-full w-full top-0 z-[9] flex justify-center items-center ${shw}`}
+      className={`absolute bg-gray-300/80 h-[200vh] w-full top-0 z-[9] flex justify-center items-center ${shw}`}
       onClick={onClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-cyan-950 rounded m-4 p-2 w-full"
+        className="bg-cyan-950 rounded m-4 p-2 w-full flex justify-between items-center"
       >
         <div>{msg}</div>
         <div className="flex gap-2 justify-end">
