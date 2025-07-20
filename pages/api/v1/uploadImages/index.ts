@@ -36,6 +36,7 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
     // }
 
     const postid = fields.postid;
+    console.log(files);
 
     if (!files || Object.keys(files).length === 0) {
       return res.status(400).json({ error: "Nenhum arquivo enviado" });

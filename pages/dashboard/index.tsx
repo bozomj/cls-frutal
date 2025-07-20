@@ -187,6 +187,7 @@ function Dashboard({ ctx }: { ctx: string }) {
   }
 
   async function getUser(id: string) {
+    console.log(id);
     const response = await fetch(`/api/v1/user/id/${id}`);
     setUser(await response.json());
   }

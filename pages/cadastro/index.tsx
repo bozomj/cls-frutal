@@ -12,6 +12,7 @@ export default function Cadastro() {
     const formData = new FormData(event.target as HTMLFormElement);
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
+    const phone = formData.get("telefone") as string;
     const password = formData.get("password") as string;
     const confirmPassword = formData.get("confirmPassword") as string;
 
@@ -32,21 +33,22 @@ export default function Cadastro() {
 
     setError(err);
     if (err === "") {
-      handleCreateUser(name, email, password);
+      handleCreateUser(name, email, password, phone);
     }
 
     async function handleCreateUser(
       name: string,
       email: string,
-      password: string
+      password: string,
+      phone: string
     ) {
-      const user = (await fetch("/api/v1/user", {
+      const user = await fetch("/api/v1/user", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, password }),
-      })) as any;
+        body: JSON.stringify({ name, email, password, phone }),
+      });
 
       const data = await user.json();
 
@@ -88,6 +90,12 @@ export default function Cadastro() {
             className="p-2 rounded-md bg-cyan-50 text-cyan-900 outline-none"
             type="email"
             placeholder="Email"
+          />
+          <input
+            type="text"
+            placeholder="Telefone"
+            name="telefone"
+            className="p-2 rounded-md bg-cyan-50 text-cyan-900 outline-none"
           />
           <input
             name="password"

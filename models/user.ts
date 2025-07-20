@@ -36,7 +36,7 @@ const User = {
     if (result < 1) {
       throw {
         message: new Error("Usuário não encontrado pelo ID"),
-        cause: { CAUSE: result },
+        cause: result,
       };
     }
     return result;

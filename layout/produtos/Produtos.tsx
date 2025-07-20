@@ -68,7 +68,7 @@ function makeItens(items: PostType[]) {
             <div className="flex justify-center bg-gray-200 rounded-2xl">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                className="flex-1   bg-gray-200  max-w-[200px] min-h-[200px]"
+                className="flex-1   bg-gray-200   min-h-[250px]"
                 src={utils.getUrlImage(item.imageurl)}
                 alt=""
               />
@@ -81,7 +81,7 @@ function makeItens(items: PostType[]) {
               </span>
             </div>
           </a>
-          <div className=" flex items-center  justify-between">
+          <div className=" flex items-end  justify-between">
             <div className="flex flex-col">
               <span>{item.name}</span>
               <a href={`https://wa.me/55${item.phone}`} target="_blank">

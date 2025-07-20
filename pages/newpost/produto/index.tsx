@@ -56,7 +56,15 @@ export default function Produto() {
 
   useEffect(() => {
     if (categoriasValues.length < 2) getCategorias();
-  }, [categoriasValues.length]);
+
+    //return funciona como "dispose" do Flutter
+    return () => {
+      urls.forEach((url) => {
+        URL.revokeObjectURL(url);
+        console.log("url deletada", url);
+      });
+    };
+  }, [categoriasValues.length, urls]);
 
   async function getCategorias() {
     const categorias = await (await fetch("/api/v1/categorias")).json();
@@ -173,7 +181,7 @@ export default function Produto() {
     post.created_at = 0;
     post.id = "";
     post.user_id = "";
-    post.url = "";
+    // post.url = "";
 
     // setValor("");
     // setCategoria("");
@@ -286,7 +294,7 @@ export default function Produto() {
               multiple
               max={3}
               className="hidden"
-              onChange={(e) => {
+              onChange={async (e) => {
                 const files = e.target.files;
 
                 // const preview = document.getElementById("preview");
@@ -297,9 +305,15 @@ export default function Produto() {
                     // Verifica se o arquivo é uma imagem
                     if (file.type.startsWith("image/")) {
                       // Cria uma URL temporária para o arquivo
+                      const resized = (await resizeImageFile(file)) as File;
                       const imgURL = URL.createObjectURL(file);
 
-                      setImagens((e) => [...e, file]);
+                      console.log({
+                        old: file,
+                        new: resized,
+                      });
+
+                      setImagens((e) => [...e, resized]);
                       setImg((e) => [...e, imgURL]);
                     }
                   }
@@ -375,3 +389,58 @@ export const getServerSideProps: GetServerSideProps = async (
     },
   };
 };
+
+function resizeImageFile(file: File, maxWidth = 1280, maxSizeKB = 300) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      const img = document.createElement("img");
+      img.src = e.target?.result as string;
+
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height = (height * maxWidth) / width;
+          width = maxWidth;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx!.drawImage(img, 0, 0, width, height);
+
+        let quality = 0.9;
+        let dataUrl = canvas.toDataURL("image/webp", quality);
+
+        while (dataUrl.length / 1024 > maxSizeKB && quality > 0.1) {
+          quality -= 0.005;
+          dataUrl = canvas.toDataURL("image/webp", quality);
+        }
+
+        fetch(dataUrl)
+          .then((res) => res.blob())
+          .then((blob) => {
+            const newFile = new File(
+              [blob],
+              file.name.replace(/\.\w+$/, ".webp"),
+              {
+                type: "image/webp",
+                lastModified: Date.now(),
+              }
+            );
+            resolve(newFile);
+          });
+      };
+
+      img.onerror = reject;
+    };
+
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}

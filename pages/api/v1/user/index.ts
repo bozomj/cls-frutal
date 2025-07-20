@@ -28,8 +28,9 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   const name = body.name;
   const email = body.email;
   const password = body.password;
+  const phone = body.phone;
 
-  const use = { name: name, email: email, password: password };
+  const use = { name: name, email: email, password: password, phone: phone };
 
   try {
     const user = await User.create(use);

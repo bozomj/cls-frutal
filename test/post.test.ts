@@ -1,6 +1,9 @@
 import imagem from "@/models/imagem";
 import Post from "@/models/post";
-import { promises as fs } from "fs";
+import fs from "fs";
+
+import path from "path";
+import sharp from "sharp";
 
 beforeAll(async () => {
   // await database.query("delete from imagens");
@@ -10,12 +13,12 @@ beforeAll(async () => {
 describe("teste da tabela post", () => {
   let post_id: string;
   const token =
-    "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFjOTRlMmZkLTY5ZmMtNDVmZi1iZDVlLWFiOTA3YzljNjlhYSIsImlhdCI6MTc1MjY5NTE2NiwiZXhwIjoxNzUyNzM4MzY2fQ._1E6E8KEeEbtDM9mOfB2lCaeZaa7frTcpTQxIS6eE3g";
+    "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViOGVhZTI4LTY2Y2QtNDFmZS04MTJkLTYzOWNmYThjMTc4NSIsImlhdCI6MTc1Mjk2MzA5OCwiZXhwIjoxNzUzMDA2Mjk4fQ.VnYxwFpKtISmXk2IMI6QNdxPnBad1wKROuQVAR4qyes";
 
   it("inserir post com sucesso", async () => {
     const pst = {
       user_id: "1c94e2fd-69fc-45ff-bd5e-ab907c9c69aa",
-      title: "testando um post 3",
+      title: "testando um post 5",
       description: "tomate cereja com abacates",
       categoria_id: 18,
       valor: 10.5,
@@ -65,11 +68,25 @@ describe("teste da tabela post", () => {
 
   it("insert imagem", async () => {
     const formdata = new FormData();
-    const conteudoArquivo = Buffer.from([0x89, 0x50, 0x4e, 0x47]);
+    // const conteudoArquivo = Buffer.from([0x89, 0x50, 0x4e, 0x47]);
+    const conteudoArquivo = path.join(
+      process.cwd(),
+      "public",
+      "img",
+      "produto_teste.jpg"
+    );
+
+    console.log(conteudoArquivo);
+    const outputPath = path.join(
+      "public",
+      "img",
+      "resize",
+      "produto_teste.jpg"
+    );
+    reduzirImagem(conteudoArquivo, outputPath);
+
     const imagens = [
-      new File([conteudoArquivo], "teste.png", {
-        type: "image/png",
-      }),
+      new Blob([fs.readFileSync(outputPath)], { type: "image/jpeg" }),
     ];
 
     for (const image of imagens) {
@@ -86,7 +103,7 @@ describe("teste da tabela post", () => {
   // let imagensup: { [key: string]: string }[];
 
   it("listar todas imagens", async () => {
-    imagensup = await imagem.getAll();
+    // imagensup = await imagem.getAll();
   });
 
   it("deletar imagem", async () => {
@@ -119,3 +136,26 @@ describe("teste da tabela post", () => {
     console.log({ resultado: result.length });
   });
 });
+
+async function reduzirImagem(
+  inputPath: string,
+  outputPath: string,
+  maxSizeKB = 300
+) {
+  let quality = 80; // Qualidade inicial
+  let buffer = await sharp(inputPath).jpeg({ quality }).toBuffer();
+
+  while (buffer.length / 1024 > maxSizeKB && quality > 10) {
+    quality -= 2;
+    buffer = await sharp(inputPath).webp({ quality }).toBuffer();
+  }
+  if (buffer.length / 1024 > maxSizeKB) {
+    buffer = await sharp(inputPath)
+      .resize({ width: 1280 }) // ou outro valor
+      .webp({ quality: 70 })
+      .toBuffer();
+  }
+
+  fs.writeFileSync(outputPath, buffer);
+  console.log(`Imagem reduzida para ${(buffer.length / 1024).toFixed(1)} KB`);
+}

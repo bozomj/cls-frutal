@@ -64,7 +64,7 @@ export default function DetailsPostPage() {
               <img
                 src={getFileName(imgPrincial)}
                 alt=""
-                className="w-[400px]"
+                className="w-[400px] min-h-[200px]"
               />
             </span>
             <div className="flex flex-col w-25  gap-2 order-1">
