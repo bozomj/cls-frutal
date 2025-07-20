@@ -1,7 +1,11 @@
 import { PostType } from "@/models/post";
 import utils from "@/utils";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons/faWhatsapp";
-import { faShare } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowLeft,
+  faArrowRight,
+  faShare,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useCallback, useEffect, useState } from "react";
@@ -11,39 +15,135 @@ interface ProdutosProps {
 }
 
 const Produtos: React.FC<ProdutosProps> = ({ pesquisa }) => {
+  const limit = 15;
+  const [pagination, setPagination] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+  const [maxPage, setMaxPage] = useState(0);
   const [postagem, setPostagem] = useState<PostType[]>([]);
 
-  const getPosts = useCallback(async () => {
-    const items = !pesquisa ? await getAllPosts() : await getSearch(pesquisa);
-    setPostagem(items);
-  }, [pesquisa]);
+  const getPosts = useCallback(
+    async (initial: number) => {
+      getTotalPosts(pesquisa ?? "");
+
+      const items = !pesquisa
+        ? await getAllPosts(initial, limit)
+        : await getSearch(pesquisa, initial, limit);
+      setPostagem(items);
+
+      const pst = document.getElementById("pst");
+
+      pst?.focus();
+    },
+    [pesquisa]
+  );
 
   useEffect(() => {
-    getPosts();
-  }, [getPosts]);
+    if (localStorage.getItem("oldsearch") != pesquisa) {
+      setPagination(0);
+      localStorage.setItem("oldsearch", pesquisa || "");
+    }
+
+    getPosts(pagination * limit);
+  }, [getPosts, pagination]);
 
   return (
     <>
-      <div className="h-[300] bg-cyan-50 flex items-center  overflow-x-scroll max-w-full ">
-        <section className="flex flex-col gap-4 p-4 w-full">
+      <div className=" bg-cyan-50 flex flex-col items-center  overflow-x-scroll max-w-full ">
+        {/* <div className="text-gray-900 flex flex-col">
+          <span>{totalItems}</span>
+
+          <span>{pagination}</span>
+          <span>{maxPage}</span>
+        </div> */}
+        <a id="pst" href=""></a>
+        <section className="flex flex-col gap-4 p-4 w-full h-fit  ">
           {...makeItens(postagem)}
         </section>
+        <div className="flex justify-between  text-cyan-800 p-4 w-full">
+          <button
+            className={`${pagination != 0 ? "" : "invisible"}`}
+            onClick={() => {
+              if (pagination > 0) setPagination(pagination - 1);
+            }}
+          >
+            <FontAwesomeIcon
+              icon={faArrowLeft}
+              className="text-3xl hover:text-cyan-500 cursor-pointer"
+            />
+          </button>
+
+          <div className="flex items-center gap-2">
+            <span
+              className={`h-2 w-2 rounded-full bg-cyan-800 ${
+                pagination != 0 ? "" : "invisible"
+              }`}
+            ></span>
+
+            <span
+              className={`h-3 w-3 rounded-full bg-cyan-800 ${
+                maxPage == 0 ? "invisible" : ""
+              }`}
+            ></span>
+            <span
+              className={`h-2 w-2 rounded-full bg-cyan-800 ${
+                pagination < maxPage ? "" : "invisible"
+              } `}
+            ></span>
+          </div>
+
+          <button
+            className={`${pagination < maxPage ? "" : "invisible"}`}
+            onClick={() => {
+              if (pagination < maxPage) setPagination(pagination + 1);
+            }}
+          >
+            <FontAwesomeIcon
+              icon={faArrowRight}
+              className="text-3xl hover:text-cyan-500 cursor-pointer"
+            />
+          </button>
+        </div>
       </div>
     </>
   );
 
-  async function getAllPosts(): Promise<PostType[]> {
-    const result = await fetch("api/v1/posts", {
-      method: "GET",
-    });
+  async function getAllPosts(
+    initial: number,
+    limit: number
+  ): Promise<PostType[]> {
+    const result = await fetch(
+      `api/v1/posts?initial=${initial}&limit=${limit}`,
+      {
+        method: "GET",
+      }
+    );
 
     return (await result.json()) as PostType[];
   }
 
-  async function getSearch(pesquisa: string): Promise<PostType[]> {
-    const result = await fetch("/api/v1/posts?search=" + pesquisa, {
+  async function getTotalPosts(pesquisa: string) {
+    const result = await fetch("api/v1/poststotal?q=" + pesquisa || "", {
       method: "GET",
     });
+
+    const total = (await result.json()).total;
+    const max = Math.ceil(total / limit) - 1;
+
+    setMaxPage(max);
+    setTotalItems(total);
+  }
+
+  async function getSearch(
+    pesquisa: string,
+    initial: number,
+    limit: number
+  ): Promise<PostType[]> {
+    const result = await fetch(
+      "/api/v1/posts?search=" + pesquisa + `&initial=${initial}&limit=${limit}`,
+      {
+        method: "GET",
+      }
+    );
 
     return (await result.json()) as PostType[];
   }
@@ -65,7 +165,7 @@ function makeItens(items: PostType[]) {
       >
         <div className="flex flex-col w-full overflow-hidden h-full gap-2 ">
           <a href={`/posts/${item.id}`} target="_blank">
-            <div className="flex justify-center bg-gray-200 rounded-2xl">
+            <div className="flex justify-center bg-gray-200 rounded-2xl overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 className="flex-1   bg-gray-200   min-h-[250px]"
@@ -94,7 +194,7 @@ function makeItens(items: PostType[]) {
             <button>
               <FontAwesomeIcon
                 icon={faShare}
-                className="text-cyan-950 text-2xl"
+                className="text-cyan-950 text-2xl hover:text-cyan-700 cursor-pointer"
               />
             </button>
           </div>

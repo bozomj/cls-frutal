@@ -66,7 +66,7 @@ export default function Cadastro() {
   return (
     <>
       <Header />
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-50">
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-50 px-2">
         <form
           onSubmit={handleSubmit}
           className="flex flex-col gap-4 bg-cyan-900 p-8 rounded-md w-full max-w-md "

@@ -59,7 +59,22 @@ async function create(pst: PostType) {
   }
 }
 
-async function listAllPost() {
+async function getTotal(search: string) {
+  try {
+    const total = await database.query(
+      `
+          SELECT COUNT(title) as total FROM posts where title ilike $1;
+        `,
+      [`%${search}%`]
+    );
+    console.log(total);
+    return total;
+  } catch (e) {
+    throw { error: "erro ao buscar total de posts", cause: e };
+  }
+}
+
+async function listAllPost(initial: string, limit: string) {
   try {
     const posts = await database.query(
       `SELECT * FROM (
@@ -72,7 +87,9 @@ async function listAllPost() {
         left join imagens on imagens.post_id = posts.id
         LEFT JOIN users ON users.id = posts.user_id
       ) AS sub ORDER BY sub.created_at desc
-       `
+       limit $1 offset  $2
+       `,
+      [limit, initial]
     );
 
     return posts;
@@ -155,17 +172,19 @@ async function getById(id: string) {
   }
 }
 
-async function search(txt: string) {
+async function search(txt: string, initial: string, limit: string) {
   try {
     const posts = await database.query(
       `select distinct on (posts.id) 
         posts.*,
         imagens.url as imageurl
         from posts left join imagens on imagens.post_id = posts.id
-        where posts.title ilike $1
+        where posts.title ilike $1 or posts.description ilike $1
+        limit $2 offset $3
         `,
-      [`%${txt}%`]
+      [`%${txt}%`, limit, initial]
     );
+
     return posts;
   } catch (error) {
     return { message: error };
@@ -179,6 +198,7 @@ const Post = {
   deletePost,
   listAllPost,
   getByUserID,
+  getTotal,
 };
 
 export default Post;

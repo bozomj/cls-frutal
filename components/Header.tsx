@@ -70,6 +70,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
             e.preventDefault();
 
             onSubmit?.(searchTerm);
+
             router.replace(`/?q=${encodeURIComponent(searchTerm)}`);
           }}
           className=" flex gap-2  flex-[1] justify-end  items-center"

@@ -8,11 +8,13 @@ interface HomeProps {
 
 const Home: React.FC<HomeProps> = () => {
   const search = useSearchParams().get("q") ?? "";
+  const initial = parseInt(useSearchParams().get("initial") ?? "0");
+  console.log(initial);
 
   return (
     <>
       <Header />
-      <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center">
+      <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center scroll-smooth ">
         <section className="md:max-w-[100rem] w-full">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img

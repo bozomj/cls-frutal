@@ -14,7 +14,7 @@ function NewPost() {
       <Header />
       <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center">
         <section className="w-full">
-          <span className="h-[10rem] w-full flex justify-evenly bg-cyan-700 relative">
+          <span className="h-[10rem] w-full flex justify-evenly bg-cyan-700 relative items-center">
             <h1>Ola! Antes de mais nada, o que você vai publicar?</h1>
             <span className="absolute top-[70%] grid grid-cols-[repeat(auto-fit,minmax(8rem,1fr))] p-1 gap-2  w-full md:w-[920px]">
               <Card>

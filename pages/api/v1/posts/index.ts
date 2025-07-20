@@ -12,12 +12,14 @@ export default router.handler();
 
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
   const search = req.query.search as string;
+  const initial = req.query.initial as string;
+  const limit = req.query.limit as string;
 
   if (search) {
     console.log({ search: search });
 
     try {
-      const posts = await Post.search(search || "");
+      const posts = await Post.search(search || "", initial, limit);
       res.status(200).json(posts);
     } catch (error) {
       throw { message: "erro com a pesquisa", cause: error };
@@ -25,7 +27,7 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    const posts = await Post.listAllPost();
+    const posts = await Post.listAllPost(initial, limit);
 
     res.status(200).json(posts);
   } catch (error) {
