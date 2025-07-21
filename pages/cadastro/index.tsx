@@ -5,6 +5,13 @@ import router from "next/router";
 
 export default function Cadastro() {
   const [error, setError] = useState("");
+  const [phoneValue, setPhonevalue] = useState("");
+
+  const phoneHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e);
+    const number = e.target.value.replace(/\D/g, "").slice(0, 15);
+    setPhonevalue(number);
+  };
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>): void {
     event.preventDefault();
@@ -71,50 +78,55 @@ export default function Cadastro() {
           onSubmit={handleSubmit}
           className="flex flex-col gap-4 bg-cyan-900 p-8 rounded-md w-full max-w-md "
         >
-          <h1 className="text-white text-2xl font-bold text-center">
-            CADASTRO
-          </h1>
-          <span>
-            {error && (
-              <p className="text-red-500 text-center font-bold">{error}</p>
-            )}
-          </span>
+          <div className="font-bold">
+            <h1 className="text-white text-2xl text-center">CADASTRO</h1>
+            <p className="text-red-500 text-center h-[2em]">{error ?? ""}</p>
+          </div>
+
           <input
             name="name"
             className="p-2 rounded-md bg-cyan-50 text-cyan-900 outline-none"
             type="text"
             placeholder="nome"
           />
+
           <input
             name="email"
             className="p-2 rounded-md bg-cyan-50 text-cyan-900 outline-none"
             type="email"
             placeholder="Email"
           />
+
           <input
             type="text"
             placeholder="Telefone"
             name="telefone"
+            value={phoneValue}
+            onChange={phoneHandler}
             className="p-2 rounded-md bg-cyan-50 text-cyan-900 outline-none"
           />
+
           <input
             name="password"
             className="p-2 rounded-md bg-cyan-50 text-cyan-900 outline-none"
             type="password"
             placeholder="Senha"
           />
+
           <input
             name="confirmPassword"
             className="p-2 rounded-md bg-cyan-50 text-cyan-900 outline-none"
             type="password"
             placeholder="Confirmar Senha"
           />
+
           <button
             className="p-2 rounded-md bg-cyan-300 text-cyan-900 cursor-pointer font-bold"
             type="submit"
           >
             Cadastrar
           </button>
+
           <Link
             href="/login"
             className=" hover:font-bold  text-sm  text-white w-fit "

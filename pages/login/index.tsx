@@ -5,13 +5,11 @@ import { useState } from "react";
 import autenticator from "@/models/autenticator";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import router from "next/router";
-import Alert from "@/components/Alert";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [showAlert, setShowAlert] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -35,7 +33,7 @@ const Login = () => {
         setError("E-mail ou senha inválidos");
       } else {
         setError("");
-        setShowAlert(true);
+        router.push("/");
       }
     } catch (error) {
       console.log(error);
@@ -85,11 +83,6 @@ const Login = () => {
           </Link>
         </form>
       </div>
-      <Alert
-        msg={"Login efetuado com sucesso!"}
-        show={showAlert}
-        onClose={() => router.push("/")}
-      />
     </>
   );
 };

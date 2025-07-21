@@ -47,7 +47,7 @@ const User = {
     try {
       dbClient = await database.getNewClient();
       const result = await database.query(
-        "SELECT * from users where name = $1;",
+        "SELECT * from users where LOWER(name) = $1;",
         [username]
       );
 
@@ -103,10 +103,9 @@ const User = {
     async function runInsertQuery(
       userImputValues: Record<string, string | number | boolean>
     ) {
-      let result;
       try {
-        return (result = await database.query(
-          "INSERT INTO users (name, email, password, is_admin, phone) VALUES ($1, $2, $3, $4, $5) RETURNING *;",
+        return await database.query(
+          "INSERT INTO users (name, email, password, is_admin, phone) VALUES (LOWER($1), LOWER($2), $3, $4, $5) RETURNING *;",
           [
             userImputValues.name,
             userImputValues.email,
@@ -114,8 +113,7 @@ const User = {
             userImputValues.is_admin || false,
             userImputValues.phone,
           ]
-        ));
-        return result.rows[0];
+        );
       } catch (error) {
         throw {
           message: new Error("Erro ao criar usuário - interno"),

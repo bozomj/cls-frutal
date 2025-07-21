@@ -47,6 +47,12 @@ export default function DetailsPostPage() {
     });
   }, [id]);
 
+  function toggleImg() {
+    const im = document.getElementById("imgfull");
+    console.log(im);
+    im?.classList.toggle("hidden");
+  }
+
   return (
     <>
       <header className="">
@@ -58,13 +64,25 @@ export default function DetailsPostPage() {
       </header>
       <main className=" p-2 flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center text-black">
         <section className="flex flex-col gap-2 w-full">
+          <div
+            id="imgfull"
+            className="w-full absolute top-0 z-[5] hidden left-0 min-h-[100vh] bg-cyan-50/50 flex items-center "
+            onClick={() => {
+              toggleImg();
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img tabIndex={0} src={getFileName(imgPrincial)} alt="" />
+          </div>
           <div className="flex gap-1 border-3 border-cyan-900 p-2 rounded-2xl">
-            <span className="w-[400px] block  order-2">
+            <span className="w-[400px] block  order-2 self-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
+                tabIndex={1}
                 src={getFileName(imgPrincial)}
                 alt=""
                 className="w-[400px] min-h-[200px]"
+                onClick={toggleImg}
               />
             </span>
             <div className="flex flex-col w-25  gap-2 order-1">

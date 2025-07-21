@@ -9,7 +9,7 @@ const Alert: React.FC<AlertProps> = ({ msg, show, onClose }) => {
   setTimeout(onClose, 1500);
   return (
     <div
-      className={`absolute bg-gray-300/80 h-[200vh] w-full top-0 z-[9] flex justify-center items-center ${shw}`}
+      className={`absolute bg-gray-300/80 h-[100vh] w-full top-0 z-[9] flex justify-center items-center ${shw}`}
       onClick={onClose}
     >
       <div

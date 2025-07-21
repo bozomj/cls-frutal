@@ -187,6 +187,7 @@ const Produtos: React.FC<ProdutosProps> = ({ pesquisa }) => {
 
               <div className=" flex text-gray-900 gap-2 w-[100%] truncate overflow-hidden flex-col py-2">
                 <h2 className="h-5 font-bold block">{item.title ?? ""}</h2>
+                <p className="text-sm truncate">{item.description}</p>
                 <span className="h-5 text-green-700 font-bold block">
                   R$: {item.valor}
                 </span>
@@ -208,7 +209,9 @@ const Produtos: React.FC<ProdutosProps> = ({ pesquisa }) => {
 
                   // Cria textarea invisível pra seleção
                   const ta = document.createElement("textarea");
-                  ta.style.display = "none";
+                  //precisa estar no documento
+                  //  e nao pode estar oculto,
+                  // pode até estar fora da tela, mas nao oculto
                   ta.value = txt;
                   document.body.appendChild(ta);
 
