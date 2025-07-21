@@ -4,7 +4,7 @@ import { useState } from "react";
 import router from "next/router";
 
 export default function Cadastro() {
-  const [error, setError] = useState("");
+  const [error, setError] = useState<Record<string, string>>({});
   const [phoneValue, setPhonevalue] = useState("");
 
   const phoneHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,23 +23,25 @@ export default function Cadastro() {
     const password = formData.get("password") as string;
     const confirmPassword = formData.get("confirmPassword") as string;
 
-    let err = "";
+    const err: Record<string, string> = {};
 
-    formData.forEach((value) => {
+    formData.forEach((value, key) => {
       if (value === "") {
-        err = "Todos os campos são obrigatórios";
-        return;
+        err[key] = "campo obrigatorio";
+        err["isError"] = "Todos os Campos são Obrigatorios";
       }
     });
 
-    if (err === "") {
-      if (password !== confirmPassword) {
-        err = "As senhas não conferem";
-      }
+    if (password !== confirmPassword) {
+      err["confirmPassword"] = "As senhas não conferem";
     }
 
+    if (phone.length < 11)
+      err["telefone"] = "Precisa ter pelo menos 11 digitos";
+
     setError(err);
-    if (err === "") {
+
+    if (!err.isError) {
       handleCreateUser(name, email, password, phone);
     }
 
@@ -60,7 +62,7 @@ export default function Cadastro() {
       const data = await user.json();
 
       if (data.status === 201) {
-        setError("Usuario criado com sucesso");
+        setError({ succes: "Usuario cadastrado com sucesso" });
         setTimeout(() => {
           router.replace("/login");
         }, 1000);
@@ -80,19 +82,26 @@ export default function Cadastro() {
         >
           <div className="font-bold">
             <h1 className="text-white text-2xl text-center">CADASTRO</h1>
-            <p className="text-red-500 text-center h-[2em]">{error ?? ""}</p>
+            <p className="text-red-500 text-center h-[2em]">
+              {error.isError ?? ""}
+              {error.succes ?? ""}
+            </p>
           </div>
 
           <input
             name="name"
-            className="p-2 rounded-md bg-cyan-50 text-cyan-900 outline-none"
+            className={`p-2 rounded-md bg-cyan-50 text-cyan-900  ${
+              error.name ? "outline-1 outline-red-500 " : "outline-none"
+            }`}
             type="text"
             placeholder="nome"
           />
 
           <input
             name="email"
-            className="p-2 rounded-md bg-cyan-50 text-cyan-900 outline-none"
+            className={`p-2 rounded-md bg-cyan-50 text-cyan-900  ${
+              error.email ? "outline-1 outline-red-500 " : "outline-none"
+            }`}
             type="email"
             placeholder="Email"
           />
@@ -103,19 +112,27 @@ export default function Cadastro() {
             name="telefone"
             value={phoneValue}
             onChange={phoneHandler}
-            className="p-2 rounded-md bg-cyan-50 text-cyan-900 outline-none"
+            className={`p-2 rounded-md bg-cyan-50 text-cyan-900  ${
+              error.telefone ? "outline-1 outline-red-500 " : "outline-none"
+            }`}
           />
 
           <input
             name="password"
-            className="p-2 rounded-md bg-cyan-50 text-cyan-900 outline-none"
+            className={`p-2 rounded-md bg-cyan-50 text-cyan-900  ${
+              error.password ? "outline-1 outline-red-500 " : "outline-none"
+            }`}
             type="password"
             placeholder="Senha"
           />
 
           <input
             name="confirmPassword"
-            className="p-2 rounded-md bg-cyan-50 text-cyan-900 outline-none"
+            className={`p-2 rounded-md bg-cyan-50 text-cyan-900  ${
+              error.confirmPassword
+                ? "outline-1 outline-red-500 "
+                : "outline-none"
+            }`}
             type="password"
             placeholder="Confirmar Senha"
           />
