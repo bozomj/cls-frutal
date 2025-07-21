@@ -1,3 +1,4 @@
+import Carrossel from "@/components/Carrossel";
 import Header from "@/components/Header";
 import Produtos from "@/layout/produtos/Produtos";
 import { useSearchParams } from "next/navigation";
@@ -11,19 +12,24 @@ const Home: React.FC<HomeProps> = () => {
   const initial = parseInt(useSearchParams().get("initial") ?? "0");
   console.log(initial);
 
+  const imgCarrossel = [
+    {
+      src: "https://img.cdndsgni.com/preview/10028403.jpg",
+    },
+    {
+      src: "https://m.media-amazon.com/images/G/32/kindle/email/2025/03_Marco/Pagina_Recomendacoes_para_voce/1500x200_Narrow.jpg",
+    },
+    {
+      src: "https://img.freepik.com/vetores-gratis/banner-do-linkedin-de-negocios-de-gradiente_23-2150091566.jpg",
+    },
+  ];
+
   return (
     <>
       <Header />
       <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center scroll-smooth ">
         <section className="md:max-w-[100rem] w-full">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            className="w-full"
-            src={
-              "https://m.media-amazon.com/images/G/32/kindle/email/2025/03_Marco/Pagina_Recomendacoes_para_voce/1500x200_Narrow.jpg"
-            }
-            alt={""}
-          />
+          <Carrossel imagens={imgCarrossel} />
           <Produtos pesquisa={search.trim()} />
         </section>
 

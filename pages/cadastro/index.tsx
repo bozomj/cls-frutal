@@ -34,10 +34,13 @@ export default function Cadastro() {
 
     if (password !== confirmPassword) {
       err["confirmPassword"] = "As senhas não conferem";
+      err["isError"] = "Todos os Campos são Obrigatorios";
     }
 
-    if (phone.length < 11)
+    if (phone.length < 11) {
       err["telefone"] = "Precisa ter pelo menos 11 digitos";
+      err["isError"] = "Todos os Campos são Obrigatorios";
+    }
 
     setError(err);
 

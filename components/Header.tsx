@@ -126,7 +126,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
             htmlFor="activeSubmenu"
             className="hover:text-cyan-300 font-bold cursor-pointer"
           >
-            {key.label}
+            <a>{key.label}</a>
           </label>
         </li>
       );

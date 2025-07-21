@@ -203,9 +203,15 @@ export default Dashboard;
 function redirectNotToken(ctx: GetServerSidePropsContext, destination: string) {
   const token = ctx.req.cookies.token || "";
   console.log(token);
-  let auth = null;
+
   try {
-    auth = autenticator.verifyToken(token);
+    const auth = autenticator.verifyToken(token);
+    console.log({ message: auth });
+    return {
+      props: {
+        ctx: auth.id,
+      },
+    };
   } catch (error) {
     console.log({
       redirect: error,
@@ -218,10 +224,4 @@ function redirectNotToken(ctx: GetServerSidePropsContext, destination: string) {
       },
     };
   }
-
-  return {
-    props: {
-      ctx: auth.id,
-    },
-  };
 }

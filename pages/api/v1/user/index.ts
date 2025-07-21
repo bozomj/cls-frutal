@@ -35,7 +35,7 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const user = await User.create(use);
 
-    const token = autenticator.createToken(user.id);
+    const token = autenticator.createToken(user[0].id);
     res.setHeader(
       "Set-Cookie",
       `token=${token}; HttpOnly; Path=/; Max-Age=3600;`

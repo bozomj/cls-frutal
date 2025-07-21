@@ -8,4 +8,5 @@ X colocar uma parte da descricao dos postes em produtos
 
 usuarios[
 diego@hotmail.com
+matheus@hotmail.com | senha 12345
 ]
