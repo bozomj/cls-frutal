@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface CarrosselProps {
   imagens: Record<string, string>[];
@@ -6,39 +6,34 @@ interface CarrosselProps {
 
 const Carrossel: React.FC<CarrosselProps> = ({ imagens }) => {
   const [imgs, setImgs] = useState(imagens);
+  const carrosselref = useRef<HTMLDivElement | null>(null);
 
   async function changeImagem() {
     setImgs((prev) => {
       return [...prev.slice(1), prev[0]];
     });
-    console.log(">>");
-  }
-
-  function trasnslate() {
-    setInterval(() => {
-      const crl = document.getElementById("crl");
-      crl?.children[0].classList.toggle("w-full");
-      crl?.children[0].classList.add("w-0");
-    }, 1500);
+    carrosselref.current?.children[0].classList.toggle("w-full");
   }
 
   useEffect(() => {
-    trasnslate();
-  }, []);
-
+    function translate() {
+      if (imgs.length <= 1) return;
+      setTimeout(() => {
+        carrosselref.current?.children[0].classList.toggle("w-full");
+        carrosselref.current?.children[0].classList.add("w-0");
+      }, 1500);
+    }
+    translate();
+  }, [imgs]);
   return (
     <div
-      id="crl"
+      ref={carrosselref}
       onTransitionEnd={async () => {
         await changeImagem();
-        const crl = document.getElementById("crl");
-        crl?.children[0].classList.toggle("w-full");
-
-        console.log(imgs);
       }}
-      className="flex w-[100%] overflow-hidden h-[150px] justify-stretch "
+      className="flex w-[100%] overflow-hidden h-[150px] "
     >
-      {...imgs.map((e) => {
+      {imgs.map((e) => {
         return (
           // eslint-disable-next-line @next/next/no-img-element
           <img

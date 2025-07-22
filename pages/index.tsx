@@ -1,4 +1,4 @@
-import Carrossel from "@/components/Carrossel";
+import Carrossel2 from "@/components/Carrossel2";
 import Header from "@/components/Header";
 import Produtos from "@/layout/produtos/Produtos";
 import { useSearchParams } from "next/navigation";
@@ -22,6 +22,9 @@ const Home: React.FC<HomeProps> = () => {
     {
       src: "https://img.freepik.com/vetores-gratis/banner-do-linkedin-de-negocios-de-gradiente_23-2150091566.jpg",
     },
+    {
+      src: "https://img.cdndsgni.com/preview/13138247.jpg",
+    },
   ];
 
   return (
@@ -29,7 +32,7 @@ const Home: React.FC<HomeProps> = () => {
       <Header />
       <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center scroll-smooth ">
         <section className="md:max-w-[100rem] w-full">
-          <Carrossel imagens={imgCarrossel} />
+          <Carrossel2 imagens={imgCarrossel} speed={5} />
           <Produtos pesquisa={search.trim()} />
         </section>
 
