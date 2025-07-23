@@ -9,8 +9,7 @@ interface HomeProps {
 
 const Home: React.FC<HomeProps> = () => {
   const search = useSearchParams().get("q") ?? "";
-  const initial = parseInt(useSearchParams().get("initial") ?? "0");
-  console.log(initial);
+  // const initial = parseInt(useSearchParams().get("initial") ?? "0");
 
   const imgCarrossel = [
     {

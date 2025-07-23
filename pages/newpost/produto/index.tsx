@@ -4,14 +4,22 @@ import Header from "@/components/Header";
 import autenticator from "@/models/autenticator";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Image from "next/image";
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import Alert from "@/components/Alert";
 import { CategoriaType } from "@/models/categoria";
+import { useRouter } from "next/navigation";
 
-const post = {
+type postTypeSimple = {
+  title: string;
+  description: string;
+  user_id: string;
+  valor: number;
+  categoria_id: number;
+  created_at: number;
+};
+
+const post: postTypeSimple = {
   title: "",
   description: "",
   user_id: "",
@@ -20,50 +28,48 @@ const post = {
   created_at: Date.now(),
 };
 
+type ImageFile = {
+  id: number;
+  file: File;
+  url: string;
+};
+
+let uniqueId = 0;
+
+function getUniqueId() {
+  return uniqueId++;
+}
+
 export default function Produto() {
+  const router = useRouter();
+
   const [categoria, setCategoria] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [valor, setValor] = useState("");
-  const [urls, setImg] = useState<string[]>([]);
-  const [imagens, setImagens] = useState<File[]>([]);
 
-  const [showModal, setShowModal] = useState(false);
-  const [Alertmsg, setAlertmsg] = useState("");
+  const [imagens, setImagens] = useState<ImageFile[]>([]);
+  const [selected, setSelected] = useState("0");
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const [showAlert, setAlert] = useState<JSX.Element | null>(null);
 
   const [categoriasValues, setCategoriasValues] = useState<
     { value: string; label: string }[]
   >([]);
 
-  const [postError, setError] = useState<{
-    title: string;
-    description: string;
-    userId: string;
-    valor: string;
-    categoria_id: string;
-    created_at: string;
-    id: string;
-  }>({
-    title: "",
-    categoria_id: "",
-    description: "",
-    userId: "",
-    valor: "",
-    created_at: "",
-    id: "",
-  });
+  const [postError, setError] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (categoriasValues.length < 2) getCategorias();
 
     //return funciona como "dispose" do Flutter
     return () => {
-      urls.forEach((url) => {
-        URL.revokeObjectURL(url);
-        console.log("url deletada", url);
+      imagens.forEach((img) => {
+        URL.revokeObjectURL(img.url);
       });
     };
-  }, [categoriasValues.length, urls]);
+  }, []);
 
   async function getCategorias() {
     const categorias = await (await fetch("/api/v1/categorias")).json();
@@ -111,7 +117,7 @@ export default function Produto() {
       return { error: "O numero de imagens devem ser no maximo 3!!" };
     const formdata = new FormData();
     for (const image of imagens) {
-      formdata.append("image", image);
+      formdata.append("image", image.file);
     }
     formdata.append("postid", id || "idcorreto");
 
@@ -134,43 +140,52 @@ export default function Produto() {
   const salvar = async () => {
     console.log(post);
 
-    if (imagens.length > 3) {
-      setAlertmsg("Escolha no máximo 3 imagens");
-      setShowModal(true);
-      return;
-    }
+    const msg =
+      imagens.length < 1
+        ? "Escolha Pelo menos uma imagem"
+        : imagens.length > 3
+        ? "Escolha no máximo 3 imagens"
+        : "";
 
-    if (imagens.length < 1) {
-      setAlertmsg("Escolha Pelo menos uma imagem");
-      setShowModal(true);
+    if (msg != "") {
+      setAlert(
+        <Alert
+          msg={msg}
+          show={true}
+          onClose={() => {
+            setAlert(<></>);
+          }}
+        />
+      );
       return;
     }
 
     post.created_at = Date.now();
     post.user_id = await getIdUserAuthenticated();
 
-    postError.description = post.description == "" ? "campo obrigatorio" : "";
-    postError.title = post.title == "" ? "Campo obrigatorio" : "";
-    postError.valor = post.valor <= 0 ? "Campo obrigatorio" : "";
-    postError.categoria_id = post.categoria_id == 0 ? "Campo obrigatorio" : "";
+    const err: Record<string, string> = {};
 
-    setError({ ...postError });
+    if (post.description == "") err["description"] = "campo obrigatorio";
+    if (post.title == "") err["title"] = "Campo obrigatorio";
+    if (post.valor <= 0) err["valor"] = "Campo obrigatorio";
 
-    const posted = await fetch("/api/v1/posts", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(post),
-    });
+    if (post.categoria_id == 0 || Number.isNaN(post.categoria_id)) {
+      err["categoria_id"] = "Campo obrigatorio";
+    }
 
+    for (const error in err) {
+      console.log(error, "volta");
+      setError(err);
+      return;
+    }
+
+    const posted = await savePost(post);
     const jsonresult = await posted.json();
 
     if (jsonresult.message == "erro ao inserir post") {
       throw jsonresult;
     }
 
-    console.log(">>", jsonresult[0].id ?? "nada");
     await uploadImage(jsonresult[0].id);
 
     post.categoria_id = 0;
@@ -179,15 +194,25 @@ export default function Produto() {
     post.valor = 0;
     post.created_at = 0;
     post.user_id = "";
-    // post.url = "";
 
     setValor("");
     setCategoria("");
     setTitle("");
     setDescription("");
-
     setImagens([]);
-    setImg([]);
+
+    setAlert(
+      <Alert
+        msg={"Post Inserido com Sucesso!!"}
+        show={true}
+        onClose={() => {
+          setAlert(<></>);
+          setTimeout(() => {
+            router.back();
+          }, 1000);
+        }}
+      />
+    );
   };
 
   return (
@@ -198,18 +223,18 @@ export default function Produto() {
           onSubmit={handleSubmit}
           className="flex flex-col gap-4 bg-cyan-950 rounded p-4 md:w-[480px] m-4 w-full "
         >
-          {Object.values(postError).some((msg) => msg != "") && (
-            <span className="text-red-800 font-bold ">
-              Todos os campos são obrigatorios
-            </span>
-          )}
+          <span className="text-red-800 font-bold h-3">
+            {Object.values(postError).some((msg) => msg != "")
+              ? "Todos os Campos são obrigatorio"
+              : ""}
+          </span>
 
           <input
             type="text"
             value={title}
             placeholder="Titulo"
             className={`p-3 bg-cyan-50 text-gray-900 outline-0  focus:outline-cyan-500 focus:outline-4
-              ${postError.title ? "border-2 border-red-600" : "border-none"}
+              ${postError.title ? "outline-2 outline-red-600" : "outline-none"}
               `}
             onChange={(e) => {
               post.title = e.target.value;
@@ -224,8 +249,8 @@ export default function Produto() {
                focus:outline-cyan-500 focus:outline-4
                ${
                  postError.description
-                   ? "border-2 border-red-600"
-                   : "border-none"
+                   ? "outline-2 outline-red-600"
+                   : "outline-none"
                } `}
             onChange={(e) => {
               post.description = e.target.value;
@@ -238,16 +263,20 @@ export default function Produto() {
             id=""
             className={`p-3 bg-cyan-50  outline-0 focus:outline-cyan-500 focus:outline-4
               ${categoria === "" ? "text-gray-400" : "text-gray-800"} 
-              ${
-                postError.categoria_id
-                  ? "border-2 border-red-600"
-                  : "border-none"
-              }
+             ${
+               postError.categoria_id
+                 ? "outline-2 outline-red-600"
+                 : "outline-none"
+             }
               `}
+            value={selected}
             onChange={(e) => {
-              setCategoria(e.target.value);
+              setSelected(e.target.value);
               console.log(e.target.value);
-              post.categoria_id = parseInt(e.target.value);
+              // if (postError.categoria_id == "")
+              // postError.categoria_id = "todos os campos sao obrigatorios";
+              if ((post.categoria_id = parseInt(e.target.value)))
+                setCategoria(e.target.value);
             }}
           >
             <option key={0} value={""}>
@@ -258,7 +287,6 @@ export default function Produto() {
                 key={e.value}
                 value={e.value}
                 disabled={e.value === ""}
-                selected={e.value === ""}
                 className={`${
                   e.value === "" ? "text-gray-400" : "text-gray-800"
                 }`}
@@ -273,7 +301,7 @@ export default function Produto() {
             placeholder="R$: 0,00"
             value={valor}
             className={`text-gray-900 outline-0 p-3 bg-cyan-50  focus:outline-cyan-500 focus:outline-4
-              ${postError.valor ? "border-2 border-red-600" : "border-none"}
+              ${postError.valor ? "outline-2 outline-red-600" : "outline-none"}
               `}
             onChange={(e) => {
               formatarMoeda(e);
@@ -288,31 +316,43 @@ export default function Produto() {
               <FontAwesomeIcon icon={faImage} className="text-3xl" />
             </span>
             <input
+              accept="image/*"
               type="file"
               multiple
               max={3}
               className="hidden"
               onChange={async (e) => {
+                // const newImages: ImageFile[] = [];
+
                 const files = e.target.files;
 
                 // const preview = document.getElementById("preview");
                 if (files) {
+                  console.log("imagens>: ", files);
                   for (let i = 0; i < files.length; i++) {
                     const file = files[i];
 
                     // Verifica se o arquivo é uma imagem
                     if (file.type.startsWith("image/")) {
+                      setLoading(true);
+
                       // Cria uma URL temporária para o arquivo
                       const resized = (await resizeImageFile(file)) as File;
-                      const imgURL = URL.createObjectURL(file);
+                      const imgURL = URL.createObjectURL(resized);
 
                       console.log({
                         old: file,
                         new: resized,
                       });
+                      const id = getUniqueId();
 
-                      setImagens((e) => [...e, resized]);
-                      setImg((e) => [...e, imgURL]);
+                      setImagens((e) => [
+                        ...e,
+                        { id: id, file: resized, url: imgURL },
+                      ]);
+
+                      setLoading(false);
+                      console.log(imagens);
                     }
                   }
                 }
@@ -321,42 +361,59 @@ export default function Produto() {
           </label>
 
           <div id="preview" className="flex gap-2 flex-wrap justify-center">
-            {urls.map((e, index) => {
+            {loading && (
+              <div className="h-2 w-full rounded bg-cyan-800 ">
+                <div className="w-full h-full bg-cyan-500 transform origin-left animate-loading"></div>
+              </div>
+            )}
+            {imagens.map((e, index) => {
               return (
-                <div key={index} className="relative w-fit">
+                <div key={e.id} className="relative w-fit">
                   <Card key={index}>
                     <div
                       className="absolute bg-amber-600 rounded-[50%] p-1 right-0 top-0"
                       onClick={() => {
-                        setImg((prev) => prev.filter((_, i) => i !== index));
-                        setImagens((prev) =>
-                          prev.filter((_, i) => i !== index)
-                        );
+                        // setImg((prev) => prev.filter((_, i) => i !== index));
+                        setImagens((prev) => {
+                          const img = prev.find((img) => img.id === e.id);
+                          if (img) URL.revokeObjectURL(img.url);
+
+                          return prev.filter((img) => img.id !== e.id);
+                        });
                       }}
                     >
                       X
                     </div>
-                    <Image src={e} alt="" width={150} height={150} />
+                    {/*  eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      key={e.id}
+                      src={e.url}
+                      alt=""
+                      width={150}
+                      height={150}
+                    />
                   </Card>
                 </div>
               );
             })}
           </div>
 
-          <span className="flex gap-2 ite">
-            <Link href={""} className="flex-1">
+          <span className="flex gap-2 items-center">
+            <button
+              type="button"
+              className="text-cyan-400 font-bold p-2 outline-1 box-border flex-1 rounded"
+              onClick={() => router.back()}
+            >
               Cancelar
-            </Link>
-            <button className="bg-cyan-600 p-2 flex-1 rounded">Salvar</button>
+            </button>
+            <button className="bg-cyan-600 font-bold p-2 flex-1 rounded">
+              Salvar
+            </button>
           </span>
         </form>
         {/* MODAL------------------------- */}
 
-        <Alert
-          msg={Alertmsg}
-          show={showModal}
-          onClose={() => setShowModal(false)}
-        />
+        {showAlert}
       </main>
     </>
   );
@@ -440,5 +497,14 @@ function resizeImageFile(file: File, maxWidth = 1280, maxSizeKB = 300) {
 
     reader.onerror = reject;
     reader.readAsDataURL(file);
+  });
+}
+async function savePost(post: postTypeSimple) {
+  return await fetch("/api/v1/posts", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(post),
   });
 }

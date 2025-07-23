@@ -4,7 +4,7 @@ para armazenamento utilizar firebase: mais barato
 
 X colocar uma parte da descricao dos postes em produtos
 
-- cadastrar com nome de usuario tudo minusculo
+X cadastrar com nome de usuario tudo minusculo
 
 usuarios[
 diego@hotmail.com

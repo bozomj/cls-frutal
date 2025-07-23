@@ -4,10 +4,7 @@ export default function Document() {
   return (
     <Html lang="pt">
       <Head>
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-        />
+        {/* Outras tags globais como fontes ou favicon alternativo */}
       </Head>
       <body className="antialiased">
         <Main />

@@ -39,9 +39,14 @@ const Carrossel2: React.FC<Carrossel2Props> = ({ imagens, speed }) => {
   }
 
   useEffect(() => {
-    setTimeout(() => {
-      carrosselref.current!.style.transform = `translateX(-${100 * index}%)`;
+    const timeout = setTimeout(() => {
+      if (carrosselref != null)
+        carrosselref.current!.style.transform = `translateX(-${100 * index}%)`;
     }, velocidade);
+
+    return () => {
+      clearTimeout(timeout);
+    };
   });
 
   return (

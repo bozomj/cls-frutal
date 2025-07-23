@@ -4,13 +4,15 @@ interface AlertProps {
   onClose: () => void;
 }
 
-const Alert: React.FC<AlertProps> = ({ msg, show, onClose }) => {
-  const shw = show ? "block" : "hidden";
+const Alert: React.FC<AlertProps> = ({ msg, onClose }) => {
+  // const shw = show ? "block" : "hidden";
   setTimeout(onClose, 1500);
   return (
     <div
-      className={`absolute bg-gray-300/80 h-[100vh] w-full top-0 z-[9] flex justify-center items-center ${shw}`}
-      onClick={onClose}
+      className={`absolute bg-gray-300/80 h-[100vh] w-full top-0 z-[9] flex justify-center items-center `}
+      onClick={() => {
+        onClose();
+      }}
     >
       <div
         onClick={(e) => e.stopPropagation()}

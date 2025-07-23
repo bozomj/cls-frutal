@@ -48,12 +48,6 @@ const Produtos: React.FC<ProdutosProps> = ({ pesquisa }) => {
     }
 
     getPosts(pagination * limit);
-
-    console.log({
-      totalItems,
-      pagination,
-      maxPage,
-    });
   }, [getPosts, pagination, pesquisa, maxPage, totalItems]);
 
   return (

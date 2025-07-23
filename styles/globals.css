@@ -37,3 +37,18 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   max-height: 100vh;
 }
+
+@keyframes loading-bar {
+  from {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  to {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+.animate-loading {
+  animation: loading-bar 1s ease-in-out infinite;
+}

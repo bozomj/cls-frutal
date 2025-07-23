@@ -37,7 +37,14 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
     <header className="bg-cyan-900 p-4 relative w-full z-[1] flex flex-col gap-2  md:items-stretch ">
       <div className="flex justify-between  ">
         <Link href={"/"} className="">
-          <Image src="/img/logo.svg" width="240" height={"120"} alt={""} />
+          <Image
+            src="/img/logo.svg"
+            width="240"
+            height={"120"}
+            alt={""}
+            className="w-auto"
+            priority={true}
+          />
         </Link>
         <div className="flex items-center gap-4">
           {isAuthenticated.status ? (

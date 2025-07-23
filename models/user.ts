@@ -18,7 +18,7 @@ const User = {
   findAll: async () => {
     try {
       const result = await database.query(
-        "SELECT id, name, email, phone, 'createdAt' FROM users;"
+        'SELECT id, name, email, phone, "createdAt" FROM users;'
       );
 
       return result;

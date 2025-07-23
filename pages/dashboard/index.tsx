@@ -17,6 +17,7 @@ import { faPhone } from "@fortawesome/free-solid-svg-icons/faPhone";
 import { faRemove } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@/components/Modal";
 import { PostType } from "@/models/post";
+import utils from "@/utils";
 
 type UserType = {
   id?: string;
@@ -34,9 +35,6 @@ async function getMyPost() {
   const pst = await myPosts.json();
   console.log({ posts: pst });
   return pst;
-}
-function getFileName(path: string): string {
-  return path?.split(/[/\\]/).pop() || "";
 }
 
 async function deletePost(id: string, callback: (e: []) => void) {
@@ -125,15 +123,22 @@ function Dashboard({ ctx }: { ctx: string }) {
                     <FontAwesomeIcon icon={faRemove} />
                   </span>
                   <div className="flex flex-col w-full  overflow-hidden h-full gap-2 ">
-                    <span
+                    {/* <span
                       className=" bg-contain bg-no-repeat bg-center  bg-gray-200 rounded-2xl min-h-[250px]"
                       style={{
-                        backgroundImage: `url(/uploads/${getFileName(
-                          item.imageurl || ""
+                        backgroundImage: `url(${utils.getUrlImage(
+                          item.imageurl
                         )})`,
                       }}
-                    ></span>
-
+                    ></span> */}
+                    <div className="flex justify-center bg-gray-200 rounded-2xl overflow-hidden">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        className="flex-1   bg-gray-200   min-h-[250px]"
+                        src={utils.getUrlImage(item.imageurl)}
+                        alt=""
+                      />
+                    </div>
                     <div className=" flex text-gray-900 gap-2 truncate overflow-hidden flex-col">
                       <span className="h-5 block">
                         {item.description ?? ""}
@@ -188,7 +193,7 @@ function Dashboard({ ctx }: { ctx: string }) {
 
   async function getUser(id: string) {
     console.log(id);
-    const response = await fetch(`/api/v1/user/id/${id}`);
+    const response = await fetch(`/api/v1/user`);
     setUser(await response.json());
   }
 }
