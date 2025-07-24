@@ -5,7 +5,7 @@ import autenticator from "@/models/autenticator";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { JSX, useEffect, useState } from "react";
+import { ChangeEvent, JSX, useEffect, useState } from "react";
 import Alert from "@/components/Alert";
 import { CategoriaType } from "@/models/categoria";
 import { useRouter } from "next/navigation";
@@ -215,6 +215,37 @@ export default function Produto() {
     );
   };
 
+  async function selecionarImagens(e: ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files || [];
+
+    if (files) {
+      console.log("imagens>: ", files);
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+
+        // Verifica se o arquivo é uma imagem
+        if (file.type.startsWith("image/")) {
+          setLoading(true);
+
+          // Cria uma URL temporária para o arquivo
+          const resized = (await resizeImageFile(file)) as File;
+          const imgURL = URL.createObjectURL(resized);
+
+          console.log({
+            old: file,
+            new: resized,
+          });
+          const id = getUniqueId();
+
+          setImagens((e) => [...e, { id: id, file: resized, url: imgURL }]);
+
+          setLoading(false);
+          console.log(imagens);
+        }
+      }
+    }
+  }
+
   return (
     <>
       <Header />
@@ -297,66 +328,38 @@ export default function Produto() {
           </select>
           {/* <span className="text-red-800">{postError.valor}</span> */}
           <input
+            name="valor"
             type="text"
             placeholder="R$: 0,00"
             value={valor}
-            className={`text-gray-900 outline-0 p-3 bg-cyan-50  focus:outline-cyan-500 focus:outline-4
-              ${postError.valor ? "outline-2 outline-red-600" : "outline-none"}
-              `}
-            onChange={(e) => {
-              formatarMoeda(e);
-            }}
+            className={`text-gray-900
+                outline-0 p-3 bg-cyan-50 
+              focus:outline-cyan-500
+                focus:outline-4
+              ${
+                postError.valor ? "outline-2 outline-red-600" : "outline-none"
+              }`}
+            onChange={(e) => formatarMoeda(e)}
           />
 
-          <label>
+          <label className="w-fit">
             <span
+              className="bg-cyan-700 block w-fit p-2 rounded
+              focus:outline-cyan-500 focus:outline-4 "
               tabIndex={0}
-              className="bg-cyan-700 block w-fit p-2 rounded focus:outline-cyan-500 focus:outline-4"
             >
-              <FontAwesomeIcon icon={faImage} className="text-3xl" />
+              <FontAwesomeIcon
+                className="text-3xl cursor-pointer"
+                icon={faImage}
+              />
             </span>
             <input
               accept="image/*"
               type="file"
+              className="hidden"
               multiple
               max={3}
-              className="hidden"
-              onChange={async (e) => {
-                // const newImages: ImageFile[] = [];
-
-                const files = e.target.files;
-
-                // const preview = document.getElementById("preview");
-                if (files) {
-                  console.log("imagens>: ", files);
-                  for (let i = 0; i < files.length; i++) {
-                    const file = files[i];
-
-                    // Verifica se o arquivo é uma imagem
-                    if (file.type.startsWith("image/")) {
-                      setLoading(true);
-
-                      // Cria uma URL temporária para o arquivo
-                      const resized = (await resizeImageFile(file)) as File;
-                      const imgURL = URL.createObjectURL(resized);
-
-                      console.log({
-                        old: file,
-                        new: resized,
-                      });
-                      const id = getUniqueId();
-
-                      setImagens((e) => [
-                        ...e,
-                        { id: id, file: resized, url: imgURL },
-                      ]);
-
-                      setLoading(false);
-                      console.log(imagens);
-                    }
-                  }
-                }
-              }}
+              onChange={(e) => selecionarImagens(e)}
             />
           </label>
 
@@ -398,21 +401,25 @@ export default function Produto() {
             })}
           </div>
 
-          <span className="flex gap-2 items-center">
+          <span id="actions" className="flex gap-2 items-center">
             <button
+              name="btn_cancelar"
+              className="text-cyan-400 font-bold
+                p-2 outline-1 box-border rounded cursor-pointer
+                flex-1"
               type="button"
-              className="text-cyan-400 font-bold p-2 outline-1 box-border flex-1 rounded"
               onClick={() => router.back()}
             >
               Cancelar
             </button>
-            <button className="bg-cyan-600 font-bold p-2 flex-1 rounded">
+            <button
+              name="btn_salvar"
+              className="bg-cyan-600 font-bold p-2 flex-1 rounded cursor-pointer"
+            >
               Salvar
             </button>
           </span>
         </form>
-        {/* MODAL------------------------- */}
-
         {showAlert}
       </main>
     </>

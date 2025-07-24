@@ -1,4 +1,7 @@
-import autenticator from "@/models/autenticator";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import {
   faCalendar,
   faEnvelope,
@@ -6,18 +9,17 @@ import {
   faClipboard,
 } from "@fortawesome/free-regular-svg-icons";
 
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import Header from "@/components/Header";
-import { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-import ListTile from "@/components/ListTile";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
-import { faPhone } from "@fortawesome/free-solid-svg-icons/faPhone";
+import { faPhone, faPlus } from "@fortawesome/free-solid-svg-icons";
+
+import Header from "@/components/Header";
+import ListTile from "@/components/ListTile";
 import Modal from "@/components/Modal";
+
+import autenticator from "@/models/autenticator";
 import { PostType } from "@/models/post";
+
 import utils from "@/utils";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 type UserType = {
   id?: string;

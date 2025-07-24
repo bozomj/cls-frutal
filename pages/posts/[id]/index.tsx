@@ -59,7 +59,7 @@ export default function DetailsPostPage() {
 
   function toggleImg() {
     const im = document.getElementById("imgfull");
-    console.log(im);
+
     im?.classList.toggle("hidden");
   }
 
@@ -68,11 +68,9 @@ export default function DetailsPostPage() {
   return (
     <>
       <header className="">
-        <Header
-          onSubmit={async (e) => {
-            console.log(e);
-          }}
-        />
+        <Header />
+        <meta property="og:title" content={item.title} />
+        <meta property="og:image" content={item.imagens[0]} />
       </header>
       <main className=" p-2 flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center text-black">
         <section className="flex flex-col gap-2 w-full">

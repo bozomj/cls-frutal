@@ -54,18 +54,15 @@ const Produtos: React.FC<ProdutosProps> = ({ pesquisa }) => {
     <>
       {showAlert}
       <div className=" bg-cyan-50 flex flex-col items-center  overflow-x-scroll max-w-full ">
-        {/* <div className="text-gray-900 flex flex-col">
-          <span>{totalItems}</span>
-
-          <span>{pagination}</span>
-          <span>{maxPage}</span>
-        </div> */}
         <a id="pst" href=""></a>
         <section className="flex flex-col gap-4 p-4 w-full h-fit  ">
           {...makeItens(postagem)}
         </section>
 
-        <div className="flex justify-between  text-cyan-800 p-4 w-full">
+        <div
+          id="paginacao"
+          className="flex justify-between  text-cyan-800 p-4 w-full"
+        >
           <button
             className={`${pagination != 0 ? "" : "invisible"}`}
             onClick={() => {
