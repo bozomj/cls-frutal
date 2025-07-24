@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
-
-import { useRouter } from "next/router";
 import Header from "@/components/Header";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { faShare } from "@fortawesome/free-solid-svg-icons";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
+
 import utils from "@/utils";
 
 async function getPost(id: string) {
@@ -85,7 +86,7 @@ export default function DetailsPostPage() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               tabIndex={0}
-              src={getFileName(imgPrincial)}
+              src={utils.getUrlImage(imgPrincial)}
               alt=""
               className="w-full rounded  shadow-2xl shadow-black outline-3 outline-cyan-600"
             />
@@ -95,14 +96,14 @@ export default function DetailsPostPage() {
             id="lista_imagems"
             className="flex gap-1 border-3 border-cyan-900 p-2 rounded-2xl"
           >
-            <div className="w-[400px] block  order-2 self-center">
+            <div className="w-[400px] block cursor-pointer    order-2 self-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 id="imagem_principal"
+                className="w-[400px] min-h-[200px] rounded-md hover:outline-3 hover:outline-cyan-600"
                 tabIndex={1}
-                src={getFileName(imgPrincial)}
+                src={utils.getUrlImage(imgPrincial)}
                 alt=""
-                className="w-[400px] min-h-[200px]"
                 onClick={toggleImg}
               />
             </div>
@@ -114,7 +115,7 @@ export default function DetailsPostPage() {
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       className="cursor-pointer hover:outline-3 outline-cyan-600 focus:outline-3 rounded"
-                      src={getFileName(img?.url)}
+                      src={utils.getUrlImage(img.url)}
                       alt=""
                       tabIndex={10}
                       key={img?.id}
@@ -126,11 +127,14 @@ export default function DetailsPostPage() {
           </section>
 
           <section>
-            <div className="flex justify-between items-center py-4">
+            <div
+              id="actions"
+              className="flex justify-between items-center py-4"
+            >
               <div className="flex items-center gap-2">
                 <FontAwesomeIcon
                   icon={faUser}
-                  className="text-2xl rounded-full p-2 w-6  bg-gray-400 flex items-center justify-center text-gray-300"
+                  className="text-2xl rounded-full p-2 w-6  bg-gray-400 flex items-center justify-center cursor-pointer text-gray-300 hover:bg-gray-600 transition duration-200 "
                 />
 
                 <span className="text-[1em]">{item.name}</span>
@@ -139,15 +143,15 @@ export default function DetailsPostPage() {
               <div className="flex gap-2 items-center text-2xl">
                 <a
                   target="_blank"
+                  className="rounded-3xl bg-green-800 w-10 h-10 flex items-center justify-center p-2 text-white self-end hover:bg-green-600 transition duration-200"
                   href={`https://wa.me/55${item.phone}?text=ola gostariad e falar com voce`}
-                  className="rounded-3xl bg-green-800 w-10 h-10 flex items-center justify-center p-2 text-white self-end "
                 >
                   <FontAwesomeIcon icon={faWhatsapp} />
                 </a>
                 <a
                   href=""
                   target="_blank"
-                  className="rounded-3xl bg-cyan-800 w-10 h-10 flex items-center justify-center p-2 text-white self-end "
+                  className="rounded-3xl bg-cyan-800 w-10 h-10 flex items-center justify-center p-2 text-white self-end hover:bg-cyan-500 transition duration-200"
                   onClick={() =>
                     navigator.clipboard.writeText(window.location.href)
                   }
@@ -187,15 +191,4 @@ function formatarData(data: string) {
   const diaSemana = diasSemana[d.getUTCDay()];
 
   return `${diaSemana} ${dia}/${mes}/${ano}`;
-}
-
-function getFileName(path?: string): string | undefined {
-  // if (path == null)
-  //   return "https://www2.camara.leg.br/atividade-legislativa/comissoes/comissoes-permanentes/cindra/imagens/sem.jpg.gif/image";
-  // if (
-  //   path ==
-  //   "https://www2.camara.leg.br/atividade-legislativa/comissoes/comissoes-permanentes/cindra/imagens/sem.jpg.gif/image"
-  // )
-  //   return path;
-  return utils.getUrlImage(path);
 }
