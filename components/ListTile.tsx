@@ -5,16 +5,18 @@ const ListTile = ({
   title,
   icon,
   url,
+  className,
   onClick,
 }: {
   title: string;
   icon?: IconProp;
   url?: string;
+  className?: string;
   onClick: () => void;
 }) => {
   return (
     <div
-      className="flex items-center gap-2 p-3 cursor-pointer hover:text-cyan-500"
+      className={`flex items-center gap-2 p-3 cursor-pointer hover:text-cyan-500 ${className}`}
       onClick={onClick}
     >
       <span>

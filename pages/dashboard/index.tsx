@@ -14,10 +14,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ListTile from "@/components/ListTile";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 import { faPhone } from "@fortawesome/free-solid-svg-icons/faPhone";
-import { faRemove } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@/components/Modal";
 import { PostType } from "@/models/post";
 import utils from "@/utils";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 type UserType = {
   id?: string;
@@ -55,34 +55,38 @@ function Dashboard({ ctx }: { ctx: string }) {
     getUser(ctx);
     getMyPost().then((e) => setPosts(e));
   }, [ctx]);
-
+  function linkFone(phone: string) {
+    return `https://wa.me/55${phone}?text=[Classificados Frutal] - fiquei interessado em seu produto `;
+  }
   return (
     <>
       <header>
         <Header titulo="Dashboard" />
       </header>
       <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between  items-center">
-        <div className="flex-1  flex w-full">
+        <div className="flex-1 max-h-[250px] flex w-full">
           <section
             tabIndex={0}
             className=" z-[999] group bg-cyan-950 max-w-[5rem] overflow-x-hidden   p-4 flex items-start flex-col gap-2 hover:max-w-[25rem]   transition-all duration-500 border-r-2 
         focus:max-w-[25rem]
-        fixed h-full"
+        fixed h-full
+        
+        "
           >
-            <div className="flex flex-col  gap-2">
+            <ul className="flex flex-col  gap-2">
+              {/* <div className="flex flex-col  gap-2"> */}
               <span className="group-focus:w-[8rem] group-focus:h-[8rem] rounded-full  w-[3rem] h-[3rem] group-hover:block   bg-white   group-hover:w-[8rem] group-hover:h-[8rem] transition-all duration-500"></span>
-              <span className="flex gap-2 p-3  group-hover:flex">
-                <FontAwesomeIcon icon={faUser} className="text-2xl" />
 
-                <h2 className="text-white whitespace-nowrap  opacity-0 group-focus:opacity-100 transition-all duration-500 group-hover:block group-hover:opacity-100">
-                  <a href={`/profile/${user.id}`}>{user.name ?? ""}</a>
-                </h2>
-              </span>
-            </div>
-            <ul>
+              <ListTile
+                title={user.name ?? ""}
+                icon={faUser}
+                url={`/profile/${user.id}`}
+                onClick={() => {}}
+              />
+              {/* </div> */}
               <li>
                 <ListTile
-                  title={user.email || ""}
+                  title={user.email ?? ""}
                   icon={faEnvelope}
                   onClick={() => {}}
                 />
@@ -107,66 +111,71 @@ function Dashboard({ ctx }: { ctx: string }) {
           </section>
 
           <section className="flex-1 p-2  pl-[5.5rem] flex flex-col gap-2 w-full">
-            {listPost.map((item: PostType, v) => {
-              return (
-                <div
-                  key={v}
-                  className="  bg-gray-100 relative  p-2 rounded-2xl flex justify-center"
-                >
-                  <span
-                    className="  bg-red-700 rounded-full h-8 w-8 right-2 top-[-0.2rem] flex justify-center items-center absolute"
-                    onClick={async () => {
-                      // await deletePost(item.id, setPosts);
-                      deletePostId(item.id ?? "");
-                    }}
+            <div className="flex flex-col gap-2">
+              <div className="p-4 rounded-md gap-2 bg-cyan-800  flex items-center  outline-2 outline-cyan-100">
+                <FontAwesomeIcon
+                  icon={faPlus}
+                  className="text-3xl outline-1 p-2 rounded-md outline-cyan-100"
+                />
+                <span>Cadastrar Produto</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              {listPost.map((item: PostType, v) => {
+                return (
+                  <article
+                    key={v}
+                    className="  bg-gray-100 relative  p-2 rounded-2xl flex justify-center"
                   >
-                    <FontAwesomeIcon icon={faRemove} />
-                  </span>
-                  <div className="flex flex-col w-full  overflow-hidden h-full gap-2 ">
-                    {/* <span
-                      className=" bg-contain bg-no-repeat bg-center  bg-gray-200 rounded-2xl min-h-[250px]"
-                      style={{
-                        backgroundImage: `url(${utils.getUrlImage(
-                          item.imageurl
-                        )})`,
-                      }}
-                    ></span> */}
-                    <div className="flex justify-center bg-gray-200 rounded-2xl overflow-hidden">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        className="flex-1   bg-gray-200   min-h-[250px]"
-                        src={utils.getUrlImage(item.imageurl)}
-                        alt=""
-                      />
-                    </div>
-                    <div className=" flex text-gray-900 gap-2 truncate overflow-hidden flex-col">
-                      <span className="h-5 block">
-                        {item.description ?? ""}
-                      </span>
-                      <span className="h-5 block">R$: {item.valor}</span>
-                      <div className=" flex items-center gap-4">
-                        <a
-                          href={`https://wa.me/55${item.phone}?text=[Classificados Frutal] - fiquei interessado em seu produto `}
-                          target="_blank"
-                        >
-                          <FontAwesomeIcon
-                            icon={faWhatsapp}
-                            className="text-3xl text-green-900"
-                          />
-                        </a>
-                        <a href="#">
-                          <FontAwesomeIcon
-                            icon={faPhone}
-                            className="text-1xl text-blue-500"
-                          />
-                          {` ${item.email}`}
-                        </a>
+                    <div className="flex flex-col w-full  overflow-hidden h-full gap-2 ">
+                      <div className="flex justify-center bg-gray-200 rounded-2xl overflow-hidden">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          className="flex-1   bg-gray-200   min-h-[250px]"
+                          src={utils.getUrlImage(item.imageurl)}
+                          alt={""}
+                        />
                       </div>
+                      <div className=" flex text-gray-900 gap-2 truncate overflow-hidden flex-col">
+                        <span className="text-2xl">{item.title ?? ""}</span>
+                        <span className="">{item.description ?? ""}</span>
+                        <span className="">R$: {item.valor}</span>
+
+                        <div className=" flex items-center gap-4">
+                          <a
+                            href={linkFone(item.phone)}
+                            target="_blank"
+                            aria-label="Whatsapp"
+                            rel="noopener noreferrer"
+                          >
+                            <FontAwesomeIcon
+                              icon={faWhatsapp}
+                              className="text-3xl text-green-900"
+                            />
+                          </a>
+                          <a href="#" aria-label="Email">
+                            <FontAwesomeIcon
+                              icon={faPhone}
+                              className="text-1xl text-blue-500"
+                            />
+                            <span>{item.email}</span>
+                          </a>
+                        </div>
+                      </div>
+                      <button
+                        aria-label="Deletar post"
+                        type="button"
+                        className="bg-red-800  cursor-pointer font-bold w-3/6 self-end rounded p-1 hover:bg-red-600"
+                        onClick={async () => deletePostId(item.id ?? "")}
+                      >
+                        Deletar
+                      </button>
                     </div>
-                  </div>
-                </div>
-              );
-            })}
+                  </article>
+                );
+              })}
+            </div>
           </section>
         </div>
       </main>
