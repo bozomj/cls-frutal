@@ -1,32 +1,26 @@
-import ProductCard from "@/components/ProductCard";
-import { PostType } from "@/models/post";
-
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-import { useEffect } from "react";
-
-interface ProdutosProps {
-  postagens: PostType[];
+interface ProdutosProps<T> {
+  postagens: T[];
   paginacao: { limite: number; current: number; maxPage: number };
+  Card: React.ComponentType<{ item: T }>;
   next: (n1: number) => number;
   back: (n2: number) => number;
 }
 
-const Produtos: React.FC<ProdutosProps> = ({
+function Produtos<T>({
   postagens = [],
   paginacao = { limite: 0, current: 0, maxPage: 0 },
+  Card,
   next,
   back,
-}) => {
-  useEffect(() => {});
-
+}: ProdutosProps<T>) {
   return (
     <>
       <div className=" bg-cyan-50 flex flex-col items-center  overflow-x-scroll max-w-full ">
         <a id="pst" href=""></a>
         <section className="flex flex-col gap-4 p-4 w-full h-fit  ">
-          {...makeItens(postagens)}
+          {makeItens(postagens)}
         </section>
 
         <div
@@ -83,15 +77,16 @@ const Produtos: React.FC<ProdutosProps> = ({
     </>
   );
 
-  function makeItens(items: PostType[]) {
+  function makeItens(items: T[]) {
     if (items.length < 1)
       return [
         <h3 key={1} className="flex justify-center text-gray-700 font-bold">
           Nada encontrado
         </h3>,
       ];
-    return items.map((item, v) => <ProductCard key={`${v}`} item={item} />);
+
+    return items.map((item, v) => <Card item={item} key={`${v}`} />);
   }
-};
+}
 
 export default Produtos;

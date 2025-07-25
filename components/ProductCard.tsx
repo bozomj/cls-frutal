@@ -9,19 +9,16 @@ import { faShare } from "@fortawesome/free-solid-svg-icons";
 interface ProductCardProps {
   item: PostType;
   className?: string;
-  key: string;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
   item,
   className,
-  key,
 }: ProductCardProps) => {
   const [showAlert, setShowAleret] = useState(<></>);
 
   return (
     <div
-      key={key}
       className={`bg-gray-300  p-2 rounded-2xl flex justify-center hover:bg-gray-300 text-gray-800 ${className}`}
     >
       <div className="flex flex-col w-full overflow-hidden h-full gap-2 ">

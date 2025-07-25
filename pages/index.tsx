@@ -1,5 +1,6 @@
 import Carrossel2 from "@/components/Carrossel2";
 import Header from "@/components/Header";
+import ProductCard from "@/components/ProductCard";
 import Produtos from "@/layout/produtos/Produtos";
 
 import { useRouter } from "next/router";
@@ -54,7 +55,6 @@ const Home: React.FC<HomeProps> = () => {
     ).json();
 
     paginacao.totalItens = total.total;
-
     paginacao.maxPage =
       paginacao.setMaxPage(paginacao.totalItens, paginacao.limite) - 1;
 
@@ -84,6 +84,7 @@ const Home: React.FC<HomeProps> = () => {
           <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
           <Carrossel2 imagens={imgCarrossel} speed={5} />
           <Produtos
+            Card={ProductCard}
             postagens={postagens}
             paginacao={paginacao}
             next={(e) => mudarPagina(e)}
