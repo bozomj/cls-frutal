@@ -16,7 +16,7 @@ const Home: React.FC<HomeProps> = () => {
   const [postagens, setPostagens] = useState([]);
 
   const [paginacao, setPaginacao] = useState({
-    limite: 40,
+    limite: 15,
     current: 0,
     totalItens: 0,
     maxPage: 0,
