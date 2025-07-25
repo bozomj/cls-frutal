@@ -1,15 +1,27 @@
 import Carrossel2 from "@/components/Carrossel2";
 import Header from "@/components/Header";
 import Produtos from "@/layout/produtos/Produtos";
-import { useSearchParams } from "next/navigation";
+
+import { useRouter } from "next/router";
+import { useCallback, useEffect, useState } from "react";
 
 interface HomeProps {
   title?: string;
 }
 
 const Home: React.FC<HomeProps> = () => {
-  const search = useSearchParams().get("q") ?? "";
-  // const initial = parseInt(useSearchParams().get("initial") ?? "0");
+  const { query } = useRouter();
+  const search = (query.q as string) ?? "";
+
+  const [postagens, setPostagens] = useState([]);
+
+  const [paginacao, setPaginacao] = useState({
+    limite: 1,
+    current: 0,
+    totalItens: 0,
+    maxPage: 0,
+    setMaxPage: (n1: number, n2: number) => Math.ceil(n1 / n2) - 1,
+  });
 
   const imgCarrossel = [
     {
@@ -26,13 +38,51 @@ const Home: React.FC<HomeProps> = () => {
     },
   ];
 
+  const getPosts = useCallback(async () => {
+    const posts = await (
+      await fetch(
+        `api/v1/posts?search=${search}&initial=${paginacao.current}&limit=${paginacao.limite}`
+      )
+    ).json();
+
+    const total = await (
+      await fetch("api/v1/poststotal?q=" + search || "")
+    ).json();
+
+    paginacao.totalItens = total.total;
+
+    paginacao.maxPage = paginacao.setMaxPage(
+      paginacao.totalItens,
+      paginacao.limite
+    );
+
+    setPaginacao(paginacao);
+    setPostagens(posts);
+    paginacao.setMaxPage(paginacao.totalItens, paginacao.limite);
+  }, [paginacao, search]);
+
+  function mudarPagina(n: number) {
+    paginacao.current = n;
+    getPosts();
+    return paginacao.current;
+  }
+
+  useEffect(() => {
+    getPosts();
+  }, [getPosts]);
+
   return (
     <>
       <Header />
       <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center scroll-smooth ">
         <section className="md:max-w-[100rem] w-full">
           <Carrossel2 imagens={imgCarrossel} speed={5} />
-          <Produtos pesquisa={search.trim()} />
+          <Produtos
+            postagens={postagens}
+            paginacao={paginacao}
+            next={(e) => mudarPagina(e)}
+            back={(e) => mudarPagina(e)}
+          />
         </section>
 
         <footer className="min-h-[10rem] min-w-full bg-cyan-950 p-4 flex flex-col">

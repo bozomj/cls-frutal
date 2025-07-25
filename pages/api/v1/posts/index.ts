@@ -15,9 +15,8 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
   const initial = req.query.initial as string;
   const limit = req.query.limit as string;
 
+  console.log({ search: search });
   if (search) {
-    console.log({ search: search });
-
     try {
       const posts = await Post.search(search || "", initial, limit);
       res.status(200).json(posts);

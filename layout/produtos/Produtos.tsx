@@ -9,46 +9,24 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface ProdutosProps {
-  pesquisa?: string;
+  postagens: PostType[];
+  paginacao: { limite: number; current: number; maxPage: number };
+  next: (n1: number) => number;
+  back: (n2: number) => number;
 }
 
-const Produtos: React.FC<ProdutosProps> = ({ pesquisa }) => {
-  const limit = 13;
-  const [pagination, setPagination] = useState(0);
-  const [totalItems, setTotalItems] = useState(0);
-
-  const [maxPage, setMaxPage] = useState(0);
-  const [postagem, setPostagem] = useState<PostType[]>([]);
-
+const Produtos: React.FC<ProdutosProps> = ({
+  postagens = [],
+  paginacao = { limite: 0, current: 0, maxPage: 0 },
+  next,
+  back,
+}) => {
   const [showAlert, setShowAleret] = useState(<></>);
 
-  const getPosts = useCallback(
-    async (initial: number) => {
-      getTotalPosts(pesquisa ?? "");
-
-      const items = !pesquisa
-        ? await getAllPosts(initial, limit)
-        : await getSearch(pesquisa, initial, limit);
-      setPostagem(items);
-
-      const pst = document.getElementById("pst");
-
-      pst?.focus();
-    },
-    [pesquisa]
-  );
-
-  useEffect(() => {
-    if (localStorage.getItem("oldsearch") != pesquisa) {
-      setPagination(0);
-      localStorage.setItem("oldsearch", pesquisa || "");
-    }
-
-    getPosts(pagination * limit);
-  }, [getPosts, pagination, pesquisa, maxPage, totalItems]);
+  useEffect(() => {});
 
   return (
     <>
@@ -56,7 +34,7 @@ const Produtos: React.FC<ProdutosProps> = ({ pesquisa }) => {
       <div className=" bg-cyan-50 flex flex-col items-center  overflow-x-scroll max-w-full ">
         <a id="pst" href=""></a>
         <section className="flex flex-col gap-4 p-4 w-full h-fit  ">
-          {...makeItens(postagem)}
+          {...makeItens(postagens)}
         </section>
 
         <div
@@ -64,9 +42,9 @@ const Produtos: React.FC<ProdutosProps> = ({ pesquisa }) => {
           className="flex justify-between  text-cyan-800 p-4 w-full"
         >
           <button
-            className={`${pagination != 0 ? "" : "invisible"}`}
+            className={`${paginacao.current != 0 ? "" : "invisible"}`}
             onClick={() => {
-              if (pagination > 0) setPagination(pagination - 1);
+              if (paginacao.current > 0) back(paginacao.current - 1);
             }}
           >
             <FontAwesomeIcon
@@ -78,26 +56,29 @@ const Produtos: React.FC<ProdutosProps> = ({ pesquisa }) => {
           <div className="flex items-center gap-2">
             <span
               className={`h-2 w-2 rounded-full bg-cyan-800 ${
-                pagination != 0 ? "" : "invisible"
+                paginacao.current != 0 ? "" : "invisible"
               }`}
             ></span>
 
             <span
               className={`h-3 w-3 rounded-full bg-cyan-600 ${
-                maxPage == 0 ? "invisible" : ""
+                paginacao.maxPage == 0 ? "invisible" : ""
               }`}
             ></span>
             <span
               className={`h-2 w-2 rounded-full bg-cyan-800 ${
-                pagination < maxPage ? "" : "invisible"
+                paginacao.current < paginacao.maxPage ? "" : "invisible"
               } `}
             ></span>
           </div>
 
           <button
-            className={`${pagination < maxPage ? "" : "invisible"}`}
+            className={`${
+              paginacao.current < paginacao.maxPage ? "" : "invisible"
+            }`}
             onClick={() => {
-              if (pagination < maxPage) setPagination(pagination + 1);
+              if (paginacao.current < paginacao.maxPage)
+                next(paginacao.current + 1);
             }}
           >
             <FontAwesomeIcon
@@ -110,47 +91,6 @@ const Produtos: React.FC<ProdutosProps> = ({ pesquisa }) => {
     </>
   );
 
-  async function getAllPosts(
-    initial: number,
-    limit: number
-  ): Promise<PostType[]> {
-    const result = await fetch(
-      `api/v1/posts?initial=${initial}&limit=${limit}`,
-      {
-        method: "GET",
-      }
-    );
-
-    return (await result.json()) as PostType[];
-  }
-
-  async function getTotalPosts(pesquisa: string) {
-    const result = await fetch("api/v1/poststotal?q=" + pesquisa || "", {
-      method: "GET",
-    });
-
-    const ttal = (await result.json()).total;
-    const max = Math.ceil(ttal / limit) - 1;
-
-    setMaxPage(max);
-    setTotalItems(ttal);
-  }
-
-  async function getSearch(
-    pesquisa: string,
-    initial: number,
-    limit: number
-  ): Promise<PostType[]> {
-    const result = await fetch(
-      "/api/v1/posts?search=" + pesquisa + `&initial=${initial}&limit=${limit}`,
-      {
-        method: "GET",
-      }
-    );
-
-    return (await result.json()) as PostType[];
-  }
-
   function makeItens(items: PostType[]) {
     if (items.length < 1)
       return [
@@ -159,7 +99,6 @@ const Produtos: React.FC<ProdutosProps> = ({ pesquisa }) => {
         </h3>,
       ];
     return items.map((item, v) => {
-      // console.log(item);
       return (
         <div
           key={v}
@@ -219,8 +158,7 @@ const Produtos: React.FC<ProdutosProps> = ({ pesquisa }) => {
                         }}
                       />
                     );
-                  } catch (e) {
-                    console.log(e);
+                  } catch {
                   } finally {
                     document.body.removeChild(ta);
                   }
