@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import Produtos from "@/layout/produtos/Produtos";
 
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface HomeProps {
   title?: string;
@@ -16,12 +16,14 @@ const Home: React.FC<HomeProps> = () => {
   const [postagens, setPostagens] = useState([]);
 
   const [paginacao, setPaginacao] = useState({
-    limite: 1,
+    limite: 40,
     current: 0,
     totalItens: 0,
     maxPage: 0,
-    setMaxPage: (n1: number, n2: number) => Math.ceil(n1 / n2) - 1,
+    setMaxPage: (n1: number, n2: number) => Math.ceil(n1 / n2),
   });
+
+  const produtosRef = useRef<HTMLInputElement>(null);
 
   const imgCarrossel = [
     {
@@ -39,31 +41,34 @@ const Home: React.FC<HomeProps> = () => {
   ];
 
   const getPosts = useCallback(async () => {
-    const posts = await (
-      await fetch(
-        `api/v1/posts?search=${search}&initial=${paginacao.current}&limit=${paginacao.limite}`
-      )
-    ).json();
-
     const total = await (
       await fetch("api/v1/poststotal?q=" + search || "")
     ).json();
 
+    const posts = await (
+      await fetch(
+        `api/v1/posts?search=${search}&initial=${
+          paginacao.current * paginacao.limite
+        }&limit=${paginacao.limite}`
+      )
+    ).json();
+
     paginacao.totalItens = total.total;
 
-    paginacao.maxPage = paginacao.setMaxPage(
-      paginacao.totalItens,
-      paginacao.limite
-    );
+    paginacao.maxPage =
+      paginacao.setMaxPage(paginacao.totalItens, paginacao.limite) - 1;
 
     setPaginacao(paginacao);
     setPostagens(posts);
     paginacao.setMaxPage(paginacao.totalItens, paginacao.limite);
+    console.log(paginacao);
+    produtosRef.current?.focus();
   }, [paginacao, search]);
 
   function mudarPagina(n: number) {
     paginacao.current = n;
     getPosts();
+
     return paginacao.current;
   }
 
@@ -75,7 +80,8 @@ const Home: React.FC<HomeProps> = () => {
     <>
       <Header />
       <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center scroll-smooth ">
-        <section className="md:max-w-[100rem] w-full">
+        <section tabIndex={0} className="md:max-w-[100rem] w-full">
+          <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
           <Carrossel2 imagens={imgCarrossel} speed={5} />
           <Produtos
             postagens={postagens}

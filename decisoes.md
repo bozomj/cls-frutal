@@ -9,7 +9,9 @@ X cadastrar com nome de usuario tudo minusculo
 - enviar post ao clicar whatsapp do vendedor. pra ele saber qual produto esta interessado
   usando a api wa.me/ não é possivel, apenas suando a API paga(Cloud API da Meta)
 
-separar os dados de <Produtos /> deixar apenas a funcao de renderizar os dados
+X separar os dados de <Produtos /> deixar apenas a funcao de renderizar os dados
+
+- separar a parte de renderizar os card de produtos usado em <Produtos />
 
 usuarios [
 diego@hotmail.com
