@@ -23,10 +23,16 @@ const Modal: React.FC<ModalProps> = ({
       >
         <div className="p-2">{children}</div>
         <div className="flex gap-2 justify-end">
-          <button className="bg-orange-800 p-2 rounded-lg" onClick={onClose}>
+          <button
+            className="bg-orange-800 p-2 rounded-lg cursor-pointer"
+            onClick={onClose}
+          >
             Cancelar
           </button>
-          <button className="bg-green-800 p-2 rounded-lg" onClick={onConfirm}>
+          <button
+            className="bg-green-800 p-2 rounded-lg cursor-pointer"
+            onClick={onConfirm}
+          >
             Confirmar
           </button>
         </div>
