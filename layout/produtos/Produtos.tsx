@@ -84,6 +84,7 @@ function Produtos<T>({
           Nada encontrado
         </h3>,
       ];
+    console.log(items);
 
     return items.map((item, v) => <Card item={item} key={`${v}`} />);
   }

@@ -116,7 +116,12 @@ async function deletePost(id: string, userId: string) {
   }
 }
 
-async function getByUserID(id: string) {
+async function getByUserID(
+  id: string,
+  search: string,
+  initial: string,
+  limit: string
+) {
   try {
     const posts = await database.query(
       `SELECT distinct on (posts.id)
@@ -128,13 +133,36 @@ async function getByUserID(id: string) {
       left join
        imagens on imagens.post_id = posts.id
       left join users on users.id = posts.user_id
-      where posts.user_id = $1
+      where posts.user_id = $1 and (posts.title ilike $2 or posts.description ilike $2 )
       order by posts.id, imagens.id
+      limit $3 offset  $4
       `,
-      [id]
+      [id, `%${search}%`, limit, initial]
     );
 
     return posts;
+  } catch (e) {
+    throw {
+      id: id,
+      message: "Erro ao listar posts por user_id",
+      cause: e,
+    };
+  }
+}
+async function getByUserIDTotal(id: string, search: string) {
+  try {
+    const total = await database.query(
+      `SELECT 
+      count(
+        posts.id
+      ) as total
+      from posts
+      where posts.user_id = $1 and (posts.title ilike $2 or posts.description ilike $2 )
+      `,
+      [id, `%${search}%`]
+    );
+
+    return total[0];
   } catch (e) {
     throw {
       id: id,
@@ -198,7 +226,9 @@ const Post = {
   deletePost,
   listAllPost,
   getByUserID,
+
   getTotal,
+  getByUserIDTotal,
 };
 
 export default Post;

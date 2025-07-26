@@ -9,7 +9,7 @@ router.get(getHandler);
 export default router.handler();
 
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
-  const search = req.query.q as string;
+  const search = (req.query.q as string) || "";
   try {
     const posts = (await Post.getTotal(search))[0];
 

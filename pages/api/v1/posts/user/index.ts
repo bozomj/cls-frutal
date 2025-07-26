@@ -10,6 +10,9 @@ router.get(gethandler);
 export default router.handler();
 
 async function gethandler(req: NextApiRequest, res: NextApiResponse) {
+  const search = (req.query.q as string) || "%";
+  const initial = (req.query.initial as string) || "";
+  const limit = (req.query.limit as string) || "";
   let userId: string;
   try {
     const { id } = autenticator.verifyToken(req.cookies.token || "");
@@ -22,9 +25,15 @@ async function gethandler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    const posts = await Post.getByUserID(userId as string);
+    const total = await Post.getByUserIDTotal(userId as string, search);
+    const posts = await Post.getByUserID(
+      userId as string,
+      search,
+      initial,
+      limit
+    );
 
-    return res.status(200).json(posts);
+    return res.status(200).json({ posts, total });
   } catch (error) {
     return res.status(400).json({ message: "erro generico", cause: error });
   }

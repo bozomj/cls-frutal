@@ -113,7 +113,7 @@ export default function DetailsPostPage() {
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       className="cursor-pointer hover:outline-3 outline-cyan-600 focus:outline-3 rounded"
-                      src={utils.getUrlImage(img.url)}
+                      src={utils.getUrlImage(img?.url || "")}
                       alt=""
                       tabIndex={10}
                       key={img?.id}
