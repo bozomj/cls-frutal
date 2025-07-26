@@ -83,6 +83,7 @@ const Home: React.FC<HomeProps> = () => {
         <section tabIndex={0} className="md:max-w-[100rem] w-full">
           <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
           <Carrossel2 imagens={imgCarrossel} speed={5} />
+
           <Produtos
             Card={ProductCard}
             postagens={postagens}

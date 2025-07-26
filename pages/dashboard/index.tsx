@@ -26,10 +26,6 @@ type UserType = {
   createdAt?: string;
 };
 
-// const handleDelete = (id: number) => {
-//     setPosts((prev) => prev.filter((p) => p.id !== id));
-//   };
-
 function Dashboard({ ctx }: { ctx: string }) {
   const [user, setUser] = useState<UserType>({});
   const [listPost, setPosts] = useState([]);
@@ -41,43 +37,43 @@ function Dashboard({ ctx }: { ctx: string }) {
     current: 0,
     totalItens: 0,
     maxPage: 0,
-    setMaxPage: (n1: number, n2: number) => Math.ceil(n1 / n2),
   });
 
-  const getMyPost = useCallback(async () => {
-    const myPosts = await fetch(
-      `api/v1/posts/user?q=&limit=${paginacao.limite}&initial=${
-        paginacao.limite * paginacao.current
-      }`,
-      {
-        method: "GET",
-      }
-    );
+  const getMyPost = useCallback(
+    async (page: number) => {
+      const initial = page * paginacao.limite;
+      const myPosts = await fetch(
+        `api/v1/posts/user?q=&limit=${paginacao.limite}&initial=${initial}`,
+        {
+          method: "GET",
+        }
+      );
 
-    const pst = await myPosts.json();
+      const pst = await myPosts.json();
+      console.log(pst);
+      setPaginacao((prev) => ({
+        ...prev,
+        totalItens: pst.total.total,
+        current: page,
+        maxPage: setMaxPage(pst.total.total, prev.limite) - 1,
+      }));
 
-    console.log(pst);
+      setPosts(pst["posts"]);
+      produtosRef.current?.focus();
+    },
+    [paginacao.limite, setPosts]
+  );
 
-    paginacao.totalItens = pst.total.total;
-    paginacao.maxPage =
-      paginacao.setMaxPage(paginacao.totalItens, paginacao.limite) - 1;
-
-    console.log(paginacao);
-    setPaginacao(paginacao);
-    setPosts(pst["posts"]);
-    produtosRef.current?.focus();
-  }, [paginacao]);
+  const setMaxPage = (total: number, limit: number) => Math.ceil(total / limit);
 
   function mudarPagina(n: number) {
     paginacao.current = n;
-    getMyPost();
-
-    return paginacao.current;
+    getMyPost(n);
   }
 
   useEffect(() => {
     getUser(ctx);
-    getMyPost();
+    getMyPost(0);
   }, [ctx, getMyPost]);
 
   return (
@@ -85,7 +81,7 @@ function Dashboard({ ctx }: { ctx: string }) {
       <header>
         <Header titulo="Dashboard" />
       </header>
-      <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between  items-center">
+      <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between  items-center scroll-smooth">
         <div className="flex-1 max-h-[250px] flex w-full">
           <section
             tabIndex={0}
@@ -132,7 +128,7 @@ function Dashboard({ ctx }: { ctx: string }) {
             </ul>
           </section>
 
-          <section className="flex-1 p-2  pl-[5.5rem] flex flex-col gap-2 w-full scroll-smooth ">
+          <section className="flex-1 p-2  pl-[5.5rem] flex flex-col gap-2 w-full scroll-smooth h-full ">
             <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
             <div className="flex flex-col gap-2">
               <div className="p-4 rounded-md gap-2 bg-cyan-800  flex items-center  outline-2 outline-cyan-100">
@@ -143,13 +139,13 @@ function Dashboard({ ctx }: { ctx: string }) {
                 <span>Cadastrar Produto</span>
               </div>
             </div>
-            <section className="flex flex-col croll-smooth">
+            <section className="flex flex-col ">
               <Produtos
                 Card={ProductCardDashboard}
                 postagens={listPost}
                 paginacao={paginacao}
-                next={(e) => mudarPagina(e)}
-                back={(e) => mudarPagina(e)}
+                next={mudarPagina}
+                back={mudarPagina}
               />
             </section>
           </section>
