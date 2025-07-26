@@ -12,8 +12,8 @@ export default router.handler();
 
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
   const search = req.query.search as string;
-  const initial = req.query.initial as string;
-  const limit = req.query.limit as string;
+  const initial = (req.query.initial as string) || "0";
+  const limit = (req.query.limit as string) || "0";
 
   console.log({ search: search });
   if (search) {

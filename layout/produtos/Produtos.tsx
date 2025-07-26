@@ -4,8 +4,8 @@ interface ProdutosProps<T> {
   postagens: T[];
   paginacao: { limite: number; current: number; maxPage: number };
   Card: React.ComponentType<{ item: T }>;
-  next: (n1: number) => number;
-  back: (n2: number) => number;
+  next: (n1: number) => void;
+  back: (n2: number) => void;
 }
 
 function Produtos<T>({
@@ -84,7 +84,6 @@ function Produtos<T>({
           Nada encontrado
         </h3>,
       ];
-    console.log(items);
 
     return items.map((item, v) => <Card item={item} key={`${v}`} />);
   }

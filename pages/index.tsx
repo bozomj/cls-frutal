@@ -21,7 +21,6 @@ const Home: React.FC<HomeProps> = () => {
     current: 0,
     totalItens: 0,
     maxPage: 0,
-    setMaxPage: (n1: number, n2: number) => Math.ceil(n1 / n2),
   });
 
   const produtosRef = useRef<HTMLInputElement>(null);
@@ -41,39 +40,40 @@ const Home: React.FC<HomeProps> = () => {
     },
   ];
 
-  const getPosts = useCallback(async () => {
-    const total = await (
-      await fetch("api/v1/poststotal?q=" + search || "")
-    ).json();
+  const getPosts = useCallback(
+    async (page: number) => {
+      const initial = page * paginacao.limite;
+      const total = await (
+        await fetch("api/v1/poststotal?q=" + search || "")
+      ).json();
 
-    const posts = await (
-      await fetch(
-        `api/v1/posts?search=${search}&initial=${
-          paginacao.current * paginacao.limite
-        }&limit=${paginacao.limite}`
-      )
-    ).json();
+      const posts = await (
+        await fetch(
+          `api/v1/posts?search=${search}&initial=${initial}&limit=${paginacao.limite}`
+        )
+      ).json();
 
-    paginacao.totalItens = total.total;
-    paginacao.maxPage =
-      paginacao.setMaxPage(paginacao.totalItens, paginacao.limite) - 1;
+      setPaginacao((prev) => ({
+        ...prev,
+        totalItens: total.total,
+        current: page,
+        maxPage: setMaxPage(total.total, prev.limite) - 1,
+      }));
 
-    setPaginacao(paginacao);
-    setPostagens(posts);
-    paginacao.setMaxPage(paginacao.totalItens, paginacao.limite);
-    console.log(paginacao);
-    produtosRef.current?.focus();
-  }, [paginacao, search]);
+      setPostagens(posts);
+      produtosRef.current?.focus();
+    },
+    [paginacao.limite, search]
+  );
 
-  function mudarPagina(n: number) {
-    paginacao.current = n;
-    getPosts();
+  const setMaxPage = (total: number, limit: number) => Math.ceil(total / limit);
 
-    return paginacao.current;
+  async function mudarPagina(n: number): Promise<void> {
+    await getPosts(n);
   }
 
   useEffect(() => {
-    getPosts();
+    getPosts(0);
   }, [getPosts]);
 
   return (
@@ -87,8 +87,8 @@ const Home: React.FC<HomeProps> = () => {
             Card={ProductCard}
             postagens={postagens}
             paginacao={paginacao}
-            next={(e) => mudarPagina(e)}
-            back={(e) => mudarPagina(e)}
+            next={mudarPagina}
+            back={mudarPagina}
           />
         </section>
 
