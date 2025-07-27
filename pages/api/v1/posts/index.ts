@@ -15,10 +15,11 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
   const initial = (req.query.initial as string) || "0";
   const limit = (req.query.limit as string) || "0";
 
-  console.log({ search: search });
+  console.log({ search: search, initial });
   if (search) {
     try {
       const posts = await Post.search(search || "", initial, limit);
+      console.log(posts);
       res.status(200).json(posts);
     } catch (error) {
       throw { message: "erro com a pesquisa", cause: error };
@@ -27,7 +28,7 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     const posts = await Post.listAllPost(initial, limit);
-
+    console.log(posts);
     res.status(200).json(posts);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar postagens", cause: error });

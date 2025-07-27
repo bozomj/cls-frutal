@@ -17,6 +17,7 @@ import ListTile from "@/components/ListTile";
 import autenticator from "@/models/autenticator";
 import Produtos from "@/layout/produtos/Produtos";
 import ProductCardDashboard from "@/components/ProductCardDasboard";
+import { PaginacaoType } from "@/components/Paginacao";
 
 type UserType = {
   id?: string;
@@ -29,51 +30,43 @@ type UserType = {
 function Dashboard({ ctx }: { ctx: string }) {
   const [user, setUser] = useState<UserType>({});
   const [listPost, setPosts] = useState([]);
-
   const produtosRef = useRef<HTMLInputElement>(null);
-
   const [paginacao, setPaginacao] = useState({
     limite: 15,
     current: 0,
     totalItens: 0,
     maxPage: 0,
   });
+  const { limite, current } = paginacao;
 
-  const getMyPost = useCallback(
-    async (page: number) => {
-      const initial = page * paginacao.limite;
-      const myPosts = await fetch(
-        `api/v1/posts/user?q=&limit=${paginacao.limite}&initial=${initial}`,
-        {
-          method: "GET",
-        }
-      );
+  const getMyPost = useCallback(async () => {
+    const initial = current * limite;
+    const myPosts = await fetch(
+      `api/v1/posts/user?q=&limit=${limite}&initial=${initial}`,
+      {
+        method: "GET",
+      }
+    );
 
-      const pst = await myPosts.json();
-      console.log(pst);
-      setPaginacao((prev) => ({
-        ...prev,
-        totalItens: pst.total.total,
-        current: page,
-        maxPage: setMaxPage(pst.total.total, prev.limite) - 1,
-      }));
+    const pst = await myPosts.json();
 
-      setPosts(pst["posts"]);
-      produtosRef.current?.focus();
-    },
-    [paginacao.limite, setPosts]
-  );
+    setPaginacao((prev) => ({
+      ...prev,
+      totalItens: pst.total.total,
+    }));
 
-  const setMaxPage = (total: number, limit: number) => Math.ceil(total / limit);
+    setPosts(pst["posts"]);
+    produtosRef.current?.focus();
+  }, [current, limite]);
 
-  function mudarPagina(n: number) {
-    paginacao.current = n;
-    getMyPost(n);
+  function mudarPagina(paginacao: PaginacaoType) {
+    setPaginacao(paginacao);
+    getMyPost();
   }
 
   useEffect(() => {
-    getUser(ctx);
-    getMyPost(0);
+    getUser();
+    getMyPost();
   }, [ctx, getMyPost]);
 
   return (
@@ -144,8 +137,7 @@ function Dashboard({ ctx }: { ctx: string }) {
                 Card={ProductCardDashboard}
                 postagens={listPost}
                 paginacao={paginacao}
-                next={mudarPagina}
-                back={mudarPagina}
+                update={(p) => mudarPagina(p)}
               />
             </section>
           </section>
@@ -154,8 +146,7 @@ function Dashboard({ ctx }: { ctx: string }) {
     </>
   );
 
-  async function getUser(id: string) {
-    console.log(id);
+  async function getUser() {
     const response = await fetch(`/api/v1/user`);
     setUser(await response.json());
   }
@@ -170,21 +161,16 @@ export default Dashboard;
 
 function redirectNotToken(ctx: GetServerSidePropsContext, destination: string) {
   const token = ctx.req.cookies.token || "";
-  console.log(token);
 
   try {
     const auth = autenticator.verifyToken(token);
-    console.log({ message: auth });
+
     return {
       props: {
         ctx: auth.id,
       },
     };
-  } catch (error) {
-    console.log({
-      redirect: error,
-    });
-
+  } catch {
     return {
       redirect: {
         destination: destination,

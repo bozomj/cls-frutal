@@ -1,5 +1,7 @@
 import Carrossel2 from "@/components/Carrossel2";
 import Header from "@/components/Header";
+import { PaginacaoType } from "@/components/Paginacao";
+
 import ProductCard from "@/components/ProductCard";
 import Produtos from "@/layout/produtos/Produtos";
 
@@ -16,11 +18,11 @@ const Home: React.FC<HomeProps> = () => {
 
   const [postagens, setPostagens] = useState([]);
 
-  const [paginacao, setPaginacao] = useState({
+  const [paginacao, setPaginacao] = useState<PaginacaoType>({
     limite: 15,
     current: 0,
-    totalItens: 0,
     maxPage: 0,
+    totalItens: 0,
   });
 
   const produtosRef = useRef<HTMLInputElement>(null);
@@ -40,40 +42,36 @@ const Home: React.FC<HomeProps> = () => {
     },
   ];
 
-  const getPosts = useCallback(
-    async (page: number) => {
-      const initial = page * paginacao.limite;
-      const total = await (
-        await fetch("api/v1/poststotal?q=" + search || "")
-      ).json();
+  const { limite, current } = paginacao;
+  const getPosts = useCallback(async () => {
+    const total = await (
+      await fetch("api/v1/poststotal?q=" + (search || ""))
+    ).json();
 
-      const posts = await (
-        await fetch(
-          `api/v1/posts?search=${search}&initial=${initial}&limit=${paginacao.limite}`
-        )
-      ).json();
+    const initial = current * limite;
+    const posts = await (
+      await fetch(
+        `api/v1/posts?search=${search}&initial=${initial}&limit=${limite}`
+      )
+    ).json();
 
-      setPaginacao((prev) => ({
-        ...prev,
-        totalItens: total.total,
-        current: page,
-        maxPage: setMaxPage(total.total, prev.limite) - 1,
-      }));
+    setPaginacao((prev) => ({
+      ...prev,
+      totalItens: total.total,
+    }));
+    setPostagens(posts);
 
-      setPostagens(posts);
-      produtosRef.current?.focus();
-    },
-    [paginacao.limite, search]
-  );
+    produtosRef.current?.focus();
+  }, [current, limite, search]);
 
-  const setMaxPage = (total: number, limit: number) => Math.ceil(total / limit);
+  async function mudarPagina(paginacao: PaginacaoType): Promise<void> {
+    setPaginacao(paginacao);
 
-  async function mudarPagina(n: number): Promise<void> {
-    await getPosts(n);
+    await getPosts();
   }
 
   useEffect(() => {
-    getPosts(0);
+    getPosts();
   }, [getPosts]);
 
   return (
@@ -88,8 +86,7 @@ const Home: React.FC<HomeProps> = () => {
             Card={ProductCard}
             postagens={postagens}
             paginacao={paginacao}
-            next={mudarPagina}
-            back={mudarPagina}
+            update={(p) => mudarPagina(p)}
           />
         </section>
 

@@ -13,16 +13,13 @@ async function gethandler(req: NextApiRequest, res: NextApiResponse) {
   const search = (req.query.q as string) || "%";
   const initial = (req.query.initial as string) || "0";
   const limit = (req.query.limit as string) || "15";
+
   let userId: string;
   try {
     const { id } = autenticator.verifyToken(req.cookies.token || "");
-    console.log("id usuario", id);
-
     userId = id;
   } catch (e) {
-    return res
-      .status(401)
-      .json({ message: "Unauthorized", cause: e, user: userId! });
+    return res.status(401).json({ message: "Unauthorized", cause: e });
   }
 
   try {
