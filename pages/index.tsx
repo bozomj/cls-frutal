@@ -66,7 +66,12 @@ const Home: React.FC<HomeProps> = () => {
     <>
       <Header />
       <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center scroll-smooth ">
-        <section tabIndex={0} className="md:max-w-[100rem] w-full">
+        <section
+          tabIndex={0}
+          className="md:max-w-[100rem] w-full
+        md:w-[720px]
+        "
+        >
           <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
           <Carrossel2 imagens={imgCarrossel} speed={5} />
 

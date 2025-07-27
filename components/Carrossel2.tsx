@@ -54,7 +54,8 @@ const Carrossel2: React.FC<Carrossel2Props> = ({ imagens, speed }) => {
       onTransitionEnd={async () => {
         animar();
       }}
-      className="flex w-[100%] overflow-hidden h-[150px] "
+      className="flex w-[100%] overflow-hidden h-[150px] 
+      md:h-[250px] "
     >
       <div ref={carrosselref} className="flex transition-all duration-700">
         {imgs.map((e, index) => {
