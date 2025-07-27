@@ -98,10 +98,9 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
     id: string
     //  callback: () => void
   ) {
-    const result = await fetch(`api/v1/posts/${id}`, {
+    await fetch(`api/v1/posts/${id}`, {
       method: "DELETE",
     });
-    console.log(await result.json());
 
     // callback();
   }

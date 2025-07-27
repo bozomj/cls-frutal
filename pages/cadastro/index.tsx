@@ -8,7 +8,6 @@ export default function Cadastro() {
   const [phoneValue, setPhonevalue] = useState("");
 
   const phoneHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e);
     const number = e.target.value.replace(/\D/g, "").slice(0, 15);
     setPhonevalue(number);
   };
