@@ -11,7 +11,7 @@ X cadastrar com nome de usuario tudo minusculo
 
 X separar os dados de <Produtos /> deixar apenas a funcao de renderizar os dados
 
-- separar a parte de renderizar os card de produtos usado em <Produtos />
+X separar a parte de renderizar os card de produtos usado em <Produtos />
 
 usuarios [
 diego@hotmail.com

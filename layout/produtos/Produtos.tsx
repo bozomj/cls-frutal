@@ -1,18 +1,11 @@
-import Paginacao, { PaginacaoType } from "@/components/Paginacao";
+import Paginacao from "@/components/Paginacao";
 
 interface ProdutosProps<T> {
   postagens: T[];
-  paginacao: PaginacaoType;
   Card: React.ComponentType<{ item: T }>;
-  update: (parinacao: PaginacaoType) => void;
 }
 
-function Produtos<T>({
-  postagens = [],
-  paginacao = { limite: 0, current: 0, maxPage: 0, totalItens: 0 },
-  Card,
-  update,
-}: ProdutosProps<T>) {
+function Produtos<T>({ postagens = [], Card }: ProdutosProps<T>) {
   return (
     <>
       <div className=" bg-cyan-50 flex flex-col items-center  overflow-x-scroll max-w-full ">
@@ -20,7 +13,7 @@ function Produtos<T>({
         <section className="flex flex-col gap-4 p-4 w-full h-fit  ">
           {makeItens(postagens)}
         </section>
-        <Paginacao paginacao={paginacao} update={update} />
+        <Paginacao />
       </div>
     </>
   );

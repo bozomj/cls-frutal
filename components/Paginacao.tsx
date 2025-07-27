@@ -1,3 +1,4 @@
+import { usePagination } from "@/contexts/PaginactionContext";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -10,19 +11,11 @@ export type PaginacaoType = {
 
 interface PaginacaoProps {
   className?: string;
-  paginacao: PaginacaoType;
-  // next: (paginacao: PaginacaoType) => void;
-  // back: (paginacao: PaginacaoType) => void;
-  update: (paginacao: PaginacaoType) => void;
 }
 
-const Paginacao: React.FC<PaginacaoProps> = ({
-  className,
-  paginacao = { limite: 0, current: 0, maxPage: 0, totalItens: 0 },
-  update,
-}: // next,
-// back,
-PaginacaoProps) => {
+const Paginacao: React.FC<PaginacaoProps> = ({ className }: PaginacaoProps) => {
+  const { paginacao, setPaginacao } = usePagination();
+
   const maxPage = Math.max(
     0,
     Math.ceil(paginacao.totalItens / paginacao.limite) - 1
@@ -37,12 +30,12 @@ PaginacaoProps) => {
         className={`${paginacao.current != 0 ? "" : "invisible"}`}
         onClick={() => {
           if (paginacao.current > 0) {
-            const novaPaginacao = {
-              ...paginacao,
+            setPaginacao((prev) => ({
+              ...prev,
               current: paginacao.current - 1,
               maxPage: maxPage,
-            };
-            update(novaPaginacao);
+            }));
+            // update(novaPaginacao);
           }
         }}
       >
@@ -73,12 +66,11 @@ PaginacaoProps) => {
         className={`${paginacao.current < maxPage ? "" : "invisible"}`}
         onClick={() => {
           if (paginacao.current < maxPage) {
-            const novaPaginacao = {
-              ...paginacao,
+            setPaginacao((prev) => ({
+              ...prev,
               current: paginacao.current + 1,
               maxPage: maxPage,
-            };
-            update(novaPaginacao);
+            }));
           }
         }}
       >

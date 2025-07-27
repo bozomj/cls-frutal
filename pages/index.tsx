@@ -1,8 +1,8 @@
 import Carrossel2 from "@/components/Carrossel2";
 import Header from "@/components/Header";
-import { PaginacaoType } from "@/components/Paginacao";
 
 import ProductCard from "@/components/ProductCard";
+import { usePagination } from "@/contexts/PaginactionContext";
 import Produtos from "@/layout/produtos/Produtos";
 
 import { useRouter } from "next/router";
@@ -17,13 +17,7 @@ const Home: React.FC<HomeProps> = () => {
   const search = (query.q as string) ?? "";
 
   const [postagens, setPostagens] = useState([]);
-
-  const [paginacao, setPaginacao] = useState<PaginacaoType>({
-    limite: 15,
-    current: 0,
-    maxPage: 0,
-    totalItens: 0,
-  });
+  const { paginacao, setPaginacao } = usePagination();
 
   const produtosRef = useRef<HTMLInputElement>(null);
 
@@ -60,19 +54,13 @@ const Home: React.FC<HomeProps> = () => {
       totalItens: total.total,
     }));
     setPostagens(posts);
-
-    produtosRef.current?.focus();
-  }, [current, limite, search]);
-
-  async function mudarPagina(paginacao: PaginacaoType): Promise<void> {
-    setPaginacao(paginacao);
-
-    await getPosts();
-  }
+  }, [current, limite, search, setPaginacao]);
 
   useEffect(() => {
     getPosts();
   }, [getPosts]);
+
+  useEffect(() => produtosRef.current?.focus());
 
   return (
     <>
@@ -82,12 +70,7 @@ const Home: React.FC<HomeProps> = () => {
           <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
           <Carrossel2 imagens={imgCarrossel} speed={5} />
 
-          <Produtos
-            Card={ProductCard}
-            postagens={postagens}
-            paginacao={paginacao}
-            update={(p) => mudarPagina(p)}
-          />
+          <Produtos Card={ProductCard} postagens={postagens} />
         </section>
 
         <footer className="min-h-[10rem] min-w-full bg-cyan-950 p-4 flex flex-col">

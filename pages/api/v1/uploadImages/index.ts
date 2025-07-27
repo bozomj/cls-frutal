@@ -11,9 +11,7 @@ router.post(postHandler);
 router.get(getHandler);
 
 const uploadDir = path.join(process.cwd(), "/public/uploads");
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir);
-}
+if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
 
 export default router.handler();
 
