@@ -22,10 +22,10 @@ function loadImage(url: string | undefined): Promise<string | undefined> {
 function formatarData(data: string) {
   const diasSemana = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
   const d = new Date(data);
-  const dia = String(d.getUTCDate()).padStart(2, "0");
-  const mes = String(d.getUTCMonth() + 1).padStart(2, "0"); // Mês começa do zero
-  const ano = d.getUTCFullYear();
-  const diaSemana = diasSemana[d.getUTCDay()];
+  const dia = String(d.getDate()).padStart(2, "0");
+  const mes = String(d.getMonth() + 1).padStart(2, "0"); // Mês começa do zero
+  const ano = d.getFullYear();
+  const diaSemana = diasSemana[d.getDay()];
 
   return `${diaSemana} ${dia}/${mes}/${ano}`;
 }

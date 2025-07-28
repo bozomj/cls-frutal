@@ -226,7 +226,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                               e = utils.stringForDecimalNumber(e).toFixed(2);
                             }
 
-                            if (e != item.valor && e != "0") {
+                            if (e != item.valor && e != "0.00") {
                               setButtonDisabled(false);
                               setItem((p) => ({ ...p, valor: e! }));
                             }

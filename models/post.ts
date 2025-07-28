@@ -225,12 +225,21 @@ async function getById(id: string) {
 async function search(txt: string, initial: string, limit: string | null) {
   try {
     const posts = await database.query(
-      `select distinct on (posts.id) 
-        posts.*,
-        imagens.url as imageurl
-        from posts left join imagens on imagens.post_id = posts.id
-        where posts.title ilike $1 or posts.description ilike $1
-        limit $2 offset $3
+      `WITH ultimos_posts AS (
+        SELECT *
+        FROM posts
+        WHERE title ILIKE $1 OR description ILIKE $1
+        ORDER BY created_at DESC
+        LIMIT $2 OFFSET $3
+      )
+      SELECT
+        p.*,
+        i.url AS imageurl
+      FROM ultimos_posts p
+      LEFT JOIN LATERAL (
+        SELECT url FROM imagens WHERE post_id = p.id ORDER BY id ASC LIMIT 1
+      ) i ON true;
+
         `,
       [`%${txt}%`, limit, initial]
     );
