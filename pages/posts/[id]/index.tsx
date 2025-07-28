@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-regular-svg-icons";
+import { faEdit, faUser } from "@fortawesome/free-regular-svg-icons";
 import { faShare } from "@fortawesome/free-solid-svg-icons";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 
 import utils from "@/utils";
+import { GetServerSidePropsContext } from "next";
+import Prompt, { TypePrompt } from "@/components/Prompt";
 
 async function getPost(id: string) {
   const res = await fetch(`/api/v1/posts/${id}`);
@@ -20,13 +22,18 @@ type Imagem = {
   post_id: string;
 };
 
-export default function DetailsPostPage() {
+type Props = {
+  user_id?: string;
+};
+
+export default function DetailsPostPage({ user_id }: Props) {
   const router = useRouter();
   const id = router.query.id as string;
   const [imagens, setImagens] = useState<Imagem[]>([]);
   const [imgPrincial, setImgPrincipal] = useState<string>();
 
   const [render, setRender] = useState(false);
+  const [prompt, setPrompt] = useState(<></>);
 
   const [item, setItem] = useState({
     id: "",
@@ -37,6 +44,8 @@ export default function DetailsPostPage() {
     description: "",
     name: "",
     phone: "",
+    user_id: "",
+    updated_at: "",
   });
 
   useEffect(() => {
@@ -62,6 +71,9 @@ export default function DetailsPostPage() {
 
     im?.classList.toggle("hidden");
   }
+  function IsPostUserId() {
+    return item.user_id == user_id;
+  }
 
   if (!render) return <></>;
 
@@ -69,6 +81,7 @@ export default function DetailsPostPage() {
     <>
       <header className="">
         <Header />
+
         <meta property="og:title" content={item.title} />
         <meta property="og:image" content={item.imagens[0]} />
       </header>
@@ -76,7 +89,7 @@ export default function DetailsPostPage() {
         <section className="flex flex-col gap-2 w-full">
           <div
             id="imgfull"
-            className="w-full absolute top-0 z-[5]  left-0 min-h-[100vh] bg-cyan-950/50 flex justify-center items-center px-1 hidden"
+            className="w-full absolute top-0 z-[5] left-0 min-h-[100vh] bg-cyan-950/50 flex justify-center items-center px-1 hidden"
             onClick={() => {
               toggleImg();
             }}
@@ -160,17 +173,110 @@ export default function DetailsPostPage() {
             </div>
 
             <div>
+              {prompt}
               <div className="flex justify-between items-center">
-                <h1 className="text-xl font-bold  ">{item.title}</h1>
+                <h1 className="text-xl font-bold  ">
+                  {IsPostUserId() && (
+                    <FontAwesomeIcon
+                      icon={faEdit}
+                      className="text-xl pr-4 text-green-800 cursor-pointer"
+                      onClick={() => {
+                        setPrompt(
+                          <Prompt
+                            type={TypePrompt.text}
+                            msg={"Editar Titulo"}
+                            value={item.title}
+                            confirm={(e) => {
+                              if (e) {
+                                setItem((p) => ({ ...p, title: e! }));
+                              }
+                              setPrompt(<></>);
+                            }}
+                          />
+                        );
+                      }}
+                    />
+                  )}
+                  {item.title}
+                </h1>
                 <span className="text-[0.8em]">
                   Publicado {utils.formatarData(item.created_at)}
+                  {item.updated_at}
                 </span>
               </div>
-
-              <span className="font-bold text-green-700">R$: {item.valor}</span>
+              <span className="font-bold text-green-700 ">
+                {IsPostUserId() && (
+                  <FontAwesomeIcon
+                    className="text-xl pr-4 text-green-800 cursor-pointer"
+                    icon={faEdit}
+                    onClick={() => {
+                      setPrompt(
+                        <Prompt
+                          msg={"Editar Valor"}
+                          value={item.valor}
+                          type={TypePrompt.money}
+                          confirm={(e) => {
+                            if (e != null) {
+                              e = utils.extractNumberInString(e);
+                              e = utils.stringForDecimalNumber(e).toString();
+                            }
+                            if (e) {
+                              setItem((p) => ({ ...p, valor: e! }));
+                            }
+                            setPrompt(<></>);
+                          }}
+                        />
+                      );
+                    }}
+                  />
+                )}
+                R$: {item.valor}{" "}
+              </span>
               <div className="border-t-1 border-t-gray-400 py-2 my-4">
                 <h2 className="font-bold">Sobre este item</h2>
-                <p>{item.description}</p>
+                <div className="flex">
+                  {IsPostUserId() && (
+                    <FontAwesomeIcon
+                      icon={faEdit}
+                      className="text-xl pr-4 text-green-800 cursor-pointer"
+                      onClick={() => {
+                        setPrompt(
+                          <Prompt
+                            msg={"Editar Descrição"}
+                            value={item.description}
+                            multiple={true}
+                            confirm={(e) => {
+                              if (e) {
+                                setItem((p) => ({ ...p, description: e! }));
+                              }
+                              setPrompt(<></>);
+                            }}
+                          />
+                        );
+                      }}
+                    />
+                  )}
+                  <p>{item.description}</p>
+                </div>
+                {IsPostUserId() && (
+                  <div className="border-t-1 border-gray-400 flex justify-end py-4 mt-4">
+                    <button
+                      type="button"
+                      className="bg-cyan-600 p-2 rounded-md text-white font-bold "
+                      onClick={async () => {
+                        const result = await fetch("/api/v1/posts", {
+                          method: "PUT",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify(item),
+                        });
+
+                        console.log(await result.json());
+                      }}
+                    >
+                      Salvar
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </section>
@@ -178,4 +284,15 @@ export default function DetailsPostPage() {
       </main>
     </>
   );
+}
+
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+  const result = utils.redirectNotToken(ctx, "");
+  if ("redirect" in result) return { props: { user_id: null } };
+
+  const { ctx: user_id } = result.props;
+
+  return {
+    props: { user_id }, // enviado como props para a página
+  };
 }

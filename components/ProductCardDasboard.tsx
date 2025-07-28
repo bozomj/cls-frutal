@@ -5,6 +5,7 @@ import { useState } from "react";
 import { faPhone } from "@fortawesome/free-solid-svg-icons";
 import Modal from "./Modal";
 import utils from "@/utils";
+import { faEdit } from "@fortawesome/free-regular-svg-icons";
 
 interface ProductCardDashboardProps {
   item: PostType;
@@ -26,8 +27,14 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
 
   return (
     <article
-      className={`bg-gray-100 relative  p-2 rounded-2xl flex justify-center ${className}`}
+      className={`bg-gray-100 relative flex-col  gap-2 p-2 rounded-2xl flex justify-center ${className}`}
     >
+      <a
+        href={`/posts/${item.id}`}
+        className="bg-green-800 rounded-full w-12 h-12 flex self-end hover:bg-green-500 items-center justify-center text-2xl"
+      >
+        <FontAwesomeIcon icon={faEdit} />
+      </a>
       <div className="flex flex-col w-full  overflow-hidden h-full gap-2 ">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img

@@ -17,7 +17,7 @@ X separar a parte de renderizar os card de produtos usado em <Produtos />
 
 - adicionar setas de navegação de imagens na pagina do post
 
-- adicionar editar em /post/[id]
+- adicionar editar em /post/[id] - precisa criar campo em post updated_at
 
 usuarios [
 diego@hotmail.com

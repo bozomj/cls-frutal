@@ -14,10 +14,10 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import Header from "@/components/Header";
 import ListTile from "@/components/ListTile";
 
-import autenticator from "@/models/autenticator";
 import Produtos from "@/layout/produtos/Produtos";
 import ProductCardDashboard from "@/components/ProductCardDasboard";
 import { usePagination } from "@/contexts/PaginactionContext";
+import utils from "@/utils";
 
 type UserType = {
   id?: string;
@@ -157,27 +157,6 @@ function Dashboard({ ctx }: { ctx: string }) {
 //executa antes de carregar
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
-) => redirectNotToken(context, "/login");
+) => utils.redirectNotToken(context, "/login");
 
 export default Dashboard;
-
-function redirectNotToken(ctx: GetServerSidePropsContext, destination: string) {
-  const token = ctx.req.cookies.token || "";
-
-  try {
-    const auth = autenticator.verifyToken(token);
-
-    return {
-      props: {
-        ctx: auth.id,
-      },
-    };
-  } catch {
-    return {
-      redirect: {
-        destination: destination,
-        permanent: false,
-      },
-    };
-  }
-}
