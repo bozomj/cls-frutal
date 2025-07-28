@@ -59,6 +59,26 @@ async function create(pst: PostType) {
   }
 }
 
+async function update(pst: PostType) {
+  const query =
+    "UPDATE posts SET title = $1, description = $2, valor = $3, categoria_id = $4 WHERE id = $5 and user_id = $6 RETURNING *";
+  try {
+    return await database.query(query, [
+      pst.title,
+      pst.description,
+      pst.valor,
+      pst.categoria_id,
+      pst.id,
+      pst.user_id,
+    ]);
+  } catch (error) {
+    throw {
+      message: new Error("Erro ao fazer alteração"),
+      cause: error,
+    };
+  }
+}
+
 async function getTotal(search: string) {
   try {
     const total = await database.query(
@@ -200,7 +220,7 @@ async function getById(id: string) {
   }
 }
 
-async function search(txt: string, initial: string, limit: string) {
+async function search(txt: string, initial: string, limit: string | null) {
   try {
     const posts = await database.query(
       `select distinct on (posts.id) 
@@ -226,6 +246,7 @@ const Post = {
   deletePost,
   listAllPost,
   getByUserID,
+  update,
 
   getTotal,
   getByUserIDTotal,
