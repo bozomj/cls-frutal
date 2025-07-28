@@ -73,6 +73,7 @@ export default function DetailsPostPage({ user_id }: Props) {
     const im = document.getElementById("imgfull");
 
     im?.classList.toggle("hidden");
+    im?.classList.toggle("flex");
   }
   function IsPostUserId() {
     return item.user_id == user_id;
@@ -92,7 +93,7 @@ export default function DetailsPostPage({ user_id }: Props) {
         <section className="flex flex-col gap-2 w-full">
           <div
             id="imgfull"
-            className="w-full absolute top-0 z-[5] left-0 min-h-[100vh] bg-cyan-950/50 flex justify-center items-center px-1 hidden"
+            className="w-full absolute top-0 z-[5] left-0 min-h-[100vh] bg-cyan-950/50 justify-center items-center px-1 hidden"
             onClick={() => {
               toggleImg();
             }}
@@ -108,7 +109,7 @@ export default function DetailsPostPage({ user_id }: Props) {
 
           <section
             id="lista_imagems"
-            className="flex gap-1 border-3 border-cyan-900 p-2 rounded-2xl"
+            className="flex gap-1 border-3 border-cyan-900 p-2 rounded-2xl w-fit max-w-full"
           >
             <div className="w-[400px] block cursor-pointer    order-2 self-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -177,7 +178,7 @@ export default function DetailsPostPage({ user_id }: Props) {
 
             <div>
               {prompt}
-              <div className="flex justify-between items-center">
+              <div className="flex  justify-between items-start flex-col-reverse">
                 <h1 className="text-xl font-bold  ">
                   {IsPostUserId() && (
                     <FontAwesomeIcon
@@ -236,7 +237,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                     }}
                   />
                 )}
-                R$: {item.valor}{" "}
+                <span>R$: {item.valor}</span>
               </span>
               <div className="border-t-1 border-t-gray-400 py-2 my-4">
                 <h2 className="font-bold">Sobre este item</h2>
@@ -283,7 +284,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                         });
 
                         const updated = await result.json();
-                        console.log(buttonDisabled);
+
                         if (updated.id) {
                           setAlert(
                             <Alert
@@ -291,6 +292,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                               onClose={() => setAlert(<></>)}
                             />
                           );
+                          setButtonDisabled(true);
                         }
                       }}
                     >
