@@ -2,48 +2,75 @@ import { useEffect, useRef, useState } from "react";
 
 interface CarrosselProps {
   imagens: Record<string, string>[];
+  speed: number;
+  className?: string;
 }
 
-const Carrossel: React.FC<CarrosselProps> = ({ imagens }) => {
-  const [imgs, setImgs] = useState(imagens);
-  const carrosselref = useRef<HTMLDivElement | null>(null);
+/**
+ *
+ * @param imagens Lista de array {src: string}
+ * @param speed Numero em segundos /[ vai ser multiplicado por 1000 - milesegundos ]/
+ * @returns
+ */
+const Carrossel: React.FC<CarrosselProps> = ({ imagens, speed, className }) => {
+  //repete o primeiro item para o ultimo, melor funcionamento
+  const imgs = [...imagens, imagens[0]];
 
-  async function changeImagem() {
-    setImgs((prev) => {
-      return [...prev.slice(1), prev[0]];
-    });
-    carrosselref.current?.children[0].classList.toggle("w-full");
+  function multiplicador(n: number, fator = 1000) {
+    return n * fator;
+  }
+  const [velocidade, setSpeed] = useState(multiplicador(speed));
+  const carrosselref = useRef<HTMLDivElement | null>(null);
+  const [index, setIndex] = useState(1);
+
+  function animar() {
+    if (index < imgs.length - 1) {
+      setSpeed(multiplicador(speed));
+      setIndex((p) => p + 1);
+      carrosselref.current!.style.transition = "transform 0.7s ease";
+    } else {
+      setIndex(0);
+      setSpeed(multiplicador(0.01));
+      carrosselref.current!.style.transition = "none";
+      carrosselref.current!.style.transform = `translateX(0)`;
+
+      void carrosselref.current!.offsetWidth;
+      carrosselref.current!.style.transition = "transform 0.05s ease";
+    }
   }
 
   useEffect(() => {
-    function translate() {
-      if (imgs.length <= 1) return;
-      setTimeout(() => {
-        carrosselref.current?.children[0].classList.toggle("w-full");
-        carrosselref.current?.children[0].classList.add("w-0");
-      }, 1500);
-    }
-    translate();
-  }, [imgs]);
+    const timeout = setTimeout(() => {
+      if (carrosselref != null)
+        carrosselref.current!.style.transform = `translateX(-${100 * index}%)`;
+    }, velocidade);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  });
+
   return (
     <div
-      ref={carrosselref}
       onTransitionEnd={async () => {
-        await changeImagem();
+        animar();
       }}
-      className="flex w-[100%] overflow-hidden h-[150px] "
+      className={`flex w-[100%] overflow-hidden h-[150px] 
+      md:h-[250px] ${className}`}
     >
-      {imgs.map((e) => {
-        return (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            key={e.src}
-            src={e.src}
-            alt=""
-            className="transition-all duration-700 flex-shrink-0 w-full "
-          />
-        );
-      })}
+      <div ref={carrosselref} className="flex transition-all duration-700">
+        {imgs.map((e, index) => {
+          return (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              key={index}
+              src={e.src}
+              alt=""
+              className="transition-all duration-700 flex-shrink-0 w-full "
+            />
+          );
+        })}
+      </div>
     </div>
   );
 };

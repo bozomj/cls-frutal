@@ -3,14 +3,17 @@ import Paginacao from "@/components/Paginacao";
 interface ProdutosProps<T> {
   postagens: T[];
   Card: React.ComponentType<{ item: T }>;
+  className?: string;
 }
 
-function Produtos<T>({ postagens = [], Card }: ProdutosProps<T>) {
+function Produtos<T>({ postagens = [], Card, className }: ProdutosProps<T>) {
   return (
     <>
-      <div className=" bg-cyan-50 flex flex-col items-center  overflow-x-scroll max-w-full ">
+      <div
+        className={`shadow-sm shadow-gray-400 flex flex-col items-center   max-w-full rounded-2xl bg-white ${className}`}
+      >
         <a id="pst" href=""></a>
-        <section className="flex flex-col gap-4 p-4 w-full h-fit  ">
+        <section className="flex flex-col gap-4 p-4 w-full h-fit">
           {makeItens(postagens)}
         </section>
         <Paginacao />

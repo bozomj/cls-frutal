@@ -13,6 +13,12 @@ X separar os dados de <Produtos /> deixar apenas a funcao de renderizar os dados
 
 X separar a parte de renderizar os card de produtos usado em <Produtos />
 
+#resetar paginationContext quando clicar em link que muda pagina
+
+- adicionar setas de navegação de imagens na pagina do post
+
+- adicionar editar em /post/[id]
+
 usuarios [
 diego@hotmail.com
 matheus@hotmail.com | senha 12345

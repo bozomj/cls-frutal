@@ -163,7 +163,7 @@ export default function DetailsPostPage() {
               <div className="flex justify-between items-center">
                 <h1 className="text-xl font-bold  ">{item.title}</h1>
                 <span className="text-[0.8em]">
-                  Publicado {formatarData(item.created_at)}
+                  Publicado {utils.formatarData(item.created_at)}
                 </span>
               </div>
 
@@ -178,15 +178,4 @@ export default function DetailsPostPage() {
       </main>
     </>
   );
-}
-
-function formatarData(data: string) {
-  const diasSemana = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
-  const d = new Date(data);
-  const dia = String(d.getUTCDate()).padStart(2, "0");
-  const mes = String(d.getUTCMonth() + 1).padStart(2, "0"); // Mês começa do zero
-  const ano = d.getUTCFullYear();
-  const diaSemana = diasSemana[d.getUTCDay()];
-
-  return `${diaSemana} ${dia}/${mes}/${ano}`;
 }

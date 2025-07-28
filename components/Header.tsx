@@ -10,12 +10,15 @@ import router from "next/router";
 
 import React, { useEffect } from "react";
 import { useState } from "react";
+import { usePagination } from "@/contexts/PaginactionContext";
+
 interface HeaderProps {
   titulo?: string;
   onSubmit?: (event: string) => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
+  const { resetPagination } = usePagination();
   const [toggle, setToggle] = useState(true);
   const [subH, alter] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,9 +37,15 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
 
   return (
-    <header className="bg-cyan-900 p-4 relative w-full z-[1] flex flex-col gap-2  md:items-stretch ">
+    <header className="bg-cyan-900 text-white p-4 relative w-full z-[1] flex flex-col gap-2  md:items-stretch ">
       <div className="flex justify-between  ">
-        <Link href={"/"} className="">
+        <Link
+          href={"/"}
+          className=""
+          onClick={() => {
+            resetPagination();
+          }}
+        >
           <Image
             src="/img/logo.svg"
             width="240"
@@ -51,6 +60,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
             <Link
               href={isAuthenticated.status ? "/dashboard" : "/login"}
               className="flex items-center gap-2 text-white hover:text-cyan-300 transition-colors"
+              onClick={() => resetPagination()}
             >
               <FontAwesomeIcon icon={faUser} className="text-2xl" />
             </Link>
@@ -77,7 +87,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
             e.preventDefault();
 
             onSubmit?.(searchTerm);
-
+            resetPagination();
             router.replace(`/?q=${encodeURIComponent(searchTerm)}`);
           }}
           className=" flex gap-2  flex-[1] justify-end  items-center"
@@ -98,7 +108,8 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
         </form>
         <nav
           id="submenu"
-          className={`bg-cyan-900 md:h-auto md:w-fit w-full peer-checked:md:h-auto overflow-y-hidden duration-[400ms] px-4 h-0 peer-checked:h-[${subH}px]    text-right  absolute left-0 top-[100%] md:relative `}
+          className={`bg-cyan-900 w-full peer-checked:md:h-auto overflow-y-hidden duration-[400ms] px-4 h-0     text-right  absolute left-0 top-[100%]  
+          peer-checked:h-[${subH}px] md:relative md:h-auto md:w-fit md:px-0`}
           style={{ height: isMobile && !toggle ? `${subH}px` : undefined }}
         >
           <ul className="flex flex-col justify-end pb-4 md:pb-0  w-full  md:gap-4 md:flex-row ">

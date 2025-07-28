@@ -29,14 +29,13 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
       className={`bg-gray-100 relative  p-2 rounded-2xl flex justify-center ${className}`}
     >
       <div className="flex flex-col w-full  overflow-hidden h-full gap-2 ">
-        <div className="flex justify-center bg-gray-200 rounded-2xl overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            className="flex-1   bg-gray-200   min-h-[250px]"
-            src={utils.getUrlImage(item.imageurl)}
-            alt={""}
-          />
-        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          className="bg-gray-200 max-h-[20rem] w-fit self-center"
+          src={utils.getUrlImage(item.imageurl)}
+          alt={""}
+        />
+
         <div className=" flex text-gray-900 gap-2 truncate overflow-hidden flex-col">
           <span className="text-2xl">{item.title ?? ""}</span>
           <span className="">{item.description ?? ""}</span>

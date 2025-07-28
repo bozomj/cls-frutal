@@ -17,7 +17,7 @@ import ListTile from "@/components/ListTile";
 import autenticator from "@/models/autenticator";
 import Produtos from "@/layout/produtos/Produtos";
 import ProductCardDashboard from "@/components/ProductCardDasboard";
-import { PaginacaoType } from "@/components/Paginacao";
+import { usePagination } from "@/contexts/PaginactionContext";
 
 type UserType = {
   id?: string;
@@ -31,12 +31,7 @@ function Dashboard({ ctx }: { ctx: string }) {
   const [user, setUser] = useState<UserType>({});
   const [listPost, setPosts] = useState([]);
   const produtosRef = useRef<HTMLInputElement>(null);
-  const [paginacao, setPaginacao] = useState({
-    limite: 15,
-    current: 0,
-    totalItens: 0,
-    maxPage: 0,
-  });
+  const { paginacao, setPaginacao } = usePagination();
   const { limite, current } = paginacao;
 
   const getMyPost = useCallback(async () => {
@@ -57,12 +52,7 @@ function Dashboard({ ctx }: { ctx: string }) {
 
     setPosts(pst["posts"]);
     produtosRef.current?.focus();
-  }, [current, limite]);
-
-  function mudarPagina(paginacao: PaginacaoType) {
-    setPaginacao(paginacao);
-    getMyPost();
-  }
+  }, [current, limite, setPaginacao]);
 
   useEffect(() => {
     getUser();
@@ -74,19 +64,28 @@ function Dashboard({ ctx }: { ctx: string }) {
       <header>
         <Header titulo="Dashboard" />
       </header>
-      <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between  items-center scroll-smooth">
-        <div className="flex-1 max-h-[250px] flex w-full">
+      <main
+        className="flex-auto overflow-y-scroll text-white bg-gray-300 flex-col flex justify-between  items-center scroll-smooth
+      
+      "
+      >
+        <div className="flex-1 flex w-full">
           <section
             tabIndex={0}
-            className=" z-[999] group bg-cyan-950 max-w-[5rem] overflow-x-hidden   p-4 flex items-start flex-col gap-2 hover:max-w-[25rem]   transition-all duration-500 border-r-2 
-        focus:max-w-[25rem]
-        fixed h-full
+            className=" z-[999] group bg-cyan-950 max-w-[5rem] overflow-x-hidden   p-4 flex items-start flex-col gap-2 hover:max-w-[25rem]   transition-all duration-500  
+                border-r-10 border-cyan-950
+        focus:max-w-[25rem] fixed h-full 
+         md:min-w-[25rem] md:static md:h-auto
         
         "
           >
-            <ul className="flex flex-col  gap-2">
+            <ul className="flex flex-col  gap-2 md:fixed">
               {/* <div className="flex flex-col  gap-2"> */}
-              <span className="group-focus:w-[8rem] group-focus:h-[8rem] rounded-full  w-[3rem] h-[3rem] group-hover:block   bg-white   group-hover:w-[8rem] group-hover:h-[8rem] transition-all duration-500"></span>
+              <span
+                className="group-focus:w-[8rem] group-focus:h-[8rem] rounded-full  w-[3rem] h-[3rem] group-hover:block   bg-white   group-hover:w-[8rem] group-hover:h-[8rem] transition-all duration-500
+              md:w-[8rem] md:h-[8rem] 
+              "
+              ></span>
 
               <ListTile
                 title={user.name ?? ""}
@@ -121,7 +120,11 @@ function Dashboard({ ctx }: { ctx: string }) {
             </ul>
           </section>
 
-          <section className="flex-1 p-2  pl-[5.5rem] flex flex-col gap-2 w-full scroll-smooth h-full ">
+          <section
+            className="flex-1 p-2  pl-[5.5rem] flex flex-col gap-2 w-full scroll-smooth h-full
+          md:p-2
+           "
+          >
             <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
             <div className="flex flex-col gap-2">
               <div className="p-4 rounded-md gap-2 bg-cyan-800  flex items-center  outline-2 outline-cyan-100">
@@ -136,8 +139,7 @@ function Dashboard({ ctx }: { ctx: string }) {
               <Produtos
                 Card={ProductCardDashboard}
                 postagens={listPost}
-                paginacao={paginacao}
-                update={(p) => mudarPagina(p)}
+                className="rounded-2xl"
               />
             </section>
           </section>

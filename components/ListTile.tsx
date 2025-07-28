@@ -24,7 +24,9 @@ const ListTile = ({
       </span>
       <span
         tabIndex={0}
-        className=" group-focus:block whitespace-nowrap group-focus:opacity-100 transition-all duration-500 group-hover:opacity-100 opacity-0"
+        className=" group-focus:block whitespace-nowrap group-focus:opacity-100 transition-all duration-500 group-hover:opacity-100 opacity-0
+        md:opacity-100
+        "
       >
         {url ? <a href={url || ""}>{title}</a> : title}
       </span>

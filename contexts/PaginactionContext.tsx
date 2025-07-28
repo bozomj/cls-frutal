@@ -10,6 +10,7 @@ type Paginacao = {
 type PaginationContextType = {
   paginacao: Paginacao;
   setPaginacao: React.Dispatch<React.SetStateAction<Paginacao>>;
+  resetPagination: () => void;
 };
 
 const PaginationContext = createContext<PaginationContextType | undefined>(
@@ -24,8 +25,16 @@ export const PaginationProvider = ({ children }: { children: ReactNode }) => {
     maxPage: 0,
   });
 
+  const resetPagination = () =>
+    setPaginacao((p) => ({
+      ...p,
+      current: 0,
+    }));
+
   return (
-    <PaginationContext.Provider value={{ paginacao, setPaginacao }}>
+    <PaginationContext.Provider
+      value={{ paginacao, setPaginacao, resetPagination }}
+    >
       {children}
     </PaginationContext.Provider>
   );

@@ -17,16 +17,46 @@ const ProductCard: React.FC<ProductCardProps> = ({
 }: ProductCardProps) => {
   const [showAlert, setShowAleret] = useState(<></>);
 
+  async function compartilhar() {
+    const txt = `${window.location.origin}/posts/${item.id}`;
+
+    // Cria textarea invisível pra seleção
+    const ta = document.createElement("textarea");
+    //precisa estar no documento
+    //  e nao pode estar oculto,
+    // pode até estar fora da tela, mas nao oculto
+    ta.value = txt;
+    document.body.appendChild(ta);
+
+    ta.select();
+
+    try {
+      document.execCommand("copy");
+      setShowAleret(
+        <Alert
+          show
+          msg={"Link Copiado com sucesso!"}
+          onClose={function (): void {
+            setShowAleret(<></>);
+          }}
+        />
+      );
+    } catch {
+    } finally {
+      document.body.removeChild(ta);
+    }
+  }
+
   return (
     <div
       className={`bg-gray-300  p-2 rounded-2xl flex justify-center hover:bg-gray-300 text-gray-800 ${className}`}
     >
       <div className="flex flex-col w-full overflow-hidden h-full gap-2 ">
         <a href={`/posts/${item.id}`} target="_blank">
-          <div className="flex justify-center bg-gray-200 rounded-2xl overflow-hidden">
+          <div className="flex justify-center bg-gray-200 overflow-hidden rounded-2xl">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              className="flex-1   bg-gray-200   min-h-[250px]"
+              className="flex-1 min-h-[250px] "
               src={utils.getUrlImage(item.imageurl)}
               alt=""
             />
@@ -40,51 +70,25 @@ const ProductCard: React.FC<ProductCardProps> = ({
             </span>
           </div>
         </a>
-        <div className=" flex items-end  justify-between">
-          <div className="flex flex-col">
-            <span>{item.name}</span>
-            <a href={`https://wa.me/55${item.phone}`} target="_blank">
-              <FontAwesomeIcon
-                icon={faWhatsapp}
-                className="text-3xl text-green-900 hover:text-green-700"
-              />
-            </a>
-          </div>
-          <button
-            onClick={async () => {
-              const txt = `${window.location.origin}/posts/${item.id}`;
 
-              // Cria textarea invisível pra seleção
-              const ta = document.createElement("textarea");
-              //precisa estar no documento
-              //  e nao pode estar oculto,
-              // pode até estar fora da tela, mas nao oculto
-              ta.value = txt;
-              document.body.appendChild(ta);
-
-              ta.select();
-
-              try {
-                document.execCommand("copy");
-                setShowAleret(
-                  <Alert
-                    show
-                    msg={"Link Copiado com sucesso!"}
-                    onClose={function (): void {
-                      setShowAleret(<></>);
-                    }}
-                  />
-                );
-              } catch {
-              } finally {
-                document.body.removeChild(ta);
-              }
-            }}
+        <div className="flex justify-between">
+          <span className="text-xl">{item.name}</span>
+          <span>Publicado {utils.formatarData(`${item.created_at}`)}</span>
+        </div>
+        <div className=" flex items-end  justify-end text-2xl gap-2">
+          <a
+            href={`https://wa.me/55${item.phone}`}
+            target="_blank"
+            className="rounded-3xl bg-green-800 w-10 h-10 flex items-center justify-center p-2 text-white  hover:bg-green-600 transition duration-200"
           >
-            <FontAwesomeIcon
-              icon={faShare}
-              className="text-cyan-950 text-2xl hover:text-cyan-700 cursor-pointer"
-            />
+            <FontAwesomeIcon icon={faWhatsapp} />
+          </a>
+
+          <button
+            onClick={compartilhar}
+            className="rounded-3xl cursor-pointer bg-cyan-800 w-10 h-10 flex items-center justify-center p-2 text-white self-end hover:bg-cyan-500 transition duration-200"
+          >
+            <FontAwesomeIcon icon={faShare} />
           </button>
         </div>
       </div>

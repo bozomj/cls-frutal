@@ -1,4 +1,4 @@
-import Carrossel2 from "@/components/Carrossel2";
+import Carrossel from "@/components/Carrossel";
 import Header from "@/components/Header";
 
 import ProductCard from "@/components/ProductCard";
@@ -37,6 +37,7 @@ const Home: React.FC<HomeProps> = () => {
   ];
 
   const { limite, current } = paginacao;
+
   const getPosts = useCallback(async () => {
     const total = await (
       await fetch("api/v1/poststotal?q=" + (search || ""))
@@ -53,6 +54,7 @@ const Home: React.FC<HomeProps> = () => {
       ...prev,
       totalItens: total.total,
     }));
+
     setPostagens(posts);
   }, [current, limite, search, setPaginacao]);
 
@@ -68,12 +70,16 @@ const Home: React.FC<HomeProps> = () => {
       <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center scroll-smooth ">
         <section
           tabIndex={0}
-          className="md:max-w-[100rem] w-full
-        md:w-[720px]
+          className="flex flex-col gap-2 w-full p-2
+        md:max-w-[50rem]
         "
         >
           <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
-          <Carrossel2 imagens={imgCarrossel} speed={5} />
+          <Carrossel
+            imagens={imgCarrossel}
+            speed={5}
+            className="rounded-2xl shadow-sm shadow-gray-400"
+          />
 
           <Produtos Card={ProductCard} postagens={postagens} />
         </section>
