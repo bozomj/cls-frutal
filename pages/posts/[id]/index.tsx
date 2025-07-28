@@ -10,6 +10,7 @@ import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 import utils from "@/utils";
 import { GetServerSidePropsContext } from "next";
 import Prompt, { TypePrompt } from "@/components/Prompt";
+import Alert from "@/components/Alert";
 
 async function getPost(id: string) {
   const res = await fetch(`/api/v1/posts/${id}`);
@@ -33,8 +34,10 @@ export default function DetailsPostPage({ user_id }: Props) {
   const [imgPrincial, setImgPrincipal] = useState<string>();
 
   const [render, setRender] = useState(false);
-  const [prompt, setPrompt] = useState(<></>);
 
+  const [prompt, setPrompt] = useState(<></>);
+  const [alert, setAlert] = useState(<></>);
+  const [buttonDisabled, setButtonDisabled] = useState(true);
   const [item, setItem] = useState({
     id: "",
     title: "",
@@ -187,7 +190,8 @@ export default function DetailsPostPage({ user_id }: Props) {
                             msg={"Editar Titulo"}
                             value={item.title}
                             confirm={(e) => {
-                              if (e) {
+                              if (e != item.title) {
+                                setButtonDisabled(false);
                                 setItem((p) => ({ ...p, title: e! }));
                               }
                               setPrompt(<></>);
@@ -218,9 +222,11 @@ export default function DetailsPostPage({ user_id }: Props) {
                           confirm={(e) => {
                             if (e != null) {
                               e = utils.extractNumberInString(e);
-                              e = utils.stringForDecimalNumber(e).toString();
+                              e = utils.stringForDecimalNumber(e).toFixed(2);
                             }
-                            if (e) {
+
+                            if (e != item.valor && e != "0") {
+                              setButtonDisabled(false);
                               setItem((p) => ({ ...p, valor: e! }));
                             }
                             setPrompt(<></>);
@@ -246,7 +252,8 @@ export default function DetailsPostPage({ user_id }: Props) {
                             value={item.description}
                             multiple={true}
                             confirm={(e) => {
-                              if (e) {
+                              if (e != item.description) {
+                                setButtonDisabled(false);
                                 setItem((p) => ({ ...p, description: e! }));
                               }
                               setPrompt(<></>);
@@ -262,7 +269,12 @@ export default function DetailsPostPage({ user_id }: Props) {
                   <div className="border-t-1 border-gray-400 flex justify-end py-4 mt-4">
                     <button
                       type="button"
-                      className="bg-cyan-600 p-2 rounded-md text-white font-bold "
+                      disabled={buttonDisabled}
+                      className={` p-2 rounded-md  font-bold ${
+                        !buttonDisabled
+                          ? "text-white bg-cyan-600"
+                          : "bg-gray-500 text-gray-800"
+                      }`}
                       onClick={async () => {
                         const result = await fetch("/api/v1/posts", {
                           method: "PUT",
@@ -270,13 +282,23 @@ export default function DetailsPostPage({ user_id }: Props) {
                           body: JSON.stringify(item),
                         });
 
-                        console.log(await result.json());
+                        const updated = await result.json();
+                        console.log(buttonDisabled);
+                        if (updated.id) {
+                          setAlert(
+                            <Alert
+                              msg={"Update Realizado com sucesso!"}
+                              onClose={() => setAlert(<></>)}
+                            />
+                          );
+                        }
                       }}
                     >
-                      Salvar
+                      Editar
                     </button>
                   </div>
                 )}
+                {alert}
               </div>
             </div>
           </section>

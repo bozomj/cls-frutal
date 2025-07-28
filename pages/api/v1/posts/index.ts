@@ -65,7 +65,8 @@ async function putHandler(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     const post = await Post.update(body);
-    return res.status(201).json(post);
+
+    return res.status(200).json(post);
   } catch (error) {
     return res
       .status(500)

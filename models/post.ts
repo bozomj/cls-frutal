@@ -63,14 +63,16 @@ async function update(pst: PostType) {
   const query =
     "UPDATE posts SET title = $1, description = $2, valor = $3, categoria_id = $4 WHERE id = $5 and user_id = $6 RETURNING *";
   try {
-    return await database.query(query, [
-      pst.title,
-      pst.description,
-      pst.valor,
-      pst.categoria_id,
-      pst.id,
-      pst.user_id,
-    ]);
+    return (
+      await database.query(query, [
+        pst.title,
+        pst.description,
+        pst.valor,
+        pst.categoria_id,
+        pst.id,
+        pst.user_id,
+      ])
+    )[0];
   } catch (error) {
     throw {
       message: new Error("Erro ao fazer alteração"),

@@ -45,29 +45,31 @@ const Prompt: React.FC<PromptProps> = ({
     <div
       className={`absolute bg-gray-300/80 h-[100vh] w-full top-0 z-[9] flex justify-center items-center `}
       onClick={() => {
-        confirm(null);
+        confirm(value);
       }}
     >
       <div
         onClick={(e) => e.stopPropagation()}
         className="bg-cyan-950 rounded m-4 p-2 w-full flex flex-col justify-between items-center text-white "
       >
-        <div>{msg}</div>
-        <div className="flex gap-2 justify-between flex-1 w-full">
+        <div className="font-bold self-start pl-2 text-2xl">{msg}</div>
+        <div className="flex gap-2 justify-between flex-1 w-full items-center">
           {!multiple ? (
             <input
               type="text"
               value={inputValue}
-              className="bg-white text-gray-900 flex-1 p-2 m-2"
+              className="bg-white text-gray-900 flex-1 p-2 m-2 outline-0"
               onChange={(e) => {
                 const txt = formate(e.target.value);
+
                 setValue(txt);
               }}
             />
           ) : (
             <textarea
               value={inputValue}
-              className="bg-white text-gray-900 flex-1 p-2 m-2"
+              rows={3}
+              className="bg-white text-gray-900 flex-1 p-2 m-2 outline-0"
               onChange={(e) => {
                 const txt = formate(e.target.value);
                 setValue(txt);
@@ -76,9 +78,10 @@ const Prompt: React.FC<PromptProps> = ({
           )}
 
           <button
-            className="bg-green-800 py-2 px-4 rounded-lg"
+            className="bg-green-800 py-2 px-4 rounded-lg h-fit"
             onClick={() => {
-              confirm(inputValue);
+              const txt = inputValue == "" ? value : inputValue;
+              confirm(txt);
             }}
           >
             Ok
