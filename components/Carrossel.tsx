@@ -1,4 +1,4 @@
-import { JSX, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface CarrosselProps {
   imagens: Record<string, string>[];
@@ -22,7 +22,6 @@ const Carrossel: React.FC<CarrosselProps> = ({ imagens, speed, className }) => {
   const [velocidade, setSpeed] = useState(multiplicador(speed));
   const carrosselref = useRef<HTMLDivElement | null>(null);
   const [index, setIndex] = useState(1);
-  const [balls, setBalls] = useState<JSX.Element[]>([]);
 
   function animar() {
     if (index < imgs.length - 1) {
@@ -51,6 +50,22 @@ const Carrossel: React.FC<CarrosselProps> = ({ imagens, speed, className }) => {
     };
   }, [index, velocidade]);
 
+  function gerador() {
+    return imgs.map((e, i) => {
+      if (i < imgs.length - 1)
+        return (
+          <span
+            key={i}
+            className={` rounded-full shrink-0 block ${
+              index == i + 1
+                ? "bg-cyan-600/80 w-4 h-4"
+                : `bg-gray-100/60 w-3 h-3 ]`
+            }`}
+          ></span>
+        );
+    });
+  }
+
   return (
     <div
       onTransitionEnd={async () => {
@@ -72,20 +87,8 @@ const Carrossel: React.FC<CarrosselProps> = ({ imagens, speed, className }) => {
           );
         })}
       </div>
-      <div className="absolute left-0 bottom-0   w-full flex justify-center gap-2 items-center p-1">
-        {imgs.map((e, i) => {
-          if (i < imgs.length - 1)
-            return (
-              <span
-                key={i}
-                className={` rounded-full  block ${
-                  index == i + 1
-                    ? "bg-cyan-600/80 w-4 h-4"
-                    : `bg-gray-100/60 w-3 h-3 ]`
-                }`}
-              ></span>
-            );
-        })}
+      <div className="absolute left-0 bottom-0 overflow-hidden w-full flex justify-center gap-2 items-center px-4 py-1">
+        {gerador()}
       </div>
     </div>
   );

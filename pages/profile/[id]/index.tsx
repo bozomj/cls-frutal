@@ -3,9 +3,7 @@ import { UserType } from "@/models/user";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-interface ProfileProps {}
-
-const Profile: React.FC<ProfileProps> = () => {
+const Profile: React.FC = () => {
   const id = useRouter().query.id as string;
   const [user, setUser] = useState<UserType>();
 
