@@ -9,6 +9,15 @@ import { ChangeEvent, JSX, useEffect, useState } from "react";
 import Alert from "@/components/Alert";
 import { CategoriaType } from "@/models/categoria";
 import { useRouter } from "next/navigation";
+import { getApp, getApps, initializeApp } from "firebase/app";
+import firebaseConfig from "@/firebaseConfig";
+import {
+  connectStorageEmulator,
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
 
 type postTypeSimple = {
   title: string;
@@ -116,18 +125,37 @@ export default function Produto() {
     if (imagens.length > 3)
       return { error: "O numero de imagens devem ser no maximo 3!!" };
     const formdata = new FormData();
-    for (const image of imagens) {
-      formdata.append("image", image.file);
-    }
-    formdata.append("postid", id || "idcorreto");
-
     if (imagens.length > 0) {
-      const uploadedImagens = await fetch("/api/v1/uploadImages", {
-        method: "POST",
-        body: formdata,
-      });
+      const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+      const storage = getStorage(app);
+      connectStorageEmulator(storage, "localhost", 9199);
 
-      return uploadedImagens.json();
+      const images = [];
+
+      for (const image of imagens) {
+        formdata.append("image", image.file);
+
+        formdata.append("postid", id || "idcorreto");
+
+        // const uploadedImagens = await fetch("/api/v1/uploadImages", {
+        //   method: "POST",
+        //   body: formdata,
+        // });
+
+        const storageRef = ref(storage, image.file.name);
+        await uploadBytes(storageRef, image.file);
+        const url = await getDownloadURL(storageRef);
+
+        images.push({ url: url, post_id: id });
+      }
+
+      await fetch("/api/v1/uploadImages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(images),
+      });
     }
 
     return null;
@@ -187,6 +215,8 @@ export default function Produto() {
     }
 
     await uploadImage(jsonresult[0].id);
+
+    return;
 
     post.categoria_id = 0;
     post.description = "";

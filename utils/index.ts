@@ -2,7 +2,8 @@ import autenticator from "@/models/autenticator";
 import { GetServerSidePropsContext } from "next";
 
 function getUrlImage(path?: string): string | undefined {
-  const url = path ? `/uploads/${path?.split(/[/\\]/).pop()}` : undefined;
+  // const url = path ? `/uploads/${path?.split(/[/\\]/).pop()}` : undefined;
+  const url = path;
 
   return url ?? "/uploads/sem-images.jpg";
 }
