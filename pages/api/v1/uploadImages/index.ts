@@ -1,4 +1,3 @@
-import { IncomingForm } from "formidable";
 import { createRouter } from "next-connect";
 import { NextApiRequest, NextApiResponse } from "next";
 import path from "path";
@@ -22,60 +21,18 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
-  const form = new IncomingForm({
-    multiples: true,
-    uploadDir,
-    keepExtensions: true,
-  });
+  const images = req.body;
 
-  form.parse(req, async (err, fields, files) => {
-    const postid = fields.postid;
-
-    if (!files || Object.keys(files).length === 0) {
-      return res.status(400).json({ error: "Nenhum arquivo enviado" });
-    }
-
-    if ((files.image?.length ?? 0) > 3) {
-      return res
-        .status(400)
-        .json({ error: "O numero de imagens devem ser no maximo 3" });
-    }
-
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: "Error no upload" });
-    }
-
-    if (files.image) {
-      const imagensbanco = [];
-      for (const file of files.image) {
-        try {
-          const n1 = (
-            await imagem.save(file.filepath || "", postid![0] || "")
-          )[0];
-
-          imagensbanco.push(n1);
-        } catch (error) {
-          for (const img of imagensbanco) {
-            await imagem.del(img.id);
-          }
-          return res.status(500).json({
-            message: "erro ao salvar imagem no banco",
-            cause: error,
-          });
-        }
-      }
-    }
-
-    return res.status(200).json({
-      message: "upload de imagens SUCESSO!!",
-      files,
-    });
+  for (const img of images) {
+    await imagem.save(img.url, img.post_id);
+  }
+  return res.status(200).json({
+    message: "upload de imagens SUCESSO!!",
   });
 }
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// export const config = {
+//   api: {
+//     bodyParser: false,
+//   },
+// };
