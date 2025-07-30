@@ -1,5 +1,5 @@
 import autenticator from "@/models/autenticator";
-import imagem from "@/models/imagem";
+
 import Post from "@/models/post";
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
@@ -25,7 +25,6 @@ async function deletehandler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query ?? "";
 
   try {
-    await imagem.delByPostId(id as string);
     const deleted = await Post.deletePost(id as string, userId);
 
     res.status(201).json({ resultado: deleted });

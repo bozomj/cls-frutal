@@ -3,9 +3,13 @@ import { GetServerSidePropsContext } from "next";
 
 function getUrlImage(path?: string): string | undefined {
   // const url = path ? `/uploads/${path?.split(/[/\\]/).pop()}` : undefined;
-  const url = path;
 
-  return url ?? "/uploads/sem-images.jpg";
+  const urlSplit = path?.split(/[/\\]/).pop();
+  const url = path?.includes("clsfrutal.firebasestorage.app")
+    ? path
+    : `/uploads/${urlSplit}`;
+
+  return urlSplit == undefined ? "/uploads/sem-images.jpg" : url;
 }
 
 function loadImage(url: string | undefined): Promise<string | undefined> {

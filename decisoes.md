@@ -20,7 +20,7 @@ X separar a parte de renderizar os card de produtos usado em <Produtos />
 X adicionar editar em /post/[id] - precisa criar campo em post updated_at.
 [ criei um prompt pra editar campo por campo ]
 
-terminar a pagina perfil
+- terminar a pagina perfil
 
 usuarios [
 diego@hotmail.com

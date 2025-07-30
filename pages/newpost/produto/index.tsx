@@ -9,15 +9,11 @@ import { ChangeEvent, JSX, useEffect, useState } from "react";
 import Alert from "@/components/Alert";
 import { CategoriaType } from "@/models/categoria";
 import { useRouter } from "next/navigation";
-import { getApp, getApps, initializeApp } from "firebase/app";
-import firebaseConfig from "@/firebaseConfig";
-import {
-  connectStorageEmulator,
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytes,
-} from "firebase/storage";
+
+import { v4 as uuid } from "uuid";
+
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { storage } from "@/storage/firebase";
 
 type postTypeSimple = {
   title: string;
@@ -126,10 +122,6 @@ export default function Produto() {
       return { error: "O numero de imagens devem ser no maximo 3!!" };
     const formdata = new FormData();
     if (imagens.length > 0) {
-      const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-      const storage = getStorage(app);
-      connectStorageEmulator(storage, "localhost", 9199);
-
       const images = [];
 
       for (const image of imagens) {
@@ -141,8 +133,10 @@ export default function Produto() {
         //   method: "POST",
         //   body: formdata,
         // });
+        const extencao = image.file.name.split(".")[1];
+        const randomName = uuid();
 
-        const storageRef = ref(storage, image.file.name);
+        const storageRef = ref(storage, randomName + extencao);
         await uploadBytes(storageRef, image.file);
         const url = await getDownloadURL(storageRef);
 
@@ -215,8 +209,6 @@ export default function Produto() {
     }
 
     await uploadImage(jsonresult[0].id);
-
-    return;
 
     post.categoria_id = 0;
     post.description = "";

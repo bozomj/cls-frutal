@@ -1,12 +1,5 @@
-import firebaseConfig from "@/firebaseConfig";
-import { initializeApp } from "firebase/app";
-import {
-  connectStorageEmulator,
-  getDownloadURL,
-  getStorage,
-  listAll,
-  ref,
-} from "firebase/storage";
+import { baseRef, storage } from "@/storage/firebase";
+import { getDownloadURL, listAll, ref } from "firebase/storage";
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
@@ -18,20 +11,15 @@ export default router.handler();
 
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const app = initializeApp(firebaseConfig);
-    const storage = getStorage(app);
-    connectStorageEmulator(storage, "localhost", 9199);
+    const result = await listAll(baseRef);
 
-    const listRef = ref(storage, "/");
-
-    const result = await listAll(listRef);
-    result.items.forEach((item) => {
-      getDownloadURL(item).then((p) => {
-        console.log(p);
-      });
+    const paths = result.items.map(async (img) => {
+      const refs = ref(storage, img.fullPath);
+      return await getDownloadURL(refs);
     });
+    const urls = await Promise.all(paths);
 
-    res.status(200).json({ result: result.items });
+    res.status(200).json({ result: urls });
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar imagens", cause: error });
   }

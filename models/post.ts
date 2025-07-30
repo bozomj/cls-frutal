@@ -1,4 +1,8 @@
 import database from "@/database/database";
+import imagem from "./imagem";
+
+import { deleteObject, ref } from "firebase/storage";
+import { storage } from "@/storage/firebase";
 
 export type PostType = {
   id?: string;
@@ -27,7 +31,6 @@ function isPostType(obj: unknown): obj is PostType {
 }
 
 async function create(pst: PostType) {
-  console.log("JSON", pst);
   if (!isPostType(pst)) {
     throw {
       message: "JSON incorreto",
@@ -89,7 +92,7 @@ async function getTotal(search: string) {
         `,
       [`%${search}%`]
     );
-    console.log(total);
+
     return total;
   } catch (e) {
     throw { error: "erro ao buscar total de posts", cause: e };
@@ -124,6 +127,16 @@ async function listAllPost(initial: string, limit: string) {
 }
 
 async function deletePost(id: string, userId: string) {
+  const imagens = await imagem.getByPostID(id);
+
+  for (const img of imagens) {
+    const deleteRef = ref(storage, img.url);
+    await deleteObject(deleteRef);
+  }
+
+  //deleta imagem post local
+  await imagem.delByPostId(id as string);
+  //deleta posts
   try {
     const posts = await database.query(
       "delete from posts where id = $1 and user_id = $2 RETURNING *",
@@ -144,23 +157,31 @@ async function getByUserID(
   initial: string,
   limit: string
 ) {
+  const query = `WITH ultimos_posts AS (
+        SELECT *
+        FROM posts
+        WHERE posts.user_id = $1 
+          AND (posts.title ilike $2 or posts.description ilike $2 )
+        ORDER BY created_at DESC
+        LIMIT $4 OFFSET $3
+      )
+      SELECT
+        p.*,
+        i.url AS imageurl
+      FROM ultimos_posts p
+      LEFT JOIN LATERAL (
+        SELECT url FROM imagens WHERE post_id = p.id ORDER BY id ASC LIMIT 1
+      ) i ON true;
+
+        `;
+
   try {
-    const posts = await database.query(
-      `SELECT distinct on (posts.id)
-        posts.*,
-        imagens.url as imageurl,
-        users.email,
-        users.phone as phone
-      from posts
-      left join
-       imagens on imagens.post_id = posts.id
-      left join users on users.id = posts.user_id
-      where posts.user_id = $1 and (posts.title ilike $2 or posts.description ilike $2 )
-      order by posts.id, imagens.id
-      limit $3 offset  $4
-      `,
-      [id, `%${search}%`, limit, initial]
-    );
+    const posts = await database.query(query, [
+      id,
+      `%${search}%`,
+      initial,
+      limit,
+    ]);
 
     return posts;
   } catch (e) {

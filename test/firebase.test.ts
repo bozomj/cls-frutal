@@ -1,21 +1,12 @@
-import firebaseConfig from "@/firebaseConfig";
-import { initializeApp } from "firebase/app";
-import {
-  connectStorageEmulator,
-  getStorage,
-  ref,
-  uploadBytes,
-} from "firebase/storage";
+import { storage } from "@/storage/firebase";
+import { connectStorageEmulator, ref, uploadBytes } from "firebase/storage";
 import fs from "fs";
 import path from "path";
 
 describe("teste FIREBASE", () => {
   it("upload de imagem", async () => {
-    const app = initializeApp(firebaseConfig);
-    const storage = getStorage(app);
-
     const enviarArquivo = async () => {
-      const storageRef = ref(storage, "/public/img/firebase");
+      const storageRef = ref(storage, "firebase" + Date.now());
       const caminho = path.join("public", "img", "logo.svg");
       const file = new Blob([fs.readFileSync(caminho)], { type: "image/svg" });
 
