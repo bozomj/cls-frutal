@@ -3,7 +3,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faUser } from "@fortawesome/free-regular-svg-icons";
+import {
+  faEdit,
+  faPlusSquare,
+  faUser,
+} from "@fortawesome/free-regular-svg-icons";
 import { faShare } from "@fortawesome/free-solid-svg-icons";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 
@@ -138,6 +142,12 @@ export default function DetailsPostPage({ user_id }: Props) {
                     />
                   );
                 })}
+
+              {imagens.length < 4 && (
+                <span className="text-5xl self-center text-cyan-700">
+                  <FontAwesomeIcon icon={faPlusSquare} />
+                </span>
+              )}
             </div>
           </section>
 
