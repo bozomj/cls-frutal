@@ -24,6 +24,8 @@ X implementado api emulador firebase
 
 - terminar a pagina perfil
 
+- cadastro de categorias.
+
 usuarios [
 diego@hotmail.com
 matheus@hotmail.com | senha 12345

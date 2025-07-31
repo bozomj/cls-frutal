@@ -324,9 +324,8 @@ export default function Produto() {
               className={`${
                 imagens.length >= 3
                   ? "bg-gray-500 text-gray-800"
-                  : "bg-cyan-700 focus:outline-cyan-500 cursor-pointer"
-              } block w-fit p-2 rounded
-               focus:outline-4`}
+                  : "bg-cyan-700 hover:bg-cyan-400 focus:outline-cyan-400 focus:outline-4 cursor-pointer"
+              } block w-fit p-2 rounded `}
               tabIndex={0}
             >
               <FontAwesomeIcon className="text-3xl" icon={faImage} />
@@ -351,27 +350,27 @@ export default function Produto() {
             {imagens.map((e, index) => {
               return (
                 <div key={e.id} className="relative w-fit">
+                  <div
+                    className="absolute cursor-pointer bg-red-900 hover:bg-red-500 rounded-full h-8 w-8 text-center p-1 -right-2 -top-2 peer"
+                    onClick={() => {
+                      // setImg((prev) => prev.filter((_, i) => i !== index));
+                      setImagens((prev) => {
+                        const img = prev.find((img) => img.id === e.id);
+                        if (img) URL.revokeObjectURL(img.url);
+
+                        return prev.filter((img) => img.id !== e.id);
+                      });
+                    }}
+                  >
+                    X
+                  </div>
                   <Card
                     key={index}
-                    className="border-3 border-cyan-600 bg-cyan-800"
+                    className="border-3 border-cyan-600 bg-cyan-800 peer-hover:bg-red-500/40 peer-hover:border-red-500"
                   >
-                    <div
-                      className="absolute bg-amber-600 rounded-full h-8 w-8 text-center p-1 -right-2 -top-2"
-                      onClick={() => {
-                        // setImg((prev) => prev.filter((_, i) => i !== index));
-                        setImagens((prev) => {
-                          const img = prev.find((img) => img.id === e.id);
-                          if (img) URL.revokeObjectURL(img.url);
-
-                          return prev.filter((img) => img.id !== e.id);
-                        });
-                      }}
-                    >
-                      X
-                    </div>
                     {/*  eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      className="rounded-md"
+                      className="rounded-md cursor-pointer"
                       key={e.id}
                       src={e.url}
                       alt=""
@@ -388,8 +387,8 @@ export default function Produto() {
             <button
               name="btn_cancelar"
               className="text-cyan-400 font-bold
-                p-2 outline-1 box-border rounded cursor-pointer
-                flex-1"
+                p-2 outline-1  rounded cursor-pointer
+                flex-1  hover:bg-cyan-800 transition duration-400"
               type="button"
               onClick={() => router.back()}
             >
@@ -397,7 +396,7 @@ export default function Produto() {
             </button>
             <button
               name="btn_salvar"
-              className="bg-cyan-600 font-bold p-2 flex-1 rounded cursor-pointer"
+              className="bg-cyan-600 font-bold p-2 flex-1 rounded cursor-pointer transition duration-500 hover:bg-cyan-400"
             >
               Salvar
             </button>
