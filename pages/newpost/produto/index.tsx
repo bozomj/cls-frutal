@@ -202,7 +202,6 @@ export default function Produto() {
     const files = e.target.files || [];
 
     if (files) {
-      console.log("imagens>: ", files);
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
 
@@ -213,11 +212,6 @@ export default function Produto() {
           // Cria uma URL temporária para o arquivo
           const resized = (await resizeImageFile(file)) as File;
           const imgURL = URL.createObjectURL(resized);
-
-          console.log({
-            old: file,
-            new: resized,
-          });
           const id = getUniqueId();
 
           setImagens((e) => [...e, { id: id, file: resized, url: imgURL }]);
@@ -327,14 +321,15 @@ export default function Produto() {
 
           <label className="w-fit">
             <span
-              className="bg-cyan-700 block w-fit p-2 rounded
-              focus:outline-cyan-500 focus:outline-4 "
+              className={`${
+                imagens.length >= 3
+                  ? "bg-gray-500 text-gray-800"
+                  : "bg-cyan-700 focus:outline-cyan-500 cursor-pointer"
+              } block w-fit p-2 rounded
+               focus:outline-4`}
               tabIndex={0}
             >
-              <FontAwesomeIcon
-                className="text-3xl cursor-pointer"
-                icon={faImage}
-              />
+              <FontAwesomeIcon className="text-3xl" icon={faImage} />
             </span>
             <input
               accept="image/*"
@@ -342,11 +337,12 @@ export default function Produto() {
               className="hidden"
               multiple
               max={3}
+              disabled={imagens.length >= 3}
               onChange={(e) => selecionarImagens(e)}
             />
           </label>
 
-          <div id="preview" className="flex gap-2 flex-wrap justify-center">
+          <div id="preview" className="flex gap-3 flex-wrap justify-center">
             {loading && (
               <div className="h-2 w-full rounded bg-cyan-800 ">
                 <div className="w-full h-full bg-cyan-500 transform origin-left animate-loading"></div>
@@ -355,9 +351,12 @@ export default function Produto() {
             {imagens.map((e, index) => {
               return (
                 <div key={e.id} className="relative w-fit">
-                  <Card key={index}>
+                  <Card
+                    key={index}
+                    className="border-3 border-cyan-600 bg-cyan-800"
+                  >
                     <div
-                      className="absolute bg-amber-600 rounded-[50%] p-1 right-0 top-0"
+                      className="absolute bg-amber-600 rounded-full h-8 w-8 text-center p-1 -right-2 -top-2"
                       onClick={() => {
                         // setImg((prev) => prev.filter((_, i) => i !== index));
                         setImagens((prev) => {
@@ -372,6 +371,7 @@ export default function Produto() {
                     </div>
                     {/*  eslint-disable-next-line @next/next/no-img-element */}
                     <img
+                      className="rounded-md"
                       key={e.id}
                       src={e.url}
                       alt=""
