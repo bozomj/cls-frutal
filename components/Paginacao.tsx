@@ -16,8 +16,6 @@ interface PaginacaoProps {
 const Paginacao: React.FC<PaginacaoProps> = ({ className }: PaginacaoProps) => {
   const { paginacao, setPaginacao } = usePagination();
 
-  console.log(paginacao);
-
   const maxPage = Math.max(
     0,
     Math.ceil(paginacao.totalItens / paginacao.limite) - 1

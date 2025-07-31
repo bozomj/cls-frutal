@@ -80,6 +80,14 @@ function formatNumberForMoedaString(number: number): string {
   });
 }
 
+function capitalizar(str: string) {
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map((palavra) => palavra.charAt(0).toUpperCase() + palavra.slice(1))
+    .join(" ");
+}
+
 const utils = {
   getUrlImage,
   loadImage,
@@ -88,6 +96,9 @@ const utils = {
   formatarMoeda,
   extractNumberInString,
   stringForDecimalNumber,
+  string: {
+    capitalizar,
+  },
 };
 
 export default utils;

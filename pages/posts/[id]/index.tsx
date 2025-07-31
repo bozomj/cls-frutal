@@ -109,7 +109,7 @@ export default function DetailsPostPage({ user_id }: Props) {
 
           <section
             id="lista_imagems"
-            className="flex gap-1 border-3 border-cyan-900 p-2 rounded-2xl w-fit max-w-full"
+            className="flex gap-1 border-3  border-gray-400 p-2 rounded-2xl w-fit max-w-full"
           >
             <div className="w-[400px] block cursor-pointer    order-2 self-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}

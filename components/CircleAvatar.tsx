@@ -15,13 +15,13 @@ const CircleAvatar: React.FC<CircleAvatarProps> = ({
         block
         rounded-full
         bg-center bg-cover
-        outline-2 outline-cyan-700 outline-white
+        outline-2  outline-white
+        bg-cyan-950/70
         ${className}
     `}
       style={{
         width: `${size}rem`,
         height: `${size}rem`,
-        backgroundColor: "gray",
         backgroundImage: `url(${imagem})`,
       }}
     ></div>

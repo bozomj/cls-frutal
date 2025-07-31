@@ -90,7 +90,7 @@ function Dashboard({ ctx }: { ctx: string }) {
               <ListTile
                 title={user.name ?? ""}
                 icon={faUser}
-                url={`/profile/${user.id}`}
+                url={`/profile`}
                 onClick={() => {}}
               />
               {/* </div> */}
