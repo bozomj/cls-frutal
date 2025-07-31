@@ -10,10 +10,7 @@ import Alert from "@/components/Alert";
 import { CategoriaType } from "@/models/categoria";
 import { useRouter } from "next/navigation";
 
-import { v4 as uuid } from "uuid";
-
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { storage } from "@/storage/firebase";
+import { imagemFirebase } from "@/storage/firebase";
 
 type postTypeSimple = {
   title: string;
@@ -117,51 +114,11 @@ export default function Produto() {
     });
   }
 
-  async function uploadImage(id: string) {
-    if (imagens.length > 3)
-      return { error: "O numero de imagens devem ser no maximo 3!!" };
-    const formdata = new FormData();
-    if (imagens.length > 0) {
-      const images = [];
-
-      for (const image of imagens) {
-        formdata.append("image", image.file);
-
-        formdata.append("postid", id || "idcorreto");
-
-        // const uploadedImagens = await fetch("/api/v1/uploadImages", {
-        //   method: "POST",
-        //   body: formdata,
-        // });
-        const extencao = image.file.name.split(".")[1];
-        const randomName = uuid();
-
-        const storageRef = ref(storage, randomName + extencao);
-        await uploadBytes(storageRef, image.file);
-        const url = await getDownloadURL(storageRef);
-
-        images.push({ url: url, post_id: id });
-      }
-
-      await fetch("/api/v1/uploadImages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(images),
-      });
-    }
-
-    return null;
-  }
-
   async function getIdUserAuthenticated() {
     return (await autenticator.isAuthenticated()).result.id;
   }
 
   const salvar = async () => {
-    console.log(post);
-
     const msg =
       imagens.length < 1
         ? "Escolha Pelo menos uma imagem"
@@ -208,7 +165,11 @@ export default function Produto() {
       throw jsonresult;
     }
 
-    await uploadImage(jsonresult[0].id);
+    try {
+      await imagemFirebase.uploadImageFirebase(jsonresult[0].id, imagens);
+    } catch (error) {
+      console.log(error);
+    }
 
     post.categoria_id = 0;
     post.description = "";
