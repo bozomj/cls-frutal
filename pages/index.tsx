@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 
 import ProductCard from "@/components/ProductCard";
 import { usePagination } from "@/contexts/PaginactionContext";
+import Footer from "@/layout/footer";
 import Produtos from "@/layout/produtos/Produtos";
 
 import { useRouter } from "next/router";
@@ -71,7 +72,7 @@ const Home: React.FC<HomeProps> = () => {
         <section
           tabIndex={0}
           className="flex flex-col gap-2 w-full p-2
-        md:max-w-[50rem]
+        md:max-w-[40rem]
         "
         >
           <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
@@ -83,22 +84,7 @@ const Home: React.FC<HomeProps> = () => {
 
           <Produtos Card={ProductCard} postagens={postagens} />
         </section>
-
-        <footer className="min-h-[10rem] min-w-full bg-cyan-950 p-4 flex flex-col">
-          <span className="text-center text-cyan-700">
-            CLF-Frutal Classificados &copy;
-          </span>
-          <div className="flex-1 flex items-center">
-            <a href="https://www.assistechso.com.br" target="_blank">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                className="w-[150px] md:w-[200px]"
-                src="https://www.assistechso.com.br/_next/image?url=%2Fimg%2Flogo.png&w=256&q=75"
-                alt=""
-              />
-            </a>
-          </div>
-        </footer>
+        <Footer />
       </main>
     </>
   );
