@@ -66,7 +66,7 @@ function Dashboard({ ctx }: { ctx: string }) {
       </header>
       <main
         className="flex-auto overflow-y-scroll text-white bg-gray-300 flex-col flex justify-between  items-center scroll-smooth
-      
+        
       "
       >
         <div className="flex-1 flex w-full">
@@ -79,7 +79,7 @@ function Dashboard({ ctx }: { ctx: string }) {
         
         "
           >
-            <ul className="flex flex-col  gap-2 md:fixed">
+            <ul className="flex flex-col gap-2 md:fixed ">
               {/* <div className="flex flex-col  gap-2"> */}
               <span
                 className="group-focus:w-[8rem] group-focus:h-[8rem] rounded-full  w-[3rem] h-[3rem] group-hover:block   bg-white   group-hover:w-[8rem] group-hover:h-[8rem] transition-all duration-500
@@ -121,21 +121,21 @@ function Dashboard({ ctx }: { ctx: string }) {
           </section>
 
           <section
-            className="flex-1 p-2  pl-[5.5rem] flex flex-col gap-2 w-full scroll-smooth h-full
-          md:p-2
+            className="flex-1 p-2 w-full pl-[5.5rem] flex flex-col gap-2 scroll-smooth h-full 
+          md:p-2 bg-green-300 
            "
           >
             <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
-            <div className="flex flex-col gap-2">
-              <div className="p-4 rounded-md gap-2 bg-cyan-800  flex items-center  outline-2 outline-cyan-100">
+            <span className="flex flex-col gap-2">
+              <div className="p-4 rounded-md gap-2 bg-cyan-800  flex items-center  outline-2 outline-cyan-100 ">
                 <FontAwesomeIcon
                   icon={faPlus}
                   className="text-3xl outline-1 p-2 rounded-md outline-cyan-100"
                 />
                 <span>Cadastrar Produto</span>
               </div>
-            </div>
-            <section className="flex flex-col ">
+            </span>
+            <section className="flex flex-col">
               <Produtos
                 Card={ProductCardDashboard}
                 postagens={listPost}

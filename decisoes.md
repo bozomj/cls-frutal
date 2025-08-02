@@ -20,11 +20,11 @@ X adicionar editar em /post/[id] - precisa criar campo em post updated_at.
 
 X implementado api emulador firebase
 
+X cadastro de categorias.
+
 - adicionar setas de navegação de imagens na pagina do post
 
 - terminar a pagina perfil
-
-- cadastro de categorias.
 
 - criar end point para retornar usuario logado
 
