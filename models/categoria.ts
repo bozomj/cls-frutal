@@ -1,7 +1,7 @@
 import database from "@/database/database";
 
 export type CategoriaType = {
-  id: number;
+  id?: number;
   descricao: string;
 };
 
@@ -12,10 +12,19 @@ async function save(descricao: CategoriaType["descricao"]) {
   try {
     const result = await database.query(query, [descricao]);
     return result;
-  } catch (error: unknown) {
+  } catch (error) {
+    const err = error as Record<string, string | number>;
+
+    if (err!.cause.toString().includes("duplicate key"))
+      throw {
+        message: "Categoria já cadastrada",
+        cause: error,
+        http_code: 409,
+      };
     throw {
       message: "erro ao inserir categoria",
       cause: error,
+      http_code: 500,
     };
   }
 }
@@ -34,9 +43,9 @@ async function getAll() {
   }
 }
 
-const categoria = {
+const Categoria = {
   save,
   getAll,
 };
 
-export default categoria;
+export default Categoria;

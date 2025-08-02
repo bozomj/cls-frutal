@@ -43,7 +43,7 @@ const Prompt: React.FC<PromptProps> = ({
 
   return (
     <div
-      className={`absolute bg-gray-300/80 h-[100vh] w-full top-0 z-[9] flex justify-center items-center `}
+      className={`absolute bg-gray-300/80 h-[100vh] w-full left-0 top-0 z-[9] flex justify-center items-center `}
       onClick={() => {
         confirm(value);
       }}

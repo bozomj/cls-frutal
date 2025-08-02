@@ -7,10 +7,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { ChangeEvent, JSX, useEffect, useState } from "react";
 import Alert from "@/components/Alert";
-import { CategoriaType } from "@/models/categoria";
+
 import { useRouter } from "next/navigation";
 
 import { imagemFirebase } from "@/storage/firebase";
+import Prompt from "@/components/Prompt";
+import categoriaController from "@/controllers/categoriaController";
+import { CategoriaType } from "@/models/categoria";
 
 type postTypeSimple = {
   title: string;
@@ -55,6 +58,7 @@ export default function Produto() {
   const [loading, setLoading] = useState<boolean>(false);
 
   const [showAlert, setAlert] = useState<JSX.Element | null>(null);
+  const [prompt, setPrompt] = useState(<></>);
 
   const [categoriasValues, setCategoriasValues] = useState<
     { value: string; label: string }[]
@@ -119,6 +123,7 @@ export default function Produto() {
   }
 
   const salvar = async () => {
+    console.log(post);
     const msg =
       imagens.length < 1
         ? "Escolha Pelo menos uma imagem"
@@ -153,7 +158,7 @@ export default function Produto() {
     }
 
     for (const error in err) {
-      console.log(error, "volta");
+      console.log(error);
       setError(err);
       return;
     }
@@ -223,6 +228,11 @@ export default function Produto() {
     }
   }
 
+  function changeCategoria(e: string) {
+    setSelected(e);
+    if ((post.categoria_id = parseInt(e))) setCategoria(e);
+  }
+
   return (
     <>
       <Header />
@@ -265,11 +275,11 @@ export default function Produto() {
               setDescription(post.description);
             }}
           />
-          {/* <span className="text-red-800">{postError.categoria_id}</span> */}
-          <select
-            name=""
-            id=""
-            className={`p-3 bg-cyan-50  outline-0 focus:outline-cyan-500 focus:outline-4
+          <div className="flex gap-2">
+            <select
+              name=""
+              id=""
+              className={`p-3 bg-cyan-50  outline-0 focus:outline-cyan-500 focus:outline-4 flex-1
               ${categoria === "" ? "text-gray-400" : "text-gray-800"} 
              ${
                postError.categoria_id
@@ -277,32 +287,65 @@ export default function Produto() {
                  : "outline-none"
              }
               `}
-            value={selected}
-            onChange={(e) => {
-              setSelected(e.target.value);
-              console.log(e.target.value);
-              // if (postError.categoria_id == "")
-              // postError.categoria_id = "todos os campos sao obrigatorios";
-              if ((post.categoria_id = parseInt(e.target.value)))
-                setCategoria(e.target.value);
-            }}
-          >
-            <option key={0} value={""}>
-              Selecione a categoria
-            </option>
-            {categoriasValues.map((e) => (
-              <option
-                key={e.value}
-                value={e.value}
-                disabled={e.value === ""}
-                className={`${
-                  e.value === "" ? "text-gray-400" : "text-gray-800"
-                }`}
-              >
-                {e.label}
+              value={selected}
+              onChange={(e) => changeCategoria(e.target.value)}
+            >
+              <option key={0} value={""}>
+                Selecione a categoria
               </option>
-            ))}
-          </select>
+              {categoriasValues.map((e) => (
+                <option
+                  key={e.value}
+                  value={e.value}
+                  disabled={e.value === ""}
+                  className={`${
+                    e.value === "" ? "text-gray-400" : "text-gray-800"
+                  }`}
+                >
+                  {e.label}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              className="bg-cyan-800  p-2 text-4xl cursor-pointer hover:bg-cyan-600 transition duration-300"
+              onClick={() =>
+                setPrompt(
+                  <Prompt
+                    msg={"Cadastrar Categoria"}
+                    value={""}
+                    confirm={async (e: string | null) => {
+                      if (e) {
+                        const result = await categoriaController.save({
+                          descricao: e,
+                        });
+
+                        const msg = result.message || "Cadastro efetuado";
+
+                        setAlert(
+                          <Alert
+                            msg={msg}
+                            onClose={() => {
+                              setAlert(<></>);
+                            }}
+                          />
+                        );
+
+                        if (result.id) {
+                          getCategorias();
+                          changeCategoria(result.id);
+                        }
+                      }
+
+                      setPrompt(<></>);
+                    }}
+                  />
+                )
+              }
+            >
+              +
+            </button>
+          </div>
           {/* <span className="text-red-800">{postError.valor}</span> */}
           <input
             name="valor"
@@ -403,6 +446,7 @@ export default function Produto() {
           </span>
         </form>
         {showAlert}
+        {prompt}
       </main>
     </>
   );

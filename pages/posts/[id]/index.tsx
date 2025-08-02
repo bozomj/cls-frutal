@@ -3,11 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEdit,
-  faPlusSquare,
-  faUser,
-} from "@fortawesome/free-regular-svg-icons";
+import { faEdit, faUser } from "@fortawesome/free-regular-svg-icons";
 import { faShare } from "@fortawesome/free-solid-svg-icons";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 
@@ -309,7 +305,6 @@ export default function DetailsPostPage({ user_id }: Props) {
                       </button>
                     </div>
                   )}
-                  {alert}
                 </div>
               </div>
             </section>
