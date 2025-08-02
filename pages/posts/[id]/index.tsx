@@ -95,7 +95,7 @@ export default function DetailsPostPage({ user_id }: Props) {
         <meta property="og:image" content={item.imagens[0]} />
       </header>
       <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center text-black ">
-        <section className="flex flex-auto flex-col gap-2 w-full max-w-[40rem] p-4 bg-gray-100 rounded-2xl shadow-sm shadow-gray-400 m-2">
+        <section className="flex flex-auto flex-col gap-2 w-full max-w-[40rem] p-4 bg-gray-100 rounded-2xl shadow-sm shadow-gray-400 my-2">
           <div className="bg-gray-300 rounded-2xl flex-auto p-2">
             <span
               id="imgfull"
@@ -115,13 +115,13 @@ export default function DetailsPostPage({ user_id }: Props) {
 
             <section
               id="lista_imagems"
-              className="flex gap-1 border-3 border-gray-400 p-2 rounded-2xl w-full items-center "
+              className="flex gap-1 border-3 border-gray-400 p-2 rounded-2xl w-full items-cente h-[25rem]"
             >
-              <div className="w-full block cursor-pointer order-2 self-center ">
+              <div className="w-full cursor-pointer order-2 self-center h-full items-center flex justify-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   id="imagem_principal"
-                  className=" min-h-[200px] rounded-md hover:outline-3 hover:outline-cyan-600"
+                  className=" max-h-full rounded-md hover:outline-3 hover:outline-cyan-600"
                   tabIndex={1}
                   src={utils.getUrlImage(imgPrincial)}
                   alt=""
@@ -129,13 +129,16 @@ export default function DetailsPostPage({ user_id }: Props) {
                 />
               </div>
 
-              <div id="galeria" className="flex flex-col w-2/7 gap-2 order-1">
+              <div
+                id="galeria"
+                className="flex flex-col w-2/7 gap-2 order-1 h-full justify-center"
+              >
                 {imagens.length > 0 &&
                   imagens.map((img) => {
                     return (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
-                        className="cursor-pointer hover:outline-3 outline-cyan-600 focus:outline-3 rounded"
+                        className="cursor-pointer hover:outline-3 shrink outline-cyan-600 focus:outline-3 rounded"
                         src={utils.getUrlImage(img?.url || "")}
                         alt=""
                         tabIndex={10}
@@ -144,12 +147,6 @@ export default function DetailsPostPage({ user_id }: Props) {
                       />
                     );
                   })}
-
-                {imagens.length < 4 && (
-                  <span className="text-5xl self-center text-cyan-700">
-                    <FontAwesomeIcon icon={faPlusSquare} />
-                  </span>
-                )}
               </div>
             </section>
 
