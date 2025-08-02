@@ -29,12 +29,12 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
     <article
       className={`bg-gray-100 relative flex-col  gap-2 p-2 rounded-2xl flex justify-center ${className} `}
     >
-      {/* <a
+      <a
         href={`/posts/${item.id}`}
         className="bg-green-800 rounded-full w-12 h-12 flex self-end hover:bg-green-500 items-center justify-center text-2xl"
       >
         <FontAwesomeIcon icon={faEdit} />
-      </a> */}
+      </a>
       <div className="flex flex-col w-full  overflow-hidden h-full gap-2 ">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -47,8 +47,8 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
           <span className="text-2xl w-fit overflow-hidden">
             {item.title ?? ""}
           </span>
-          {/* <span className="w-full">{item.description ?? ""}</span> */}
-          {/* <span className="w-full">R$: {item.valor}</span> */}
+          <span className="w-full">{item.description ?? ""}</span>
+          <span className="w-full">R$: {item.valor}</span>
 
           <div className=" flex items-center gap-4 w-full">
             <a
