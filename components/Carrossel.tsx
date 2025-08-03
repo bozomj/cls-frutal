@@ -13,7 +13,7 @@ interface CarrosselProps {
  * @returns
  */
 const Carrossel: React.FC<CarrosselProps> = ({ imagens, speed, className }) => {
-  //repete o primeiro item para o ultimo, melor funcionamento
+  //repete o primeiro item para o ultimo, melhor funcionamento
   const imgs = [...imagens, imagens[0]];
 
   function multiplicador(n: number, fator = 1000) {

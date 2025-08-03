@@ -74,8 +74,8 @@ function Dashboard({ ctx }: { ctx: string }) {
             tabIndex={0}
             className=" z-[999] group bg-cyan-950 max-w-[5rem] overflow-x-hidden   p-4 flex items-start flex-col gap-2 hover:max-w-[25rem]   transition-all duration-500  
                 border-r-10 border-cyan-950
-        focus:max-w-[25rem] fixed h-full 
-         md:min-w-[25rem] md:static md:h-auto
+          focus:max-w-[25rem] fixed h-full 
+          md:min-w-[25rem] md:static md:h-auto
         
         "
           >
@@ -122,7 +122,7 @@ function Dashboard({ ctx }: { ctx: string }) {
 
           <section
             className="flex-1 p-2 w-full pl-[5.5rem] flex flex-col gap-2 scroll-smooth h-full 
-          md:p-2 bg-green-300 
+          md:p-2 
            "
           >
             <span data-scroll-top tabIndex={1} ref={produtosRef}></span>

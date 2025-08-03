@@ -28,6 +28,8 @@ X cadastro de categorias.
 
 - criar end point para retornar usuario logado
 
+- criar miniatura para visualizar
+
 usuarios [
 diego@hotmail.com
 matheus@hotmail.com | senha 12345

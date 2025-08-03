@@ -130,7 +130,7 @@ export default function DetailsPostPage({ user_id }: Props) {
 
               <div
                 id="galeria"
-                className="flex flex-col w-2/7 gap-2 order-1 h-full justify-center  overflow-hidden"
+                className="flex flex-col w-2/7 gap-2 order-1 h-full   overflow-hidden"
               >
                 {imagens.length > 0 &&
                   imagens.map((img, key) => {
@@ -143,7 +143,7 @@ export default function DetailsPostPage({ user_id }: Props) {
 
                     return (
                       <div
-                        className={`flex flex-1 justify-center w-full bg-gray-100  shrink h-1/3 ${rounded} overflow-hidden 
+                        className={`flex flex-1 justify-center w-full bg-gray-100  shrink h-1/3 ${rounded} overflow-hidden  max-h-1/3
                         border-3 border-gray-100
                         hover:border-cyan-600 
                         `}
