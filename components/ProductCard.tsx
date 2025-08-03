@@ -49,20 +49,20 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <div
-      className={`bg-gray-300  p-2 rounded-2xl flex justify-center hover:bg-gray-300 text-gray-800 ${className}`}
+      className={`bg-gray-300  p-2 rounded-2xl flex justify-center hover:bg-gray-300 text-gray-800 ${className} `}
     >
-      <div className="flex flex-col w-full overflow-hidden h-full gap-2 ">
+      <div className="flex flex-col w-full overflow-hidden gap-2 ">
         <a href={`/posts/${item.id}`} target="_blank">
-          <div className="flex justify-center bg-gray-200 overflow-hidden rounded-2xl">
+          <div className="flex flex-1 justify-center bg-gray-200 overflow-hidden rounded-2xl h-[15rem]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              className="flex-1 min-h-[250px] "
+              className="object-contain"
               src={utils.getUrlImage(item.imageurl)}
               alt=""
             />
           </div>
 
-          <div className=" flex text-gray-900 gap-2 w-[100%] truncate overflow-hidden flex-col py-2">
+          <div className="flex-1 flex text-gray-900 gap-2 w-[100%] truncate overflow-hidden flex-col py-2">
             <h2 className="h-5 font-bold block">{item.title ?? ""}</h2>
             <p className="text-sm truncate">{item.description}</p>
             <span className="h-5 text-green-700 font-bold block">

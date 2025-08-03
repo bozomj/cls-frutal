@@ -16,7 +16,7 @@ const Alert: React.FC<AlertProps> = ({ msg, onClose }) => {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-cyan-950 rounded m-4 p-2 w-full flex justify-between items-center text-white "
+        className="bg-cyan-950 rounded m-4 p-2 w-full flex justify-between items-center text-white md:w-[40rem]"
       >
         <div>{msg}</div>
         <div className="flex gap-2 justify-end">

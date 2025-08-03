@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 
 import ProductCard from "@/components/ProductCard";
 import { usePagination } from "@/contexts/PaginactionContext";
-import Footer from "@/layout/footer";
+import Footer from "@/layout/FooterLayout";
 import Produtos from "@/layout/produtos/Produtos";
 
 import { useRouter } from "next/router";

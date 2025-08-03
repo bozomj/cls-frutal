@@ -11,7 +11,7 @@ import utils from "@/utils";
 import { GetServerSidePropsContext } from "next";
 import Prompt, { TypePrompt } from "@/components/Prompt";
 import Alert from "@/components/Alert";
-import Footer from "@/layout/Footer";
+import Footer from "@/layout/FooterLayout";
 
 async function getPost(id: string) {
   const res = await fetch(`/api/v1/posts/${id}`);
@@ -95,7 +95,7 @@ export default function DetailsPostPage({ user_id }: Props) {
           <div className="bg-gray-300 rounded-2xl flex-auto p-2">
             <div
               id="imgfull"
-              className="flex absolute top-0 z-[5] left-0 h-full w-full bg-cyan-950/80 justify-center items-center px-1 "
+              className=" absolute top-0 z-[5] left-0 h-full w-full bg-cyan-950/80 justify-center items-center px-1 hidden"
               onClick={() => {
                 toggleImg();
               }}
@@ -293,9 +293,9 @@ export default function DetailsPostPage({ user_id }: Props) {
                       <button
                         type="button"
                         disabled={buttonDisabled}
-                        className={` p-2 rounded-md  font-bold ${
+                        className={` p-2 rounded-md  font-bold  ${
                           !buttonDisabled
-                            ? "text-white bg-cyan-600"
+                            ? "text-white bg-cyan-600 cursor-pointer"
                             : "bg-gray-500 text-gray-800"
                         }`}
                         onClick={async () => {
