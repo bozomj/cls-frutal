@@ -11,7 +11,7 @@ import utils from "@/utils";
 import { GetServerSidePropsContext } from "next";
 import Prompt, { TypePrompt } from "@/components/Prompt";
 import Alert from "@/components/Alert";
-import Footer from "@/layout/footer";
+import Footer from "@/layout/Footer";
 
 async function getPost(id: string) {
   const res = await fetch(`/api/v1/posts/${id}`);
@@ -93,27 +93,30 @@ export default function DetailsPostPage({ user_id }: Props) {
       <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center text-black ">
         <section className="flex flex-auto flex-col gap-2 w-full max-w-[40rem] p-4 bg-gray-100 rounded-2xl shadow-sm shadow-gray-400 my-2">
           <div className="bg-gray-300 rounded-2xl flex-auto p-2">
-            <span
+            <div
               id="imgfull"
-              className="w-full absolute top-0 z-[5] left-0 min-h-[100vh] bg-cyan-950/50 justify-center items-center px-1 hidden"
+              className="flex absolute top-0 z-[5] left-0 h-full w-full bg-cyan-950/80 justify-center items-center px-1 "
               onClick={() => {
                 toggleImg();
               }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                tabIndex={0}
-                src={utils.getUrlImage(imgPrincial)}
-                alt=""
-                className="w-full rounded  shadow-2xl shadow-black outline-3 outline-cyan-600"
-              />
-            </span>
+              <div className="flex flex-col  gap-2 order-1 h-full justify-center w-full overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  tabIndex={0}
+                  src={utils.getUrlImage(imgPrincial)}
+                  alt=""
+                  className={`cursor-pointer object-contain max-h-full w-full`}
+                  // className=" flex-1 rounded  object-contain shadow-2xl shadow-black outline-3 outline-cyan-600"
+                />
+              </div>
+            </div>
 
             <section
               id="lista_imagems"
               className="flex gap-1 border-3 border-gray-400 p-2 rounded-2xl w-full items-cente h-[25rem]"
             >
-              <div className="w-full cursor-pointer order-2 self-center h-full items-center flex justify-center">
+              <div className="w-full cursor-pointer order-2 self-center h-full items-center flex justify-center bg-gray-100 rounded-r-2xl p-1">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   id="imagem_principal"
@@ -127,20 +130,32 @@ export default function DetailsPostPage({ user_id }: Props) {
 
               <div
                 id="galeria"
-                className="flex flex-col w-2/7 gap-2 order-1 h-full justify-center"
+                className="flex flex-col w-2/7 gap-2 order-1 h-full justify-center  overflow-hidden"
               >
                 {imagens.length > 0 &&
-                  imagens.map((img) => {
+                  imagens.map((img, key) => {
+                    const rounded =
+                      key == 0
+                        ? " rounded-tl-2xl"
+                        : key < imagens.length - 1
+                        ? "rounded-sm"
+                        : "rounded-bl-2xl";
+
                     return (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        className="cursor-pointer hover:outline-3 shrink outline-cyan-600 focus:outline-3 rounded"
-                        src={utils.getUrlImage(img?.url || "")}
-                        alt=""
-                        tabIndex={10}
-                        key={img?.id}
+                      <div
+                        className={`flex flex-1 justify-center w-full bg-gray-100  shrink h-1/3 ${rounded} overflow-hidden 
+                        border-3 border-gray-100
+                        hover:border-cyan-600 
+                        `}
+                        key={img.id}
                         onClick={() => setImgPrincipal(img.url)}
-                      />
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
+                        <img
+                          className={`cursor-pointer object-contain`}
+                          src={utils.getUrlImage(img.url)}
+                        />
+                      </div>
                     );
                   })}
               </div>
@@ -157,7 +172,9 @@ export default function DetailsPostPage({ user_id }: Props) {
                     className="text-2xl rounded-full p-2 w-6  bg-gray-400 flex items-center justify-center cursor-pointer text-gray-300 hover:bg-gray-600 transition duration-200 "
                   />
 
-                  <span className="text-[1em]">{item.name}</span>
+                  <span className="text-[1em]">
+                    {utils.string.capitalizar(item.name)}
+                  </span>
                 </div>
 
                 <div className="flex gap-2 items-center text-2xl">
@@ -184,7 +201,7 @@ export default function DetailsPostPage({ user_id }: Props) {
               <div>
                 {prompt}
                 <div className="flex  justify-between items-start flex-col-reverse">
-                  <h1 className="text-xl font-bold  ">
+                  <h1 className="text-xl font-bold">
                     {IsPostUserId() && (
                       <FontAwesomeIcon
                         icon={faEdit}
@@ -307,6 +324,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                   )}
                 </div>
               </div>
+              {alert}
             </section>
           </div>
         </section>
