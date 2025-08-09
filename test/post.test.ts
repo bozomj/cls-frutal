@@ -1,4 +1,4 @@
-import imagem from "@/models/imagem";
+import database from "@/database/database";
 import Post from "@/models/post";
 import fs from "fs";
 
@@ -6,18 +6,18 @@ import path from "path";
 import sharp from "sharp";
 
 beforeAll(async () => {
-  // await database.query("delete from imagens");
-  // await database.query("delete from posts");
+  await database.query("delete from imagens");
+  await database.query("delete from posts");
 });
 
 describe("teste da tabela post", () => {
   let post_id: string;
   const token =
-    "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViOGVhZTI4LTY2Y2QtNDFmZS04MTJkLTYzOWNmYThjMTc4NSIsImlhdCI6MTc1Mjk2MzA5OCwiZXhwIjoxNzUzMDA2Mjk4fQ.VnYxwFpKtISmXk2IMI6QNdxPnBad1wKROuQVAR4qyes";
+    "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdjOGY0YmNlLTg3YWItNDg0Ny1iOTg1LWU1MDcyMmExY2FiMSIsImlhdCI6MTc1NDc2MjM0NiwiZXhwIjoxNzU0ODA1NTQ2fQ.BTLvknf5aUjfbK5VpT6h3bjO6TEJx21VXJhTCSmVIb8";
 
   it("inserir post com sucesso", async () => {
     const pst = {
-      user_id: "1c94e2fd-69fc-45ff-bd5e-ab907c9c69aa",
+      user_id: "7c8f4bce-87ab-4847-b985-e50722a1cab1",
       title: "testando um post 5",
       description: "tomate cereja com abacates",
       categoria_id: 18,
@@ -33,7 +33,10 @@ describe("teste da tabela post", () => {
       body: JSON.stringify(pst),
     });
 
-    post_id = (await post.json())[0].id;
+    const result = await post.json();
+    console.log(">>>>>>>>>", result);
+
+    post_id = result.id;
 
     expect(post.status).toBe(201);
   });
@@ -61,14 +64,14 @@ describe("teste da tabela post", () => {
   });
 
   it("listar posts", async () => {
-    const post = await Post.listAllPost();
+    const post = await Post.listAllPost("0", "10");
 
     expect(post).toEqual(expect.any(Array));
   });
 
   it("insert imagem", async () => {
     const formdata = new FormData();
-    // const conteudoArquivo = Buffer.from([0x89, 0x50, 0x4e, 0x47]);
+
     const conteudoArquivo = path.join(
       process.cwd(),
       "public",
@@ -83,15 +86,15 @@ describe("teste da tabela post", () => {
       "resize",
       "produto_teste.jpg"
     );
-    reduzirImagem(conteudoArquivo, outputPath);
+    await reduzirImagem(conteudoArquivo, outputPath);
 
-    const imagens = [
-      new Blob([fs.readFileSync(outputPath)], { type: "image/jpeg" }),
-    ];
+    const buffer = fs.readFileSync(outputPath);
+    const uni8 = new Uint8Array(buffer);
 
-    for (const image of imagens) {
-      formdata.append("image", image);
-    }
+    const blob = new Blob([uni8], { type: "image/jpeg" });
+
+    formdata.append("image", blob);
+
     formdata.append("postid", post_id);
 
     await fetch("http://localhost:3000/api/v1/uploadImages", {

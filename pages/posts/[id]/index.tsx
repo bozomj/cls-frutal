@@ -28,29 +28,30 @@ type Props = {
   user_id?: string;
 };
 
+const item0 = {
+  id: "",
+  title: "",
+  valor: "",
+  created_at: "",
+  imagens: [],
+  description: "",
+  name: "",
+  phone: "",
+  user_id: "",
+  updated_at: "",
+};
+
 export default function DetailsPostPage({ user_id }: Props) {
   const router = useRouter();
   const id = router.query.id as string;
+
   const [imagens, setImagens] = useState<Imagem[]>([]);
   const [imgPrincial, setImgPrincipal] = useState<string>();
-
   const [render, setRender] = useState(false);
-
   const [prompt, setPrompt] = useState(<></>);
   const [alert, setAlert] = useState(<></>);
   const [buttonDisabled, setButtonDisabled] = useState(true);
-  const [item, setItem] = useState({
-    id: "",
-    title: "",
-    valor: "",
-    created_at: "",
-    imagens: [],
-    description: "",
-    name: "",
-    phone: "",
-    user_id: "",
-    updated_at: "",
-  });
+  const [item, setItem] = useState(item0);
 
   useEffect(() => {
     if (!id) return;
@@ -106,7 +107,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                   tabIndex={0}
                   src={utils.getUrlImage(imgPrincial)}
                   alt=""
-                  className={`cursor-pointer object-contain max-h-full w-full`}
+                  className={`cursor-pointer object-contain max-h-full w-full `}
                   // className=" flex-1 rounded  object-contain shadow-2xl shadow-black outline-3 outline-cyan-600"
                 />
               </div>
@@ -134,6 +135,7 @@ export default function DetailsPostPage({ user_id }: Props) {
               >
                 {imagens.length > 0 &&
                   imagens.map((img, key) => {
+                    if (img == null) return;
                     const rounded =
                       key == 0
                         ? " rounded-tl-2xl"
@@ -144,7 +146,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                     return (
                       <div
                         className={`flex flex-1 justify-center w-full bg-gray-100  shrink h-1/3 ${rounded} overflow-hidden  max-h-1/3
-                        border-3 border-gray-100
+                        border-3 border-gray-100 p-1
                         hover:border-cyan-600 
                         `}
                         key={img.id}
@@ -152,7 +154,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
                         <img
-                          className={`cursor-pointer object-contain`}
+                          className={`cursor-pointer object-contain rounded-md`}
                           src={utils.getUrlImage(img.url)}
                         />
                       </div>

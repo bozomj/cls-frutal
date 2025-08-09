@@ -1,6 +1,5 @@
 import Carrossel from "@/components/Carrossel";
 import Header from "@/components/Header";
-import ImageSlider from "@/components/ImageSlider";
 
 import ProductCard from "@/components/ProductCard";
 import { usePagination } from "@/contexts/PaginactionContext";
@@ -58,6 +57,7 @@ const Home: React.FC<HomeProps> = () => {
     }));
 
     setPostagens(posts);
+    console.log(posts);
   }, [current, limite, search, setPaginacao]);
 
   useEffect(() => {
@@ -81,9 +81,6 @@ const Home: React.FC<HomeProps> = () => {
             imagens={imgCarrossel}
             speed={5}
             className="rounded-2xl shadow-sm shadow-gray-400"
-          />
-          <ImageSlider
-            images={[...imgCarrossel, ...imgCarrossel, ...imgCarrossel]}
           />
 
           <Produtos Card={ProductCard} postagens={postagens} />

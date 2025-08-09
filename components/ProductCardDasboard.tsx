@@ -27,7 +27,7 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
 
   return (
     <article
-      className={`bg-gray-100 relative flex-col  gap-2 p-2 rounded-2xl flex justify-center ${className} `}
+      className={`bg-gray-300 relative flex-col  gap-2 p-2 rounded-2xl flex justify-center ${className} `}
     >
       <a
         href={`/posts/${item.id}`}
@@ -36,12 +36,14 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
         <FontAwesomeIcon icon={faEdit} />
       </a>
       <div className="flex flex-col w-full  overflow-hidden h-full gap-2 ">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          className="bg-gray-200 max-h-[20rem] w-fit self-center"
-          src={utils.getUrlImage(item.imageurl)}
-          alt={""}
-        />
+        <div className="bg-gray-200 rounded-2xl flex justify-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className="bg-gray-200 max-h-[20rem] w-fit self-center"
+            src={utils.getUrlImage(item.imageurl)}
+            alt={""}
+          />
+        </div>
 
         <div className=" flex text-gray-900 gap-2  flex-col ">
           <span className="text-2xl w-fit overflow-hidden">
@@ -74,7 +76,7 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
         <button
           aria-label="Deletar post"
           type="button"
-          className="bg-red-800  cursor-pointer font-bold w-3/6 self-end rounded p-1 hover:bg-red-600"
+          className="bg-red-800  cursor-pointer font-bold w-1/3 self-end rounded p-1 hover:bg-red-600"
           onClick={async () => deletePostId(item.id ?? "")}
         >
           Deletar

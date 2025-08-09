@@ -25,10 +25,13 @@ X cadastro de categorias.
 - adicionar setas de navegação de imagens na pagina do post
 
 - terminar a pagina perfil
+  colocando preview pra ver a imagem selecionada pra perfil
 
 - criar end point para retornar usuario logado
 
 - criar miniatura para visualizar
+
+- criar painel de controle do administrador master
 
 usuarios [
 diego@hotmail.com

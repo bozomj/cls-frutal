@@ -171,7 +171,22 @@ export default function Produto() {
     }
 
     try {
-      await imagemFirebase.uploadImageFirebase(jsonresult[0].id, imagens);
+      // jsonresult[0].id;
+      const imagensFirebase = await imagemFirebase.uploadImageFirebase(imagens);
+
+      if (imagemFirebase != null) {
+        const imgs = imagensFirebase!.map((img: { url: string }) => {
+          return { url: img.url, post_id: jsonresult[0].id };
+        });
+
+        await fetch("/api/v1/uploadImages", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(imgs),
+        });
+      }
     } catch (error) {
       console.log(error);
     }

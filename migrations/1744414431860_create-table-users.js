@@ -27,6 +27,7 @@ exports.up = (pgm) => {
       notNull: true,
       default: pgm.func("current_timestamp"),
     },
+
     is_admin: {
       type: "boolean",
       default: false,

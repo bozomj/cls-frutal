@@ -20,7 +20,10 @@ const ListTile = ({
       onClick={onClick}
     >
       <span>
-        <FontAwesomeIcon icon={icon!} className="text-3xl" />
+        <FontAwesomeIcon
+          icon={icon!}
+          className="text-3xl transition-all duration-500"
+        />
       </span>
       <span
         tabIndex={0}

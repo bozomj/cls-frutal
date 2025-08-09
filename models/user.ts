@@ -12,6 +12,7 @@ export type UserType = {
   password: string;
   createdAt: string;
   is_admin: boolean;
+  url?: string;
 };
 
 const User = {
@@ -31,9 +32,18 @@ const User = {
   },
 
   findById: async (id: string) => {
-    const result = await database.query("SELECT * from users where id = $1;", [
-      id,
-    ]);
+    const result = await database.query(
+      `
+      SELECT users.*, perfil_images.url 
+      FROM users 
+      LEFT JOIN perfil_images
+       ON perfil_images.user_id = users.id
+       AND perfil_images.selected = true
+      where users.id = $1;
+
+      `,
+      [id]
+    );
 
     if (result < 1) {
       throw {
@@ -41,6 +51,7 @@ const User = {
         cause: result,
       };
     }
+    console.log(result);
     return result;
   },
 
