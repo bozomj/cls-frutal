@@ -53,7 +53,6 @@ const Profile: React.FC = () => {
           const resized = (await utils.imagem.resizeImageFile(file)) as File;
           setImgUrlPreview(URL.createObjectURL(resized));
 
-          // setImagens((e) => [...e, { id: id, file: resized, url: imgURL }]);
           if (resized != null) {
             setImageprofile(resized);
           }
@@ -85,45 +84,33 @@ const Profile: React.FC = () => {
             <img src={imgUrlPreview} alt="preview" className="rounded-2xl" />
           </div>
           <div className="flex gap-2 justify-end">
-            <button
-              type="button"
-              className="hover:border-cyan-800 border-cyan-950 border-2 p-2 rounded-md cursor-pointer text-cyan-600 hover:text-cyan-400"
-            >
+            <button type="button" className="btn btn-secondary">
               Cancelar
             </button>
 
-            <button
-              className=" rounded-md bg-cyan-800 p-2 border-2 border-cyan-800 cursor-pointer hover:bg-cyan-600 hover:border-cyan-600 text-cyan-500 hover:text-cyan-200 font-bold"
-              onClick={async () => {
-                const imgs = await imagemFirebase.uploadImageFirebase([
-                  {
-                    file: imageProfile!,
-                  },
-                ]);
-
-                await fetch("/api/v1/user/setImageProfile", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({ user_id: user?.id, url: imgs[0].url }),
-                });
-
-                setUser(await userController.getUserLogin());
-              }}
-            >
+            <button className="btn btn-primary" onClick={salvar}>
               Salvar
             </button>
           </div>
         </div>
       </div>
+
       <main className="flex  justify-center bg-gray-200 p-4 text-gray-800 overflow-y-scroll scroll-smooth">
         <div className="w-full md:w-[40rem]">
           <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
+
           <section className="flex flex-col gap-2 ">
             <div className="relative w-fit">
               <CircleAvatar imagem={utils.getUrlImage(user?.url)} />
-              <label className="w-10 h-10 rounded-full border-2 border-cyan-50 bg-cyan-100  absolute right-1 bottom-1 text-2xl flex justify-center items-center text-cyan-800">
+              <label
+                className="
+              w-10 h-10 absolute right-1 bottom-1 
+              rounded-full border-2 border-cyan-50 
+              bg-cyan-100  hover:bg-cyan-200
+              text-2xl text-cyan-800 
+              flex justify-center items-center 
+              cursor-pointer"
+              >
                 <FontAwesomeIcon icon={faCamera} />
                 <input
                   type="file"
@@ -149,6 +136,24 @@ const Profile: React.FC = () => {
       </main>
     </>
   );
+
+  async function salvar() {
+    const imgs = await imagemFirebase.uploadImageFirebase([
+      {
+        file: imageProfile!,
+      },
+    ]);
+
+    await fetch("/api/v1/user/setImageProfile", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ user_id: user?.id, url: imgs[0].url }),
+    });
+
+    setUser(await userController.getUserLogin());
+  }
 };
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext

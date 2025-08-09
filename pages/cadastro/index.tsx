@@ -140,7 +140,7 @@ export default function Cadastro() {
           />
 
           <button
-            className="p-2 rounded-md bg-cyan-300 text-cyan-900 cursor-pointer font-bold"
+            className="btn bg-cyan-300 text-cyan-900 font-bold"
             type="submit"
           >
             Cadastrar

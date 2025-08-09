@@ -68,15 +68,12 @@ const Login = () => {
             placeholder="Senha"
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button
-            className="p-2 rounded-md bg-cyan-300 text-cyan-900 cursor-pointer"
-            type="submit"
-          >
+          <button className="btn bg-cyan-300 text-cyan-900" type="submit">
             Entrar
           </button>
           <Link
             href="/cadastro"
-            className=" hover:font-bold  text-sm  text-white w-fit "
+            className=" hover:opacity-100 opacity-80 font-bold  text-sm  text-white w-fit "
           >
             Não tem uma conta?{" "}
             <span className="text-cyan-300 ">Cadastre-se</span>
