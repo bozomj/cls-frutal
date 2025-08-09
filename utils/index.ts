@@ -88,6 +88,61 @@ function capitalizar(str: string) {
     .join(" ");
 }
 
+function resizeImageFile(file: File, maxWidth = 1280, maxSizeKB = 300) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      const img = document.createElement("img");
+      img.src = e.target?.result as string;
+
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height = (height * maxWidth) / width;
+          width = maxWidth;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx!.drawImage(img, 0, 0, width, height);
+
+        let quality = 0.9;
+        let dataUrl = canvas.toDataURL("image/webp", quality);
+
+        while (dataUrl.length / 1024 > maxSizeKB && quality > 0.1) {
+          quality -= 0.005;
+          dataUrl = canvas.toDataURL("image/webp", quality);
+        }
+
+        fetch(dataUrl)
+          .then((res) => res.blob())
+          .then((blob) => {
+            const newFile = new File(
+              [blob],
+              file.name.replace(/\.\w+$/, ".webp"),
+              {
+                type: "image/webp",
+                lastModified: Date.now(),
+              }
+            );
+            resolve(newFile);
+          });
+      };
+
+      img.onerror = reject;
+    };
+
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 const utils = {
   getUrlImage,
   loadImage,
@@ -98,6 +153,10 @@ const utils = {
   stringForDecimalNumber,
   string: {
     capitalizar,
+  },
+
+  imagem: {
+    resizeImageFile,
   },
 };
 

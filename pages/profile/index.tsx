@@ -20,7 +20,7 @@ const Profile: React.FC = () => {
   const [posts, setPosts] = useState([]);
   const { paginacao, setPaginacao } = usePagination();
   const [previewVisible, setPreviewVisible] = useState("hidden");
-  const [imgUrlPreview, setImgUrlPreview] = useState("");
+  const [imgUrlPreview, setImgUrlPreview] = useState<string>();
   const [imageProfile, setImageprofile] = useState<File | null>(null);
 
   const produtosRef = useRef<HTMLInputElement>(null);
@@ -50,74 +50,20 @@ const Profile: React.FC = () => {
         // Verifica se o arquivo é uma imagem
         if (file.type.startsWith("image/")) {
           // Cria uma URL temporária para o arquivo
-          const resized = (await resizeImageFile(file)) as File;
+          const resized = (await utils.imagem.resizeImageFile(file)) as File;
           setImgUrlPreview(URL.createObjectURL(resized));
 
           // setImagens((e) => [...e, { id: id, file: resized, url: imgURL }]);
           if (resized != null) {
             setImageprofile(resized);
           }
-          console.log(imageProfile, imgUrlPreview);
+
           setPreviewVisible("");
         }
       }
     }
   }
-  function resizeImageFile(file: File, maxWidth = 1280, maxSizeKB = 300) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
 
-      reader.onload = (e) => {
-        const img = document.createElement("img");
-        img.src = e.target?.result as string;
-
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
-
-          let width = img.width;
-          let height = img.height;
-
-          if (width > maxWidth) {
-            height = (height * maxWidth) / width;
-            width = maxWidth;
-          }
-
-          canvas.width = width;
-          canvas.height = height;
-          ctx!.drawImage(img, 0, 0, width, height);
-
-          let quality = 0.9;
-          let dataUrl = canvas.toDataURL("image/webp", quality);
-
-          while (dataUrl.length / 1024 > maxSizeKB && quality > 0.1) {
-            quality -= 0.005;
-            dataUrl = canvas.toDataURL("image/webp", quality);
-          }
-
-          fetch(dataUrl)
-            .then((res) => res.blob())
-            .then((blob) => {
-              const newFile = new File(
-                [blob],
-                file.name.replace(/\.\w+$/, ".webp"),
-                {
-                  type: "image/webp",
-                  lastModified: Date.now(),
-                }
-              );
-              resolve(newFile);
-            });
-        };
-
-        img.onerror = reject;
-      };
-
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  }
-  console.log(user);
   return (
     <>
       <Header />
@@ -128,10 +74,15 @@ const Profile: React.FC = () => {
           setPreviewVisible("hidden");
         }}
       >
-        <div className="flex flex-col w-[30rem] max-h-2/3 bg-cyan-950 p-4 rounded-2xl gap-2 overflow-hidden">
+        <div
+          className="flex flex-col w-[30rem] max-h-2/3 bg-cyan-950 p-4 rounded-2xl gap-2 overflow-hidden"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
           <div className="flex rounded-2xl flex-1 justify-center items-center w-full bg-gray-300 p-2">
             {/*  eslint-disable-next-line @next/next/no-img-element */}
-            <img src={imgUrlPreview} alt="" className="rounded-2xl" />
+            <img src={imgUrlPreview} alt="preview" className="rounded-2xl" />
           </div>
           <div className="flex gap-2 justify-end">
             <button
@@ -150,13 +101,15 @@ const Profile: React.FC = () => {
                   },
                 ]);
 
-                fetch("/api/v1/user/setImageProfile", {
+                await fetch("/api/v1/user/setImageProfile", {
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json",
                   },
                   body: JSON.stringify({ user_id: user?.id, url: imgs[0].url }),
                 });
+
+                setUser(await userController.getUserLogin());
               }}
             >
               Salvar

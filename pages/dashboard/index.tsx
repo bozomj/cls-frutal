@@ -25,6 +25,7 @@ type UserType = {
   email?: string;
   title?: string;
   createdAt?: string;
+  url?: string;
 };
 
 function Dashboard({ ctx }: { ctx: string }) {
@@ -85,9 +86,16 @@ function Dashboard({ ctx }: { ctx: string }) {
               {/* <div className="flex flex-col  gap-2"> */}
               <span
                 className="group-focus:w-[8rem] group-focus:h-[8rem] rounded-full  w-[3rem] h-[3rem] group-hover:block   bg-white   group-hover:w-[8rem] group-hover:h-[8rem] transition-all duration-500
-              md:w-[8rem] md:h-[8rem] 
+              md:w-[8rem] md:h-[8rem] overflow-hidden border-2 border-white
               "
-              ></span>
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={user.url}
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
+              </span>
 
               <ListTile
                 title={user.name ?? ""}
