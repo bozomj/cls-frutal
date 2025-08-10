@@ -14,19 +14,20 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
 import ProductCardDashboard from "@/components/ProductCardDasboard";
 import { imagemFirebase } from "@/storage/firebase";
+import Modal from "@/components/Modal";
+import FooterLayout from "@/layout/FooterLayout";
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<UserType>();
   const [posts, setPosts] = useState([]);
   const { paginacao, setPaginacao } = usePagination();
-  const [previewVisible, setPreviewVisible] = useState("hidden");
-  const [imgUrlPreview, setImgUrlPreview] = useState<string>();
-  const [imageProfile, setImageprofile] = useState<File | null>(null);
+  const [showmodal, setShowModal] = useState(<></>);
 
   const produtosRef = useRef<HTMLInputElement>(null);
 
   const { limite, current } = paginacao;
   const initial = current * limite;
+
   const init = useCallback(async () => {
     setUser(await userController.getUserLogin());
     const p = await userController.getPost(initial, limite);
@@ -40,6 +41,45 @@ const Profile: React.FC = () => {
 
   useEffect(() => produtosRef.current?.focus());
 
+  return (
+    <>
+      <Header />
+
+      <main className="flex  justify-center bg-gray-200 p-4 text-gray-800 overflow-y-scroll scroll-smooth flex-1">
+        <div className="w-full md:w-[40rem]">
+          <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
+
+          <section id="profile" className="flex flex-col gap-2 ">
+            <div className="relative w-fit">
+              <CircleAvatar imagem={utils.getUrlImage(user?.url)} />
+
+              <label
+                id="btn-camera"
+                className={`w-10 h-10 absolute right-1 bottom-1 
+                  rounded-full border-2 border-cyan-50 
+                bg-cyan-100  hover:bg-cyan-200
+                  text-2xl text-cyan-800 
+                  flex justify-center items-center 
+                  cursor-pointer`}
+              >
+                <FontAwesomeIcon icon={faCamera} />
+                {showmodal}
+                <input type="file" className="hidden" onChange={fileSelect} />
+              </label>
+            </div>
+
+            <h1>{utils.string.capitalizar(user?.name ?? "")}</h1>
+          </section>
+
+          <section className="border-t-2 border-gray-400 flex flex-col py-4 mt-4">
+            <Produtos postagens={posts} Card={ProductCardDashboard} />
+          </section>
+        </div>
+      </main>
+      <FooterLayout />
+    </>
+  );
+
   async function selecionarImagens(e: ChangeEvent<HTMLInputElement>) {
     const files = e.target.files || [];
 
@@ -49,98 +89,48 @@ const Profile: React.FC = () => {
 
         // Verifica se o arquivo é uma imagem
         if (file.type.startsWith("image/")) {
-          // Cria uma URL temporária para o arquivo
+          // Cria uma URL temporária para o arquivo e redimenciona
           const resized = (await utils.imagem.resizeImageFile(file)) as File;
-          setImgUrlPreview(URL.createObjectURL(resized));
+          const previewImg = URL.createObjectURL(resized) as string;
 
-          if (resized != null) {
-            setImageprofile(resized);
-          }
-
-          setPreviewVisible("");
+          return { resized, previewImg };
         }
       }
     }
+    return null;
   }
 
-  return (
-    <>
-      <Header />
-      <div
-        id="preview"
-        className={`w-full h-full bg-gray-950/50 fixed z-[999] flex justify-center items-center ${previewVisible}`}
-        onClick={() => {
-          setPreviewVisible("hidden");
-        }}
-      >
-        <div
-          className="flex flex-col w-[30rem] max-h-2/3 bg-cyan-950 p-4 rounded-2xl gap-2 overflow-hidden"
-          onClick={(e) => {
-            e.stopPropagation();
+  async function fileSelect(e: ChangeEvent<HTMLInputElement>) {
+    const result = await selecionarImagens(e);
+
+    if (result != null) {
+      setShowModal(
+        <Modal
+          onClose={() => {
+            setShowModal(<></>);
+          }}
+          onConfirm={() => {
+            salvar(result.resized);
+            setShowModal(<></>);
           }}
         >
           <div className="flex rounded-2xl flex-1 justify-center items-center w-full bg-gray-300 p-2">
             {/*  eslint-disable-next-line @next/next/no-img-element */}
-            <img src={imgUrlPreview} alt="preview" className="rounded-2xl" />
-          </div>
-          <div className="flex gap-2 justify-end">
-            <button type="button" className="btn btn-secondary">
-              Cancelar
-            </button>
-
-            <button className="btn btn-primary" onClick={salvar}>
-              Salvar
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <main className="flex  justify-center bg-gray-200 p-4 text-gray-800 overflow-y-scroll scroll-smooth">
-        <div className="w-full md:w-[40rem]">
-          <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
-
-          <section className="flex flex-col gap-2 ">
-            <div className="relative w-fit">
-              <CircleAvatar imagem={utils.getUrlImage(user?.url)} />
-              <label
-                className="
-              w-10 h-10 absolute right-1 bottom-1 
-              rounded-full border-2 border-cyan-50 
-              bg-cyan-100  hover:bg-cyan-200
-              text-2xl text-cyan-800 
-              flex justify-center items-center 
-              cursor-pointer"
-              >
-                <FontAwesomeIcon icon={faCamera} />
-                <input
-                  type="file"
-                  className="hidden"
-                  onChange={(e) => selecionarImagens(e)}
-                />
-              </label>
-            </div>
-            <h1>{utils.string.capitalizar(user?.name ?? "")}</h1>
-          </section>
-
-          <section
-            id="publicacoes"
-            className="border-t border-gray-400 flex flex-col py-4 mt-4"
-          >
-            <Produtos
-              postagens={posts}
-              Card={ProductCardDashboard}
-              className="text-white"
+            <img
+              src={result.previewImg}
+              alt="preview"
+              className="rounded-2xl"
             />
-          </section>
-        </div>
-      </main>
-    </>
-  );
+          </div>
+        </Modal>
+      );
+    }
+  }
 
-  async function salvar() {
+  async function salvar(image: File) {
     const imgs = await imagemFirebase.uploadImageFirebase([
       {
-        file: imageProfile!,
+        file: image,
       },
     ]);
 
@@ -155,6 +145,7 @@ const Profile: React.FC = () => {
     setUser(await userController.getUserLogin());
   }
 };
+
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => utils.redirectNotToken(context, "/login");

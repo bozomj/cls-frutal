@@ -53,6 +53,8 @@ export default function DetailsPostPage({ user_id }: Props) {
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [item, setItem] = useState(item0);
 
+  const [isPostUserId, IsPostUserId] = useState(false);
+
   useEffect(() => {
     if (!id) return;
 
@@ -68,17 +70,15 @@ export default function DetailsPostPage({ user_id }: Props) {
       setImgPrincipal(v[0].imagens[0]?.url ?? null);
 
       setRender(true);
+      IsPostUserId(item.user_id == user_id);
     });
-  }, [id, router]);
+  }, [id, item.user_id, router, user_id]);
 
   function toggleImg() {
     const im = document.getElementById("imgfull");
 
     im?.classList.toggle("hidden");
     im?.classList.toggle("flex");
-  }
-  function IsPostUserId() {
-    return item.user_id == user_id;
   }
 
   if (!render) return <></>;
@@ -92,16 +92,20 @@ export default function DetailsPostPage({ user_id }: Props) {
         <meta property="og:image" content={item.imagens[0]} />
       </header>
       <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center text-black ">
-        <section className="flex flex-auto flex-col gap-2 w-full max-w-[40rem] p-4 bg-gray-100 rounded-2xl shadow-sm shadow-gray-400 my-2">
-          <div className="bg-gray-300 rounded-2xl flex-auto p-2">
+        <section
+          id="frame-1"
+          className="flex flex-auto flex-col gap-2 w-full max-w-[40rem] p-4 bg-gray-100 rounded-2xl shadow-sm shadow-gray-400 my-2"
+        >
+          <div id="frame-2" className="bg-gray-300 rounded-2xl flex-auto p-2">
             <div
               id="imgfull"
-              className=" absolute top-0 z-[5] left-0 h-full w-full bg-cyan-950/80 justify-center items-center px-1 hidden"
-              onClick={() => {
-                toggleImg();
-              }}
+              className=" 
+              absolute top-0 z-[5] left-0 h-full w-full 
+              bg-cyan-950/80 
+              justify-center items-center px-1 hidden"
+              onClick={() => toggleImg()}
             >
-              <div className="flex flex-col  gap-2 order-1 h-full justify-center w-full overflow-hidden">
+              <div className="flex flex-col bg-red gap-2 order-1 h-full justify-center w-full overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   tabIndex={0}
@@ -117,10 +121,12 @@ export default function DetailsPostPage({ user_id }: Props) {
               id="lista_imagems"
               className="flex gap-1 border-3 border-gray-400 p-2 rounded-2xl w-full items-cente h-[25rem]"
             >
-              <div className="w-full cursor-pointer order-2 self-center h-full items-center flex justify-center bg-gray-100 rounded-r-2xl p-1">
+              <div
+                id="imagem_principal"
+                className="w-full cursor-pointer order-2 self-center h-full items-center flex justify-center bg-gray-100 rounded-r-2xl p-1"
+              >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  id="imagem_principal"
                   className=" max-h-full rounded-md hover:outline-3 hover:outline-cyan-600"
                   tabIndex={1}
                   src={utils.getUrlImage(imgPrincial)}
@@ -163,7 +169,7 @@ export default function DetailsPostPage({ user_id }: Props) {
               </div>
             </section>
 
-            <section>
+            <section id="dados-postagem">
               <div
                 id="actions"
                 className="flex justify-between items-center py-4"
@@ -201,96 +207,102 @@ export default function DetailsPostPage({ user_id }: Props) {
               </div>
 
               <div>
-                {prompt}
                 <div className="flex  justify-between items-start flex-col-reverse">
                   <h1 className="text-xl font-bold">
-                    {IsPostUserId() && (
+                    {prompt}
+                    {isPostUserId && (
                       <FontAwesomeIcon
                         icon={faEdit}
                         className="text-xl pr-4 text-green-800 cursor-pointer"
-                        onClick={() => {
-                          setPrompt(
-                            <Prompt
-                              type={TypePrompt.text}
-                              msg={"Editar Titulo"}
-                              value={item.title}
-                              confirm={(e) => {
-                                if (e != item.title) {
-                                  setButtonDisabled(false);
-                                  setItem((p) => ({ ...p, title: e! }));
-                                }
-                                setPrompt(<></>);
-                              }}
-                            />
-                          );
-                        }}
                       />
                     )}
-                    {item.title}
+                    <span
+                      className="focus:outline-2 focus:outline-gray-400"
+                      {...(isPostUserId
+                        ? {
+                            contentEditable: true,
+                            suppressContentEditableWarning: true,
+                            onInput: () => {
+                              setButtonDisabled(false);
+                            },
+                            onBlur: (e) => {
+                              const value = e.currentTarget.innerText;
+                              setItem((p) => ({ ...p, title: value }));
+                            },
+                          }
+                        : {})}
+                    >
+                      {item.title}
+                    </span>
                   </h1>
                   <span className="text-[0.8em]">
                     Publicado {utils.formatarData(item.created_at)}
-                    {item.updated_at}
                   </span>
                 </div>
                 <span className="font-bold text-green-700 ">
-                  {IsPostUserId() && (
+                  {isPostUserId && (
                     <FontAwesomeIcon
                       className="text-xl pr-4 text-green-800 cursor-pointer"
                       icon={faEdit}
-                      onClick={() => {
-                        setPrompt(
-                          <Prompt
-                            msg={"Editar Valor"}
-                            value={item.valor}
-                            type={TypePrompt.money}
-                            confirm={(e) => {
-                              if (e != null) {
-                                e = utils.extractNumberInString(e);
-                                e = utils.stringForDecimalNumber(e).toFixed(2);
-                              }
-
-                              if (e != item.valor && e != "0.00") {
-                                setButtonDisabled(false);
-                                setItem((p) => ({ ...p, valor: e! }));
-                              }
-                              setPrompt(<></>);
-                            }}
-                          />
-                        );
-                      }}
                     />
                   )}
-                  <span>R$: {item.valor}</span>
+                  R$:
+                  <span
+                    className="focus:outline-2 focus:outline-gray-400"
+                    {...(isPostUserId
+                      ? {
+                          contentEditable: true,
+                          suppressContentEditableWarning: true,
+                          onInput: (v) => {
+                            const e = utils.extractNumberInString(
+                              v.currentTarget.innerText
+                            );
+                            v.currentTarget.innerHTML = utils
+                              .stringForDecimalNumber(e)
+                              .toFixed(2);
+
+                            moveCursorToEnd(v.currentTarget);
+                          },
+                          onBlur: (v) => {
+                            const e = v.currentTarget.innerText;
+                            setButtonDisabled(false);
+                            setItem((p) => ({ ...p, valor: e }));
+                          },
+                        }
+                      : {})}
+                  >
+                    {item.valor}
+                  </span>
                 </span>
                 <div className="border-t-1 border-t-gray-400 py-2 my-4">
                   <h2 className="font-bold">Sobre este item</h2>
                   <div className="flex">
-                    {IsPostUserId() && (
+                    {isPostUserId && (
                       <FontAwesomeIcon
                         icon={faEdit}
                         className="text-xl pr-4 text-green-800 cursor-pointer"
-                        onClick={() => {
-                          setPrompt(
-                            <Prompt
-                              msg={"Editar Descrição"}
-                              value={item.description}
-                              multiple={true}
-                              confirm={(e) => {
-                                if (e != item.description) {
-                                  setButtonDisabled(false);
-                                  setItem((p) => ({ ...p, description: e! }));
-                                }
-                                setPrompt(<></>);
-                              }}
-                            />
-                          );
-                        }}
                       />
                     )}
-                    <p>{item.description}</p>
+                    <p
+                      className="focus:outline-2 focus:outline-gray-400"
+                      {...(isPostUserId
+                        ? {
+                            contentEditable: true,
+                            suppressContentEditableWarning: true,
+                            onInput: () => {
+                              setButtonDisabled(false);
+                            },
+                            onBlur: (e) => {
+                              const value = e.currentTarget.innerText;
+                              setItem((p) => ({ ...p, description: value }));
+                            },
+                          }
+                        : {})}
+                    >
+                      {item.description}
+                    </p>
                   </div>
-                  {IsPostUserId() && (
+                  {isPostUserId && (
                     <div className="border-t-1 border-gray-400 flex justify-end py-4 mt-4">
                       <button
                         type="button"
@@ -300,25 +312,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                             ? "text-white bg-cyan-600 cursor-pointer"
                             : "bg-gray-500 text-gray-800"
                         }`}
-                        onClick={async () => {
-                          const result = await fetch("/api/v1/posts", {
-                            method: "PUT",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify(item),
-                          });
-
-                          const updated = await result.json();
-
-                          if (updated.id) {
-                            setAlert(
-                              <Alert
-                                msg={"Update Realizado com sucesso!"}
-                                onClose={() => setAlert(<></>)}
-                              />
-                            );
-                            setButtonDisabled(true);
-                          }
-                        }}
+                        onClick={postUpdate}
                       >
                         Editar
                       </button>
@@ -334,6 +328,76 @@ export default function DetailsPostPage({ user_id }: Props) {
       </main>
     </>
   );
+
+  function moveCursorToEnd(el) {
+    const range = document.createRange();
+    const sel = window.getSelection();
+
+    range.selectNodeContents(el);
+    range.collapse(false); // false = coloca no fim do conteúdo
+
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
+  function editarValor() {
+    setPrompt(
+      <Prompt
+        msg={"Editar Valor"}
+        value={item.valor}
+        type={TypePrompt.money}
+        confirm={(e) => {
+          if (e != null) {
+            e = utils.extractNumberInString(e);
+            e = utils.stringForDecimalNumber(e).toFixed(2);
+          }
+
+          if (e != item.valor && e != "0.00") {
+            setButtonDisabled(false);
+            setItem((p) => ({ ...p, valor: e! }));
+          }
+          setPrompt(<></>);
+        }}
+      />
+    );
+  }
+
+  function editarEdscricao() {
+    setPrompt(
+      <Prompt
+        msg={"Editar Descrição"}
+        value={item.description}
+        multiple={true}
+        confirm={(e) => {
+          if (e != item.description) {
+            setButtonDisabled(false);
+            setItem((p) => ({ ...p, description: e! }));
+          }
+          setPrompt(<></>);
+        }}
+      />
+    );
+  }
+
+  async function postUpdate() {
+    const result = await fetch("/api/v1/posts", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(item),
+    });
+
+    const updated = await result.json();
+
+    if (updated.id) {
+      setAlert(
+        <Alert
+          msg={"Update Realizado com sucesso!"}
+          onClose={() => setAlert(<></>)}
+        />
+      );
+      setButtonDisabled(true);
+    }
+  }
 }
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {

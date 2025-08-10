@@ -7,3 +7,5 @@ const getToken = (req: NextApiRequest, res: NextApiResponse) => {
 };
 
 export default getToken;
+
+// retorna token

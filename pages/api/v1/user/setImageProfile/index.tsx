@@ -1,4 +1,4 @@
-import imagem from "@/models/imagem";
+import profileImages from "@/models/perfil_images";
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
@@ -12,7 +12,7 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   const body = req.body;
   console.log(body);
 
-  await imagem.saveProfileImage(body);
+  await profileImages.saveProfileImage(body);
 
   res.status(200).json(body);
 }

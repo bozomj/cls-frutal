@@ -51,7 +51,7 @@ const User = {
         cause: result,
       };
     }
-    console.log(result);
+
     return result;
   },
 

@@ -1,4 +1,4 @@
-import Card from "@/components/card";
+import Card from "@/components/Card";
 import Header from "@/components/Header";
 import autenticator from "@/models/autenticator";
 import { faHandshake } from "@fortawesome/free-regular-svg-icons";
