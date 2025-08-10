@@ -28,7 +28,7 @@ type Props = {
   user_id?: string;
 };
 
-const item0 = {
+const _item = {
   id: "",
   title: "",
   valor: "",
@@ -50,7 +50,7 @@ export default function DetailsPostPage({ user_id }: Props) {
   const [render, setRender] = useState(false);
   const [alert, setAlert] = useState(<></>);
   const [buttonDisabled, setButtonDisabled] = useState(true);
-  const [item, setItem] = useState(item0);
+  const [item, setItem] = useState(_item);
 
   const [isPostUserId, IsPostUserId] = useState(false);
 
@@ -62,7 +62,7 @@ export default function DetailsPostPage({ user_id }: Props) {
     if (!id) return;
 
     getPost(id).then((v) => {
-      if (v.length < 1) {
+      if (v.length < 1 || v.message) {
         router.push("/");
         return;
       }
@@ -376,7 +376,7 @@ export default function DetailsPostPage({ user_id }: Props) {
 }
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-  const result = utils.redirectNotToken(ctx, "");
+  const result = utils.redirectNotToken(ctx, "/");
   if ("redirect" in result) return { props: { user_id: null } };
 
   const { ctx: user_id } = result.props;
