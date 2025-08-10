@@ -14,14 +14,14 @@ function NewPost() {
   return (
     <>
       <Header />
-      <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center">
-        <section className="w-full">
-          <span className="h-[10rem] w-full flex justify-evenly bg-cyan-700 relative items-center">
-            <h1 className="text-xl">
+      <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center ">
+        <section className="h-[10rem] w-full flex justify-evenly bg-cyan-700  items-center">
+          <div className="w-full md:w-[40rem]  relative ">
+            <h1 className="text-xl p-2 text-center">
               Ola! Antes de mais nada, o que você vai publicar?
             </h1>
 
-            <span className="absolute top-[70%] grid grid-cols-[repeat(auto-fit,minmax(8rem,1fr))] p-1 gap-2  w-full md:w-[920px]">
+            <span className="absolute grid grid-cols-[repeat(auto-fit,minmax(8rem,1fr))] p-1 gap-2  w-full md:w-[40rem]">
               <Link href="/newpost/produto">
                 <Card className={cardStyle}>
                   <FontAwesomeIcon icon={faShoppingBag} className="text-5xl" />
@@ -39,7 +39,7 @@ function NewPost() {
                 Serviços
               </Card>
             </span>
-          </span>
+          </div>
         </section>
       </main>
     </>

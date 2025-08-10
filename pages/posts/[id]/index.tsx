@@ -97,9 +97,9 @@ export default function DetailsPostPage({ user_id }: Props) {
       <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center text-black ">
         <section
           id="frame-1"
-          className="flex flex-auto flex-col gap-2 w-full max-w-[40rem] p-4 bg-gray-100 rounded-2xl shadow-sm shadow-gray-400 my-2"
+          className="flex flex-auto flex-col gap-2 w-full max-w-[40rem] p-4 bg-gray-100 rounded-2xl shadow-sm shadow-gray-400 my-2 "
         >
-          <div id="frame-2" className="bg-gray-300 rounded-2xl flex-auto p-2">
+          <div id="frame-2" className="bg-gray-300 rounded-2xl flex-auto p-2 ">
             <div
               id="imgfull"
               className=" 

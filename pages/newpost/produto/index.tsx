@@ -266,7 +266,7 @@ export default function Produto() {
             type="text"
             value={title}
             placeholder="Titulo"
-            className={`p-3 bg-cyan-50 text-gray-900 outline-0  focus:outline-cyan-500 focus:outline-4
+            className={`p-3 bg-cyan-50 text-gray-900 outline-0  focus:outline-cyan-500 focus:outline-4 rounded-md
               ${postError.title ? "outline-2 outline-red-600" : "outline-none"}
               `}
             onChange={(e) => {
@@ -278,7 +278,7 @@ export default function Produto() {
           <textarea
             placeholder="Descrição"
             value={description}
-            className={`p-3 bg-cyan-50 text-gray-900 outline-0
+            className={`p-3 bg-cyan-50 text-gray-900 outline-0 rounded-md
                focus:outline-cyan-500 focus:outline-4
                ${
                  postError.description
@@ -294,7 +294,7 @@ export default function Produto() {
             <select
               name=""
               id=""
-              className={`p-3 bg-cyan-50  outline-0 focus:outline-cyan-500 focus:outline-4 flex-1
+              className={`p-3 bg-cyan-50 rounded-md  outline-0 focus:outline-cyan-500 focus:outline-4 flex-1
               ${categoria === "" ? "text-gray-400" : "text-gray-800"} 
              ${
                postError.categoria_id
@@ -370,7 +370,7 @@ export default function Produto() {
             className={`text-gray-900
                 outline-0 p-3 bg-cyan-50 
               focus:outline-cyan-500
-                focus:outline-4
+                focus:outline-4 rounded-md
               ${
                 postError.valor ? "outline-2 outline-red-600" : "outline-none"
               }`}
