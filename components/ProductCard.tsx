@@ -62,8 +62,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
             />
           </div>
 
-          <div className="flex-1 flex text-gray-900 gap-2 w-[100%] truncate overflow-hidden flex-col py-2">
-            <h2 className="h-5 font-bold block">{item.title ?? ""}</h2>
+          <div className="flex-1 flex text-gray-900 gap-2 w-[100%]  overflow-hidden flex-col py-2">
+            <h2 className=" font-bold block  whitespace-wrap">
+              {item.title ?? ""}
+            </h2>
             <p className="text-sm truncate">{item.description}</p>
             <span className="h-5 text-green-700 font-bold block">
               R$: {item.valor}
