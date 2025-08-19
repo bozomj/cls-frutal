@@ -231,7 +231,7 @@ async function getById(id: string) {
       LEFT JOIN users ON users.id = posts.user_id
       LEFT JOIN perfil_images ON perfil_images.user_id = posts.user_id
       WHERE posts.id = $1 and perfil_images.selected = true
-      GROUP BY posts.id, users.email, perfil_images.url, users.phone
+      GROUP BY posts.id, users.email, perfil_images.url, users.phone;
       
       `,
       [id]
