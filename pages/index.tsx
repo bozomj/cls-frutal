@@ -5,6 +5,7 @@ import ProductCard from "@/components/ProductCard";
 import { usePagination } from "@/contexts/PaginactionContext";
 import Footer from "@/layout/FooterLayout";
 import Produtos from "@/layout/produtos/Produtos";
+import localstore from "@/storage/localstore";
 
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -57,11 +58,11 @@ const Home: React.FC<HomeProps> = () => {
     }));
 
     setPostagens(posts);
-    console.log(posts);
   }, [current, limite, search, setPaginacao]);
 
   useEffect(() => {
     getPosts();
+    console.log(localstore.getUser());
   }, [getPosts]);
 
   useEffect(() => produtosRef.current?.focus());

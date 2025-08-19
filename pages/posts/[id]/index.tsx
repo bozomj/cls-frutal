@@ -12,6 +12,7 @@ import { GetServerSidePropsContext } from "next";
 
 import Alert from "@/components/Alert";
 import Footer from "@/layout/FooterLayout";
+import CircleAvatar from "@/components/CircleAvatar";
 
 async function getPost(id: string) {
   const res = await fetch(`/api/v1/posts/${id}`);
@@ -54,6 +55,8 @@ export default function DetailsPostPage({ user_id }: Props) {
 
   const [isPostUserId, IsPostUserId] = useState(false);
 
+  const [imgProfile, setImageProfile] = useState<string | null>(null);
+
   const titleRef = useRef<HTMLElement | null>(null);
   const valorRef = useRef<HTMLElement | null>(null);
   const descricaoRef = useRef<HTMLParagraphElement | null>(null);
@@ -71,6 +74,7 @@ export default function DetailsPostPage({ user_id }: Props) {
 
       setImagens(v[0].imagens);
       setImgPrincipal(v[0].imagens[0]?.url ?? null);
+      setImageProfile(v[0].img_profile ?? null);
 
       setRender(true);
       IsPostUserId(item.user_id == user_id);
@@ -86,6 +90,7 @@ export default function DetailsPostPage({ user_id }: Props) {
 
   if (!render) return <></>;
 
+  console.log(item);
   return (
     <>
       <header className="">
@@ -178,11 +183,17 @@ export default function DetailsPostPage({ user_id }: Props) {
                 className="flex justify-between items-center py-4"
               >
                 <div className="flex items-center gap-2">
-                  <FontAwesomeIcon
-                    icon={faUser}
-                    className="text-2xl rounded-full p-2 w-6  bg-gray-400 flex items-center justify-center cursor-pointer text-gray-300 hover:bg-gray-600 transition duration-200 "
-                  />
-
+                  {imgProfile ? (
+                    <CircleAvatar
+                      imagem={utils.getUrlImage(imgProfile)}
+                      size={3}
+                    />
+                  ) : (
+                    <FontAwesomeIcon
+                      icon={faUser}
+                      className="text-2xl rounded-full p-2 w-6  bg-gray-400 flex items-center justify-center cursor-pointer text-gray-300 hover:bg-gray-600 transition duration-200 "
+                    />
+                  )}
                   <span className="text-[1em]">
                     {utils.string.capitalizar(item.name)}
                   </span>

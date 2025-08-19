@@ -223,13 +223,16 @@ async function getById(id: string) {
         posts.*,
         users.email,
         users.phone as phone,
+        perfil_images.url as img_profile,
         MIN(users.name) as name,
         json_agg(imagens.*) AS imagens
       FROM posts
       LEFT JOIN imagens ON imagens.post_id = posts.id
       LEFT JOIN users ON users.id = posts.user_id
-      WHERE posts.id = $1
-      GROUP BY posts.id, users.email, phone
+      LEFT JOIN perfil_images ON perfil_images.user_id = posts.user_id
+      WHERE posts.id = $1 and perfil_images.selected = true
+      GROUP BY posts.id, users.email, perfil_images.url, users.phone
+      
       `,
       [id]
     );

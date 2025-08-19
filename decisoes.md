@@ -33,6 +33,8 @@ X cadastro de categorias.
 
 - criar painel de controle do administrador master
 
+- criar cadastro para as fotos do carrosel (possiveis propagandas para o site)
+
 usuarios [
 diego@hotmail.com
 matheus@hotmail.com | senha 12345

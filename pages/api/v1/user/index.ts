@@ -21,7 +21,6 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
     const users = await User.findById(user.id);
 
     res.status(200).json(users[0]);
-    // res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar usuários", cause: error });
   }
