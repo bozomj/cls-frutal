@@ -16,6 +16,7 @@ import CircleAvatar from "@/components/CircleAvatar";
 
 async function getPost(id: string) {
   const res = await fetch(`/api/v1/posts/${id}`);
+
   return await res.json();
 }
 
@@ -388,6 +389,7 @@ export default function DetailsPostPage({ user_id }: Props) {
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   const result = utils.redirectNotToken(ctx, "/");
+
   if ("redirect" in result) return { props: { user_id: null } };
 
   const { ctx: user_id } = result.props;
