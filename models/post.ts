@@ -31,7 +31,6 @@ function isPostType(obj: unknown): obj is PostType {
 }
 
 async function create(pst: PostType) {
-  console.log("<<<>>>>", pst);
   if (!isPostType(pst)) {
     throw {
       message: "JSON incorreto",

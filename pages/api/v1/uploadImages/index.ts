@@ -23,6 +23,7 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   const images = req.body;
 
+  console.log("Imagem salva:", images);
   for (const img of images) {
     await imagem.save(img.url, img.post_id);
   }
@@ -30,9 +31,3 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
     message: "upload de imagens SUCESSO!!",
   });
 }
-
-// export const config = {
-//   api: {
-//     bodyParser: false,
-//   },
-// };
