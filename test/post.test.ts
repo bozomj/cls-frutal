@@ -14,17 +14,19 @@ beforeAll(async () => {
   await database.query("delete from posts");
 });
 
+afterAll(async () => {});
+
 describe("teste da tabela post", () => {
   let post_id: string;
   const token =
-    "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdjOGY0YmNlLTg3YWItNDg0Ny1iOTg1LWU1MDcyMmExY2FiMSIsImlhdCI6MTc1NTYzOTQzNywiZXhwIjoxNzU1NjgyNjM3fQ.alUlczjWtx-O5HA5GnQrIpimLykpC0_l7YeU3mnzldw";
+    "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdjOGY0YmNlLTg3YWItNDg0Ny1iOTg1LWU1MDcyMmExY2FiMSIsImlhdCI6MTc1NzIwNzM5OCwiZXhwIjoxNzU3MjUwNTk4fQ.v9uW2uMF3gaBQACsHjjvxdXTpdQP3wYaGmXT4J7qT7M";
 
   it("inserir post com sucesso", async () => {
     const pst = {
       user_id: "7c8f4bce-87ab-4847-b985-e50722a1cab1",
       title: "testando um post 5",
       description: "tomate cereja com abacates",
-      categoria_id: 113,
+      categoria_id: 133,
       valor: 10.5,
     };
 
@@ -32,7 +34,7 @@ describe("teste da tabela post", () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Cookie: token,
+        Cookie: `${token}`,
       },
       body: JSON.stringify(pst),
     });

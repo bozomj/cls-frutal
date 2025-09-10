@@ -19,7 +19,6 @@ describe("teste FIREBASE", () => {
       const storageRef = ref(storage, "firebase" + Date.now() + ".svg");
       const caminho = path.join("public", "img", "logo.svg");
       const buffer = fs.readFileSync(caminho);
-      // const file = new Blob([buffer], { type: "image/svg+xml" });
 
       imagemRef = storageRef;
 

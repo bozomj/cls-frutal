@@ -3,7 +3,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import {
-  faCalendar,
   faEnvelope,
   faUser,
   faClipboard,
@@ -18,6 +17,7 @@ import Produtos from "@/layout/produtos/Produtos";
 import ProductCardDashboard from "@/components/ProductCardDasboard";
 import { usePagination } from "@/contexts/PaginactionContext";
 import utils from "@/utils";
+import Link from "next/link";
 
 type UserType = {
   id?: string;
@@ -105,16 +105,7 @@ function Dashboard({ ctx }: { ctx: string }) {
                 className="md:hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 w-full"
               />
               {/* </div> */}
-              <li>
-                <ListTile
-                  title={
-                    "francisco cuoco navalha ferraz de almeida tupila fino"
-                  }
-                  icon={faEnvelope}
-                  onClick={() => {}}
-                  className="md:hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 w-full overflow-hidden"
-                />
-              </li>
+
               <li>
                 <ListTile
                   title={user.email ?? ""}
@@ -124,14 +115,6 @@ function Dashboard({ ctx }: { ctx: string }) {
                 />
               </li>
 
-              <li>
-                <ListTile
-                  title={user.createdAt ?? ""}
-                  icon={faCalendar}
-                  onClick={() => {}}
-                  className="md:hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 w-full"
-                />
-              </li>
               <li>
                 <ListTile
                   title="Produtos"
@@ -152,11 +135,18 @@ function Dashboard({ ctx }: { ctx: string }) {
             <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
             <span className="flex flex-col gap-2">
               <div className="p-4 rounded-md gap-2 bg-cyan-800  flex items-center  outline-2 outline-cyan-100 ">
-                <FontAwesomeIcon
-                  icon={faPlus}
-                  className="text-3xl outline-1 p-2 rounded-md outline-cyan-100"
-                />
-                <span>Cadastrar Produto</span>
+                <Link
+                  href="/newpost"
+                  className="flex gap-2 items-center"
+                  target="blank"
+                  rel="noreferrer"
+                >
+                  <FontAwesomeIcon
+                    icon={faPlus}
+                    className="text-3xl outline-1 p-2 rounded-md outline-cyan-100"
+                  />
+                  <span>Cadastrar Produto</span>
+                </Link>
               </div>
             </span>
             <section className="flex flex-col">

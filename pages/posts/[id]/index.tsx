@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,6 +13,8 @@ import { GetServerSidePropsContext } from "next";
 import Alert from "@/components/Alert";
 import Footer from "@/layout/FooterLayout";
 import CircleAvatar from "@/components/CircleAvatar";
+import Card from "@/components/Card";
+import { imagemFirebase } from "@/storage/firebase";
 
 async function getPost(id: string) {
   const res = await fetch(`/api/v1/posts/${id}`);
@@ -42,17 +44,23 @@ const _item = {
   user_id: "",
   updated_at: "",
 };
-
+let uniqueId = 0;
 export default function DetailsPostPage({ user_id }: Props) {
   const router = useRouter();
   const id = router.query.id as string;
 
-  const [imagens, setImagens] = useState<Imagem[]>([]);
+  const [imagens, setImagens] = useState<
+    { id: number; file: File; url: string }[]
+  >([]);
   const [imgPrincial, setImgPrincipal] = useState<string>();
   const [render, setRender] = useState(false);
   const [alert, setAlert] = useState(<></>);
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [item, setItem] = useState(_item);
+
+  const [previewImagens, setPreviewImagens] = useState<
+    { id: number; file: File; url: string }[]
+  >([]);
 
   const [isPostUserId, IsPostUserId] = useState(false);
 
@@ -125,7 +133,6 @@ export default function DetailsPostPage({ user_id }: Props) {
                 />
               </div>
             </div>
-
             <section
               id="lista_imagems"
               className="flex gap-1 border-3 border-gray-400 p-2 rounded-2xl w-full items-cente h-[25rem]"
@@ -161,9 +168,9 @@ export default function DetailsPostPage({ user_id }: Props) {
                     return (
                       <div
                         className={`flex flex-1 justify-center w-full bg-gray-100  shrink h-1/3 ${rounded} overflow-hidden  max-h-1/3
-                        border-3 border-gray-100 p-1
-                        hover:border-cyan-600 
-                        `}
+                      border-3 border-gray-100 p-1
+                      hover:border-cyan-600 
+                      `}
                         key={img.id}
                         onClick={() => setImgPrincipal(img.url)}
                       >
@@ -177,6 +184,75 @@ export default function DetailsPostPage({ user_id }: Props) {
                   })}
               </div>
             </section>
+
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              max={3}
+              onChange={(e) => selecionarImagens(e)}
+            />
+
+            <div
+              id="preview-imagens"
+              className="flex gap-3 flex-wrap justify-center"
+            >
+              {previewImagens.map((img, index) => (
+                <div key={img.id} className="relative w-fit">
+                  <div
+                    className="absolute cursor-pointer bg-red-900 hover:bg-red-500 rounded-full h-8 w-8 text-center p-1 -right-2 -top-2 peer"
+                    onClick={() => {
+                      setPreviewImagens((p) => {
+                        const imgs = previewImagens.find(
+                          (im) => im.id === img.id
+                        );
+                        if (imgs) URL.revokeObjectURL(imgs.url);
+                        return p.filter((_, i) => i !== index);
+                      });
+                    }}
+                  >
+                    X
+                  </div>
+                  <Card
+                    key={index}
+                    className="border-3 border-cyan-600 bg-cyan-800 peer-hover:bg-red-500/40 peer-hover:border-red-500"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
+                    <img key={img.id} src={img.url} />
+                  </Card>
+                </div>
+              ))}
+            </div>
+            <button
+              className="btn bg-amber-400 text-white font-bold"
+              onClick={async () => {
+                if (previewImagens.length < 1 || previewImagens.length > 3)
+                  return;
+
+                console.group(typeof previewImagens);
+                const imagesFirebase = await imagemFirebase.uploadImageFirebase(
+                  previewImagens
+                );
+                if (imagesFirebase.length < 1) return;
+
+                const imgs = imagesFirebase.map((img: { url: string }) => {
+                  return { url: img.url, post_id: item.id };
+                });
+
+                await fetch("/api/v1/uploadImages", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(imgs),
+                });
+
+                // setImagens(previewImagens);
+                setPreviewImagens([]);
+              }}
+            >
+              salvar
+            </button>
 
             <section id="dados-postagem">
               <div
@@ -383,6 +459,33 @@ export default function DetailsPostPage({ user_id }: Props) {
         />
       );
       setButtonDisabled(true);
+    }
+  }
+
+  function getUniqueId() {
+    return uniqueId++;
+  }
+  async function selecionarImagens(e: ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files || [];
+
+    if (files) {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+
+        // Verifica se o arquivo é uma imagem
+        if (file.type.startsWith("image/")) {
+          // setLoading(true);
+
+          const resized = (await utils.imagem.resizeImageFile(file)) as File;
+          // Cria uma URL temporária para o arquivo
+          const imgURL = URL.createObjectURL(resized);
+          const id = getUniqueId();
+          setPreviewImagens((p) => [
+            ...p,
+            { url: imgURL, id: id, file: resized },
+          ]);
+        }
+      }
     }
   }
 }

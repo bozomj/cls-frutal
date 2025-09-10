@@ -43,7 +43,9 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
       `token=${token}; HttpOnly; ${tokenSecure} ; Path=/; Max-Age=3600;`
     );
 
-    res.status(200).json({ message: "Usuário logado com sucesso" });
+    res
+      .status(200)
+      .json({ message: "Usuário logado com sucesso", token: token });
   } catch (error) {
     console.log({
       redirect: error,

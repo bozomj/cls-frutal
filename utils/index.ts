@@ -151,6 +151,7 @@ const utils = {
   formatarMoeda,
   extractNumberInString,
   stringForDecimalNumber,
+
   string: {
     capitalizar,
   },

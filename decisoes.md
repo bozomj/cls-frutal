@@ -29,6 +29,8 @@ X criar end point para retornar usuario logado api/v1/user
 - terminar a pagina perfil
   X colocando preview pra ver a imagem selecionada pra perfil
 
+- botao de adicionar foto na pagina de produto
+
 - criar miniatura para visualizar
 
 - criar painel de controle do administrador master
