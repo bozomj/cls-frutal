@@ -15,6 +15,7 @@ import Footer from "@/layout/FooterLayout";
 import CircleAvatar from "@/components/CircleAvatar";
 import Card from "@/components/Card";
 import { imagemFirebase } from "@/storage/firebase";
+import user from "@/pages/api/v1/user";
 
 async function getPost(id: string) {
   const res = await fetch(`/api/v1/posts/${id}`);
@@ -99,7 +100,6 @@ export default function DetailsPostPage({ user_id }: Props) {
 
   if (!render) return <></>;
 
-  console.log(item);
   return (
     <>
       <header className="">
@@ -223,36 +223,38 @@ export default function DetailsPostPage({ user_id }: Props) {
                 </div>
               ))}
             </div>
-            <button
-              className="btn bg-amber-400 text-white font-bold"
-              onClick={async () => {
-                if (previewImagens.length < 1 || previewImagens.length > 3)
-                  return;
+            {isPostUserId && imagens.length < 3 && (
+              <button
+                className="btn bg-amber-400 text-white font-bold"
+                onClick={async () => {
+                  if (item.user_id !== user_id) return;
 
-                console.group(typeof previewImagens);
-                const imagesFirebase = await imagemFirebase.uploadImageFirebase(
-                  previewImagens
-                );
-                if (imagesFirebase.length < 1) return;
+                  if (previewImagens.length < 1 || previewImagens.length > 3)
+                    return;
 
-                const imgs = imagesFirebase.map((img: { url: string }) => {
-                  return { url: img.url, post_id: item.id };
-                });
+                  const imagesFirebase =
+                    await imagemFirebase.uploadImageFirebase(previewImagens);
+                  if (imagesFirebase.length < 1) return;
 
-                await fetch("/api/v1/uploadImages", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify(imgs),
-                });
+                  const imgs = imagesFirebase.map((img: { url: string }) => {
+                    return { url: img.url, post_id: item.id };
+                  });
 
-                // setImagens(previewImagens);
-                setPreviewImagens([]);
-              }}
-            >
-              salvar
-            </button>
+                  await fetch("/api/v1/uploadImages", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(imgs),
+                  });
+
+                  // setImagens(previewImagens);
+                  setPreviewImagens([]);
+                }}
+              >
+                salvar
+              </button>
+            )}
 
             <section id="dados-postagem">
               <div
