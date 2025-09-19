@@ -15,19 +15,12 @@ import Footer from "@/layout/FooterLayout";
 import CircleAvatar from "@/components/CircleAvatar";
 import Card from "@/components/Card";
 import { imagemFirebase } from "@/storage/firebase";
-import user from "@/pages/api/v1/user";
 
 async function getPost(id: string) {
   const res = await fetch(`/api/v1/posts/${id}`);
 
   return await res.json();
 }
-
-type Imagem = {
-  url: string;
-  id: string;
-  post_id: string;
-};
 
 type Props = {
   user_id?: string;
@@ -46,22 +39,19 @@ const _item = {
   updated_at: "",
 };
 let uniqueId = 0;
+type ImageType = { id: number; file: File; url: string };
 export default function DetailsPostPage({ user_id }: Props) {
   const router = useRouter();
-  const id = router.query.id as string;
+  const post_id = router.query.id as string;
 
-  const [imagens, setImagens] = useState<
-    { id: number; file: File; url: string }[]
-  >([]);
+  const [post_imagens, setImagens] = useState<ImageType[]>([]);
   const [imgPrincial, setImgPrincipal] = useState<string>();
   const [render, setRender] = useState(false);
   const [alert, setAlert] = useState(<></>);
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [item, setItem] = useState(_item);
 
-  const [previewImagens, setPreviewImagens] = useState<
-    { id: number; file: File; url: string }[]
-  >([]);
+  const [previewImagens, setPreviewImagens] = useState<ImageType[]>([]);
 
   const [isPostUserId, IsPostUserId] = useState(false);
 
@@ -72,16 +62,17 @@ export default function DetailsPostPage({ user_id }: Props) {
   const descricaoRef = useRef<HTMLParagraphElement | null>(null);
 
   useEffect(() => {
-    if (!id) return;
+    if (!post_id) return;
 
-    getPost(id).then((v) => {
+    getPost(post_id).then((v) => {
       if (v.length < 1 || v.message) {
         router.push("/");
         return;
       }
 
-      setItem(v[0]);
+      console.log(v);
 
+      setItem(v[0]);
       setImagens(v[0].imagens);
       setImgPrincipal(v[0].imagens[0]?.url ?? null);
       setImageProfile(v[0].img_profile ?? null);
@@ -89,7 +80,7 @@ export default function DetailsPostPage({ user_id }: Props) {
       setRender(true);
       IsPostUserId(item.user_id == user_id);
     });
-  }, [id, item.user_id, router, user_id]);
+  }, [post_id, item.user_id, router, user_id]);
 
   function toggleImg() {
     const im = document.getElementById("imgfull");
@@ -155,13 +146,13 @@ export default function DetailsPostPage({ user_id }: Props) {
                 id="galeria"
                 className="flex flex-col w-2/7 gap-2 order-1 h-full   overflow-hidden"
               >
-                {imagens.length > 0 &&
-                  imagens.map((img, key) => {
+                {post_imagens.length > 0 &&
+                  post_imagens.map((img, key) => {
                     if (img == null) return;
                     const rounded =
                       key == 0
                         ? " rounded-tl-2xl"
-                        : key < imagens.length - 1
+                        : key < post_imagens.length - 1
                         ? "rounded-sm"
                         : "rounded-bl-2xl";
 
@@ -184,46 +175,49 @@ export default function DetailsPostPage({ user_id }: Props) {
                   })}
               </div>
             </section>
+            {isPostUserId && post_imagens.length < 3 && (
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                max={3}
+                onChange={(e) => selecionarImagens(e)}
+              />
+            )}
 
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              max={3}
-              onChange={(e) => selecionarImagens(e)}
-            />
-
-            <div
-              id="preview-imagens"
-              className="flex gap-3 flex-wrap justify-center"
-            >
-              {previewImagens.map((img, index) => (
-                <div key={img.id} className="relative w-fit">
-                  <div
-                    className="absolute cursor-pointer bg-red-900 hover:bg-red-500 rounded-full h-8 w-8 text-center p-1 -right-2 -top-2 peer"
-                    onClick={() => {
-                      setPreviewImagens((p) => {
-                        const imgs = previewImagens.find(
-                          (im) => im.id === img.id
-                        );
-                        if (imgs) URL.revokeObjectURL(imgs.url);
-                        return p.filter((_, i) => i !== index);
-                      });
-                    }}
-                  >
-                    X
+            {isPostUserId && previewImagens.length > 0 && (
+              <div
+                id="preview-imagens"
+                className="flex gap-3 flex-wrap justify-center bg-gray-400 py-4"
+              >
+                {previewImagens.map((img, index) => (
+                  <div key={img.id} className="relative w-fit">
+                    <div
+                      className="absolute cursor-pointer bg-red-900 hover:bg-red-500 rounded-full h-8 w-8 text-center p-1 -right-2 -top-2 peer"
+                      onClick={() => {
+                        setPreviewImagens((p) => {
+                          const imgs = previewImagens.find(
+                            (im) => im.id === img.id
+                          );
+                          if (imgs) URL.revokeObjectURL(imgs.url);
+                          return p.filter((_, i) => i !== index);
+                        });
+                      }}
+                    >
+                      X
+                    </div>
+                    <Card
+                      key={index}
+                      className="border-3 border-cyan-600 bg-cyan-800 peer-hover:bg-red-500/40 peer-hover:border-red-500"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
+                      <img key={img.id} src={img.url} />
+                    </Card>
                   </div>
-                  <Card
-                    key={index}
-                    className="border-3 border-cyan-600 bg-cyan-800 peer-hover:bg-red-500/40 peer-hover:border-red-500"
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
-                    <img key={img.id} src={img.url} />
-                  </Card>
-                </div>
-              ))}
-            </div>
-            {isPostUserId && imagens.length < 3 && (
+                ))}
+              </div>
+            )}
+            {isPostUserId && post_imagens.length < 3 && (
               <button
                 className="btn bg-amber-400 text-white font-bold"
                 onClick={async () => {
@@ -237,7 +231,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                   if (imagesFirebase.length < 1) return;
 
                   const imgs = imagesFirebase.map((img: { url: string }) => {
-                    return { url: img.url, post_id: item.id };
+                    return { url: img.url, post_id: item.id, user_id: user_id };
                   });
 
                   await fetch("/api/v1/uploadImages", {
@@ -248,14 +242,13 @@ export default function DetailsPostPage({ user_id }: Props) {
                     body: JSON.stringify(imgs),
                   });
 
-                  // setImagens(previewImagens);
+                  setImagens(previewImagens);
                   setPreviewImagens([]);
                 }}
               >
                 salvar
               </button>
             )}
-
             <section id="dados-postagem">
               <div
                 id="actions"

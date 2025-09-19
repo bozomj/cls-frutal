@@ -172,12 +172,15 @@ export default function Produto() {
     }
 
     try {
-      // jsonresult[0].id;
       const imagensFirebase = await imagemFirebase.uploadImageFirebase(imagens);
 
       if (imagemFirebase != null) {
         const imgs = imagensFirebase!.map((img: { url: string }) => {
-          return { url: img.url, post_id: jsonresult[0].id };
+          return {
+            url: img.url,
+            post_id: jsonresult[0].id,
+            user_id: post.user_id,
+          };
         });
 
         await fetch("/api/v1/uploadImages", {

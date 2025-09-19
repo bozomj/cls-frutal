@@ -31,6 +31,8 @@ X criar end point para retornar usuario logado api/v1/user
 
 - botao de adicionar foto na pagina de produto
 
+  - (falta impedir que um post seja alterado por outro usuario, no caso das imagens ou colocamos o id do usuario na tabela tbm ou antes de salvar verificar se o post pertence ao usuario atual)
+
 - criar miniatura para visualizar
 
 - criar painel de controle do administrador master
