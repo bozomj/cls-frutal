@@ -63,7 +63,10 @@ async function putHandler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    const post = await Post.update(body);
+    const post = await Post.update({
+      ...body,
+      updated_at: new Date().toISOString(),
+    });
     return res.status(200).json(post);
   } catch (error) {
     return res

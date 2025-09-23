@@ -16,6 +16,7 @@ export type PostType = {
   phone: string;
   name: string;
   created_at?: EpochTimeStamp;
+  updated_at?: EpochTimeStamp;
 };
 
 function isPostType(obj: unknown): obj is PostType {
@@ -63,8 +64,16 @@ async function create(pst: PostType) {
 }
 
 async function update(pst: PostType) {
-  const query =
-    "UPDATE posts SET title = $1, description = $2, valor = $3, categoria_id = $4 WHERE id = $5 and user_id = $6 RETURNING *";
+  const query = `
+    UPDATE posts 
+      SET title = $1,
+      description = $2,
+      valor = $3,
+      categoria_id = $4,
+      updated_at = $5
+    WHERE id = $6 and user_id = $7 
+    RETURNING
+      *`;
   try {
     return (
       await database.query(query, [
@@ -72,6 +81,7 @@ async function update(pst: PostType) {
         pst.description,
         pst.valor,
         pst.categoria_id,
+        pst.updated_at,
         pst.id,
         pst.user_id,
       ])
