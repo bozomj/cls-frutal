@@ -3,7 +3,7 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faUser } from "@fortawesome/free-regular-svg-icons";
+import { faEdit, faImage, faUser } from "@fortawesome/free-regular-svg-icons";
 import { faShare } from "@fortawesome/free-solid-svg-icons";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 
@@ -46,7 +46,7 @@ export default function DetailsPostPage({ user_id }: Props) {
 
   const [post_imagens, setImagens] = useState<ImageType[]>([]);
   const [imgPrincial, setImgPrincipal] = useState<string>();
-  const [render, setRender] = useState(false);
+
   const [alert, setAlert] = useState(<></>);
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [item, setItem] = useState(_item);
@@ -77,7 +77,6 @@ export default function DetailsPostPage({ user_id }: Props) {
       setImgPrincipal(v[0].imagens[0]?.url ?? null);
       setImageProfile(v[0].img_profile ?? null);
 
-      setRender(true);
       IsPostUserId(item.user_id == user_id);
     });
   }, [post_id, item.user_id, router, user_id]);
@@ -89,16 +88,9 @@ export default function DetailsPostPage({ user_id }: Props) {
     im?.classList.toggle("flex");
   }
 
-  if (!render) return <></>;
-
   return (
     <>
-      <header className="">
-        <Header />
-
-        <meta property="og:title" content={item.title} />
-        <meta property="og:image" content={item.imagens[0]} />
-      </header>
+      <Header />
       <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center text-black ">
         <section
           id="frame-1"
@@ -175,14 +167,19 @@ export default function DetailsPostPage({ user_id }: Props) {
                   })}
               </div>
             </section>
+
             {isPostUserId && post_imagens.length < 3 && (
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                max={3}
-                onChange={(e) => selecionarImagens(e)}
-              />
+              <label className="bg-cyan-700 hover:bg-cyan-400 focus:outline-cyan-400 focus:outline-4 cursor-pointer block w-fit p-2 rounded m-2 text-white">
+                <FontAwesomeIcon className="text-3xl" icon={faImage} />
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  multiple
+                  max={3}
+                  onChange={(e) => selecionarImagens(e)}
+                />
+              </label>
             )}
 
             {isPostUserId && previewImagens.length > 0 && (

@@ -29,9 +29,9 @@ X criar end point para retornar usuario logado api/v1/user
 - terminar a pagina perfil
   X colocando preview pra ver a imagem selecionada pra perfil
 
-- botao de adicionar foto na pagina de produto
+x botao de adicionar foto na pagina de produto
 
-  - (falta impedir que um post seja alterado por outro usuario, no caso das imagens ou colocamos o id do usuario na tabela tbm ou antes de salvar verificar se o post pertence ao usuario atual)
+- (falta impedir que um post seja alterado por outro usuario, no caso das imagens ou colocamos o id do usuario na tabela tbm ou antes de salvar verificar se o post pertence ao usuario atual)
 
 - criar miniatura para visualizar
 
