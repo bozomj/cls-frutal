@@ -37,6 +37,7 @@ const _item = {
   phone: "",
   user_id: "",
   updated_at: "",
+  maxImagens: 3,
 };
 
 let uniqueId = 0;
@@ -171,7 +172,7 @@ export default function DetailsPostPage({ user_id }: Props) {
               </div>
             </section>
 
-            {isPostUserId && post_imagens.length < 5 && (
+            {isPostUserId && post_imagens.length < _item.maxImagens && (
               <label className="bg-cyan-700 hover:bg-cyan-400 focus:outline-cyan-400 focus:outline-4 cursor-pointer block w-fit p-2 rounded m-2 text-white">
                 <FontAwesomeIcon className="text-3xl" icon={faImage} />
                 <input
@@ -217,13 +218,16 @@ export default function DetailsPostPage({ user_id }: Props) {
                 ))}
               </div>
             )}
-            {isPostUserId && post_imagens.length < 3 && (
+            {isPostUserId && post_imagens.length < _item.maxImagens && (
               <button
                 className="btn bg-amber-400 text-white font-bold"
                 onClick={async () => {
                   if (item.user_id !== user_id) return;
 
-                  if (post_imagens.length + previewImagens.length > 3) {
+                  if (
+                    post_imagens.length + previewImagens.length >
+                    _item.maxImagens
+                  ) {
                     setAlert(
                       <Alert
                         msg={"Limite de 3 imagens por postagem"}
@@ -233,8 +237,15 @@ export default function DetailsPostPage({ user_id }: Props) {
                     return;
                   }
 
-                  if (previewImagens.length < 1 || previewImagens.length > 3)
+                  if (previewImagens.length < 1 || previewImagens.length > 3) {
+                    setAlert(
+                      <Alert
+                        msg={"Selecione Pelo menos 1 imagem e no maximo 3"}
+                        onClose={() => setAlert(<></>)}
+                      />
+                    );
                     return;
+                  }
 
                   const imagesFirebase =
                     await imagemFirebase.uploadImageFirebase(previewImagens);
@@ -252,8 +263,8 @@ export default function DetailsPostPage({ user_id }: Props) {
                     body: JSON.stringify(imgs),
                   });
 
-                  setImagens(previewImagens);
                   setPreviewImagens([]);
+                  router.replace(router.asPath);
                 }}
               >
                 salvar

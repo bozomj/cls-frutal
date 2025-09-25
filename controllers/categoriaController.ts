@@ -10,15 +10,15 @@ const categoriaController = {
       },
     });
 
-    const ct = await result.json();
+    const categoriaJson = await result.json();
 
-    if (ct.http_code)
+    if (categoriaJson.http_code)
       return {
-        http_code: ct.http_code,
-        message: ct.message,
+        http_code: categoriaJson.http_code,
+        message: categoriaJson.message,
       };
 
-    return ct[0];
+    return categoriaJson[0];
   },
 };
 
