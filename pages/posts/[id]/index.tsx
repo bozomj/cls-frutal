@@ -38,8 +38,11 @@ const _item = {
   user_id: "",
   updated_at: "",
 };
+
 let uniqueId = 0;
+
 type ImageType = { id: number; file: File; url: string };
+
 export default function DetailsPostPage({ user_id }: Props) {
   const router = useRouter();
   const post_id = router.query.id as string;
@@ -168,7 +171,7 @@ export default function DetailsPostPage({ user_id }: Props) {
               </div>
             </section>
 
-            {isPostUserId && post_imagens.length < 3 && (
+            {isPostUserId && post_imagens.length < 5 && (
               <label className="bg-cyan-700 hover:bg-cyan-400 focus:outline-cyan-400 focus:outline-4 cursor-pointer block w-fit p-2 rounded m-2 text-white">
                 <FontAwesomeIcon className="text-3xl" icon={faImage} />
                 <input
@@ -219,6 +222,16 @@ export default function DetailsPostPage({ user_id }: Props) {
                 className="btn bg-amber-400 text-white font-bold"
                 onClick={async () => {
                   if (item.user_id !== user_id) return;
+
+                  if (post_imagens.length + previewImagens.length > 3) {
+                    setAlert(
+                      <Alert
+                        msg={"Limite de 3 imagens por postagem"}
+                        onClose={() => setAlert(<></>)}
+                      />
+                    );
+                    return;
+                  }
 
                   if (previewImagens.length < 1 || previewImagens.length > 3)
                     return;

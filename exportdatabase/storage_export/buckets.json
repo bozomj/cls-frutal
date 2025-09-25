@@ -2,6 +2,9 @@
   "buckets": [
     {
       "id": "clsfrutal.firebasestorage.app"
+    },
+    {
+      "id": "clsfrutal.appspot.com"
     }
   ]
 }

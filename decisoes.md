@@ -39,6 +39,8 @@ x botao de adicionar foto na pagina de produto
 
 - criar cadastro para as fotos do carrosel (possiveis propagandas para o site)
 
+- redirecionar pagina ao cadastrar usuario
+
 usuarios [
 diego@hotmail.com
 matheus@hotmail.com | senha 12345

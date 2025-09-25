@@ -141,7 +141,11 @@ async function deletePost(id: string, userId: string) {
 
   for (const img of imagens) {
     const deleteRef = ref(storage, img.url);
-    await deleteObject(deleteRef);
+    try {
+      await deleteObject(deleteRef);
+    } catch (error) {
+      console.log("Erro ao deletar imagem no firebase", error);
+    }
   }
 
   //deleta imagem post local
