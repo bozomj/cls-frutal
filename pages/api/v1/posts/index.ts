@@ -44,33 +44,31 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function putHandler(req: NextApiRequest, res: NextApiResponse) {
-  const body = req.body;
-  let user;
-
   try {
-    user = autenticator.verifyToken(req.cookies.token || "");
+    const user = autenticator.verifyToken(req.cookies.token || "");
+    const body = req.body;
 
-    if (user.id !== body.user_id) {
-      throw {
-        message: "Unauthorized",
-        cause: "Post não pertence ao usuario atual",
-      };
-    } else {
-      body.user_id = user.id;
+    const post = await Post.getById(body.id);
+
+    console.log(user.id, post.user_id);
+
+    if (!post) {
+      return res.status(404).json({ message: "Post não encontrado" });
     }
-  } catch (e) {
-    return res.status(401).json({ message: "Unauthorized", cause: e });
-  }
 
-  try {
-    const post = await Post.update({
+    if (user.id !== post.user_id) {
+      return res.status(403).json({
+        message: "Forbidden",
+        cause: "Post não pertence ao usuario atual",
+      });
+    }
+
+    const updated = await Post.update({
       ...body,
       updated_at: new Date().toISOString(),
     });
-    return res.status(200).json(post);
-  } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "erro ao inserir post", cause: error });
+    return res.status(200).json(updated);
+  } catch (e) {
+    return res.status(401).json({ message: "Unauthorized", cause: e });
   }
 }
