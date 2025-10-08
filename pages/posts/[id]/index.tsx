@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,28 +16,8 @@ import CircleAvatar from "@/components/CircleAvatar";
 import Card from "@/components/Card";
 import { imagemFirebase } from "@/storage/firebase";
 
-async function getPost(id: string) {
-  const res = await fetch(`/api/v1/posts/${id}`);
-
-  return await res.json();
-}
-
 type Props = {
   user_id?: string;
-};
-
-const _item = {
-  id: "",
-  title: "",
-  valor: "",
-  created_at: "",
-  imagens: [],
-  description: "",
-  name: "",
-  phone: "",
-  user_id: "",
-  updated_at: "",
-  maxImagens: 3,
 };
 
 let uniqueId = 0;
@@ -45,6 +25,20 @@ let uniqueId = 0;
 type ImageType = { id: number; file: File; url: string };
 
 export default function DetailsPostPage({ user_id }: Props) {
+  const _item = {
+    id: "",
+    title: "",
+    valor: "",
+    created_at: "",
+    imagens: [],
+    description: "",
+    name: "",
+    phone: "",
+    user_id: "",
+    updated_at: "",
+    maxImagens: 3,
+  };
+
   const router = useRouter();
   const post_id = router.query.id as string;
 
@@ -61,6 +55,28 @@ export default function DetailsPostPage({ user_id }: Props) {
 
   const [imgProfile, setImageProfile] = useState<string | null>(null);
 
+  const getPost = useCallback(
+    async (id: string) => {
+      const res = await fetch(`/api/v1/posts/${id}`);
+
+      const data = await res.json();
+
+      if (data.length < 1 || data.message) {
+        router.replace("/");
+        return { message: "Post not found", status: 404 };
+      }
+
+      const result = data;
+      console.log(data);
+      setItem(result);
+      setImagens(result.imagens);
+      setImgPrincipal(result.imagens[0]?.url ?? null);
+      setImageProfile(result.img_profile ?? null);
+      IsPostUserId(result.user_id == user_id);
+    },
+    [user_id, router]
+  );
+
   const titleRef = useRef<HTMLElement | null>(null);
   const valorRef = useRef<HTMLElement | null>(null);
   const descricaoRef = useRef<HTMLParagraphElement | null>(null);
@@ -68,22 +84,12 @@ export default function DetailsPostPage({ user_id }: Props) {
   useEffect(() => {
     if (!post_id) return;
 
-    getPost(post_id).then((v) => {
-      if (v.length < 1 || v.message) {
-        router.push("/");
-        return;
-      }
+    async function fetchData() {
+      await getPost(post_id);
+    }
 
-      console.log(v);
-
-      setItem(v[0]);
-      setImagens(v[0].imagens);
-      setImgPrincipal(v[0].imagens[0]?.url ?? null);
-      setImageProfile(v[0].img_profile ?? null);
-
-      IsPostUserId(item.user_id == user_id);
-    });
-  }, [post_id, item.user_id, router, user_id]);
+    fetchData();
+  }, [post_id, getPost]);
 
   function toggleImg() {
     const im = document.getElementById("imgfull");
@@ -288,7 +294,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                     />
                   )}
                   <span className="text-[1em]">
-                    {utils.string.capitalizar(item.name)}
+                    {utils.string.capitalizar(item.name ?? "")}
                   </span>
                 </div>
 

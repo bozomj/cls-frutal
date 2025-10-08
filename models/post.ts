@@ -250,7 +250,7 @@ async function getById(id: string) {
       [id]
     );
 
-    return posts[0];
+    return posts.length < 1 ? posts : posts[0];
   } catch (e) {
     throw {
       id: id,

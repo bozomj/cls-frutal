@@ -1,31 +1,31 @@
-[debug] [2025-09-29T21:36:04.325Z] ----------------------------------------------------------------------
-[debug] [2025-09-29T21:36:04.328Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\BOZO\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js emulators:start --project clsfrutal --config=./firebase/firebase.json --import=./exportdatabase --export-on-exit
-[debug] [2025-09-29T21:36:04.329Z] CLI Version:   14.11.1
-[debug] [2025-09-29T21:36:04.329Z] Platform:      win32
-[debug] [2025-09-29T21:36:04.329Z] Node Version:  v20.16.0
-[debug] [2025-09-29T21:36:04.330Z] Time:          Mon Sep 29 2025 18:36:04 GMT-0300 (Horário Padrão de Brasília)
-[debug] [2025-09-29T21:36:04.330Z] ----------------------------------------------------------------------
+[debug] [2025-10-07T23:23:24.889Z] ----------------------------------------------------------------------
+[debug] [2025-10-07T23:23:24.892Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\BOZO\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js emulators:start --project clsfrutal --config=./firebase/firebase.json --import=./exportdatabase --export-on-exit
+[debug] [2025-10-07T23:23:24.892Z] CLI Version:   14.11.1
+[debug] [2025-10-07T23:23:24.892Z] Platform:      win32
+[debug] [2025-10-07T23:23:24.892Z] Node Version:  v20.16.0
+[debug] [2025-10-07T23:23:24.892Z] Time:          Tue Oct 07 2025 20:23:24 GMT-0300 (Horário Padrão de Brasília)
+[debug] [2025-10-07T23:23:24.892Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2025-09-29T21:36:04.333Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
-[debug] [2025-09-29T21:36:04.712Z] Object "/emulators" in "firebase.json" has unknown property: {"additionalProperty":"import"}
-[debug] [2025-09-29T21:36:04.718Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2025-09-29T21:36:04.718Z] > authorizing via signed-in user (bozomj@gmail.com)
-[debug] [2025-09-29T21:36:04.982Z] java version "11.0.20" 2023-07-18 LTS
+[debug] [2025-10-07T23:23:24.894Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2025-10-07T23:23:25.174Z] Object "/emulators" in "firebase.json" has unknown property: {"additionalProperty":"import"}
+[debug] [2025-10-07T23:23:25.180Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-07T23:23:25.180Z] > authorizing via signed-in user (bozomj@gmail.com)
+[debug] [2025-10-07T23:23:25.425Z] java version "11.0.20" 2023-07-18 LTS
 
-[debug] [2025-09-29T21:36:04.982Z] Java(TM) SE Runtime Environment 18.9 (build 11.0.20+9-LTS-256)
+[debug] [2025-10-07T23:23:25.426Z] Java(TM) SE Runtime Environment 18.9 (build 11.0.20+9-LTS-256)
 Java HotSpot(TM) 64-Bit Server VM 18.9 (build 11.0.20+9-LTS-256, mixed mode)
 
-[debug] [2025-09-29T21:36:05.007Z] Parsed Java major version: 11
+[debug] [2025-10-07T23:23:25.457Z] Parsed Java major version: 11
 [info] i  emulators: Starting emulators: storage {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: storage"}}
-[debug] [2025-09-29T21:36:05.017Z] [logging] Logging Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
-[debug] [2025-09-29T21:36:05.017Z] [storage] Storage Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
-[debug] [2025-09-29T21:36:05.017Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"storage":[{"address":"127.0.0.1","family":"IPv4","port":9199}]},"metadata":{"message":"assigned listening specs for emulators"}}
-[debug] [2025-09-29T21:36:05.021Z] [hub] writing locator at C:\Users\BOZO\AppData\Local\Temp\hub-clsfrutal.json
-[debug] [2025-09-29T21:36:05.035Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"storage"},"message":"Ignoring unsupported arg: port"}}
-[debug] [2025-09-29T21:36:05.073Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
-[debug] [2025-09-29T21:36:05.074Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
-[debug] [2025-09-29T21:36:06.150Z] Temp file directory for storage emulator: C:\Users\BOZO\AppData\Local\Temp/firebase/storage/blobs {"metadata":{"emulator":{"name":"storage"},"message":"Temp file directory for storage emulator: C:\\Users\\BOZO\\AppData\\Local\\Temp/firebase/storage/blobs"}}
-[debug] [2025-09-29T21:36:06.195Z] Could not find VSCode notification endpoint: FetchError: request to http://localhost:40001/vscode/notify failed, reason: . If you are not running the Firebase Data Connect VSCode extension, this is expected and not an issue.
+[debug] [2025-10-07T23:23:25.467Z] [logging] Logging Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-10-07T23:23:25.467Z] [storage] Storage Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-10-07T23:23:25.467Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"storage":[{"address":"127.0.0.1","family":"IPv4","port":9199}]},"metadata":{"message":"assigned listening specs for emulators"}}
+[debug] [2025-10-07T23:23:25.470Z] [hub] writing locator at C:\Users\BOZO\AppData\Local\Temp\hub-clsfrutal.json
+[debug] [2025-10-07T23:23:25.482Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"storage"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2025-10-07T23:23:25.531Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2025-10-07T23:23:25.531Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2025-10-07T23:23:26.303Z] Temp file directory for storage emulator: C:\Users\BOZO\AppData\Local\Temp/firebase/storage/blobs {"metadata":{"emulator":{"name":"storage"},"message":"Temp file directory for storage emulator: C:\\Users\\BOZO\\AppData\\Local\\Temp/firebase/storage/blobs"}}
+[debug] [2025-10-07T23:23:28.893Z] Could not find VSCode notification endpoint: FetchError: request to http://localhost:40001/vscode/notify failed, reason: . If you are not running the Firebase Data Connect VSCode extension, this is expected and not an issue.
 [info] 
 ┌─────────────────────────────────────────────────────────────┐
 │ ✔  All emulators ready! It is now safe to connect your app. │
