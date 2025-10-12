@@ -174,15 +174,19 @@ async function getByUserID(
   const query = `WITH ultimos_posts AS (
         SELECT *
         FROM posts
+        
         WHERE posts.user_id = $1 
           AND (posts.title ilike $2 or posts.description ilike $2 )
+          
         ORDER BY created_at DESC
         LIMIT $4 OFFSET $3
       )
       SELECT
         p.*,
+        users.phone AS phone,
         i.url AS imageurl
       FROM ultimos_posts p
+      LEFT JOIN users ON users.id = p.user_id
       LEFT JOIN LATERAL (
         SELECT url FROM imagens WHERE post_id = p.id ORDER BY id ASC LIMIT 1
       ) i ON true;
