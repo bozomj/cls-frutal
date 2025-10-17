@@ -22,6 +22,7 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
   if (deleted) return null;
 
   function linkFone(phone: string) {
+    console.log(item);
     return `https://wa.me/55${phone}?text=[Classificados Frutal] - fiquei interessado em seu produto `;
   }
 

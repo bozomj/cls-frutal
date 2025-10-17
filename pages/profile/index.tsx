@@ -16,6 +16,7 @@ import ProductCardDashboard from "@/components/ProductCardDasboard";
 import { imagemFirebase } from "@/storage/firebase";
 import Modal from "@/components/Modal";
 import FooterLayout from "@/layout/FooterLayout";
+import Link from "next/link";
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<UserType>();
@@ -33,6 +34,7 @@ const Profile: React.FC = () => {
     const p = await userController.getPost(initial, limite);
     setPosts(p.posts);
     setPaginacao((prev) => ({ ...prev, totalItens: p.total.total }));
+    console.log(posts);
   }, [initial, limite, setPaginacao]);
 
   useEffect(() => {
@@ -69,6 +71,13 @@ const Profile: React.FC = () => {
             </div>
 
             <h1>{utils.string.capitalizar(user?.name ?? "")}</h1>
+            {user?.is_admin && (
+              <div className="text-sm text-gray-600 font-bold">
+                <Link href="/administrator" className="hover:underline">
+                  Painel Administrador
+                </Link>
+              </div>
+            )}
           </section>
 
           <section className="border-t-2 border-gray-400 flex flex-col py-4 mt-4">

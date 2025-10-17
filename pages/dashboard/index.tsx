@@ -43,7 +43,6 @@ function Dashboard({ ctx }: { ctx: string }) {
         method: "GET",
       }
     );
-
     const pst = await myPosts.json();
 
     setPaginacao((prev) => ({

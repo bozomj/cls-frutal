@@ -1,79 +1,30 @@
 import CircleAvatar from "@/components/CircleAvatar";
-import Header from "@/components/Header";
-import FooterLayout from "@/layout/FooterLayout";
 import autenticator from "@/models/autenticator";
 import User, { UserType } from "@/models/user";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { JSX, useEffect, useState } from "react";
-import { PostType } from "@/models/post";
+
 import ListTile from "@/components/ListTile";
 import { faDashboard, faPodcast } from "@fortawesome/free-solid-svg-icons";
+import AdminDashboard from "@/privatePages/admin_dashboard";
 
 interface Props {
   user: UserType;
 }
 
-async function getUsers() {
-  const result = await fetch("http://localhost:3000/api/v1/users", {});
-  const users = await result.json();
-
-  return users;
-}
-
-async function getPosts() {
-  const result = await fetch("http://localhost:3000/api/v1/posts", {});
-  const posts = await result.json();
-  return posts;
-}
-
-function mountUserList(users: UserType[]) {
-  return users.map((user) => (
-    <div
-      key={user.id}
-      className="p-2 bg-cyan-600 flex gap-4 items-center rounded text-white"
-    >
-      <div>{user.name}</div>
-      <div>{user.email}</div>
-      <div>{user.phone}</div>
-    </div>
-  ));
-}
-
-function mountPostList(posts: PostType[]) {
-  console.log(posts);
-  return posts.map((post) => (
-    <div
-      key={post.id}
-      className="p-2 bg-cyan-600 flex gap-4 items-center rounded text-white"
-    >
-      <div>{post.title}</div>
-      <div>{post.description}</div>
-      <div>{post.valor}</div>
-    </div>
-  ));
-}
-
-function changeContainer(container: JSX.Element[]) {
-  return container;
-}
-
 const AdministratorPage = ({ user }: Props) => {
-  const [users, setUsers] = useState<UserType[]>([]);
-  const [posts, setPosts] = useState([]);
-  const [container, setContainer] = useState<JSX.Element[]>([]);
+  const [container, setContainer] = useState<JSX.Element>(<></>);
 
   useEffect(() => {
-    getUsers().then(setUsers);
-    getPosts().then(setPosts);
+    console.log("pagina recarregada");
   }, []);
 
   return (
     <>
-      <Header />
       <main className="flex bg-gray-100 flex-1 text-gray-800">
         <section
           id="lista_usuarios"
-          className="flex  flex-col min-w-[20rem]  bg-cyan-900 p-2 text-white gap-4"
+          className="flex  flex-col min-w-[20rem]  bg-cyan-950 p-2 text-white gap-4"
         >
           <div className="text-center font-bold text-2xl">
             Administrator Page
@@ -92,16 +43,14 @@ const AdministratorPage = ({ user }: Props) => {
               title="Dashboard"
               icon={faDashboard}
               onClick={() => {
-                const r = changeContainer(mountUserList(users));
-                setContainer(r);
+                setContainer(AdminDashboard());
               }}
             />
             <ListTile
               title="Postagens"
               icon={faPodcast}
               onClick={() => {
-                const r = changeContainer(mountPostList(posts));
-                setContainer(r);
+                setContainer(<div>Postagens</div>);
               }}
             />
           </ul>
@@ -109,12 +58,11 @@ const AdministratorPage = ({ user }: Props) => {
 
         <section
           id="container"
-          className="flex flex-col gap-1 flex-1 overflow-hidden "
+          className="flex flex-col gap-1 flex-1 overflow-hidden p-1"
         >
-          {container}
+          <AdminDashboard />{" "}
         </section>
       </main>
-      <FooterLayout />
     </>
   );
 };

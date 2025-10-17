@@ -10,6 +10,7 @@ export type UserType = {
   name: string;
   email: string;
   password: string;
+  phone: string;
   createdAt: string;
   is_admin: boolean;
   url?: string;
@@ -29,6 +30,15 @@ const User = {
         cause: { CAUSE: error },
       };
     }
+  },
+
+  getTotalUsers: async () => {
+    const result = await database.query(
+      `
+      SELECT COUNT(*) AS total FROM users;
+      `
+    );
+    return result;
   },
 
   findById: async (id: string) => {
