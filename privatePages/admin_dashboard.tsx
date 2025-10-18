@@ -1,36 +1,62 @@
 import Card from "@/components/Card";
+import userController from "@/controllers/userController";
+import Chart from "chart.js/auto";
 
-import { JSX, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-function AdminDashboard(): JSX.Element {
-  const [totalPost, setTotalPost] = useState(0);
-  const [totalUsers, setTotalUsers] = useState(0);
+function AdminDashboard() {
+  const [totalPost, setTotalPost] = useState();
+  const [totalUsers, setTotalUsers] = useState();
 
-  useEffect(() => {
-    getTotalPost().then(setTotalPost);
-    getTotalUsers().then(setTotalUsers);
-  }, []);
+  useEffect(init, []);
 
   return (
-    <div className="flex gap-2">
-      <Card className=" border-2 border-gray-300 text-xl">
-        <h2>Total de Postagens</h2>
-        {totalPost}
-      </Card>
-      <Card className=" border-2 border-gray-300 text-xl">
-        <h2>Total de Usuários</h2>
-        {totalUsers}
-      </Card>
+    <div className="flex flex-col gap-2">
+      <div className="flex gap-2">
+        <Card className={style}>
+          <h2>Total de Postagens</h2>
+          {totalPost}
+        </Card>
+
+        <Card className={style}>
+          <h2>Total de Usuários</h2>
+          {totalUsers}
+        </Card>
+      </div>
+
+      <section className="w-[30rem]">
+        <canvas id="grafico"></canvas>
+      </section>
     </div>
   );
-}
 
-async function getTotalUsers() {
-  const result = await fetch("/api/v1/users/total", { method: "GET" });
-  const data = await result.json();
+  function initChart() {
+    const ctx = document.getElementById("grafico") as HTMLCanvasElement;
 
-  console.log("usuarios: ", data);
-  return data.total;
+    return new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho"],
+        datasets: [
+          {
+            label: "Postagens",
+            data: [12, 19, 3, 5, 2, 3],
+            backgroundColor: "rgba(75, 192, 192, 0.2)",
+          },
+        ],
+      },
+    });
+  }
+
+  function init() {
+    getTotalPost().then(setTotalPost);
+    userController.getTotalUsers().then(setTotalUsers);
+    const chart = initChart();
+
+    return () => {
+      chart.destroy();
+    };
+  }
 }
 
 async function getTotalPost() {
@@ -40,5 +66,7 @@ async function getTotalPost() {
   console.log(data);
   return data.total;
 }
+
+const style = " border-2 border-gray-300 text-xl font-bold min-w-fit";
 
 export default AdminDashboard;

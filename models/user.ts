@@ -50,7 +50,6 @@ const User = {
        ON perfil_images.user_id = users.id
        AND perfil_images.selected = true
       where users.id = $1;
-
       `,
       [id]
     );

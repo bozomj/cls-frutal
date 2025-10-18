@@ -5,7 +5,11 @@ import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { JSX, useEffect, useState } from "react";
 
 import ListTile from "@/components/ListTile";
-import { faDashboard, faPodcast } from "@fortawesome/free-solid-svg-icons";
+import {
+  faDashboard,
+  faHome,
+  faPodcast,
+} from "@fortawesome/free-solid-svg-icons";
 import AdminDashboard from "@/privatePages/admin_dashboard";
 
 interface Props {
@@ -15,9 +19,7 @@ interface Props {
 const AdministratorPage = ({ user }: Props) => {
   const [container, setContainer] = useState<JSX.Element>(<></>);
 
-  useEffect(() => {
-    console.log("pagina recarregada");
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <>
@@ -39,11 +41,13 @@ const AdministratorPage = ({ user }: Props) => {
           <span className="bg-cyan-800 h-[0.1rem]"></span>
 
           <ul>
+            <ListTile url="/" onClick={() => {}} title="Home" icon={faHome} />
+
             <ListTile
               title="Dashboard"
               icon={faDashboard}
               onClick={() => {
-                setContainer(AdminDashboard());
+                setContainer(<AdminDashboard />);
               }}
             />
             <ListTile
@@ -60,7 +64,7 @@ const AdministratorPage = ({ user }: Props) => {
           id="container"
           className="flex flex-col gap-1 flex-1 overflow-hidden p-1"
         >
-          <AdminDashboard />{" "}
+          {container}
         </section>
       </main>
     </>

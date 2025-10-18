@@ -144,7 +144,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
             htmlFor="activeSubmenu"
             className="hover:text-cyan-300 font-bold cursor-pointer"
           >
-            <a>{key.label}</a>
+            <a>{key.label} |</a>
           </label>
         </li>
       );
@@ -164,9 +164,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
 
     alter(sub.height);
 
-    autenticator.isAuthenticated().then((result) => {
-      setIsAuthenticated(result);
-    });
+    autenticator.isAuthenticated().then(setIsAuthenticated);
   }
 };
 
