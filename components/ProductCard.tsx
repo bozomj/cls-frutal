@@ -15,7 +15,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   item,
   className,
 }: ProductCardProps) => {
-  const [showAlert, setShowAleret] = useState(<></>);
+  const [showAlert, setShowAlert] = useState(<></>);
 
   async function compartilhar() {
     const txt = `${window.location.origin}/posts/${item.id}`;
@@ -32,12 +32,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
     try {
       document.execCommand("copy");
-      setShowAleret(
+      setShowAlert(
         <Alert
           show
           msg={"Link Copiado com sucesso!"}
           onClose={function (): void {
-            setShowAleret(<></>);
+            setShowAlert(<></>);
           }}
         />
       );
@@ -49,7 +49,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <div
-      className={`bg-gray-300  p-2 rounded-2xl flex justify-center hover:bg-gray-300 text-gray-800 ${className} `}
+      className={`
+        bg-gray-300  p-2 rounded-2xl flex justify-center
+         hover:bg-gray-300 text-gray-800 ${className} 
+        `}
     >
       <div className="flex flex-col w-full overflow-hidden gap-2 ">
         <a href={`/posts/${item.id}`} target="_blank">
@@ -79,17 +82,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </div>
         <div className=" flex items-end  justify-end text-2xl gap-2">
           <a
+            className={styleWhatsapp}
             href={`https://wa.me/55${item.phone}`}
             target="_blank"
-            className="rounded-3xl bg-green-800 w-10 h-10 flex items-center justify-center p-2 text-white  hover:bg-green-600 transition duration-200"
           >
             <FontAwesomeIcon icon={faWhatsapp} />
           </a>
 
-          <button
-            onClick={compartilhar}
-            className="rounded-3xl cursor-pointer bg-cyan-800 w-10 h-10 flex items-center justify-center p-2 text-white self-end hover:bg-cyan-500 transition duration-200"
-          >
+          <button onClick={compartilhar} className={styleCompartilhar}>
             <FontAwesomeIcon icon={faShare} />
           </button>
         </div>
@@ -100,3 +100,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
 };
 
 export default ProductCard;
+
+const styleCompartilhar =
+  "rounded-3xl cursor-pointer bg-cyan-800 w-10 h-10 flex items-center justify-center p-2 text-white self-end hover:bg-cyan-500 transition duration-200";
+
+const styleWhatsapp =
+  "rounded-3xl bg-green-800 w-10 h-10 flex items-center justify-center p-2 text-white  hover:bg-green-600 transition duration-200";

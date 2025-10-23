@@ -3,11 +3,27 @@ import Post from "@/models/post";
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
+const auth = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  next: () => void
+) => {
+  try {
+    const token = req.cookies.token || "";
+    const user = autenticator.verifyToken(token);
+    (req as unknown as { user: { id: string } }).user = user;
+    next();
+  } catch (e: unknown) {
+    const error = e as { message: string };
+    res.status(401).json({ message: "Unauthorized", cause: error.message });
+  }
+};
+
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router.get(getHandler);
-router.post(postHandler);
-router.put(putHandler);
+router.post(auth, postHandler);
+router.put(auth, putHandler);
 
 export default router.handler();
 
@@ -26,12 +42,6 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
-  try {
-    autenticator.verifyToken(req.cookies.token || "");
-  } catch (e) {
-    return res.status(401).json({ message: "Unauthorized", cause: e });
-  }
-
   const body = req.body;
   try {
     const post = await Post.create(body);
@@ -45,10 +55,9 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
 
 async function putHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const user = autenticator.verifyToken(req.cookies.token || "");
     const body = req.body;
-
     const post = await Post.getById(body.id);
+    const user = (req as unknown as { user: { id: string } }).user;
 
     console.log(user.id, post.user_id);
 

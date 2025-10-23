@@ -37,7 +37,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
 
   return (
-    <header className="bg-cyan-900 text-white p-4 relative w-full z-[1] flex flex-col gap-2  md:items-stretch ">
+    <header className="bg-secondary text-primary-dark p-4 relative w-full z-[1] flex flex-col gap-2  md:items-stretch ">
       <div className="flex justify-between  ">
         <Link
           href={"/"}
@@ -59,7 +59,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
           {isAuthenticated.status ? (
             <Link
               href={isAuthenticated.status ? "/dashboard" : "/login"}
-              className="flex items-center gap-2 text-white hover:text-cyan-300 transition-colors"
+              className="flex items-center gap-2 text-primary-dark hover:text-primary-light transition-colors"
               onClick={() => resetPagination()}
             >
               <FontAwesomeIcon icon={faUser} className="text-2xl" />
@@ -68,7 +68,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
             ""
           )}
           <Link href={isAuthenticated.status ? "/api/v1/logout" : "/login"}>
-            <span className=" md:inline hover:text-cyan-300 transition-colors">
+            <span className=" md:inline hover:text-primary-light transition-colors ">
               {isAuthenticated.status ? "Sair" : "Entrar"}
             </span>
           </Link>
@@ -94,7 +94,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
         >
           <input
             type="text"
-            className="bg-cyan-50 rounded  flex-[1] px-2 p-1 text-gray-900"
+            className="bg-cyan-50 rounded  flex-[1] px-2 p-1 text-gray-900 outline-0"
             placeholder="Pesquisar"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -102,13 +102,13 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
           <button type="submit">
             <FontAwesomeIcon
               icon={faSearch}
-              className="text-2xl p-0 cursor-pointer hover:text-cyan-300 "
+              className="text-xl p-0 cursor-pointer hover:text-primary-light"
             />
           </button>
         </form>
         <nav
           id="submenu"
-          className={`bg-cyan-900 w-full peer-checked:md:h-auto overflow-y-hidden duration-[400ms] px-4 h-0     text-right  absolute left-0 top-[100%]  
+          className={`bg-secondary w-full peer-checked:md:h-auto overflow-y-hidden duration-[400ms] px-4 h-0     text-right  absolute left-0 top-[100%]  
           peer-checked:h-[${subH}px] md:relative md:h-auto md:w-fit md:px-0`}
           style={{ height: isMobile && !toggle ? `${subH}px` : undefined }}
         >
@@ -118,7 +118,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
         </nav>
         <label
           htmlFor="activeSubmenu"
-          className="md:hidden w-[32] h-[32] cursor-pointer hover:text-cyan-300"
+          className="md:hidden w-[32] h-[32] cursor-pointer hover:text-primary-light"
         >
           {toggle ? (
             <FontAwesomeIcon icon={faBars} className="text-2xl" />
@@ -142,9 +142,9 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
         <li key={value}>
           <label
             htmlFor="activeSubmenu"
-            className="hover:text-cyan-300 font-bold cursor-pointer"
+            className="hover:text-primary-light cursor-pointer"
           >
-            <a>{key.label} |</a>
+            <a>{key.label} </a>
           </label>
         </li>
       );

@@ -276,8 +276,10 @@ async function search(txt: string, initial: string, limit: string | null) {
       )
       SELECT
         p.*,
-        i.url AS imageurl
+        i.url AS imageurl,
+        users.phone AS phone
       FROM ultimos_posts p
+      LEFT JOIN users ON users.id = p.user_id
       LEFT JOIN LATERAL (
         SELECT url FROM imagens WHERE post_id = p.id ORDER BY id ASC LIMIT 1
       ) i ON true;

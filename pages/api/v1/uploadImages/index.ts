@@ -23,12 +23,12 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   const images = req.body;
+  console.log(images[0]);
 
   const post = await Post.getById(images[0].post_id);
+  console.log(post.user_id);
 
-  console.log(images[0].user_id, post[0].user_id);
-
-  if (images[0].user_id !== post[0].user_id)
+  if (images[0].user_id !== post.user_id)
     return res.status(401).json({ message: "Usuário não autorizado" });
 
   // return res.status(200).json({ images });

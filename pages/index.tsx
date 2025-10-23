@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 
 import ProductCard from "@/components/ProductCard";
 import { usePagination } from "@/contexts/PaginactionContext";
+import postController from "@/controllers/postController";
 import Footer from "@/layout/FooterLayout";
 import Produtos from "@/layout/produtos/Produtos";
 import localstore from "@/storage/localstore";
@@ -41,16 +42,10 @@ const Home: React.FC<HomeProps> = () => {
   const { limite, current } = paginacao;
 
   const getPosts = useCallback(async () => {
-    const total = await (
-      await fetch("api/v1/poststotal?q=" + (search || ""))
-    ).json();
-
     const initial = current * limite;
-    const posts = await (
-      await fetch(
-        `api/v1/posts?search=${search}&initial=${initial}&limit=${limite}`
-      )
-    ).json();
+
+    const total = await postController.getTotal(search);
+    const posts = await postController.getAll(search, initial, limite);
 
     setPaginacao((prev) => ({
       ...prev,
@@ -73,9 +68,7 @@ const Home: React.FC<HomeProps> = () => {
       <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center scroll-smooth ">
         <section
           tabIndex={0}
-          className="flex flex-col gap-2 w-full p-2
-        md:max-w-[40rem]
-        "
+          className="flex flex-col gap-2 w-full p-2 md:max-w-[40rem]"
         >
           <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
           <Carrossel
