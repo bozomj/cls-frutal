@@ -80,7 +80,7 @@ const Carrossel: React.FC<CarrosselProps> = ({ imagens, speed, className }) => {
             // eslint-disable-next-line @next/next/no-img-element
             <img
               key={index}
-              src={e.src}
+              src={e?.src ?? ""}
               alt=""
               className="transition-all duration-700 flex-shrink-0 w-full "
             />

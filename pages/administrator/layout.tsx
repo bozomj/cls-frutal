@@ -4,6 +4,7 @@ import { JSX, useEffect } from "react";
 
 import ListTile from "@/components/ListTile";
 import {
+  faCarrot,
   faDashboard,
   faHome,
   faPodcast,
@@ -49,6 +50,12 @@ const LayoutPage = ({ user, children }: Props) => {
               url="/administrator/dashboard"
               icon={faDashboard}
               onClick={() => {}}
+            />
+            <ListTile
+              title="Carrosel"
+              icon={faCarrot}
+              onClick={() => {}}
+              url="/administrator/carrossel"
             />
             <ListTile title="Postagens" icon={faPodcast} onClick={() => {}} />
           </ul>
