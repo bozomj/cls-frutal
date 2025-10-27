@@ -1,5 +1,4 @@
 import carrosselImages from "@/models/carrosselImages";
-import { imagemFirebase } from "@/storage/firebase";
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
@@ -19,13 +18,15 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   const imagens = req.body;
+  const data = [];
   for (const image of imagens) {
     const result = await carrosselImages.save(image.url);
+    data.push(result);
   }
 
   return res
     .status(200)
-    .json({ message: "Imagens recebidas com sucesso", imagens });
+    .json({ message: "Imagens recebidas com sucesso", data });
 }
 
 async function delHandler(req: NextApiRequest, res: NextApiResponse) {

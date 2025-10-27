@@ -39,6 +39,7 @@ function CarrosselPageAdmin({ user }: Props) {
               type="file"
               className="hidden"
               accept="image/*"
+              multiple={true}
               max={3}
               onChange={async (e) => {
                 console.log("imagens", imgCarrossel);
@@ -99,17 +100,9 @@ function CarrosselPageAdmin({ user }: Props) {
       console.log(error.message);
     }
 
-    console.log(dataImage);
-
-    // const resp = await fetch("/api/v1/carrossel", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({ imagens: imagensPreviews }),
-    // });
-    // const data = await resp.json();
-    // console.log(data);
+    const data = await getImagesCarrossel();
+    setImgCarrossel(data);
+    setPreviewImagens([]);
   }
 
   async function getImagesCarrossel() {
