@@ -26,16 +26,16 @@ const Home: React.FC<HomeProps> = () => {
 
   const imgCarrossel = [
     {
-      src: "https://img.cdndsgni.com/preview/10028403.jpg",
+      url: "https://img.cdndsgni.com/preview/10028403.jpg",
     },
     {
-      src: "https://m.media-amazon.com/images/G/32/kindle/email/2025/03_Marco/Pagina_Recomendacoes_para_voce/1500x200_Narrow.jpg",
+      url: "https://m.media-amazon.com/images/G/32/kindle/email/2025/03_Marco/Pagina_Recomendacoes_para_voce/1500x200_Narrow.jpg",
     },
     {
-      src: "https://img.freepik.com/vetores-gratis/banner-do-linkedin-de-negocios-de-gradiente_23-2150091566.jpg",
+      url: "https://img.freepik.com/vetores-gratis/banner-do-linkedin-de-negocios-de-gradiente_23-2150091566.jpg",
     },
     {
-      src: "https://img.cdndsgni.com/preview/13138247.jpg",
+      url: "https://img.cdndsgni.com/preview/13138247.jpg",
     },
   ];
 

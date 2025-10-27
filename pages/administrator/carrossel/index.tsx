@@ -5,29 +5,18 @@ import { getAdminProps } from "../hoc";
 import Carrossel from "@/components/Carrossel";
 import { faAdd } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useState } from "react";
 
 interface Props {
   user: UserType;
 }
 
 function CarrosselPageAdmin({ user }: Props) {
-  const imgCarrossel = [
-    {
-      src: "https://img.cdndsgni.com/preview/10028403.jpg",
-    },
-    {
-      src: "https://m.media-amazon.com/images/G/32/kindle/email/2025/03_Marco/Pagina_Recomendacoes_para_voce/1500x200_Narrow.jpg",
-    },
-    {
-      src: "https://img.freepik.com/vetores-gratis/banner-do-linkedin-de-negocios-de-gradiente_23-2150091566.jpg",
-    },
-    {
-      src: "https://img.cdndsgni.com/preview/13138247.jpg",
-    },
-    {
-      src: "https://img.freepik.com/vetores-gratis/banner-do-linkedin-de-negocios-de-gradiente_23-2150091566.jpg",
-    },
-  ];
+  const [imgCarrossel, setImgCarrossel] = useState([]);
+
+  useEffect(() => {
+    getImagesCarrossel().then(setImgCarrossel);
+  }, []);
 
   return (
     <LayoutPage user={user}>
@@ -43,15 +32,26 @@ function CarrosselPageAdmin({ user }: Props) {
     </LayoutPage>
   );
 
+  async function getImagesCarrossel() {
+    const resp = await fetch("/api/v1/carrossel");
+    const data = await resp.json();
+    console.log(data);
+    return data;
+  }
+
   function imagensCarrossel() {
-    const itens = imgCarrossel.map((e, index) => (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        key={index}
-        src={e?.src ?? ""}
-        alt=""
-        className="w-32 h-20 object-cover rounded-md"
-      />
+    const itens = imgCarrossel.map((e: { url: string }, index) => (
+      <div key={index} className="relative">
+        <span className="absolute p-1 bg-red-500 right-0 flex items-center text-white cursor-pointer ">
+          <FontAwesomeIcon icon={faAdd} />
+        </span>
+        {/*  eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={e?.url ?? ""}
+          alt=""
+          className="w-[30rem]  object-cover rounded-md"
+        />
+      </div>
     ));
 
     return <div className="flex gap-2 mt-4">{itens}</div>;
