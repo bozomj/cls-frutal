@@ -1,3 +1,4 @@
+import autenticator from "@/models/autenticator";
 import carrosselImages from "@/models/carrosselImages";
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
@@ -17,6 +18,11 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
+  const token = req.cookies.token || "";
+  const verified = autenticator.verifyToken(token);
+
+  console.log(verified);
+  return;
   const imagens = req.body;
   const data = [];
   for (const image of imagens) {

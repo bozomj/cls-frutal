@@ -85,16 +85,17 @@ function CarrosselPageAdmin({ user }: Props) {
     });
 
     try {
-      const imagens = await imagemFirebase.uploadImageFirebase(dataImage);
+      // const imagens = await imagemFirebase.uploadImageFirebase(dataImage);
 
-      console.log("TUDO DEU CERTO", imagens);
+      // console.log("TUDO DEU CERTO", imagens);
 
       await fetch("/api/v1/carrossel", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(imagens),
+        body: JSON.stringify([]),
+        // body: JSON.stringify([imagens]),
       });
     } catch (error) {
       console.log(error.message);
