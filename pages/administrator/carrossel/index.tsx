@@ -6,6 +6,8 @@ import Carrossel from "@/components/Carrossel";
 import { faAdd } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
+import utils from "@/utils";
+import { imagemFirebase } from "@/storage/firebase";
 
 interface Props {
   user: UserType;
@@ -13,6 +15,7 @@ interface Props {
 
 function CarrosselPageAdmin({ user }: Props) {
   const [imgCarrossel, setImgCarrossel] = useState([]);
+  const [imagensPreviews, setPreviewImagens] = useState([]);
 
   useEffect(() => {
     getImagesCarrossel().then(setImgCarrossel);
@@ -20,17 +23,94 @@ function CarrosselPageAdmin({ user }: Props) {
 
   return (
     <LayoutPage user={user}>
-      <div>
+      <div className="flex flex-col gap-2">
         <Carrossel imagens={imgCarrossel} speed={1} />
-        {imagensCarrossel()}
-        <section id="actions">
-          <button className="btn btn-primary gap-2 mt-4">
+        <div className="flex h-[20rem] bg-gray-300 p-2">
+          {imagensCarrossel(imgCarrossel)}
+        </div>
+        <h2>adicionar novas imagens</h2>
+        <div id="preview" className="flex h-[20rem] bg-gray-300 p-2">
+          {imagensCarrossel(imagensPreviews)}
+        </div>
+        <section id="actions" className="flex justify-between items-center">
+          <label className="btn btn-primary gap-2 mt-4">
             <FontAwesomeIcon icon={faAdd} />
+            <input
+              type="file"
+              className="hidden"
+              accept="image/*"
+              max={3}
+              onChange={async (e) => {
+                console.log("imagens", imgCarrossel);
+                const files = e.target.files || [];
+
+                if (files) {
+                  for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+
+                    // Verifica se o arquivo é uma imagem
+                    if (file.type.startsWith("image/")) {
+                      // setLoading(true);
+
+                      const resized = (await utils.imagem.resizeImageFile(
+                        file
+                      )) as File;
+                      // Cria uma URL temporária para o arquivo
+                      const imgURL = URL.createObjectURL(resized);
+                      setPreviewImagens((prev) => [
+                        ...prev,
+                        { url: imgURL, file: resized },
+                      ]);
+                    }
+                  }
+                }
+              }}
+            />
+          </label>
+          <button
+            className="btn bg-green-500 text-white"
+            onClick={salvarImagens}
+          >
+            Salvar
           </button>
         </section>
       </div>
     </LayoutPage>
   );
+
+  async function salvarImagens() {
+    const dataImage = imagensPreviews.map((image) => {
+      return { file: image.file };
+    });
+
+    try {
+      const imagens = await imagemFirebase.uploadImageFirebase(dataImage);
+
+      console.log("TUDO DEU CERTO", imagens);
+
+      await fetch("/api/v1/carrossel", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(imagens),
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+
+    console.log(dataImage);
+
+    // const resp = await fetch("/api/v1/carrossel", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({ imagens: imagensPreviews }),
+    // });
+    // const data = await resp.json();
+    // console.log(data);
+  }
 
   async function getImagesCarrossel() {
     const resp = await fetch("/api/v1/carrossel");
@@ -39,17 +119,33 @@ function CarrosselPageAdmin({ user }: Props) {
     return data;
   }
 
-  function imagensCarrossel() {
-    const itens = imgCarrossel.map((e: { url: string }, index) => (
+  function imagensCarrossel(imgs: []) {
+    const itens = imgs.map((e: { url: string }, index) => (
       <div key={index} className="relative">
-        <span className="absolute p-1 bg-red-500 right-0 flex items-center text-white cursor-pointer ">
+        <button
+          className="absolute p-1 bg-red-400 right-0 flex items-center text-white cursor-pointer "
+          onClick={async () => {
+            console.log(e);
+            imagemFirebase.deleteImageFromUrl(e.url);
+
+            const result = await fetch("/api/v1/carrossel", {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(e),
+            });
+
+            console.log(result);
+          }}
+        >
           <FontAwesomeIcon icon={faAdd} />
-        </span>
+        </button>
         {/*  eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={e?.url ?? ""}
           alt=""
-          className="w-[30rem]  object-cover rounded-md"
+          className="w-[30rem]   rounded-md h-full"
         />
       </div>
     ));

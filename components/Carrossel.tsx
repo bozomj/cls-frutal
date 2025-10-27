@@ -48,7 +48,7 @@ const Carrossel: React.FC<CarrosselProps> = ({ imagens, speed, className }) => {
     return () => {
       clearTimeout(timeout);
     };
-  }, [index, velocidade]);
+  }, [index, velocidade, imagens]);
 
   function gerador() {
     return imgs.map((e, i) => {
@@ -75,17 +75,20 @@ const Carrossel: React.FC<CarrosselProps> = ({ imagens, speed, className }) => {
       md:h-[250px] ${className}`}
     >
       <div ref={carrosselref} className="flex transition-all duration-700">
-        {imgs.map((e, index) => {
-          return (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              key={index}
-              src={e?.url ?? ""}
-              alt=""
-              className="transition-all duration-700 flex-shrink-0 w-full "
-            />
-          );
-        })}
+        {
+          /* {(imgs.length > 0 || imgs.length != null) ?? */
+          imgs.map((e, index) => {
+            return (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={index}
+                src={e?.url ?? ""}
+                alt=""
+                className="transition-all duration-700 flex-shrink-0 w-full "
+              />
+            );
+          })
+        }
       </div>
       <div className="absolute left-0 bottom-0 overflow-hidden w-full flex justify-center gap-2 items-center px-4 py-1">
         {gerador()}

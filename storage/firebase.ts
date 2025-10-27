@@ -29,6 +29,8 @@ if (process.env.NODE_ENV === "development") {
 }
 
 async function uploadImageFirebase(imagens: ImageFile[]) {
+  // console.log(">>>>", imagens);
+  // return;
   if (imagens.length > 0) {
     const images = [];
 
@@ -54,9 +56,24 @@ async function deleteImage(img: StorageReference) {
   return await deleteObject(img);
 }
 
+async function deleteImageFromUrl(url: string) {
+  const storage = getStorage();
+
+  // Extrai o caminho do arquivo da URL
+  const path = url.split("/o/")[1]?.split("?")[0];
+  const decodedPath = decodeURIComponent(path || "");
+
+  // Cria o StorageReference
+  const imageRef = ref(storage, decodedPath);
+
+  // Usa sua função existente
+  await deleteImage(imageRef);
+}
+
 const imagemFirebase = {
   uploadImageFirebase,
   deleteImage,
+  deleteImageFromUrl,
 };
 
 export { app, storage, baseRef, imagemFirebase };

@@ -32,8 +32,22 @@ async function save(url: string) {
   }
 }
 
+async function remove(url: string) {
+  const query = `DELETE FROM carrossel_images WHERE url = $1 RETURNING *;`;
+  const values = [url];
+
+  try {
+    const result = await database.query(query, values);
+    return result;
+  } catch (error) {
+    console.log("Erro ao deletar imagem do carrossel:", error);
+    return [];
+  }
+}
+
 const carrosselImages = {
   save,
+  remove,
   getAll,
 };
 
