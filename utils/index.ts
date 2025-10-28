@@ -88,7 +88,11 @@ function capitalizar(str: string) {
     .join(" ");
 }
 
-function resizeImageFile(file: File, maxWidth = 1280, maxSizeKB = 300) {
+function resizeImageFile(
+  file: File,
+  maxWidth = 1280,
+  maxSizeKB = 300
+): Promise<File> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 

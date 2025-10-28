@@ -5,9 +5,10 @@ import { getAdminProps } from "../hoc";
 import Carrossel from "@/components/Carrossel";
 import { faAdd } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import utils from "@/utils";
 import { imagemFirebase } from "@/storage/firebase";
+import InputFile from "@/components/InputFile";
 
 interface Props {
   user: UserType;
@@ -30,52 +31,26 @@ function CarrosselPageAdmin({ user }: Props) {
     <LayoutPage user={user}>
       <div className="flex flex-col gap-2">
         <Carrossel imagens={imgCarrossel} speed={1} />
-        <div className="flex h-[20rem] bg-gray-300 p-2">
-          {imagensCarrossel(imgCarrossel)}
-        </div>
-        <h2>adicionar novas imagens</h2>
-        <div id="preview" className="flex h-[20rem] bg-gray-300 p-2">
-          {imagensCarrossel(imagensPreviews as [], (e, index) => {
-            imagensPreviews.splice(index, 1);
-            setPreviewImagens((prev) => [...prev]);
-          })}
-        </div>
+
+        <section className="flex flex-col items-center gap-2">
+          <h2 className="text-3xl font-bold">Imagens Banner Carrossel</h2>
+          <div className="flex h-[20rem] bg-gray-300 p-2">
+            {imagensCarrossel(imgCarrossel)}
+          </div>
+        </section>
+
+        <section className="flex flex-col items-center gap-2">
+          <h2 className="text-3xl font-bold">Adicionar novas imagens</h2>
+          <div id="preview" className="flex h-[20rem] bg-gray-600 p-2">
+            {imagensCarrossel(imagensPreviews as [], (e, index) => {
+              imagensPreviews.splice(index, 1);
+              setPreviewImagens((prev) => [...prev]);
+            })}
+          </div>
+        </section>
+
         <section id="actions" className="flex justify-between items-center">
-          <label className="btn btn-primary gap-2 mt-4">
-            <FontAwesomeIcon icon={faAdd} />
-            <input
-              type="file"
-              className="hidden"
-              accept="image/*"
-              multiple={true}
-              max={3}
-              onChange={async (e) => {
-                console.log("imagens", imgCarrossel);
-                const files = e.target.files || [];
-
-                if (files) {
-                  for (let i = 0; i < files.length; i++) {
-                    const file = files[i];
-
-                    // Verifica se o arquivo é uma imagem
-                    if (file.type.startsWith("image/")) {
-                      // setLoading(true);
-
-                      const resized = (await utils.imagem.resizeImageFile(
-                        file
-                      )) as File;
-                      // Cria uma URL temporária para o arquivo
-                      const imgURL = URL.createObjectURL(resized);
-                      setPreviewImagens((prev) => [
-                        ...prev,
-                        { url: imgURL, file: resized },
-                      ]);
-                    }
-                  }
-                }
-              }}
-            />
-          </label>
+          <InputFile onClick={getFiles} />
           <button
             className="btn bg-green-500 text-white"
             onClick={salvarImagens}
@@ -86,6 +61,21 @@ function CarrosselPageAdmin({ user }: Props) {
       </div>
     </LayoutPage>
   );
+
+  async function getFiles(e: ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files || [];
+
+    if (files.length === 0) return;
+
+    for (const file of files) {
+      if (file.type.startsWith("image/")) {
+        const resized = await utils.imagem.resizeImageFile(file);
+        const imgURL = URL.createObjectURL(resized); // Cria uma URL temporária para o arquivo
+
+        setPreviewImagens((prev) => [...prev, { url: imgURL, file: resized }]);
+      }
+    }
+  }
 
   async function salvarImagens() {
     const dataImage = imagensPreviews.map((image: { file: File }) => {
