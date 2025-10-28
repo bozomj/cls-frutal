@@ -1,5 +1,6 @@
 import autenticator from "@/models/autenticator";
 import carrosselImages from "@/models/carrosselImages";
+import User from "@/models/user";
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
@@ -19,11 +20,22 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   const token = req.cookies.token || "";
-  const verified = autenticator.verifyToken(token);
+  // const token = randomUUID();
+  let verified;
+  try {
+    verified = autenticator.verifyToken(token);
+    const user_id = verified.id;
 
-  console.log(verified);
-  return;
+    const user = await User.findById(user_id);
+
+    if (!user[0].is_admin) throw { message: "Usuario não autorizado" };
+  } catch (error: unknown) {
+    const err = error as { message: string };
+    return res.status(403).json({ message: err.message });
+  }
+
   const imagens = req.body;
+
   const data = [];
   for (const image of imagens) {
     const result = await carrosselImages.save(image.url);
