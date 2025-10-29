@@ -50,7 +50,7 @@ function CarrosselPageAdmin({ user }: Props) {
         </section>
 
         <section id="actions" className="flex justify-between items-center">
-          <InputFile onClick={getInputFiles} />
+          <InputFile onClick={getInputFiles} className="w-15 text-white" />
           <button
             className="btn bg-green-500 text-white"
             onClick={salvarImagens}

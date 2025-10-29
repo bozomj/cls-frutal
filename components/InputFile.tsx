@@ -11,7 +11,7 @@ interface InputFileProps {
 
 const InputFile: React.FC<InputFileProps> = ({ icon, onClick, className }) => {
   return (
-    <label className={`btn btn-primary gap-2 mt-4 ${className}`}>
+    <label className={`btn bg-cyan-900 text-center ${className}`}>
       <FontAwesomeIcon icon={icon ?? faAdd} />
       <input
         type="file"

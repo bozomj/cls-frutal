@@ -36,7 +36,7 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
     const posts = await Post.search(search, initial, limit);
 
     res.status(200).json(posts);
-  } catch (error) {
+  } catch (error: unknown) {
     throw { message: "Erro ao buscar postagens", cause: error };
   }
 }
