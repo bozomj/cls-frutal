@@ -9,6 +9,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import utils from "@/utils";
 import { imagemFirebase } from "@/storage/firebase";
 import InputFile from "@/components/InputFile";
+import carrosselController from "@/controllers/carrosselController";
 
 interface Props {
   user: UserType;
@@ -21,10 +22,12 @@ type typeImagePreview = {
 
 function CarrosselPageAdmin({ user }: Props) {
   const [imgCarrossel, setImgCarrossel] = useState<[]>([]);
-  const [imagensPreviews, setPreviewImagens] = useState<typeImagePreview[]>([]);
+  const [imagensPreviews, setPreviewImagens] = useState<
+    typeImagePreview[] | []
+  >([]);
 
   useEffect(() => {
-    getImagesCarrossel().then(setImgCarrossel);
+    carrosselController.getImagesCarrossel().then(setImgCarrossel);
   }, []);
 
   return (
@@ -39,18 +42,15 @@ function CarrosselPageAdmin({ user }: Props) {
           </div>
         </section>
 
-        <section className="flex flex-col items-center gap-2">
+        <section className="flex flex-col items-center gap-2 mt-4 ">
           <h2 className="text-3xl font-bold">Adicionar novas imagens</h2>
-          <div id="preview" className="flex h-[20rem] bg-gray-600 p-2">
-            {imagensCarrossel(imagensPreviews as [], (e, index) => {
-              imagensPreviews.splice(index, 1);
-              setPreviewImagens((prev) => [...prev]);
-            })}
+          <div id="preview" className="flex h-[20rem] bg-gray-600 p-2 w-full">
+            {imagensCarrossel(imagensPreviews, removePreviewImage)}
           </div>
         </section>
 
         <section id="actions" className="flex justify-between items-center">
-          <InputFile onClick={getFiles} />
+          <InputFile onClick={getInputFiles} />
           <button
             className="btn bg-green-500 text-white"
             onClick={salvarImagens}
@@ -62,7 +62,12 @@ function CarrosselPageAdmin({ user }: Props) {
     </LayoutPage>
   );
 
-  async function getFiles(e: ChangeEvent<HTMLInputElement>) {
+  function removePreviewImage(e: unknown, index: number) {
+    imagensPreviews.splice(index, 1);
+    setPreviewImagens((prev) => [...prev]);
+  }
+
+  async function getInputFiles(e: ChangeEvent<HTMLInputElement>) {
     const files = e.target.files || [];
 
     if (files.length === 0) return;
@@ -78,9 +83,7 @@ function CarrosselPageAdmin({ user }: Props) {
   }
 
   async function salvarImagens() {
-    const dataImage = imagensPreviews.map((image: { file: File }) => {
-      return { file: image.file };
-    });
+    const dataImage = imagensPreviews.map((image) => ({ file: image.file }));
 
     try {
       const imagens = await imagemFirebase.uploadImageFirebase(dataImage);
@@ -97,27 +100,20 @@ function CarrosselPageAdmin({ user }: Props) {
       console.log(err.message);
     }
 
-    const data = await getImagesCarrossel();
+    const data = await carrosselController.getImagesCarrossel();
 
     setImgCarrossel(data);
     setPreviewImagens([]);
   }
 
-  async function getImagesCarrossel() {
-    const resp = await fetch("/api/v1/carrossel");
-    const data = await resp.json();
-    console.log(data);
-    return data;
-  }
-
   function imagensCarrossel(
-    imgs: [],
+    imgs: [] | typeImagePreview[],
     click?: (v: unknown, index: number) => void
   ) {
     const itens = imgs.map((e: { url: string }, index) => (
-      <div key={index} className="relative">
+      <div key={index} className="relative rounded-md overflow-hidden">
         <button
-          className="absolute p-1 bg-red-400 right-0 flex items-center text-white cursor-pointer "
+          className="absolute p-1 bg-red-600 right-0 flex items-center text-white cursor-pointer hover:bg-red-400 "
           onClick={
             click
               ? () => click(e, index)
@@ -135,7 +131,7 @@ function CarrosselPageAdmin({ user }: Props) {
 
                   console.log(result);
 
-                  const data = await getImagesCarrossel();
+                  const data = await carrosselController.getImagesCarrossel();
                   setImgCarrossel(data);
                 }
           }

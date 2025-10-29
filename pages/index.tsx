@@ -3,10 +3,10 @@ import Header from "@/components/Header";
 
 import ProductCard from "@/components/ProductCard";
 import { usePagination } from "@/contexts/PaginactionContext";
+import carrosselController from "@/controllers/carrosselController";
 import postController from "@/controllers/postController";
 import Footer from "@/layout/FooterLayout";
 import Produtos from "@/layout/produtos/Produtos";
-import localstore from "@/storage/localstore";
 
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -18,27 +18,12 @@ interface HomeProps {
 const Home: React.FC<HomeProps> = () => {
   const { query } = useRouter();
   const search = (query.q as string) ?? "";
-
-  const [postagens, setPostagens] = useState([]);
-  const { paginacao, setPaginacao } = usePagination();
-
   const produtosRef = useRef<HTMLInputElement>(null);
 
-  const imgCarrossel = [
-    {
-      url: "https://img.cdndsgni.com/preview/10028403.jpg",
-    },
-    {
-      url: "https://m.media-amazon.com/images/G/32/kindle/email/2025/03_Marco/Pagina_Recomendacoes_para_voce/1500x200_Narrow.jpg",
-    },
-    {
-      url: "https://img.freepik.com/vetores-gratis/banner-do-linkedin-de-negocios-de-gradiente_23-2150091566.jpg",
-    },
-    {
-      url: "https://img.cdndsgni.com/preview/13138247.jpg",
-    },
-  ];
+  const [postagens, setPostagens] = useState([]);
+  const [imgCarrossel, setImgCarrossel] = useState([]);
 
+  const { paginacao, setPaginacao } = usePagination();
   const { limite, current } = paginacao;
 
   const getPosts = useCallback(async () => {
@@ -57,7 +42,7 @@ const Home: React.FC<HomeProps> = () => {
 
   useEffect(() => {
     getPosts();
-    console.log(localstore.getUser());
+    carrosselController.getImagesCarrossel().then(setImgCarrossel);
   }, [getPosts]);
 
   useEffect(() => produtosRef.current?.focus());
