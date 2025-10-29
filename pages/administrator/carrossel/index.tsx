@@ -115,25 +115,7 @@ function CarrosselPageAdmin({ user }: Props) {
         <button
           className="absolute p-1 bg-red-600 right-0 flex items-center text-white cursor-pointer hover:bg-red-400 "
           onClick={
-            click
-              ? () => click(e, index)
-              : async () => {
-                  console.log(e);
-                  imagemFirebase.deleteImageFromUrl(e.url);
-
-                  const result = await fetch("/api/v1/carrossel", {
-                    method: "DELETE",
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(e),
-                  });
-
-                  console.log(result);
-
-                  const data = await carrosselController.getImagesCarrossel();
-                  setImgCarrossel(data);
-                }
+            click ? () => click(e, index) : () => removeCarrosselImage(e)
           }
         >
           <FontAwesomeIcon icon={faAdd} />
@@ -148,6 +130,14 @@ function CarrosselPageAdmin({ user }: Props) {
     ));
 
     return <div className="flex gap-2 mt-4">{itens}</div>;
+  }
+
+  async function removeCarrosselImage(e: { url: string }) {
+    await imagemFirebase.deleteImageFromUrl(e.url);
+    await carrosselController.deleteImage(e);
+
+    const data = await carrosselController.getImagesCarrossel();
+    setImgCarrossel(data);
   }
 }
 
