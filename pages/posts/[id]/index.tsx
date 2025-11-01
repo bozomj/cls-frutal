@@ -15,6 +15,8 @@ import Footer from "@/layout/FooterLayout";
 import CircleAvatar from "@/components/CircleAvatar";
 import Card from "@/components/Card";
 import { imagemFirebase } from "@/storage/firebase";
+import postController from "@/controllers/postController";
+import FullImageView from "@/components/FullImageView";
 
 type Props = {
   user_id?: string;
@@ -44,18 +46,18 @@ export default function DetailsPostPage({ user_id }: Props) {
 
   const [post_imagens, setImagens] = useState<ImageType[]>([]);
   const [imgPrincial, setImgPrincipal] = useState<string>();
-
   const [imagemIndex, setImagemIndex] = useState<number>(0);
-
   const [alert, setAlert] = useState(<></>);
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [item, setItem] = useState(_item);
-
   const [previewImagens, setPreviewImagens] = useState<ImageType[]>([]);
-
   const [isPostUserId, IsPostUserId] = useState(false);
-
   const [imgProfile, setImageProfile] = useState<string | null>(null);
+  const [visible, setVisible] = useState(false);
+
+  const titleRef = useRef<HTMLElement | null>(null);
+  const valorRef = useRef<HTMLElement | null>(null);
+  const descricaoRef = useRef<HTMLParagraphElement | null>(null);
 
   const getPost = useCallback(
     async (id: string) => {
@@ -79,50 +81,15 @@ export default function DetailsPostPage({ user_id }: Props) {
     [user_id, router]
   );
 
-  function trocarImagens(direction: string) {
-    if (post_imagens.length === 0) return;
-    setImagemIndex((prev) => {
-      let value = prev;
-
-      if (direction === "left" && prev > 0) value = prev - 1;
-
-      if (direction === "rigth" && !(prev === post_imagens.length - 1))
-        value = prev + 1;
-
-      setImgPrincipal(post_imagens[value].url);
-      return value;
-    });
-  }
-
-  const titleRef = useRef<HTMLElement | null>(null);
-  const valorRef = useRef<HTMLElement | null>(null);
-  const descricaoRef = useRef<HTMLParagraphElement | null>(null);
-
   useEffect(() => {
     if (!post_id) return;
-
-    const keyHandler = (e: KeyboardEvent) => {
-      if (document.getElementById("imgfull")?.classList.contains("flex")) {
-        if (e.key === "ArrowLeft") trocarImagens("left");
-        if (e.key === "ArrowRight") trocarImagens("rigth");
-      }
-    };
 
     async function fetchData() {
       await getPost(post_id);
     }
 
     fetchData();
-    window.addEventListener("keydown", keyHandler);
-
-    return () => window.removeEventListener("keydown", keyHandler);
   }, [post_id, getPost]);
-
-  function toggleImg() {
-    const im = document.getElementById("imgfull");
-    im?.classList.toggle("hidden");
-    im?.classList.toggle("flex");
-  }
 
   return (
     <>
@@ -132,46 +99,13 @@ export default function DetailsPostPage({ user_id }: Props) {
           id="frame-1"
           className="flex flex-auto flex-col gap-2 w-full max-w-[40rem] p-4 bg-gray-100 rounded-2xl shadow-sm shadow-gray-400 my-2 "
         >
-          <div id="frame-2" className="bg-gray-300 rounded-2xl flex-auto p-2 ">
-            <div
-              id="imgfull"
-              className="
-              -
-              absolute top-0 z-[5] left-0 h-full w-full 
-              bg-cyan-950/80 
-              justify-center items-center px-1 hidden"
-              onClick={() => toggleImg()}
-            >
-              <button
-                className="hover:bg-cyan-400/10 h-full text-9xl cursor-pointer text-white/30"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  trocarImagens("left");
-                }}
-              >
-                {"<"}
-              </button>
-              {/* <div className="flex flex-col bg-red gap-2 order-1 h-full justify-center w-full overflow-hidden"> */}
-              <div className="h-full flex">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  tabIndex={0}
-                  src={utils.getUrlImage(imgPrincial)}
-                  alt=""
-                  className={`cursor-pointer object-contain max-h-full w-full `}
-                  // className=" flex-1 rounded  object-contain shadow-2xl shadow-black outline-3 outline-cyan-600"
-                />
-              </div>
-              <button
-                className="hover:bg-cyan-400/10 h-full text-9xl cursor-pointer text-white/30"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  trocarImagens("rigth");
-                }}
-              >
-                {">"}
-              </button>
-            </div>
+          <FullImageView
+            images={post_imagens}
+            index={imagemIndex}
+            visible={visible}
+            onClose={closeFullImages}
+          />
+          <div id="frame-2" className="bg-gray-300 rounded-2xl flex-auto p-2">
             <section
               id="lista_imagems"
               className="flex gap-1 border-3 border-gray-400 p-2 rounded-2xl w-full items-cente h-[25rem]"
@@ -186,7 +120,9 @@ export default function DetailsPostPage({ user_id }: Props) {
                   tabIndex={1}
                   src={utils.getUrlImage(imgPrincial)}
                   alt=""
-                  onClick={toggleImg}
+                  onClick={() => {
+                    setVisible(true);
+                  }}
                 />
               </div>
 
@@ -212,8 +148,8 @@ export default function DetailsPostPage({ user_id }: Props) {
                       `}
                         key={img.id}
                         onClick={() => {
-                          setImagemIndex(key);
                           setImgPrincipal(img.url);
+                          setImagemIndex(key);
                         }}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
@@ -514,13 +450,7 @@ export default function DetailsPostPage({ user_id }: Props) {
   }
 
   async function postUpdate() {
-    const result = await fetch("/api/v1/posts", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(item),
-    });
-
-    const updated = await result.json();
+    const updated = await postController.update(item);
 
     if (updated.id) {
       setAlert(
@@ -536,6 +466,7 @@ export default function DetailsPostPage({ user_id }: Props) {
   function getUniqueId() {
     return uniqueId++;
   }
+
   async function selecionarImagens(e: ChangeEvent<HTMLInputElement>) {
     const files = e.target.files || [];
 
@@ -558,6 +489,14 @@ export default function DetailsPostPage({ user_id }: Props) {
         }
       }
     }
+  }
+
+  function closeFullImages(i: number) {
+    setImagemIndex(() => {
+      setImgPrincipal(post_imagens[i].url);
+      setVisible(false);
+      return i;
+    });
   }
 }
 

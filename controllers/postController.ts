@@ -20,9 +20,22 @@ async function getAll(
   return posts;
 }
 
+async function update(post: unknown) {
+  const result = await fetch("/api/v1/posts", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(post),
+  });
+
+  const updated = await result.json();
+
+  return updated;
+}
+
 const postController = {
   getTotal,
   getAll,
+  update,
 };
 
 export default postController;
