@@ -17,6 +17,7 @@ import Card from "@/components/Card";
 import { imagemFirebase } from "@/storage/firebase";
 import postController from "@/controllers/postController";
 import FullImageView from "@/components/FullImageView";
+import MiniGalleryImage from "@/components/MiniGalleryImage";
 
 type Props = {
   user_id?: string;
@@ -106,63 +107,15 @@ export default function DetailsPostPage({ user_id }: Props) {
             onClose={closeFullImages}
           />
           <div id="frame-2" className="bg-gray-300 rounded-2xl flex-auto p-2">
-            <section
-              id="lista_imagems"
-              className="flex gap-1 border-3 border-gray-400 p-2 rounded-2xl w-full items-cente h-[25rem]"
-            >
-              <div
-                id="imagem_principal"
-                className="w-full cursor-pointer order-2 self-center h-full items-center flex justify-center bg-gray-100 rounded-r-2xl p-1"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  className=" max-h-full rounded-md hover:outline-3 hover:outline-cyan-600"
-                  tabIndex={1}
-                  src={utils.getUrlImage(imgPrincial)}
-                  alt=""
-                  onClick={() => {
-                    setVisible(true);
-                  }}
-                />
-              </div>
-
-              <div
-                id="galeria"
-                className="flex flex-col w-2/7 gap-2 order-1 h-full   overflow-hidden"
-              >
-                {post_imagens.length > 0 &&
-                  post_imagens.map((img, key) => {
-                    if (img == null) return;
-                    const rounded =
-                      key == 0
-                        ? " rounded-tl-2xl"
-                        : key < post_imagens.length - 1
-                        ? "rounded-sm"
-                        : "rounded-bl-2xl";
-
-                    return (
-                      <div
-                        className={`flex flex-1 justify-center w-full bg-gray-100  shrink h-1/3 ${rounded} overflow-hidden  max-h-1/3
-                      border-3 border-gray-100 p-1
-                      hover:border-cyan-600 
-                      `}
-                        key={img.id}
-                        onClick={() => {
-                          setImgPrincipal(img.url);
-                          setImagemIndex(key);
-                        }}
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
-                        <img
-                          className={`cursor-pointer object-contain rounded-md`}
-                          src={utils.getUrlImage(img.url)}
-                        />
-                      </div>
-                    );
-                  })}
-              </div>
-            </section>
-
+            <MiniGalleryImage
+              post_imagens={post_imagens}
+              imgPrincipal={imgPrincial as string}
+              onClick={() => setVisible(true)}
+              selectImg={(i) => {
+                setImgPrincipal(post_imagens[i].url);
+                setImagemIndex(i);
+              }}
+            />
             {isPostUserId && post_imagens.length < _item.maxImagens && (
               <label className="bg-cyan-700 hover:bg-cyan-400 focus:outline-cyan-400 focus:outline-4 cursor-pointer block w-fit p-2 rounded m-2 text-white">
                 <FontAwesomeIcon className="text-3xl" icon={faImage} />
