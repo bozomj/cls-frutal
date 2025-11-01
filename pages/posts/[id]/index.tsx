@@ -45,6 +45,8 @@ export default function DetailsPostPage({ user_id }: Props) {
   const [post_imagens, setImagens] = useState<ImageType[]>([]);
   const [imgPrincial, setImgPrincipal] = useState<string>();
 
+  const [imagemIndex, setImagemIndex] = useState<number>(0);
+
   const [alert, setAlert] = useState(<></>);
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [item, setItem] = useState(_item);
@@ -77,6 +79,21 @@ export default function DetailsPostPage({ user_id }: Props) {
     [user_id, router]
   );
 
+  function trocarImagens(direction: string) {
+    if (post_imagens.length === 0) return;
+    setImagemIndex((prev) => {
+      let value = prev;
+
+      if (direction === "left" && prev > 0) value = prev - 1;
+
+      if (direction === "rigth" && !(prev === post_imagens.length - 1))
+        value = prev + 1;
+
+      setImgPrincipal(post_imagens[value].url);
+      return value;
+    });
+  }
+
   const titleRef = useRef<HTMLElement | null>(null);
   const valorRef = useRef<HTMLElement | null>(null);
   const descricaoRef = useRef<HTMLParagraphElement | null>(null);
@@ -84,16 +101,25 @@ export default function DetailsPostPage({ user_id }: Props) {
   useEffect(() => {
     if (!post_id) return;
 
+    const keyHandler = (e: KeyboardEvent) => {
+      if (document.getElementById("imgfull")?.classList.contains("flex")) {
+        if (e.key === "ArrowLeft") trocarImagens("left");
+        if (e.key === "ArrowRight") trocarImagens("rigth");
+      }
+    };
+
     async function fetchData() {
       await getPost(post_id);
     }
 
     fetchData();
+    window.addEventListener("keydown", keyHandler);
+
+    return () => window.removeEventListener("keydown", keyHandler);
   }, [post_id, getPost]);
 
   function toggleImg() {
     const im = document.getElementById("imgfull");
-
     im?.classList.toggle("hidden");
     im?.classList.toggle("flex");
   }
@@ -109,13 +135,24 @@ export default function DetailsPostPage({ user_id }: Props) {
           <div id="frame-2" className="bg-gray-300 rounded-2xl flex-auto p-2 ">
             <div
               id="imgfull"
-              className=" 
+              className="
+              -
               absolute top-0 z-[5] left-0 h-full w-full 
               bg-cyan-950/80 
               justify-center items-center px-1 hidden"
               onClick={() => toggleImg()}
             >
-              <div className="flex flex-col bg-red gap-2 order-1 h-full justify-center w-full overflow-hidden">
+              <button
+                className="hover:bg-cyan-400/10 h-full text-9xl cursor-pointer text-white/30"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  trocarImagens("left");
+                }}
+              >
+                {"<"}
+              </button>
+              {/* <div className="flex flex-col bg-red gap-2 order-1 h-full justify-center w-full overflow-hidden"> */}
+              <div className="h-full flex">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   tabIndex={0}
@@ -125,6 +162,15 @@ export default function DetailsPostPage({ user_id }: Props) {
                   // className=" flex-1 rounded  object-contain shadow-2xl shadow-black outline-3 outline-cyan-600"
                 />
               </div>
+              <button
+                className="hover:bg-cyan-400/10 h-full text-9xl cursor-pointer text-white/30"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  trocarImagens("rigth");
+                }}
+              >
+                {">"}
+              </button>
             </div>
             <section
               id="lista_imagems"
@@ -165,7 +211,10 @@ export default function DetailsPostPage({ user_id }: Props) {
                       hover:border-cyan-600 
                       `}
                         key={img.id}
-                        onClick={() => setImgPrincipal(img.url)}
+                        onClick={() => {
+                          setImagemIndex(key);
+                          setImgPrincipal(img.url);
+                        }}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
                         <img

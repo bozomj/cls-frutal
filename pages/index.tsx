@@ -16,8 +16,7 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = () => {
-  const { query } = useRouter();
-  const search = (query.q as string) ?? "";
+  const search = useRouter().query.q ?? "";
   const produtosRef = useRef<HTMLInputElement>(null);
 
   const [postagens, setPostagens] = useState([]);

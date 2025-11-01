@@ -1,4 +1,4 @@
-async function getTotal(search: string) {
+async function getTotal(search: string | string[]) {
   const total = await (
     await fetch("api/v1/poststotal?q=" + (search || ""))
   ).json();
@@ -6,7 +6,11 @@ async function getTotal(search: string) {
   return total;
 }
 
-async function getAll(search: string, initial: number, limite: number) {
+async function getAll(
+  search: string | string[],
+  initial: number,
+  limite: number
+) {
   const posts = await (
     await fetch(
       `api/v1/posts?search=${search}&initial=${initial}&limit=${limite}`
