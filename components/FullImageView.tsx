@@ -55,13 +55,14 @@ const FullImageView: React.FC<FullImageViewProps> = ({
   }, [index]);
 
   if (images.length < 1) return <></>;
+
   return (
     <div
       id="imgfull"
       className={`
-        absolute top-0 z-[5] left-0 h-full w-full p-2
-              bg-cyan-950/80 
-              justify-center items-center px-1 ${visible ? "flex" : "hidden"}
+          absolute top-0 z-[5] left-0 h-full w-full p-2
+          bg-cyan-950/80 
+          justify-center items-center px-1 ${visible ? "flex" : "hidden"}
         `}
       onClick={() => {
         onClose(imagemIndex);
@@ -81,7 +82,7 @@ const FullImageView: React.FC<FullImageViewProps> = ({
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           tabIndex={0}
-          src={utils.getUrlImage(images[imagemIndex].url)}
+          src={utils.getUrlImage(images[imagemIndex]?.url)}
           alt=""
           className={`cursor-pointer object-contain max-h-full w-full `}
           // className=" flex-1 rounded  object-contain shadow-2xl shadow-black outline-3 outline-cyan-600"

@@ -62,9 +62,7 @@ export default function DetailsPostPage({ user_id }: Props) {
 
   const getPost = useCallback(
     async (id: string) => {
-      const res = await fetch(`/api/v1/posts/${id}`);
-
-      const data = await res.json();
+      const data = await postController.getPostId(id);
 
       if (data.length < 1 || data.message) {
         router.replace("/");
@@ -73,6 +71,7 @@ export default function DetailsPostPage({ user_id }: Props) {
 
       const result = data;
       console.log(data);
+
       setItem(result);
       setImagens(result.imagens);
       setImgPrincipal(result.imagens[0]?.url ?? null);
@@ -166,8 +165,6 @@ export default function DetailsPostPage({ user_id }: Props) {
               <button
                 className="btn bg-amber-400 text-white font-bold"
                 onClick={async () => {
-                  if (item.user_id !== user_id) return;
-
                   if (
                     post_imagens.length + previewImagens.length >
                     _item.maxImagens
@@ -193,6 +190,9 @@ export default function DetailsPostPage({ user_id }: Props) {
 
                   const imagesFirebase =
                     await imagemFirebase.uploadImageFirebase(previewImagens);
+
+                  if (item.user_id !== user_id) return;
+
                   if (imagesFirebase.length < 1) return;
 
                   const imgs = imagesFirebase.map((img: { url: string }) => {
@@ -446,7 +446,7 @@ export default function DetailsPostPage({ user_id }: Props) {
 
   function closeFullImages(i: number) {
     setImagemIndex(() => {
-      setImgPrincipal(post_imagens[i].url);
+      setImgPrincipal(post_imagens[i]?.url);
       setVisible(false);
       return i;
     });

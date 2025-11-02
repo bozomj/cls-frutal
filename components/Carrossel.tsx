@@ -1,3 +1,4 @@
+import utils from "@/utils";
 import { useEffect, useRef, useState } from "react";
 
 interface CarrosselProps {
@@ -50,7 +51,7 @@ const Carrossel: React.FC<CarrosselProps> = ({ imagens, speed, className }) => {
     };
   }, [index, velocidade, imagens]);
 
-  function gerador() {
+  function pointIndicator() {
     return imgs.map((e, i) => {
       if (i < imgs.length - 1)
         return (
@@ -82,7 +83,7 @@ const Carrossel: React.FC<CarrosselProps> = ({ imagens, speed, className }) => {
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 key={index}
-                src={e?.url ?? ""}
+                src={utils.getUrlImage(e?.url ?? "")}
                 alt=""
                 className="transition-all duration-700 flex-shrink-0 w-full "
               />
@@ -91,7 +92,7 @@ const Carrossel: React.FC<CarrosselProps> = ({ imagens, speed, className }) => {
         }
       </div>
       <div className="absolute left-0 bottom-0 overflow-hidden w-full flex justify-center gap-2 items-center px-4 py-1">
-        {gerador()}
+        {pointIndicator()}
       </div>
     </div>
   );

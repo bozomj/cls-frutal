@@ -2,7 +2,7 @@ import autenticator from "@/models/autenticator";
 import { GetServerSidePropsContext } from "next";
 
 function getUrlImage(path?: string): string | undefined {
-  // const url = path ? `/uploads/${path?.split(/[/\\]/).pop()}` : undefined;
+  path = path?.replaceAll("localhost", "192.168.0.150");
 
   const urlSplit = path?.split(/[/\\]/).pop();
   const url = path?.includes("clsfrutal.firebasestorage.app")

@@ -13,7 +13,6 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
   selectImg,
   onClick,
 }) => {
-  console.log(imgPrincipal);
   return (
     <section
       id="lista_imagems"
@@ -40,7 +39,8 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
         className="flex flex-col w-2/7 gap-2 order-1 h-full   overflow-hidden"
       >
         {post_imagens.length > 0 &&
-          post_imagens.map((img, key) => {
+          post_imagens.map((im, key) => {
+            const img = im as { id: string; url: string };
             if (img == null) return;
             const rounded =
               key == 0

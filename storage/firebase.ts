@@ -25,12 +25,10 @@ const storage = getStorage(app);
 const baseRef = ref(storage, "/");
 
 if (process.env.NODE_ENV === "development") {
-  connectStorageEmulator(storage, "localhost", 9199);
+  connectStorageEmulator(storage, "192.168.0.150", 9199);
 }
 
 async function uploadImageFirebase(imagens: ImageFile[]) {
-  // console.log(">>>>", imagens);
-  // return;
   if (imagens.length > 0) {
     const images = [];
 
@@ -40,7 +38,10 @@ async function uploadImageFirebase(imagens: ImageFile[]) {
       const name = uuid() + "." + ext;
 
       const storageRef = ref(storage, name);
-      await uploadBytes(storageRef, image.file);
+
+      const updated = await uploadBytes(storageRef, image.file);
+      console.log(updated);
+
       const url = await getDownloadURL(storageRef);
 
       images.push({ url: url });

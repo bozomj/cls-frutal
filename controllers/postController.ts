@@ -6,6 +6,11 @@ async function getTotal(search: string | string[]) {
   return total;
 }
 
+async function getPostId(id: string) {
+  const result = await fetch(`/api/v1/posts/${id}`);
+  return await result.json();
+}
+
 async function getAll(
   search: string | string[],
   initial: number,
@@ -35,6 +40,7 @@ async function update(post: unknown) {
 const postController = {
   getTotal,
   getAll,
+  getPostId,
   update,
 };
 
