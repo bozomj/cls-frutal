@@ -114,6 +114,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                 setImagemIndex(i);
               }}
             />
+
             {isPostUserId && post_imagens.length < _item.maxImagens && (
               <label className="bg-cyan-700 hover:bg-cyan-400 focus:outline-cyan-400 focus:outline-4 cursor-pointer block w-fit p-2 rounded m-2 text-white">
                 <FontAwesomeIcon className="text-3xl" icon={faImage} />

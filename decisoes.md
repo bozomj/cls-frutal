@@ -24,7 +24,7 @@ X cadastro de categorias.
 
 X criar end point para retornar usuario logado api/v1/user
 
-- adicionar setas de navegação de imagens na pagina do post
+x adicionar setas de navegação de imagens na pagina do post
 
 - terminar a pagina perfil
   X colocando preview pra ver a imagem selecionada pra perfil
@@ -37,11 +37,11 @@ x botao de adicionar foto na pagina de produto
 
 - criar painel de controle do administrador master
 
-- criar cadastro para as fotos do carrosel (possiveis propagandas para o site)
+x criar cadastro para as fotos do carrosel (possiveis propagandas para o site)
 
 - redirecionar pagina ao cadastrar usuario
 
-- carrossel criar botoes pra navegar entre os banner
+x carrossel criar botoes pra navegar entre os banner
 
 usuarios [
 diego@hotmail.com
@@ -49,3 +49,16 @@ matheus@hotmail.com | senha 12345
 ]
 
 META TAGS Open Graph - HTML
+
+// exemplo de busca mais avancada
+
+```sql
+  SELECT *,
+  ts_rank(to_tsvector('portuguese', titulo || ' ' || descricao),
+          websearch_to_tsquery('portuguese', $1)) AS rank
+FROM anuncios
+WHERE to_tsvector('portuguese', titulo || ' ' || descricao)
+      @@ websearch_to_tsquery('portuguese', $1)
+ORDER BY rank DESC;
+
+```

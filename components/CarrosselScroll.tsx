@@ -2,7 +2,7 @@
 
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PointIndicator from "./PointIndicator";
 
 interface CarrosselScrollProps {
@@ -20,16 +20,15 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({ items, time }) => {
   const width = ref?.clientWidth;
   const max = width! * totalItems;
 
-  async function moveRight() {
+  function moveRight() {
     if (animado) return;
     animado = true;
 
     if (scrollRef.current) {
-      ref?.scrollBy({ left: -width!, behavior: "smooth" });
-
       const newIndex = index == 0 ? items.length - 1 : index - 1;
       setIndex(newIndex);
 
+      ref?.scrollBy({ left: -width!, behavior: "smooth" });
       if (ref!.scrollLeft == 0) {
         ref?.scrollBy({ left: max! });
         ref?.scrollBy({ left: -width!, behavior: "smooth" });
@@ -37,15 +36,15 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({ items, time }) => {
     }
   }
 
-  async function moveLeft() {
+  function moveLeft() {
     if (animado) return;
     animado = true;
 
     if (scrollRef.current) {
-      ref?.scrollBy({ left: width, behavior: "smooth" });
       const newIndex = index == items?.length - 1 ? 0 : index + 1;
-
       setIndex(newIndex);
+
+      ref?.scrollBy({ left: width, behavior: "smooth" });
 
       if (ref!.scrollLeft >= max) {
         ref?.scrollBy({ left: -ref.scrollWidth! });
@@ -67,13 +66,9 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({ items, time }) => {
   });
 
   return (
-    <div className="w-full h-[15rem] bg-green-200 rounded-3xl relative overflow-hidden">
-      <button
-        className="left-0 absolute h-full w-1/12  text-4xl cursor-pointer hover:text-5xl"
-        onClick={moveLeft}
-      >
-        <FontAwesomeIcon icon={faAngleLeft} />
-      </button>
+    <div className="w-full h-[15rem] bg-green-200 rounded-2xl relative overflow-hidden">
+      <ArrowButton direction="left" className={`left-0 `} onClick={moveLeft} />
+
       <div
         ref={scrollRef}
         className="flex  h-full overflow-hidden"
@@ -85,6 +80,7 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({ items, time }) => {
           // eslint-disable-next-line @next/next/no-img-element
           return <img className="min-w-full" key={key} src={e.url} alt="" />;
         })}
+        {/* repete a primeira imagem no final para dar ilusão de rolagem infinita */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className="min-w-full"
@@ -94,14 +90,37 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({ items, time }) => {
         />
         ;
       </div>
-      <button
-        className="right-0 absolute h-full w-1/12 cursor-pointer top-0 text-4xl hover:text-5xl"
+      <ArrowButton
+        className={`right-0 top-0 `}
+        direction="right"
         onClick={moveRight}
-      >
-        <FontAwesomeIcon icon={faAngleRight} />
-      </button>
+      />
+
       <PointIndicator index={index} points={totalItems} />
     </div>
+  );
+};
+
+interface ArrowButtonProps {
+  direction: "left" | "right";
+  className: string;
+  onClick?: () => void;
+}
+
+const ArrowButton: React.FC<ArrowButtonProps> = ({
+  direction,
+  className,
+  onClick,
+}) => {
+  return (
+    <button
+      className={`absolute h-full w-1/12 text-4xl cursor-pointer hover:text-5xl hover:bg-white/30 transition duration-500 ${className}`}
+      onClick={onClick}
+    >
+      <FontAwesomeIcon
+        icon={direction === "left" ? faAngleLeft : faAngleRight}
+      />
+    </button>
   );
 };
 

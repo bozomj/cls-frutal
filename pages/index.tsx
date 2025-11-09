@@ -1,4 +1,3 @@
-import Carrossel from "@/components/Carrossel";
 import CarrosselScroll from "@/components/CarrosselScroll";
 import Header from "@/components/Header";
 
@@ -57,19 +56,8 @@ const Home: React.FC<HomeProps> = () => {
         >
           <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
           <CarrosselScroll items={imgCarrossel} time={5} />
-          <Carrossel
-            imagens={imgCarrossel}
-            speed={5}
-            className="rounded-2xl shadow-sm shadow-gray-400"
-          />
-
           <Produtos Card={ProductCard} postagens={postagens} />
-
-          <Carrossel
-            imagens={imgCarrossel}
-            speed={5}
-            className="rounded-2xl shadown-sm shadown-gray-400"
-          />
+          <CarrosselScroll items={imgCarrossel} time={5} />
         </section>
         <Footer />
       </main>
