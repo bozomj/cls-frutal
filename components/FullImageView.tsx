@@ -1,6 +1,7 @@
 import utils from "@/utils";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 interface FullImageViewProps {
@@ -60,7 +61,7 @@ const FullImageView: React.FC<FullImageViewProps> = ({
     <div
       id="imgfull"
       className={`
-          absolute top-0 z-[5] left-0 h-full w-full p-2
+          absolute top-0 z-[5] left-0 h-full w-full p-2 
           bg-cyan-950/80 
           justify-center items-center px-1 ${visible ? "flex" : "hidden"}
         `}
@@ -68,35 +69,36 @@ const FullImageView: React.FC<FullImageViewProps> = ({
         onClose(imagemIndex);
       }}
     >
-      <button
-        className="h-full text-9xl cursor-pointer text-white/30 outline-0 hover:text-white/50"
-        onClick={(e) => {
-          e.stopPropagation();
-          moveLeft();
-        }}
-      >
-        <FontAwesomeIcon icon={faAngleLeft} />
-      </button>
-      {/* <div className="flex flex-col bg-red gap-2 order-1 h-full justify-center w-full overflow-hidden"> */}
-      <div className="h-full flex">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          tabIndex={0}
-          src={utils.getUrlImage(images[imagemIndex]?.url)}
-          alt=""
-          className={`cursor-pointer object-contain max-h-full w-full `}
-          // className=" flex-1 rounded  object-contain shadow-2xl shadow-black outline-3 outline-cyan-600"
-        />
+      <div className="flex h-full w-full relative">
+        <button
+          className="h-full flex-1 w-[10%] text-5xl absolute left-0 z-[6] cursor-pointer text-white/30 outline-0 hover:text-white/50 md:text-8xl "
+          onClick={(e) => {
+            e.stopPropagation();
+            moveLeft();
+          }}
+        >
+          <FontAwesomeIcon icon={faAngleLeft} />
+        </button>
+        {/* <div className="flex flex-col bg-red gap-2 order-1 h-full justify-center w-full overflow-hidden"> */}
+        <div className="h-full relative flex-4">
+          <Image
+            className="flex-1"
+            src={utils.getUrlImage(images[imagemIndex]?.url) || ""}
+            alt=""
+            fill
+            style={{ objectFit: "contain" }}
+          />
+        </div>
+        <button
+          className=" h-full  w-[10%] flex-1 text-5xl absolute z-[6] right-0 cursor-pointer text-white/30 outline-0 hover:text-white/50 md:text-8xl"
+          onClick={(e) => {
+            e.stopPropagation();
+            moveRight();
+          }}
+        >
+          <FontAwesomeIcon icon={faAngleRight} />
+        </button>
       </div>
-      <button
-        className=" h-full text-9xl cursor-pointer text-white/30 outline-0 hover:text-white/50"
-        onClick={(e) => {
-          e.stopPropagation();
-          moveRight();
-        }}
-      >
-        <FontAwesomeIcon icon={faAngleRight} />
-      </button>
     </div>
   );
 };

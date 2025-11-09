@@ -19,32 +19,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   async function compartilhar() {
     const txt = `${window.location.origin}/posts/${item.id}`;
+    navigator.clipboard.writeText(txt);
 
-    // Cria textarea invisível pra seleção
-    const ta = document.createElement("textarea");
-    //precisa estar no documento
-    //  e nao pode estar oculto,
-    // pode até estar fora da tela, mas nao oculto
-    ta.value = txt;
-    document.body.appendChild(ta);
-
-    ta.select();
-
-    try {
-      document.execCommand("copy");
-      setShowAlert(
-        <Alert
-          show
-          msg={"Link Copiado com sucesso!"}
-          onClose={function (): void {
-            setShowAlert(<></>);
-          }}
-        />
-      );
-    } catch {
-    } finally {
-      document.body.removeChild(ta);
-    }
+    setShowAlert(
+      <Alert
+        show
+        msg={"Link Copiado com sucesso!"}
+        onClose={() => setShowAlert(<></>)}
+      />
+    );
   }
 
   return (
@@ -55,6 +38,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
         `}
     >
       <div className="flex flex-col w-full overflow-hidden gap-2 ">
+        <span className="text-sm text-right">
+          Publicado {utils.formatarData(`${item.created_at}`)}
+        </span>
         <a href={`/posts/${item.id}`} target="_blank">
           <div className="flex flex-1 justify-center bg-gray-200 overflow-hidden rounded-2xl h-[15rem]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -78,9 +64,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         <div className="flex justify-between">
           <span className="text-xl">{item.name}</span>
-          <span>Publicado {utils.formatarData(`${item.created_at}`)}</span>
         </div>
-        <div className=" flex items-end  justify-end text-2xl gap-2">
+        <div className=" flex items-end  justify-end text-xl gap-2">
           <a
             className={styleWhatsapp}
             href={`https://wa.me/55${item.phone}`}
@@ -102,7 +87,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 export default ProductCard;
 
 const styleCompartilhar =
-  "rounded-3xl cursor-pointer bg-cyan-800 w-10 h-10 flex items-center justify-center p-2 text-white self-end hover:bg-cyan-500 transition duration-200";
+  "rounded-3xl cursor-pointer bg-cyan-800 w-8 h-8 flex items-center justify-center p-2 text-white self-end hover:bg-cyan-500 transition duration-200";
 
 const styleWhatsapp =
-  "rounded-3xl bg-green-800 w-10 h-10 flex items-center justify-center p-2 text-white  hover:bg-green-600 transition duration-200";
+  "rounded-3xl bg-green-800 w-8 h-8 flex items-center justify-center p-2 text-white  hover:bg-green-600 transition duration-200";

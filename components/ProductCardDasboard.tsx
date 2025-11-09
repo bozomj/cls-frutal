@@ -66,6 +66,7 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
                   className="text-3xl text-green-900"
                 />
               </a>
+
               <a href="#" aria-label="Email">
                 <FontAwesomeIcon
                   icon={faPhone}

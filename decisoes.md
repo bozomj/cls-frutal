@@ -41,6 +41,8 @@ x botao de adicionar foto na pagina de produto
 
 - redirecionar pagina ao cadastrar usuario
 
+- carrossel criar botoes pra navegar entre os banner
+
 usuarios [
 diego@hotmail.com
 matheus@hotmail.com | senha 12345

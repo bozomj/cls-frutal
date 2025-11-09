@@ -18,12 +18,11 @@ import { imagemFirebase } from "@/storage/firebase";
 import postController from "@/controllers/postController";
 import FullImageView from "@/components/FullImageView";
 import MiniGalleryImage from "@/components/MiniGalleryImage";
+import Image from "next/image";
 
 type Props = {
   user_id?: string;
 };
-
-let uniqueId = 0;
 
 type ImageType = { id: number; file: File; url: string };
 
@@ -53,7 +52,7 @@ export default function DetailsPostPage({ user_id }: Props) {
   const [item, setItem] = useState(_item);
   const [previewImagens, setPreviewImagens] = useState<ImageType[]>([]);
   const [isPostUserId, IsPostUserId] = useState(false);
-  const [imgProfile, setImageProfile] = useState<string | null>(null);
+  const [imgProfileUrl, setImageProfile] = useState<string | null>(null);
   const [visible, setVisible] = useState(false);
 
   const titleRef = useRef<HTMLElement | null>(null);
@@ -154,8 +153,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                       key={index}
                       className="border-3 border-cyan-600 bg-cyan-800 peer-hover:bg-red-500/40 peer-hover:border-red-500"
                     >
-                      {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
-                      <img key={img.id} src={img.url} />
+                      <Image src={img.url} alt={""} />
                     </Card>
                   </div>
                 ))}
@@ -220,9 +218,9 @@ export default function DetailsPostPage({ user_id }: Props) {
                 className="flex justify-between items-center py-4"
               >
                 <div className="flex items-center gap-2">
-                  {imgProfile ? (
+                  {imgProfileUrl ? (
                     <CircleAvatar
-                      imagem={utils.getUrlImage(imgProfile)}
+                      imagem={utils.getUrlImage(imgProfileUrl)}
                       size={3}
                     />
                   ) : (
@@ -244,16 +242,14 @@ export default function DetailsPostPage({ user_id }: Props) {
                   >
                     <FontAwesomeIcon icon={faWhatsapp} />
                   </a>
-                  <a
-                    href=""
-                    target="_blank"
+                  <button
                     className="rounded-3xl bg-cyan-800 w-10 h-10 flex items-center justify-center p-2 text-white self-end hover:bg-cyan-500 transition duration-200"
                     onClick={() =>
                       navigator.clipboard.writeText(window.location.href)
                     }
                   >
                     <FontAwesomeIcon icon={faShare} />
-                  </a>
+                  </button>
                 </div>
               </div>
 
@@ -416,10 +412,6 @@ export default function DetailsPostPage({ user_id }: Props) {
     }
   }
 
-  function getUniqueId() {
-    return uniqueId++;
-  }
-
   async function selecionarImagens(e: ChangeEvent<HTMLInputElement>) {
     const files = e.target.files || [];
 
@@ -434,10 +426,10 @@ export default function DetailsPostPage({ user_id }: Props) {
           const resized = (await utils.imagem.resizeImageFile(file)) as File;
           // Cria uma URL temporária para o arquivo
           const imgURL = URL.createObjectURL(resized);
-          const id = getUniqueId();
+          // const id = getUniqueId();
           setPreviewImagens((p) => [
             ...p,
-            { url: imgURL, id: id, file: resized },
+            { url: imgURL, id: i, file: resized },
           ]);
         }
       }

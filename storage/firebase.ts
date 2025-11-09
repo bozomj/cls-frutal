@@ -29,9 +29,8 @@ if (process.env.NODE_ENV === "development") {
 }
 
 async function uploadImageFirebase(imagens: ImageFile[]) {
+  const images = [];
   if (imagens.length > 0) {
-    const images = [];
-
     for (const image of imagens) {
       const partes = image.file.name.split(".");
       const ext = partes[partes.length - 1];
@@ -39,18 +38,15 @@ async function uploadImageFirebase(imagens: ImageFile[]) {
 
       const storageRef = ref(storage, name);
 
-      const updated = await uploadBytes(storageRef, image.file);
-      console.log(updated);
+      await uploadBytes(storageRef, image.file);
 
       const url = await getDownloadURL(storageRef);
 
       images.push({ url: url });
     }
-
-    return images;
   }
 
-  return [];
+  return images;
 }
 
 async function deleteImage(img: StorageReference) {

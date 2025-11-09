@@ -1,5 +1,6 @@
 import utils from "@/utils";
 import { useEffect, useRef, useState } from "react";
+import PointIndicator from "./PointIndicator";
 
 interface CarrosselProps {
   imagens: Record<string, string>[];
@@ -51,30 +52,18 @@ const Carrossel: React.FC<CarrosselProps> = ({ imagens, speed, className }) => {
     };
   }, [index, velocidade, imagens]);
 
-  function pointIndicator() {
-    return imgs.map((e, i) => {
-      if (i < imgs.length - 1)
-        return (
-          <span
-            key={i}
-            className={` rounded-full shrink-0 block ${
-              index == i + 1
-                ? "bg-cyan-600/80 w-4 h-4"
-                : `bg-gray-100/60 w-3 h-3 ]`
-            }`}
-          ></span>
-        );
-    });
-  }
-
   return (
     <div
-      onTransitionEnd={async () => {
-        animar();
-      }}
+      onTransitionEnd={() => animar()}
       className={`flex w-[100%] overflow-hidden h-[150px] relative
       md:h-[250px] ${className}`}
     >
+      <span
+        className="absolute bg-red-800/50 h-full w-10 left-0 z-[10]"
+        onClick={() => {}}
+      >
+        botao 1
+      </span>
       <div ref={carrosselref} className="flex transition-all duration-700">
         {
           /* {(imgs.length > 0 || imgs.length != null) ?? */
@@ -83,7 +72,7 @@ const Carrossel: React.FC<CarrosselProps> = ({ imagens, speed, className }) => {
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 key={index}
-                src={utils.getUrlImage(e?.url ?? "")}
+                src={utils.getUrlImage(e?.url)}
                 alt=""
                 className="transition-all duration-700 flex-shrink-0 w-full "
               />
@@ -91,9 +80,10 @@ const Carrossel: React.FC<CarrosselProps> = ({ imagens, speed, className }) => {
           })
         }
       </div>
-      <div className="absolute left-0 bottom-0 overflow-hidden w-full flex justify-center gap-2 items-center px-4 py-1">
-        {pointIndicator()}
-      </div>
+      <span className="absolute bg-red-800/50 h-full w-10 right-0 z-[10]">
+        botao 2
+      </span>
+      <PointIndicator index={index - 1} points={imgs.length - 1} />
     </div>
   );
 };
