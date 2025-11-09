@@ -20,25 +20,28 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({ items, time }) => {
   const width = ref?.clientWidth;
   const max = width! * totalItems;
 
+  const animado = useRef(false);
+
   function moveRight() {
-    if (animado) return;
-    animado = true;
+    if (animado.current) return;
+    animado.current = true;
 
     if (scrollRef.current) {
       const newIndex = index == 0 ? items.length - 1 : index - 1;
       setIndex(newIndex);
 
       ref?.scrollBy({ left: -width!, behavior: "smooth" });
-      if (ref!.scrollLeft == 0) {
+      if (ref!.scrollLeft <= 0) {
         ref?.scrollBy({ left: max! });
         ref?.scrollBy({ left: -width!, behavior: "smooth" });
       }
     }
+    setTimeout(() => (animado.current = false), time * 1000);
   }
 
   function moveLeft() {
-    if (animado) return;
-    animado = true;
+    if (animado.current) return;
+    animado.current = true;
 
     if (scrollRef.current) {
       const newIndex = index == items?.length - 1 ? 0 : index + 1;
@@ -51,9 +54,8 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({ items, time }) => {
         ref?.scrollBy({ left: width!, behavior: "smooth" });
       }
     }
+    setTimeout(() => (animado.current = false), time * 1000);
   }
-
-  let animado = false;
 
   useEffect(() => {
     let frames: NodeJS.Timeout;
@@ -73,7 +75,7 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({ items, time }) => {
         ref={scrollRef}
         className="flex  h-full overflow-hidden"
         onScrollEnd={() => {
-          animado = false;
+          setTimeout(() => (animado.current = false), 300);
         }}
       >
         {items.map((e: { url: string }, key: number) => {
