@@ -1,6 +1,6 @@
 import autenticator from "@/models/autenticator";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
-import { faClose, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { faBars } from "@fortawesome/free-solid-svg-icons/faBars";
 import { faXmark } from "@fortawesome/free-solid-svg-icons/faXmark";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -20,6 +20,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
   const { resetPagination } = usePagination();
   const [toggle, setToggle] = useState(true);
+  const [subH, alter] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
 
   const [isAuthenticated, setIsAuthenticated] = useState({
@@ -73,89 +74,14 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
           </Link>
         </div>
       </div>
-
-      <div
-        className={`
-        absolute
-        w-full
-        h-dvh
-        top-0
-        left-[-100%]
-        has-[input:checked]:block
-        has-[input:checked]:left-0
-        
-        
-        
-        
-        `}
-        onClick={(e) => {
-          const self = e.currentTarget;
-          self.classList.add("!left-0");
-          setTimeout(() => {
-            self.classList.remove("!left-0");
-          }, 400);
-          console.log(self);
-        }}
-      >
+      <div className="flex justify-end items-center gap-4 flex-[1]">
         <input
           type="checkbox"
           id="activeSubmenu"
-          onClick={(e) => {
-            e.stopPropagation();
-            change();
-          }}
+          onClick={change}
           className="peer hidden "
         />
-        <label
-          htmlFor="activeSubmenu"
-          id="fundopreto"
-          className="
-        w-full
-        h-full
-        absolute left-0 top-0 z-[10]
-        transitions-all
-        duration-[800ms]
-        bg-gray-950/0
-        peer-checked:bg-gray-950/60"
-        ></label>
 
-        <nav
-          id="submenu"
-          className={`
-          bg-secondary
-          w-8/12
-          h-full
-          relative
-          overflow-hidden
-          p-0
-          
-          z-[20]
-          peer-checked:md:x-auto peer-checked:p-2 peer-checked:left-0
-          duration-[600ms]    
-          md:relative md:h-auto md:w-fit md:px-0
-
-          
-          `}
-          style={{ left: isMobile && !toggle ? `0` : `-100%` }}
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-        >
-          <FontAwesomeIcon
-            icon={faClose}
-            className={`
-              absolute
-              right-4
-              `}
-          />
-
-          <ul className="flex flex-col justify-end pb-4 md:pb-0  w-full  md:gap-4 md:flex-row ">
-            {mapItemsMenu()}
-          </ul>
-        </nav>
-      </div>
-
-      <div className="flex justify-end items-center gap-4 flex-[1]">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -180,7 +106,16 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
             />
           </button>
         </form>
-
+        <nav
+          id="submenu"
+          className={`bg-secondary w-full peer-checked:md:h-auto overflow-y-hidden duration-[400ms] px-4 h-0     text-right  absolute left-0 top-[100%]  
+          peer-checked:h-[${subH}px] md:relative md:h-auto md:w-fit md:px-0`}
+          style={{ height: isMobile && !toggle ? `${subH}px` : undefined }}
+        >
+          <ul className="flex flex-col justify-end pb-4 md:pb-0  w-full  md:gap-4 md:flex-row ">
+            {mapItemsMenu()}
+          </ul>
+        </nav>
         <label
           htmlFor="activeSubmenu"
           className="md:hidden w-[32] h-[32] cursor-pointer hover:text-primary-light"
@@ -191,6 +126,12 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
             <FontAwesomeIcon icon={faXmark} className="text-3xl" />
           )}
         </label>
+
+        <label
+          htmlFor="activeSubmenu"
+          id="fundopreto"
+          className="w-full h-dvh  left-0 top-0 fixed z-[-1]   hidden peer-checked:block"
+        ></label>
       </div>
     </header>
   );
@@ -215,6 +156,14 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
   }
 
   function init() {
+    const submenu = document.getElementById("submenu");
+    const sub = {
+      height: submenu?.scrollHeight ?? 0,
+      width: submenu?.clientWidth ?? 0,
+    };
+
+    alter(sub.height);
+
     autenticator.isAuthenticated().then(setIsAuthenticated);
   }
 };

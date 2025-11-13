@@ -60,6 +60,8 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({ items, time }) => {
   useEffect(() => {
     let frames: NodeJS.Timeout;
     const animate = async () => {
+      if (animado.current) return;
+      // animado.current = true;
       frames = setTimeout(animate, time * 1000);
       moveLeft();
     };
