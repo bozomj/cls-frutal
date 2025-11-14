@@ -130,7 +130,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
                     
           md:static
           md:w-full
-          md:p-0
+          
           
           
           
@@ -156,6 +156,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
               
               md:flex-row
               md:gap-2
+              
               "
             >
               {mapItemsMenu()}
@@ -247,7 +248,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
         <li key={value}>
           <label
             htmlFor="activeSubmenu"
-            className="hover:text-primary-light cursor-pointer"
+            className="hover:text-primary-light p-2 cursor-pointer hover:border-l md:hover:border-b md:hover:border-l-0 md:px-0 md:py-2"
           >
             <a>{key.label} </a>
           </label>

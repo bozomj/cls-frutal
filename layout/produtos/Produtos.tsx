@@ -29,7 +29,16 @@ function Produtos<T>({ postagens = [], Card, className }: ProdutosProps<T>) {
         </h3>,
       ];
 
-    return items.map((item, v) => <Card item={item} key={`${v}`} />);
+    return items.map((item, v) => {
+      return (
+        <>
+          <Card item={item} key={`${v}`} />
+          {v < items.length - 1 && (
+            <span className="border-b-3 rounded-3xl w-full bg-gray-200"></span>
+          )}
+        </>
+      );
+    });
   }
 }
 

@@ -33,8 +33,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
   return (
     <div
       className={`
-        bg-gray-300  p-2 rounded-2xl flex justify-center
-         hover:bg-gray-300 text-gray-800 ${className} 
+        bg-gray-50 border-2 border-gray-50  p-2 rounded-2xl flex justify-center transition duration-400
+         hover:border-gray-300  text-gray-800 ${className} 
         `}
     >
       <div className="flex flex-col w-full overflow-hidden gap-2 ">
@@ -55,10 +55,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <h2 className=" font-bold block  whitespace-wrap">
               {item.title ?? ""}
             </h2>
-            <p className="text-sm truncate">{item.description}</p>
             <span className="h-5 text-green-700 font-bold block">
               R$: {item.valor}
             </span>
+            <p className="text-sm truncate">{item.description}</p>
           </div>
         </a>
 
