@@ -49,7 +49,7 @@ const Home: React.FC<HomeProps> = () => {
   return (
     <>
       <Header />
-      <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center scroll-smooth ">
+      <main className="flex-auto overflow-y-scroll bg-white flex-col flex justify-between gap-2 items-center scroll-smooth ">
         <section
           tabIndex={0}
           className="flex flex-col gap-2 w-full p-2 md:max-w-[40rem]"
