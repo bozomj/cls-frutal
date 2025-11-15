@@ -1,4 +1,5 @@
 import Paginacao from "@/components/Paginacao";
+import VerticalDivider from "@/components/VerticalDivider";
 
 interface ProdutosProps<T> {
   postagens: T[];
@@ -24,21 +25,18 @@ function Produtos<T>({ postagens = [], Card, className }: ProdutosProps<T>) {
   function makeItens(items: T[]) {
     if (items.length < 1)
       return [
-        <h3 key={1} className="flex justify-center text-gray-700 font-bold">
+        <h2 key={0} className="flex justify-center text-gray-700 font-bold">
           Nada encontrado
-        </h3>,
+        </h2>,
       ];
 
-    return items.map((item, v) => {
-      return (
-        <>
-          <Card item={item} key={`${v}`} />
-          {v < items.length - 1 && (
-            <span className="border-b-3 rounded-3xl w-full bg-gray-200"></span>
-          )}
-        </>
-      );
-    });
+    return items.map((item, v) => (
+      <div key={v} className="flex flex-col gap-4">
+        <Card item={item} key={`${v}`} />
+
+        {v < items.length - 1 && <VerticalDivider height={3} />}
+      </div>
+    ));
   }
 }
 
