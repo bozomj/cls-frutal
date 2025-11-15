@@ -23,7 +23,8 @@ function Produtos<T>({ postagens = [], Card, className }: ProdutosProps<T>) {
   );
 
   function makeItens(items: T[]) {
-    if (items.length < 1)
+    const TotalItems = items.length;
+    if (TotalItems < 1)
       return [
         <h2 key={0} className="flex justify-center text-gray-700 font-bold">
           Nada encontrado
@@ -33,8 +34,7 @@ function Produtos<T>({ postagens = [], Card, className }: ProdutosProps<T>) {
     return items.map((item, v) => (
       <div key={v} className="flex flex-col gap-4">
         <Card item={item} key={`${v}`} />
-
-        {v < items.length - 1 && <VerticalDivider height={3} />}
+        {v < TotalItems - 1 && <VerticalDivider height={3} />}
       </div>
     ));
   }
