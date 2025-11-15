@@ -75,7 +75,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
         <section
           ref={refSlideMenu}
           className={`
-          absolute top-0 left-[-100%]
+          absolute top-0 left-[-100%] z-[999]
           w-full h-dvh
           has-[input:checked]:block 
           has-[input:checked]:left-0
@@ -112,7 +112,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
             className={`
           bg-white
             w-8/12 h-full
-            relative z-[20] p-2
+            relative z-[11] p-2
             overflow-hidden
             duration-[600ms]    
             md:static

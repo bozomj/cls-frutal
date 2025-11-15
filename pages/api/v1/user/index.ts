@@ -16,6 +16,7 @@ export default router.handler();
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const id = (req.headers.cookie || "").split("=")[1];
+    console.log("TOKEN", id);
     const user = autenticator.verifyToken(id);
 
     const users = await User.findById(user.id);

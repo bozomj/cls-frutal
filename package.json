@@ -3,9 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    
     "dev": "docker rm -f clf-postgres-dev 2>/dev/null || true && docker-compose up -d && next dev",
+  "firebase": "firebase emulators:start --project clsfrutal --config=./firebase/firebase.json --import=./exportdatabase --export-on-exit",
+  "init": "concurrently \"npm run dev\" \"npm run firebase\"",
     "build": "next build",
     "start": "next start",
+    
     "lint": "next lint",
     "db:up": "docker-compose up -d",
     "db:down": "docker-compose down",
@@ -16,8 +20,8 @@
     "migrate:create": "node-pg-migrate create",
     "migrate:up": "node-pg-migrate up",
     "migrate:down": "node-pg-migrate down",
-    "seed": "ts-node seeds/createAminUser.ts",
-    "firebase": "firebase emulators:start --project clsfrutal --config=./firebase/firebase.json --import=./exportdatabase --export-on-exit"
+    "seed": "ts-node seeds/createAminUser.ts"
+    
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
@@ -50,6 +54,7 @@
     "@types/pg": "^8.11.12",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "concurrently": "^9.2.1",
     "dotenv": "^16.5.0",
     "eslint": "^9",
     "eslint-config-next": "15.2.4",

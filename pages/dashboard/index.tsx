@@ -8,7 +8,7 @@ import {
   faClipboard,
 } from "@fortawesome/free-regular-svg-icons";
 
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faClose, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 import Header from "@/components/Header";
 import ListTile from "@/components/ListTile";
@@ -58,39 +58,50 @@ function Dashboard({ ctx }: { ctx: string }) {
     getUser();
     getMyPost();
   }, [ctx, getMyPost]);
+  console.log(user);
 
   return (
     <>
-      <header>
+      <header className="z-[20]">
         <Header titulo="Dashboard" />
       </header>
       <main
         className="flex-auto overflow-y-scroll text-white bg-gray-300 flex-col flex justify-between  items-center scroll-smooth
-        
-      "
+"
       >
         <div className="flex-1 flex w-full md:justify-center">
           <section
             tabIndex={0}
-            className=" z-[999] group bg-cyan-950 max-w-[5rem] overflow-x-hidden   p-4 flex items-start flex-col gap-2 hover:max-w-[25rem]   transition-all duration-500  
-                border-r-10 border-cyan-950
-          focus:max-w-[25rem] fixed h-full 
-
-          md:min-w-[25rem] md:static md:h-auto md:w-fit
+            className="
+            group
+            flex flex-col items-start gap-2 
+            fixed z-[8] w-[4rem]  h-full p-1 overflow-x-hidden
+          bg-cyan-950 border-cyan-950
+            border-r-4 
+            focus:max-w-[25rem] focus:w-3/4 
+            md:min-w-[25rem] md:static md:h-auto md:w-fit
           md:bg-gray-300 md:border-gray-300 md:text-gray-950  
-        
-        "
+            
+            transition-all duration-500
+            "
           >
-            <ul className="flex flex-col gap-2 w-[23rem] md:fixed">
+            <ul className="flex flex-col gap-2 w-full md:fixed ">
+              <span
+                tabIndex={1}
+                className="self-end cursor-pointer hover:text-cyan-500 invisible group-focus:visible"
+              >
+                <FontAwesomeIcon icon={faClose} />
+              </span>
+
               {/* <div className="flex flex-col  gap-2"> */}
               <span
-                className="group-focus:w-[8rem] group-focus:h-[8rem] rounded-full  w-[3rem] h-[3rem] group-hover:block   bg-white   group-hover:w-[8rem] group-hover:h-[8rem] transition-all duration-500
+                className="group-focus:w-[8rem] group-focus:h-[8rem] rounded-full  w-[3rem] h-[3rem]    bg-white transition-all duration-500
               md:w-[8rem] md:h-[8rem] overflow-hidden border-2 border-white
               "
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={user.url}
+                  src={utils.getUrlImage(user.url)}
                   alt=""
                   className="w-full h-full object-cover"
                 />
@@ -101,7 +112,7 @@ function Dashboard({ ctx }: { ctx: string }) {
                 icon={faUser}
                 url={`/profile`}
                 onClick={() => {}}
-                className="md:hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 w-full"
+                className="md:hover:bg-gray-400/50  duration-500 rounded md:hover:text-gray-950 "
               />
               {/* </div> */}
 
@@ -110,7 +121,7 @@ function Dashboard({ ctx }: { ctx: string }) {
                   title={user.email ?? ""}
                   icon={faEnvelope}
                   onClick={() => {}}
-                  className="md:hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 w-full"
+                  className="md:hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 "
                 />
               </li>
 
@@ -120,7 +131,7 @@ function Dashboard({ ctx }: { ctx: string }) {
                   icon={faClipboard}
                   onClick={() => {}}
                   url="/newpost"
-                  className="md:hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 w-full"
+                  className="md:hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 "
                 />
               </li>
             </ul>

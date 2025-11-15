@@ -21,20 +21,12 @@ const ListTile = ({
     >
       <a
         href={url ?? "#"}
-        className="flex gap-2 items-center cursor-pointer w-full"
+        className="flex gap-3 items-center cursor-pointer w-full"
       >
         <span>
-          <FontAwesomeIcon
-            icon={icon!}
-            className="text-3xl transition-all duration-500"
-          />
+          <FontAwesomeIcon icon={icon!} className="text-2xl w-8 " />
         </span>
-        <span
-          tabIndex={0}
-          className=" group-focus:block whitespace-nowrap group-focus:opacity-100 transition-all duration-500 group-hover:opacity-100 opacity-0
-        md:opacity-100
-        "
-        ></span>
+
         {title}
       </a>
     </div>

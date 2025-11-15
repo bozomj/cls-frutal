@@ -1,8 +1,7 @@
 import { PostType } from "@/models/post";
-import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
-import { faPhone } from "@fortawesome/free-solid-svg-icons";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import Modal from "./Modal";
 import utils from "@/utils";
 import { faEdit } from "@fortawesome/free-regular-svg-icons";
@@ -21,73 +20,52 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
 
   if (deleted) return null;
 
-  function linkFone(phone: string) {
-    console.log(item);
-    return `https://wa.me/55${phone}?text=[Classificados Frutal] - fiquei interessado em seu produto `;
-  }
-
   return (
-    <>
-      <article
-        className={`bg-gray-300 relative flex-col text-white  gap-2 p-2 rounded-2xl flex justify-center ${className} `}
-      >
-        <a
-          href={`/posts/${item.id}`}
-          className="bg-green-800 rounded-full w-12 h-12 flex self-end hover:bg-green-500 items-center justify-center text-2xl"
-        >
-          <FontAwesomeIcon icon={faEdit} />
-        </a>
-        <div className="flex flex-col w-full  overflow-hidden h-full gap-2 ">
-          <div className="bg-gray-200 rounded-2xl flex justify-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              className="bg-gray-200 max-h-[20rem] w-fit self-center"
-              src={utils.getUrlImage(item.imageurl)}
-              alt={""}
-            />
-          </div>
-
-          <div className=" flex text-gray-900 gap-2  flex-col ">
-            <span className="text-2xl w-fit overflow-hidden">
-              {item.title ?? ""}
-            </span>
-            <span className="w-full">{item.description ?? ""}</span>
-            <span className="w-full">R$: {item.valor}</span>
-
-            <div className=" flex items-center gap-4 w-full">
-              <a
-                href={linkFone(item.phone)}
-                target="_blank"
-                aria-label="Whatsapp"
-                rel="noopener noreferrer"
-              >
-                <FontAwesomeIcon
-                  icon={faWhatsapp}
-                  className="text-3xl text-green-900"
-                />
-              </a>
-
-              <a href="#" aria-label="Email">
-                <FontAwesomeIcon
-                  icon={faPhone}
-                  className="text-1xl text-blue-500"
-                />
-                <span>{item.email}</span>
-              </a>
-            </div>
-          </div>
+    <article
+      className={`bg-gray-300 relative flex-col text-white  gap-2 p-2 rounded-2xl flex justify-center ${className} `}
+    >
+      <div className="flex justify-between items-center">
+        <span className="text-gray-800">
+          pub: {utils.formatarData(`${item.created_at}` || "")}
+        </span>
+        <div id="list-actions" className="flex justify-end gap-4">
+          <a
+            href={`/posts/${item.id}`}
+            className="text-green-800 hover:text-green-500 text-xl"
+          >
+            <FontAwesomeIcon icon={faEdit} />
+          </a>
           <button
             aria-label="Deletar post"
             type="button"
-            className="bg-red-800  cursor-pointer font-bold w-1/3 self-end rounded p-1 hover:bg-red-600"
+            className="text-red-800  cursor-pointer font-bold hover:text-red-600 text-xl"
             onClick={async () => deletePostId(item.id ?? "")}
           >
-            Deletar
+            <FontAwesomeIcon icon={faTrash} />
             {showmodal}
           </button>
         </div>
-      </article>
-    </>
+      </div>
+
+      <div className="flex flex-col w-full  overflow-hidden h-full gap-2 ">
+        <div className="bg-gray-200 rounded-2xl flex justify-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className="bg-gray-200 max-h-[10rem] w-fit self-center"
+            src={utils.getUrlImage(item.imageurl)}
+            alt={""}
+          />
+        </div>
+
+        <div className=" flex text-gray-900 flex-col ">
+          <span className="text-xl w-fit overflow-hidden">
+            {item.title ?? ""}
+          </span>
+          <span className="w-full text-green-800">R$: {item.valor}</span>
+          <span className="w-full">{item.description ?? ""}</span>
+        </div>
+      </div>
+    </article>
   );
 
   async function deletePostId(id: string) {
