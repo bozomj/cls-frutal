@@ -27,26 +27,31 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
     user: null,
   });
   const itemsMenu = [
-    { label: "produtos", link: "" },
+    { label: "produtos", link: "/newpost" },
     { label: "serviços", link: "" },
     { label: "vagas", link: "" },
   ];
 
   useEffect(init, []);
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  const refSlideMenu = React.useRef<HTMLElement>(null);
+
+  function closeSlideMenu() {
+    refSlideMenu.current!.classList.add("!left-0");
+    setTimeout(() => {
+      refSlideMenu.current!.classList.remove("!left-0");
+    }, 400);
+  }
 
   return (
     <header
       className="
-    bg-white
-     text-primary-dark
-      p-4 relative 
-      w-full 
-      z-[1] 
-      flex flex-col gap-2 
-      md:items-stretch 
+    bg-white text-primary-dark
       border-b border-gray-300
-      
+      flex flex-col gap-2 
+      p-4 relative z-[1] 
+      w-full 
+      md:items-stretch 
       "
     >
       <div className="flex justify-between gap-4 items-center">
@@ -68,73 +73,51 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
         </Link>
 
         <section
+          ref={refSlideMenu}
           className={`
-              
-        absolute
-        w-full
-        h-dvh
-        top-0
-        left-[-100%]
-        has-[input:checked]:block
-        has-[input:checked]:left-0
-
-        md:static
-        md:h-auto
-        md: flex-1
-        
+          absolute top-0 left-[-100%]
+          w-full h-dvh
+          has-[input:checked]:block 
+          has-[input:checked]:left-0
+          md:static md:h-auto md: flex-1
         `}
-          onClick={(e) => {
-            const self = e.currentTarget;
-            self.classList.add("!left-0");
-            setTimeout(() => {
-              self.classList.remove("!left-0");
-            }, 400);
-          }}
+          onClick={closeSlideMenu}
         >
           <input
             type="checkbox"
             id="activeSubmenu"
+            checked={!toggle}
+            readOnly
             onClick={(e) => {
               e.stopPropagation();
               change();
             }}
-            className="peer hidden "
+            className="peer hidden"
           />
           <label
             id="fundopreto"
             htmlFor="activeSubmenu"
             className="
-          w-full
-          h-full
-          absolute left-0 top-0 z-[10]
-          transitions-all
-          duration-[800ms]
-          bg-gray-950/0
+            w-full h-full
+            absolute left-0 top-0 z-[10]
+            transitions-all duration-[800ms]
+            bg-gray-950/0
 
-         peer-checked:bg-gray-950/60
-         md:hidden
-         "
+          peer-checked:bg-gray-950/60
+            md:hidden
+            "
           ></label>
           <nav
-            id="submenu"
+            id="slideMenuItems"
             className={`
           bg-white
-          w-8/12
-          h-full
-          relative
-          overflow-hidden
-          
-          z-[20]
-          p-2
-          duration-[600ms]    
-                    
-          md:static
-          md:w-full
-          
-          
-          
-          
-          `}
+            w-8/12 h-full
+            relative z-[20] p-2
+            overflow-hidden
+            duration-[600ms]    
+            md:static
+            md:w-full
+            `}
             style={{ left: isMobile && !toggle ? `0` : `-100%` }}
             onClick={(e) => {
               e.stopPropagation();
@@ -142,21 +125,19 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
           >
             <label
               htmlFor="activeSubmenu"
-              className="absolute
-              right-4 md:hidden"
+              className="
+                absolute right-4
+                cursor-pointer
+                md:hidden"
+              onClick={closeSlideMenu}
             >
               <FontAwesomeIcon icon={faClose} />
             </label>
             <ul
               className="
-              flex
-              flex-col
-              justify-end
+              flex flex-col justify-end
               w-full
-              
-              md:flex-row
-              md:gap-2
-              
+              md:flex-row md:gap-2
               "
             >
               {mapItemsMenu()}
@@ -249,8 +230,11 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
           <label
             htmlFor="activeSubmenu"
             className="hover:text-primary-light p-2 cursor-pointer hover:border-l md:hover:border-b md:hover:border-l-0 md:px-0 md:py-2"
+            onClick={closeSlideMenu}
           >
-            <a>{key.label} </a>
+            <a href={key.link} target="">
+              {key.label}
+            </a>
           </label>
         </li>
       );
