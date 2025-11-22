@@ -1,7 +1,6 @@
 import database from "@/database/database";
 
 async function saveProfileImage(img: Record<string, unknown>) {
-  console.log("imagem", img.url);
   try {
     await database.query(
       `

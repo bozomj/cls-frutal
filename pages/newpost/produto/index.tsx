@@ -76,7 +76,7 @@ export default function Produto() {
         URL.revokeObjectURL(img.url);
       });
     };
-  }, []);
+  });
 
   async function getCategorias() {
     const categorias = await (await fetch("/api/v1/categorias")).json();
@@ -252,13 +252,18 @@ export default function Produto() {
     if ((post.categoria_id = parseInt(e))) setCategoria(e);
   }
 
+  const style = {
+    input:
+      "p-3 bg-gray-300 text-gray-900 outline-2 outline-gray-400  focus:outline-cyan-500 focus:outline-4 rounded-md",
+  };
+
   return (
     <>
       <Header />
       <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center p-2">
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-4 bg-cyan-950 rounded p-4 md:w-[480px] m-4 w-full "
+          className="flex flex-col gap-4 bg-gray-50 rounded p-4 md:w-[480px] m-4 w-full "
         >
           <span className="text-red-800 font-bold h-3">
             {Object.values(postError).some((msg) => msg != "")
@@ -270,25 +275,22 @@ export default function Produto() {
             type="text"
             value={title}
             placeholder="Titulo"
-            className={`p-3 bg-cyan-50 text-gray-900 outline-0  focus:outline-cyan-500 focus:outline-4 rounded-md
-              ${postError.title ? "outline-2 outline-red-600" : "outline-none"}
-              `}
+            className={`${style.input} ${
+              postError.title ? "outline-2 outline-red-600" : ""
+            } `}
             onChange={(e) => {
               post.title = e.target.value;
               setTitle(post.title);
+              console.log(title);
             }}
           />
           {/* <span className="text-red-800">{postError.description}</span> */}
           <textarea
             placeholder="Descrição"
             value={description}
-            className={`p-3 bg-cyan-50 text-gray-900 outline-0 rounded-md
-               focus:outline-cyan-500 focus:outline-4
-               ${
-                 postError.description
-                   ? "outline-2 outline-red-600"
-                   : "outline-none"
-               } `}
+            className={`${style.input} ${
+              postError.description ? "outline-2 outline-red-600" : ""
+            } `}
             onChange={(e) => {
               post.description = e.target.value;
               setDescription(post.description);
@@ -298,32 +300,33 @@ export default function Produto() {
             <select
               name=""
               id=""
-              className={`p-3 bg-cyan-50 rounded-md  outline-0 focus:outline-cyan-500 focus:outline-4 flex-1
-              ${categoria === "" ? "text-gray-400" : "text-gray-800"} 
-             ${
-               postError.categoria_id
-                 ? "outline-2 outline-red-600"
-                 : "outline-none"
-             }
+              className={`${style.input} flex-1
+              ${selected === "0" ? "text-gray-400!" : "text-gray-800!"} 
+             ${postError.categoria_id ? "outline-2 outline-red-600" : ""}
               `}
               value={selected}
-              onChange={(e) => changeCategoria(e.target.value)}
+              onChange={(e) => {
+                console.log(selected, e.target.value);
+                changeCategoria(e.target.value);
+              }}
             >
-              <option key={0} value={""}>
+              <option key={0} value={"0"} className="text-gray-400">
                 Selecione a categoria
               </option>
-              {categoriasValues.map((e) => (
-                <option
-                  key={e.value}
-                  value={e.value}
-                  disabled={e.value === ""}
-                  className={`${
-                    e.value === "" ? "text-gray-400" : "text-gray-800"
-                  }`}
-                >
-                  {e.label}
-                </option>
-              ))}
+              {categoriasValues.map((e) => {
+                return (
+                  <option
+                    key={e.value}
+                    value={e.value}
+                    disabled={e.value === ""}
+                    className={`${
+                      e.value === "0" ? "text-gray-400!" : "text-gray-800!"
+                    } `}
+                  >
+                    {e.label}
+                  </option>
+                );
+              })}
             </select>
             <button
               type="button"
@@ -371,13 +374,9 @@ export default function Produto() {
             type="text"
             placeholder="R$: 0,00"
             value={valor}
-            className={`text-gray-900
-                outline-0 p-3 bg-cyan-50 
-              focus:outline-cyan-500
-                focus:outline-4 rounded-md
-              ${
-                postError.valor ? "outline-2 outline-red-600" : "outline-none"
-              }`}
+            className={`${style.input} ${
+              postError.valor ? "outline-2 outline-red-600" : ""
+            }`}
             onChange={(e) => formatarMoeda(e)}
           />
 
@@ -404,43 +403,14 @@ export default function Produto() {
           </label>
 
           <div id="preview" className="flex gap-3 flex-wrap justify-center">
-            {loading && (
-              <div className="h-2 w-full rounded bg-cyan-800 ">
-                <div className="w-full h-full bg-cyan-500 transform origin-left animate-loading"></div>
-              </div>
-            )}
-            {imagens.map((e, index) => {
+            {loading && <LinearProgressIndicator />}
+            {imagens.map((e) => {
               return (
-                <div key={e.id} className="relative w-fit">
-                  <div
-                    className="absolute cursor-pointer bg-red-900 hover:bg-red-500 rounded-full h-8 w-8 text-center p-1 -right-2 -top-2 peer"
-                    onClick={() => {
-                      // setImg((prev) => prev.filter((_, i) => i !== index));
-                      setImagens((prev) => {
-                        const img = prev.find((img) => img.id === e.id);
-                        if (img) URL.revokeObjectURL(img.url);
-
-                        return prev.filter((img) => img.id !== e.id);
-                      });
-                    }}
-                  >
-                    X
-                  </div>
-                  <Card
-                    key={index}
-                    className="border-3 border-cyan-600 bg-cyan-800 peer-hover:bg-red-500/40 peer-hover:border-red-500"
-                  >
-                    {/*  eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      className="rounded-md cursor-pointer"
-                      key={e.id}
-                      src={e.url}
-                      alt=""
-                      width={150}
-                      height={150}
-                    />
-                  </Card>
-                </div>
+                <ImagePreview
+                  key={e.id}
+                  image={e}
+                  onClick={() => removeImagePreview(e)}
+                />
               );
             })}
           </div>
@@ -468,6 +438,52 @@ export default function Produto() {
         {prompt}
       </main>
     </>
+  );
+
+  function removeImagePreview(image: ImageFile) {
+    setImagens((prev) => {
+      const img = prev.find((img) => img.id === image.id);
+      if (img) URL.revokeObjectURL(img.url);
+
+      return prev.filter((img) => img.id !== image.id);
+    });
+  }
+}
+
+function LinearProgressIndicator() {
+  return (
+    <div className="h-2 w-full rounded bg-cyan-800 overflow-hidden">
+      <div className="w-full h-full bg-cyan-500 transform origin-left animate-loading"></div>
+    </div>
+  );
+}
+
+function ImagePreview({
+  image,
+  onClick,
+}: {
+  image: ImageFile;
+  onClick: (image: ImageFile) => void;
+}) {
+  return (
+    <div className="relative w-fit">
+      <div
+        className="absolute cursor-pointer bg-red-900 hover:bg-red-500 rounded-full h-8 w-8 text-center p-1 -right-2 -top-2 peer"
+        onClick={() => onClick(image)}
+      >
+        X
+      </div>
+      <Card className="border-3 border-cyan-600 bg-cyan-800 peer-hover:bg-red-500/40 peer-hover:border-red-500">
+        {/*  eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          className="rounded-md cursor-pointer"
+          src={image.url}
+          alt=""
+          width={150}
+          height={150}
+        />
+      </Card>
+    </div>
   );
 }
 

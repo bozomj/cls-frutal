@@ -1,6 +1,6 @@
 import CircleAvatar from "@/components/CircleAvatar";
 import { UserType } from "@/models/user";
-import { JSX, useEffect } from "react";
+import { JSX, useRef } from "react";
 
 import ListTile from "@/components/ListTile";
 import {
@@ -9,6 +9,7 @@ import {
   faHome,
   faPodcast,
 } from "@fortawesome/free-solid-svg-icons";
+import utils from "@/utils";
 
 interface Props {
   user: UserType;
@@ -16,11 +17,39 @@ interface Props {
 }
 
 const LayoutPage = ({ user, children }: Props) => {
-  useEffect(() => {}, []);
+  const scrollRef = useRef<HTMLUListElement>(null);
+  const isDown = useRef(false);
+  const startX = useRef(0);
+  const scrollLeft = useRef(0);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    isDown.current = true;
+    startX.current = e.pageX - (scrollRef.current?.offsetLeft ?? 0);
+    scrollLeft.current = scrollRef.current?.scrollLeft ?? 0;
+    if (scrollRef.current) scrollRef.current.style.cursor = "grabbing";
+  };
+
+  const handleMouseLeave = () => {
+    isDown.current = false;
+    if (scrollRef.current) scrollRef.current.style.cursor = "grab";
+  };
+
+  const handleMouseUp = () => {
+    isDown.current = false;
+    if (scrollRef.current) scrollRef.current.style.cursor = "grab";
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDown.current || !scrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = x - startX.current; // diferença do movimento
+    scrollRef.current.scrollLeft = scrollLeft.current - walk;
+  };
 
   return (
     <>
-      <div className="flex bg-gray-100 flex-1 text-gray-800">
+      <div className="flex flex-col bg-gray-100 flex-1 text-gray-800">
         <aside
           id="lista_usuarios"
           className="flex  flex-col min-w-[20rem]  bg-cyan-950 p-2 text-white gap-4"
@@ -29,20 +58,26 @@ const LayoutPage = ({ user, children }: Props) => {
             Administrator Page
           </div>
           <span className="bg-cyan-800 h-[0.1rem]"></span>
-
           <div className="flex gap-2 items-center ">
-            <CircleAvatar imagem={user.url} size={5} />
+            <CircleAvatar imagem={utils.getUrlImage(user.url)} size={5} />
             <div className=" text-xl">{user.name}</div>
           </div>
-
           <span className="bg-cyan-800 h-[0.1rem]"></span>
 
-          <ul>
+          <ul
+            ref={scrollRef}
+            className="flex w-full overflow-x-auto select-none no-drag items-center"
+            onMouseDown={handleMouseDown}
+            onMouseLeave={handleMouseLeave}
+            onMouseUp={handleMouseUp}
+            onMouseMove={handleMouseMove}
+          >
             <ListTile
               url="/administrator"
               onClick={() => {}}
               title="Home"
               icon={faHome}
+              className="select-none no-drag"
             />
 
             <ListTile
@@ -50,14 +85,22 @@ const LayoutPage = ({ user, children }: Props) => {
               url="/administrator/dashboard"
               icon={faDashboard}
               onClick={() => {}}
+              className="select-none no-drag"
             />
             <ListTile
               title="Carrosel"
               icon={faCarrot}
               onClick={() => {}}
               url="/administrator/carrossel"
+              className="select-none no-drag"
             />
-            <ListTile title="Postagens" icon={faPodcast} onClick={() => {}} />
+            <ListTile
+              title="Postagens"
+              icon={faPodcast}
+              onClick={() => {}}
+              url="/newpost/produto"
+              className="select-none no-drag"
+            />
           </ul>
         </aside>
 

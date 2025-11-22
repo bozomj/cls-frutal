@@ -114,6 +114,42 @@ export default function DetailsPostPage({ user_id }: Props) {
                 setImagemIndex(i);
               }}
             />
+            {isPostUserId && (
+              <div className="flex gap-2 overflow-x-scroll h-[15rem] p-2">
+                {post_imagens.map((img, i) => {
+                  return (
+                    <div
+                      key={i}
+                      className="w-fit h-full relative bg-accent shrink-0"
+                    >
+                      <span
+                        className="bg-red-800 w-3 h-3 rounded-full p-3 absolute flex justify-center items-center right-1 text-white top-1"
+                        onClick={async () => {
+                          await imagemFirebase.deleteImageFromUrl(img.url);
+                          const imgRemoved = await fetch(`/api/v1/imagens`, {
+                            method: "delete",
+                            headers: {
+                              "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(img),
+                          });
+                          console.log(imgRemoved);
+
+                          setImagens((p) =>
+                            p.filter((imgs) => imgs.id !== img.id)
+                          );
+                        }}
+                      >
+                        X
+                      </span>
+
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={img.url} alt="" className="h-full" />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
 
             {isPostUserId && post_imagens.length < _item.maxImagens && (
               <label className="bg-cyan-700 hover:bg-cyan-400 focus:outline-cyan-400 focus:outline-4 cursor-pointer block w-fit p-2 rounded m-2 text-white">
@@ -154,7 +190,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                       key={index}
                       className="border-3 border-cyan-600 bg-cyan-800 peer-hover:bg-red-500/40 peer-hover:border-red-500"
                     >
-                      <Image src={img.url} alt={""} />
+                      <Image src={img.url} alt={""} width={600} height={300} />
                     </Card>
                   </div>
                 ))}

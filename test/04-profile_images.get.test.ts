@@ -1,5 +1,5 @@
 import database from "@/database/database";
-import imagem from "@/models/imagem";
+
 import { storage } from "@/storage/firebase";
 import {
   connectStorageEmulator,
@@ -9,11 +9,13 @@ import {
 } from "firebase/storage";
 import path from "path";
 import fs from "fs";
+import profileImages from "@/models/perfil_images";
+import User from "@/models/user";
 
 beforeAll(async () => {
-  await database.query("delete  from perfil_images");
+  await database.query("delete from perfil_images");
 });
-
+let userCreated: { id: string };
 describe("teste imagem profile", () => {
   //   it("salvar imagem de usuario", async () => {
   //     const userId = "a5240bf7-a135-4dfc-92eb-129edea16569";
@@ -42,7 +44,7 @@ describe("teste imagem profile", () => {
     const img = { user_id: userId, url: caminho };
 
     try {
-      await imagem.saveProfileImage(img);
+      await profileImages.saveProfileImage(img);
     } catch (error) {
       expect(error).toMatchObject({
         message: "erro ao salvar",
@@ -52,31 +54,39 @@ describe("teste imagem profile", () => {
   });
 
   it("teste salvar imagem no firebase e no postgres", async () => {
-    // let imagemRef: StorageReference;
-    const userId = "a5240bf7-a135-4dfc-92eb-129edea16569";
+    await User.create({
+      name: "carlos",
+      email: "carlos@hotmail.com",
+      phone: "34997668902",
+      password: "123456",
+    });
+    const user = await User.findByEmail("carlos@hotmail.com");
+    const userId = user[0].id;
+    userCreated = user[0];
+
     connectStorageEmulator(storage, "localhost", 9199);
     const enviarArquivo = async () => {
       const storageRef = ref(storage, "firebase" + Date.now() + ".png");
       const caminho = path.join("public", "img", "splash.png");
-      const file = new Blob([fs.readFileSync(caminho)], { type: "image/png" });
+      const newblob = fs.readFileSync(caminho);
 
-      //   imagemRef = storageRef;
+      await uploadBytes(storageRef, newblob, {
+        contentType: "image/png",
+      });
 
-      await uploadBytes(storageRef, file);
-
-      //   const url = storageRef.toString();
       const url = await getDownloadURL(storageRef);
       const img = { user_id: userId, url: url };
 
-      await imagem.saveProfileImage(img);
+      await profileImages.saveProfileImage(img);
     };
 
     await enviarArquivo();
   });
 
   it("buscar imagens de perfil do usuario por id", async () => {
-    const userId = "a5240bf7-a135-4dfc-92eb-129edea16569";
-    const images = await imagem.getImagesProfile(userId);
-    console.log(images);
+    const userId = userCreated.id;
+    const images = await profileImages.getImagesProfile(userId);
+
+    expect(images.length).toEqual(1);
   });
 });

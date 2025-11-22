@@ -51,7 +51,7 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
 
             return (
               <div
-                className={`flex flex-1 justify-center w-full bg-gray-100  shrink h-1/3 ${rounded} overflow-hidden  max-h-1/3
+                className={`flex flex-1 justify-center w-full bg-gray-100  shrink h-1/3 ${rounded} overflow-hidden  max-h-1/3 relative
                       border-3 border-gray-100 p-1
                       hover:border-cyan-600 
                       `}

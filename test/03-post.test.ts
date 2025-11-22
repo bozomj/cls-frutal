@@ -1,32 +1,45 @@
 import database from "@/database/database";
 import firebaseConfig from "@/firebaseConfig";
 import Post from "@/models/post";
+import User from "@/models/user";
 import { imagemFirebase } from "@/storage/firebase";
 import { getApp, getApps, initializeApp } from "firebase/app";
 import { connectStorageEmulator, getStorage } from "firebase/storage";
 import fs from "fs";
 
 import path from "path";
-import sharp from "sharp";
 
 beforeAll(async () => {
   await database.query("delete from imagens");
   await database.query("delete from posts");
+  await database.query("delete from users");
 });
-
-afterAll(async () => {});
 
 describe("teste da tabela post", () => {
   let post_id: string;
-  const token =
+  let user: { id: string };
+  let token =
     "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdjOGY0YmNlLTg3YWItNDg0Ny1iOTg1LWU1MDcyMmExY2FiMSIsImlhdCI6MTc1NzIwNzM5OCwiZXhwIjoxNzU3MjUwNTk4fQ.v9uW2uMF3gaBQACsHjjvxdXTpdQP3wYaGmXT4J7qT7M";
 
   it("inserir post com sucesso", async () => {
+    const resultuser = await User.create({
+      name: "francisco",
+      email: "teste@hotmail.com",
+      phone: "34997668902",
+      password: "123456",
+    });
+
+    user = resultuser[0];
+
+    const userLogado = await User.login("teste@hotmail.com", "123456");
+
+    token = "token=" + userLogado;
+
     const pst = {
-      user_id: "7c8f4bce-87ab-4847-b985-e50722a1cab1",
+      user_id: user!.id,
       title: "testando um post 5",
       description: "tomate cereja com abacates",
-      categoria_id: 133,
+      categoria_id: 10,
       valor: 10.5,
     };
 
@@ -40,7 +53,6 @@ describe("teste da tabela post", () => {
     });
 
     const result = await post.json();
-    console.log({ resultado: result });
 
     post_id = result.id;
 
@@ -49,7 +61,7 @@ describe("teste da tabela post", () => {
 
   it("erro ao inserir post com userId inexistente", async () => {
     const pst = {
-      userId: "48a47280-6272-42b8-b92d-ed0bac719de3",
+      userId: user.id,
       title: "testando um post 2",
       description: "tomate cerja com abacate",
       content: "corpo do post",
@@ -85,22 +97,12 @@ describe("teste da tabela post", () => {
       "img",
       "produto_teste.jpg"
     );
-    const outputPath = path.join(
-      "public",
-      "img",
-      "resize",
-      "produto_teste.jpg"
-    );
-    // await reduzirImagem(conteudoArquivo, outputPath);
-
-    // const buffer = fs.readFileSync(outputPath);
 
     const buffer = fs.readFileSync(conteudoArquivo);
     const uni8 = new Uint8Array(buffer);
     const blob = new Blob([uni8], { type: "image/jpeg" });
     const file = new File([blob], "produto_teste.jpg", { type: "image/jpeg" });
 
-    console.log({ imagens: uni8 });
     const imgFirebase = await imagemFirebase.uploadImageFirebase([
       { file: file },
     ]);
@@ -146,6 +148,8 @@ describe("teste da tabela post", () => {
   });
 
   it("exibir post do usuario logado", async () => {
+    // const userLogado = await User.login("bozomj@gmail.com", "123456");
+
     const posts = await fetch("http://localhost:3000/api/v1/posts/user", {
       method: "GET",
       headers: {
@@ -153,28 +157,6 @@ describe("teste da tabela post", () => {
       },
     });
     const result = await posts.json();
+    expect(result.posts.length).toEqual(1);
   });
 });
-
-async function reduzirImagem(
-  inputPath: string,
-  outputPath: string,
-  maxSizeKB = 300
-) {
-  let quality = 80; // Qualidade inicial
-  let buffer = await sharp(inputPath).jpeg({ quality }).toBuffer();
-
-  while (buffer.length / 1024 > maxSizeKB && quality > 10) {
-    quality -= 2;
-    buffer = await sharp(inputPath).webp({ quality }).toBuffer();
-  }
-  if (buffer.length / 1024 > maxSizeKB) {
-    buffer = await sharp(inputPath)
-      .resize({ width: 1280 }) // ou outro valor
-      .webp({ quality: 70 })
-      .toBuffer();
-  }
-
-  fs.writeFileSync(outputPath, buffer);
-  console.log(`Imagem reduzida para ${(buffer.length / 1024).toFixed(1)} KB`);
-}

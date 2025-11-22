@@ -66,26 +66,28 @@ function Dashboard({ ctx }: { ctx: string }) {
         <Header titulo="Dashboard" />
       </header>
       <main
-        className="flex-auto overflow-y-scroll text-white bg-gray-300 flex-col flex justify-between  items-center scroll-smooth
+        className="flex-auto overflow-y-scroll text-gray-800 bg-gray-300 flex-col flex justify-between  items-center scroll-smooth
 "
       >
         <div className="flex-1 flex w-full md:justify-center">
+          <span className="w-[4rem]"></span>
+
           <section
             tabIndex={0}
             className="
             group
             flex flex-col items-start gap-2 
             fixed z-[8] w-[4rem]  h-full p-1 overflow-x-hidden
-          bg-cyan-950 border-cyan-950
-            border-r-4 
-            focus:max-w-[25rem] focus:w-3/4 
-            md:min-w-[25rem] md:static md:h-auto md:w-fit
-          md:bg-gray-300 md:border-gray-300 md:text-gray-950  
             
+          bg-gray-50 border-gray-50 
+            border-r-4 
+            focus:w-3/4 
+            md:min-w-[25rem] md:static md:h-auto md:w-fit md:focus:max-w-[25rem] 
+          md:bg-gray-300 md:border-gray-300 md:text-gray-950  
             transition-all duration-500
             "
           >
-            <ul className="flex flex-col gap-2 w-full md:fixed ">
+            <ul className="flex flex-col w-full gap-2 md:w-[24rem] md:fixed  ">
               <span
                 tabIndex={1}
                 className="self-end cursor-pointer hover:text-cyan-500 invisible group-focus:visible"
@@ -138,13 +140,13 @@ function Dashboard({ ctx }: { ctx: string }) {
           </section>
 
           <section
-            className="flex-1 p-2 w-full pl-[5.5rem] flex flex-col gap-2 scroll-smooth h-full 
+            className="flex-1 p-2 w-full  flex flex-col gap-2 scroll-smooth h-full 
           md:p-2 md:max-w-[40rem]
            "
           >
             <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
             <span className="flex flex-col gap-2">
-              <div className="p-4 rounded-md gap-2 bg-cyan-800  flex items-center  outline-2 outline-cyan-100 ">
+              <div className="p-4 rounded-md gap-2 bg-cyan-800 text-white flex items-center  outline-2 outline-cyan-100 ">
                 <Link
                   href="/newpost"
                   className="flex gap-2 items-center"

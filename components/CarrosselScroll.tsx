@@ -4,6 +4,7 @@ import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useRef, useState } from "react";
 import PointIndicator from "./PointIndicator";
+import utils from "@/utils";
 
 interface CarrosselScrollProps {
   items: { url: string }[];
@@ -48,11 +49,6 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({ items, time }) => {
       setIndex(newIndex);
 
       ref?.scrollBy({ left: width, behavior: "smooth" });
-
-      if (ref!.scrollLeft >= max) {
-        ref?.scrollBy({ left: -ref.scrollWidth! });
-        ref?.scrollBy({ left: width!, behavior: "smooth" });
-      }
     }
     setTimeout(() => (animado.current = false), time * 1000);
   }
@@ -65,6 +61,22 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({ items, time }) => {
       frames = setTimeout(animate, time * 1000);
       moveLeft();
     };
+
+    const handleScroll = () => {
+      const atEnd = ref!.scrollLeft >= max - 2;
+
+      if (atEnd) {
+        ref!.style.scrollBehavior = "auto";
+        ref!.scrollLeft = 0;
+
+        requestAnimationFrame(() => {
+          ref!.style.scrollBehavior = "smooth";
+        });
+      }
+    };
+
+    ref?.addEventListener("scroll", handleScroll);
+
     frames = setTimeout(animate, time * 1000);
     return () => clearTimeout(frames);
   });
@@ -81,15 +93,22 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({ items, time }) => {
         }}
       >
         {items.map((e: { url: string }, key: number) => {
-          // eslint-disable-next-line @next/next/no-img-element
-          return <img className="min-w-full" key={key} src={e.url} alt="" />;
+          return (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              className="min-w-full"
+              key={key}
+              src={utils.getUrlImage(e.url)}
+              alt=""
+            />
+          );
         })}
         {/* repete a primeira imagem no final para dar ilusão de rolagem infinita */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className="min-w-full"
           key={totalItems}
-          src={items[0]?.url}
+          src={utils.getUrlImage(items[0]?.url)}
           alt=""
         />
         ;

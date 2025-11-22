@@ -2,7 +2,7 @@ import LayoutPage from "../layout";
 import { GetServerSidePropsContext } from "next";
 import { UserType } from "@/models/user";
 import { getAdminProps } from "../hoc";
-import Carrossel from "@/components/Carrossel";
+
 import { faAdd } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -10,6 +10,7 @@ import utils from "@/utils";
 import { imagemFirebase } from "@/storage/firebase";
 import InputFile from "@/components/InputFile";
 import carrosselController from "@/controllers/carrosselController";
+import CarrosselScroll from "@/components/CarrosselScroll";
 
 interface Props {
   user: UserType;
@@ -33,19 +34,25 @@ function CarrosselPageAdmin({ user }: Props) {
   return (
     <LayoutPage user={user}>
       <div className="flex flex-col gap-2">
-        <Carrossel imagens={imgCarrossel} speed={1} />
+        <CarrosselScroll items={imgCarrossel} time={1} />
 
-        <section className="flex flex-col items-center gap-2">
+        <section className="flex flex-col items-center gap-2 ">
           <h2 className="text-3xl font-bold">Imagens Banner Carrossel</h2>
-          <div className="flex h-[20rem] bg-gray-300 p-2">
-            {imagensCarrossel(imgCarrossel)}
+          <div className="flex h-[15rem] bg-gray-300 p-2 overflow-x-scroll w-full">
+            <ImagensCarrossel imgs={imgCarrossel} database={true} />
           </div>
         </section>
 
         <section className="flex flex-col items-center gap-2 mt-4 ">
           <h2 className="text-3xl font-bold">Adicionar novas imagens</h2>
-          <div id="preview" className="flex h-[20rem] bg-gray-600 p-2 w-full">
-            {imagensCarrossel(imagensPreviews, removePreviewImage)}
+          <div
+            id="preview"
+            className="flex h-[20rem] bg-gray-600 p-2 w-full overflow-x-scroll"
+          >
+            <ImagensCarrossel
+              imgs={imagensPreviews}
+              click={removePreviewImage}
+            />
           </div>
         </section>
 
@@ -106,12 +113,20 @@ function CarrosselPageAdmin({ user }: Props) {
     setPreviewImagens([]);
   }
 
-  function imagensCarrossel(
-    imgs: [] | typeImagePreview[],
-    click?: (v: unknown, index: number) => void
-  ) {
+  function ImagensCarrossel({
+    imgs,
+    database = false,
+    click,
+  }: {
+    imgs: [] | typeImagePreview[];
+    click?: (v: unknown, index: number) => void;
+    database?: boolean;
+  }) {
     const itens = imgs.map((e: { url: string }, index) => (
-      <div key={index} className="relative rounded-md overflow-hidden">
+      <div
+        key={index}
+        className="relative rounded-md overflow-hidden w-[30rem]"
+      >
         <button
           className="absolute p-1 bg-red-600 right-0 flex items-center text-white cursor-pointer hover:bg-red-400 "
           onClick={
@@ -122,7 +137,9 @@ function CarrosselPageAdmin({ user }: Props) {
         </button>
         {/*  eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={e?.url ?? ""}
+          src={database ? utils.getUrlImage(e?.url ?? "") || "" : e.url}
+          width={10}
+          height={10}
           alt=""
           className="w-[30rem]   rounded-md h-full"
         />

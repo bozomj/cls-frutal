@@ -10,7 +10,6 @@ describe("Categorias", () => {
   it("mostrar todas categorias", async () => {
     const categorias = await categoria.getAll();
 
-    console.log(categorias);
     expect(categorias).toEqual(expect.any(Array));
   });
 
