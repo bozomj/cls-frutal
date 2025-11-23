@@ -20,6 +20,8 @@ import FullImageView from "@/components/FullImageView";
 import MiniGalleryImage from "@/components/MiniGalleryImage";
 import Image from "next/image";
 import ImageCardPreview from "@/components/ImageCardPreview";
+import VerticalDivider from "@/components/VerticalDivider";
+import { Span } from "next/dist/trace";
 
 type Props = {
   user_id?: string;
@@ -85,7 +87,11 @@ export default function DetailsPostPage({ user_id }: Props) {
     if (!post_id) return;
 
     async function fetchData() {
-      await getPost(post_id);
+      await new Promise((p) =>
+        setTimeout(() => {
+          getPost(post_id);
+        }, 3000)
+      );
     }
 
     fetchData();
@@ -282,7 +288,10 @@ export default function DetailsPostPage({ user_id }: Props) {
                   )}
                 </div>
 
-                <section id="postuseractions">
+                <section
+                  id="postuseractions"
+                  className="outline-3 outline-gray-400 rounded-2xl p-2"
+                >
                   {isPostUserId && (
                     <div>
                       <h2 className="text-2xl text-center p-2">
