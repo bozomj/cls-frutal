@@ -43,40 +43,40 @@ const Login = () => {
   return (
     <>
       <Header />
-      <div className="flex flex-col items-center p-2 justify-center h-screen bg-gray-50 ">
+      <div className="flex flex-col items-center p-2 justify-center h-screen bg-gray-300 text-gray-700">
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-4 bg-cyan-900 p-8 rounded-md w-full max-w-md "
+          className="flex flex-col gap-4 bg-gray-50 p-8 rounded-md w-full max-w-md "
         >
-          <h1 className="text-white text-2xl font-bold text-center">LOGIN</h1>
+          <h1 className=" text-2xl font-bold text-center">Entrar</h1>
           <span>
             {error && (
               <p className="text-red-500 text-center font-bold">{error}</p>
             )}
           </span>
           <input
-            className="p-2 rounded-md bg-cyan-50 text-cyan-900 outline-none"
+            className="p-3 bg-gray-300 text-gray-900 outline-2 outline-gray-400  focus:outline-cyan-500 focus:outline-4 rounded-md "
             required
             type="email"
             placeholder="Email"
             onChange={(e) => setEmail(e.target.value)}
           />
           <input
-            className="p-2 rounded-md bg-cyan-50 text-cyan-900 outline-none"
+            className="p-3 bg-gray-300 text-gray-900 outline-2 outline-gray-400  focus:outline-cyan-500 focus:outline-4 rounded-md  "
             required
             type="password"
             placeholder="Senha"
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button className="btn bg-cyan-300 text-cyan-900" type="submit">
+          <button className="btn bg-cyan-800 text-white" type="submit">
             Entrar
           </button>
           <Link
             href="/cadastro"
-            className=" hover:opacity-100 opacity-80 font-bold  text-sm  text-white w-fit "
+            className=" hover:opacity-100 opacity-80 font-bold  text-sm w-fit self-end"
           >
             Não tem uma conta?{" "}
-            <span className="text-cyan-300 ">Cadastre-se</span>
+            <span className="text-cyan-800 ">Cadastre-se</span>
           </Link>
         </form>
       </div>

@@ -15,6 +15,7 @@ import Prompt from "@/components/Prompt";
 import categoriaController from "@/controllers/categoriaController";
 import { CategoriaType } from "@/models/categoria";
 import utils from "@/utils";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 type postTypeSimple = {
   title: string;
@@ -77,180 +78,6 @@ export default function Produto() {
       });
     };
   });
-
-  async function getCategorias() {
-    const categorias = await (await fetch("/api/v1/categorias")).json();
-
-    const c = categorias.map((e: CategoriaType) => {
-      return { value: e.id, label: e.descricao };
-    });
-
-    setCategoriasValues([...c]);
-  }
-
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>): void {
-    event.preventDefault();
-    salvar();
-  }
-
-  const formatarMoeda = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value;
-    const apenasNumeros = extractNumberInString(input);
-
-    const numero = stringForDecimalNumber(apenasNumeros);
-    const formatado = formatNumberForMoedaString(numero);
-
-    setValor(formatado);
-    post.valor = numero;
-  };
-
-  function extractNumberInString(str: string): string {
-    return str.replace(/\D/g, "");
-  }
-
-  function stringForDecimalNumber(str: string): number {
-    return parseInt(str || "0", 10) / 100;
-  }
-
-  function formatNumberForMoedaString(number: number): string {
-    return number.toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    });
-  }
-
-  async function getIdUserAuthenticated() {
-    return (await autenticator.isAuthenticated()).result.id;
-  }
-
-  const salvar = async () => {
-    console.log(post);
-    const msg =
-      imagens.length < 1
-        ? "Escolha Pelo menos uma imagem"
-        : imagens.length > 3
-        ? "Escolha no máximo 3 imagens"
-        : "";
-
-    if (msg != "") {
-      setAlert(
-        <Alert
-          msg={msg}
-          show={true}
-          onClose={() => {
-            setAlert(<></>);
-          }}
-        />
-      );
-      return;
-    }
-
-    post.created_at = Date.now();
-    post.user_id = await getIdUserAuthenticated();
-
-    const err: Record<string, string> = {};
-
-    if (post.description == "") err["description"] = "campo obrigatorio";
-    if (post.title == "") err["title"] = "Campo obrigatorio";
-    if (post.valor <= 0) err["valor"] = "Campo obrigatorio";
-
-    if (post.categoria_id == 0 || Number.isNaN(post.categoria_id)) {
-      err["categoria_id"] = "Campo obrigatorio";
-    }
-
-    for (const error in err) {
-      console.log(error);
-      setError(err);
-      return;
-    }
-
-    const posted = await savePost(post);
-    const jsonresult = await posted.json();
-
-    if (jsonresult.message == "erro ao inserir post") {
-      throw jsonresult;
-    }
-
-    try {
-      const imagensFirebase = await imagemFirebase.uploadImageFirebase(imagens);
-
-      if (imagemFirebase != null) {
-        const imgs = imagensFirebase!.map((img: { url: string }) => {
-          return {
-            url: img.url,
-            post_id: jsonresult[0].id,
-            user_id: post.user_id,
-          };
-        });
-
-        await fetch("/api/v1/uploadImages", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(imgs),
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-
-    post.categoria_id = 0;
-    post.description = "";
-    post.title = "";
-    post.valor = 0;
-    post.created_at = 0;
-    post.user_id = "";
-
-    setValor("");
-    setCategoria("");
-    setTitle("");
-    setDescription("");
-    setImagens([]);
-
-    setAlert(
-      <Alert
-        msg={"Post Inserido com Sucesso!!"}
-        show={true}
-        onClose={() => {
-          setAlert(<></>);
-          setTimeout(() => {
-            router.back();
-          }, 1000);
-        }}
-      />
-    );
-  };
-
-  async function selecionarImagens(e: ChangeEvent<HTMLInputElement>) {
-    const files = e.target.files || [];
-
-    if (files) {
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-
-        // Verifica se o arquivo é uma imagem
-        if (file.type.startsWith("image/")) {
-          setLoading(true);
-
-          // Cria uma URL temporária para o arquivo
-          const resized = (await utils.imagem.resizeImageFile(file)) as File;
-          const imgURL = URL.createObjectURL(resized);
-          const id = getUniqueId();
-
-          setImagens((e) => [...e, { id: id, file: resized, url: imgURL }]);
-
-          setLoading(false);
-          console.log(imagens);
-        }
-      }
-    }
-  }
-
-  function changeCategoria(e: string) {
-    setSelected(e);
-    if ((post.categoria_id = parseInt(e))) setCategoria(e);
-  }
 
   const style = {
     input:
@@ -386,7 +213,7 @@ export default function Produto() {
                 imagens.length >= 3
                   ? "bg-gray-500 text-gray-800"
                   : "bg-cyan-700 hover:bg-cyan-400 focus:outline-cyan-400 focus:outline-4 cursor-pointer"
-              } block w-fit p-2 rounded `}
+              } block w-fit p-2 rounded  `}
               tabIndex={0}
             >
               <FontAwesomeIcon className="text-3xl" icon={faImage} />
@@ -402,7 +229,10 @@ export default function Produto() {
             />
           </label>
 
-          <div id="preview" className="flex gap-3 flex-wrap justify-center">
+          <div
+            id="preview"
+            className="flex gap-3 justify-center bg-gray-400 p-2 rounded overflow-x-scroll"
+          >
             {loading && <LinearProgressIndicator />}
             {imagens.map((e) => {
               return (
@@ -418,9 +248,9 @@ export default function Produto() {
           <span id="actions" className="flex gap-2 items-center">
             <button
               name="btn_cancelar"
-              className="text-cyan-400 font-bold
+              className="text-cyan-800 font-bold
                 p-2 outline-1  rounded cursor-pointer
-                flex-1  hover:bg-cyan-800 transition duration-400"
+                flex-1  hover:bg-cyan-600/10 transition duration-400 "
               type="button"
               onClick={() => router.back()}
             >
@@ -428,7 +258,7 @@ export default function Produto() {
             </button>
             <button
               name="btn_salvar"
-              className="bg-cyan-600 font-bold p-2 flex-1 rounded cursor-pointer transition duration-500 hover:bg-cyan-400"
+              className="bg-cyan-800 font-bold p-2 flex-1 rounded cursor-pointer transition duration-500 hover:bg-cyan-700"
             >
               Salvar
             </button>
@@ -439,6 +269,180 @@ export default function Produto() {
       </main>
     </>
   );
+
+  async function getCategorias() {
+    const categorias = await (await fetch("/api/v1/categorias")).json();
+
+    const c = categorias.map((e: CategoriaType) => {
+      return { value: e.id, label: e.descricao };
+    });
+
+    setCategoriasValues([...c]);
+  }
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>): void {
+    event.preventDefault();
+    salvar();
+  }
+
+  function formatarMoeda(e: React.ChangeEvent<HTMLInputElement>) {
+    const input = e.target.value;
+    const apenasNumeros = extractNumberInString(input);
+
+    const numero = stringForDecimalNumber(apenasNumeros);
+    const formatado = formatNumberForMoedaString(numero);
+
+    setValor(formatado);
+    post.valor = numero;
+  }
+
+  function extractNumberInString(str: string): string {
+    return str.replace(/\D/g, "");
+  }
+
+  function stringForDecimalNumber(str: string): number {
+    return parseInt(str || "0", 10) / 100;
+  }
+
+  function formatNumberForMoedaString(number: number): string {
+    return number.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+  }
+
+  async function getIdUserAuthenticated() {
+    return (await autenticator.isAuthenticated()).result.id;
+  }
+
+  async function salvar() {
+    console.log(post);
+    const msg =
+      imagens.length < 1
+        ? "Escolha Pelo menos uma imagem"
+        : imagens.length > 3
+        ? "Escolha no máximo 3 imagens"
+        : "";
+
+    if (msg != "") {
+      setAlert(
+        <Alert
+          msg={msg}
+          show={true}
+          onClose={() => {
+            setAlert(<></>);
+          }}
+        />
+      );
+      return;
+    }
+
+    post.created_at = Date.now();
+    post.user_id = await getIdUserAuthenticated();
+
+    const err: Record<string, string> = {};
+
+    if (post.description == "") err["description"] = "campo obrigatorio";
+    if (post.title == "") err["title"] = "Campo obrigatorio";
+    if (post.valor <= 0) err["valor"] = "Campo obrigatorio";
+
+    if (post.categoria_id == 0 || Number.isNaN(post.categoria_id)) {
+      err["categoria_id"] = "Campo obrigatorio";
+    }
+
+    for (const error in err) {
+      console.log(error);
+      setError(err);
+      return;
+    }
+
+    const posted = await savePost(post);
+    const jsonresult = await posted.json();
+
+    if (jsonresult.message == "erro ao inserir post") {
+      throw jsonresult;
+    }
+
+    try {
+      const imagensFirebase = await imagemFirebase.uploadImageFirebase(imagens);
+
+      if (imagemFirebase != null) {
+        const imgs = imagensFirebase!.map((img: { url: string }) => {
+          return {
+            url: img.url,
+            post_id: jsonresult[0].id,
+            user_id: post.user_id,
+          };
+        });
+
+        await fetch("/api/v1/uploadImages", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(imgs),
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    post.categoria_id = 0;
+    post.description = "";
+    post.title = "";
+    post.valor = 0;
+    post.created_at = 0;
+    post.user_id = "";
+
+    setValor("");
+    setCategoria("");
+    setTitle("");
+    setDescription("");
+    setImagens([]);
+
+    setAlert(
+      <Alert
+        msg={"Post Inserido com Sucesso!!"}
+        show={true}
+        onClose={() => {
+          setAlert(<></>);
+          setTimeout(() => {
+            router.back();
+          }, 1000);
+        }}
+      />
+    );
+  }
+
+  async function selecionarImagens(e: ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files || [];
+
+    if (files) {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+
+        // Verifica se o arquivo é uma imagem
+        if (file.type.startsWith("image/")) {
+          setLoading(true);
+
+          // Cria uma URL temporária para o arquivo
+          const resized = (await utils.imagem.resizeImageFile(file)) as File;
+          const imgURL = URL.createObjectURL(resized);
+          const id = getUniqueId();
+
+          setImagens((e) => [...e, { id: id, file: resized, url: imgURL }]);
+
+          setLoading(false);
+          console.log(imagens);
+        }
+      }
+    }
+  }
+
+  function changeCategoria(e: string) {
+    setSelected(e);
+    if ((post.categoria_id = parseInt(e))) setCategoria(e);
+  }
 
   function removeImagePreview(image: ImageFile) {
     setImagens((prev) => {

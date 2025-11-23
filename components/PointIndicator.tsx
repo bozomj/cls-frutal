@@ -11,7 +11,7 @@ const PointIndicator: React.FC<PointIndicatorProps> = ({ index, points }) => {
           <span
             key={`point-${i}`}
             className={` rounded-full shrink-0 block ${
-              index === i ? "bg-cyan-600/80 w-4 h-4" : `bg-gray-100/60 w-3 h-3 `
+              index === i ? "bg-cyan-600/80 w-3 h-3" : `bg-gray-100/60 w-2 h-2 `
             }`}
           ></span>
         ))}

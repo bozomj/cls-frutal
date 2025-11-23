@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faImage, faUser } from "@fortawesome/free-regular-svg-icons";
-import { faShare } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faShare } from "@fortawesome/free-solid-svg-icons";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 
 import utils from "@/utils";
@@ -301,18 +301,19 @@ export default function DetailsPostPage({ user_id }: Props) {
                             <h3 className="p-2 text-white text-center text-xl">
                               Imagens Atuais
                             </h3>
-                            <div className="flex gap-2 overflow-x-scroll h-[15rem] p-2 bg-gray-400 ">
-                              {post_imagens.map((img, i) => {
-                                return (
-                                  <ImageCardPreview
-                                    key={"img-" + i}
-                                    image={img}
-                                    onClick={() => {
-                                      deletarImagem(img);
-                                    }}
-                                  />
-                                );
-                              })}
+                            <div className="flex gap-2 overflow-x-scroll h-[15rem] p-2 bg-gray-400 justify-center ">
+                              {post_imagens[0] !== null &&
+                                post_imagens.map((img, i) => {
+                                  return (
+                                    <ImageCardPreview
+                                      key={"img-" + i}
+                                      image={img}
+                                      onClick={() => {
+                                        deletarImagem(img);
+                                      }}
+                                    />
+                                  );
+                                })}
                             </div>
                           </div>
                         </div>
@@ -348,7 +349,11 @@ export default function DetailsPostPage({ user_id }: Props) {
                       <div className="flex justify-between  p-2">
                         {isPostUserId &&
                           post_imagens.length < _item.maxImagens && (
-                            <label className="bg-cyan-700 hover:bg-cyan-400 focus:outline-cyan-400 focus:outline-4 cursor-pointer block w-fit p-2 rounded  text-white">
+                            <label className="bg-cyan-800 hover:bg-cyan-600  cursor-pointer block w-fit p-2 pr-3 pt-3 rounded  text-white relative">
+                              <FontAwesomeIcon
+                                icon={faPlus}
+                                className=" absolute rounded-full top-1 right-1 text-md"
+                              />
                               <FontAwesomeIcon
                                 className="text-3xl"
                                 icon={faImage}
@@ -447,7 +452,14 @@ export default function DetailsPostPage({ user_id }: Props) {
   );
 
   async function deletarImagem(img: ImageType) {
-    await imagemFirebase.deleteImageFromUrl(img.url);
+    try {
+      await imagemFirebase.deleteImageFromUrl(img.url);
+    } catch (error) {
+      console.log({
+        error: error,
+        message: "Imagem pode não existir no firebase",
+      });
+    }
     await fetch(`/api/v1/imagens`, {
       method: "delete",
       headers: {

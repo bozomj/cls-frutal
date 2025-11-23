@@ -9,49 +9,22 @@ import utils from "@/utils";
 interface CarrosselScrollProps {
   items: { url: string }[];
   time: number;
+  activeAction?: boolean;
 }
 
-const CarrosselScroll: React.FC<CarrosselScrollProps> = ({ items, time }) => {
+const CarrosselScroll: React.FC<CarrosselScrollProps> = ({
+  items,
+  time,
+  activeAction = false,
+}) => {
   const [index, setIndex] = useState<number>(0);
-
   const scrollRef = useRef<HTMLDivElement>(null);
-
   const totalItems = items.length;
   const ref = scrollRef.current;
   const width = ref?.clientWidth;
   const max = width! * totalItems;
 
   const animado = useRef(false);
-
-  function moveRight() {
-    if (animado.current) return;
-    animado.current = true;
-
-    if (scrollRef.current) {
-      const newIndex = index == 0 ? items.length - 1 : index - 1;
-      setIndex(newIndex);
-
-      ref?.scrollBy({ left: -width!, behavior: "smooth" });
-      if (ref!.scrollLeft <= 0) {
-        ref?.scrollBy({ left: max! });
-        ref?.scrollBy({ left: -width!, behavior: "smooth" });
-      }
-    }
-    setTimeout(() => (animado.current = false), time * 1000);
-  }
-
-  function moveLeft() {
-    if (animado.current) return;
-    animado.current = true;
-
-    if (scrollRef.current) {
-      const newIndex = index == items?.length - 1 ? 0 : index + 1;
-      setIndex(newIndex);
-
-      ref?.scrollBy({ left: width, behavior: "smooth" });
-    }
-    setTimeout(() => (animado.current = false), time * 1000);
-  }
 
   useEffect(() => {
     let frames: NodeJS.Timeout;
@@ -82,8 +55,14 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({ items, time }) => {
   });
 
   return (
-    <div className="w-full h-[15rem] bg-green-200 rounded-2xl relative overflow-hidden shadow-sm shadow-gray-400 border">
-      <ArrowButton direction="left" className={`left-0 `} onClick={moveLeft} />
+    <div className="w-full h-[12rem] bg-green-200 rounded-2xl relative overflow-hidden shadow-sm shadow-gray-400 border">
+      {activeAction && (
+        <ArrowButton
+          direction="left"
+          className={`left-0 `}
+          onClick={() => move("left")}
+        />
+      )}
 
       <div
         ref={scrollRef}
@@ -113,15 +92,48 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({ items, time }) => {
         />
         ;
       </div>
-      <ArrowButton
-        className={`right-0 top-0 `}
-        direction="right"
-        onClick={moveRight}
-      />
+      {activeAction && (
+        <ArrowButton
+          className={`right-0 top-0 `}
+          direction="right"
+          onClick={() => move("right")}
+        />
+      )}
 
       <PointIndicator index={index} points={totalItems} />
     </div>
   );
+
+  function move(direction: string) {
+    if (animado.current) return;
+    animado.current = true;
+
+    return direction === "left" ? moveLeft() : moveRight();
+  }
+
+  function moveRight() {
+    if (scrollRef.current) {
+      const newIndex = index == 0 ? items.length - 1 : index - 1;
+      setIndex(newIndex);
+
+      ref?.scrollBy({ left: -width!, behavior: "smooth" });
+      if (ref!.scrollLeft <= 0) {
+        ref?.scrollBy({ left: max! });
+        ref?.scrollBy({ left: -width!, behavior: "smooth" });
+      }
+    }
+    setTimeout(() => (animado.current = false), time * 1000);
+  }
+
+  function moveLeft() {
+    if (scrollRef.current) {
+      const newIndex = index == items?.length - 1 ? 0 : index + 1;
+      setIndex(newIndex);
+
+      ref?.scrollBy({ left: width, behavior: "smooth" });
+    }
+    setTimeout(() => (animado.current = false), time * 1000);
+  }
 };
 
 interface ArrowButtonProps {

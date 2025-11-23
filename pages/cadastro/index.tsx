@@ -2,6 +2,8 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import { useState } from "react";
 import router from "next/router";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import autenticator from "@/models/autenticator";
 
 export default function Cadastro() {
   const [error, setError] = useState<Record<string, string>>({});
@@ -77,13 +79,13 @@ export default function Cadastro() {
   return (
     <>
       <Header />
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-50 px-2">
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-300 px-2">
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-4 bg-cyan-900 p-8 rounded-md w-full max-w-md "
+          className="flex flex-col gap-4 bg-gray-50 p-8 rounded-md w-full max-w-md text-gray-800 "
         >
           <div className="font-bold">
-            <h1 className="text-white text-2xl text-center">CADASTRO</h1>
+            <h1 className="text-2xl text-center">CADASTRO</h1>
             <p className="text-red-500 text-center h-[2em]">
               {error.isError ?? ""}
               {error.succes ?? ""}
@@ -92,8 +94,8 @@ export default function Cadastro() {
 
           <input
             name="name"
-            className={`p-2 rounded-md bg-cyan-50 text-cyan-900  ${
-              error.name ? "outline-1 outline-red-500 " : "outline-none"
+            className={`p-3 bg-gray-300 text-gray-900 outline-2 outline-gray-400  focus:outline-cyan-500 focus:outline-4 rounded-md   ${
+              error.name ? "outline-1 outline-red-500 " : ""
             }`}
             type="text"
             placeholder="nome"
@@ -101,8 +103,8 @@ export default function Cadastro() {
 
           <input
             name="email"
-            className={`p-2 rounded-md bg-cyan-50 text-cyan-900  ${
-              error.email ? "outline-1 outline-red-500 " : "outline-none"
+            className={`p-3 bg-gray-300 text-gray-900 outline-2 outline-gray-400  focus:outline-cyan-500 focus:outline-4 rounded-md    ${
+              error.email ? "outline-1 outline-red-500 " : ""
             }`}
             type="email"
             placeholder="Email"
@@ -114,15 +116,15 @@ export default function Cadastro() {
             name="telefone"
             value={phoneValue}
             onChange={phoneHandler}
-            className={`p-2 rounded-md bg-cyan-50 text-cyan-900  ${
-              error.telefone ? "outline-1 outline-red-500 " : "outline-none"
+            className={`p-3 bg-gray-300 text-gray-900 outline-2 outline-gray-400  focus:outline-cyan-500 focus:outline-4 rounded-md   ${
+              error.telefone ? "outline-1 outline-red-500 " : ""
             }`}
           />
 
           <input
             name="password"
-            className={`p-2 rounded-md bg-cyan-50 text-cyan-900  ${
-              error.password ? "outline-1 outline-red-500 " : "outline-none"
+            className={`p-3 bg-gray-300 text-gray-900 outline-2 outline-gray-400  focus:outline-cyan-500 focus:outline-4 rounded-md   ${
+              error.password ? "outline-1 outline-red-500 " : ""
             }`}
             type="password"
             placeholder="Senha"
@@ -130,17 +132,15 @@ export default function Cadastro() {
 
           <input
             name="confirmPassword"
-            className={`p-2 rounded-md bg-cyan-50 text-cyan-900  ${
-              error.confirmPassword
-                ? "outline-1 outline-red-500 "
-                : "outline-none"
+            className={`p-3 bg-gray-300 text-gray-900 outline-2 outline-gray-400  focus:outline-cyan-500 focus:outline-4 rounded-md    ${
+              error.confirmPassword ? "outline-1 outline-red-500 " : ""
             }`}
             type="password"
             placeholder="Confirmar Senha"
           />
 
           <button
-            className="btn bg-cyan-300 text-cyan-900 font-bold"
+            className="btn bg-cyan-800 text-white font-bold"
             type="submit"
           >
             Cadastrar
@@ -148,12 +148,36 @@ export default function Cadastro() {
 
           <Link
             href="/login"
-            className=" hover:font-bold  text-sm  text-white w-fit "
+            className=" hover:opacity-100 opacity-80 font-bold  text-sm w-fit self-end"
           >
-            Já tem uma conta? <span className="text-cyan-300 ">Faça Login</span>
+            Já tem uma conta? <span className="text-cyan-800 ">Faça Login</span>
           </Link>
         </form>
       </div>
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const token = context.req.cookies.token || null;
+
+  if (token != null) {
+    try {
+      autenticator.verifyToken(token);
+      return {
+        redirect: {
+          destination: "/",
+          permanent: false,
+        },
+      };
+    } catch (error) {
+      console.log({ error: error });
+    }
+  }
+
+  return {
+    props: {},
+  };
+};

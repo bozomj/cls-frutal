@@ -41,6 +41,8 @@ x criar cadastro para as fotos do carrosel (possiveis propagandas para o site)
 
 - redirecionar pagina ao cadastrar usuario
 
+- concertar erro ao deletar imagem e ela não existir no firebase
+
 x carrossel criar botoes pra navegar entre os banner
 
 usuarios [
