@@ -19,6 +19,7 @@ import postController from "@/controllers/postController";
 import FullImageView from "@/components/FullImageView";
 import MiniGalleryImage from "@/components/MiniGalleryImage";
 import Image from "next/image";
+import ImageCardPreview from "@/components/ImageCardPreview";
 
 type Props = {
   user_id?: string;
@@ -114,141 +115,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                 setImagemIndex(i);
               }}
             />
-            {isPostUserId && (
-              <div className="flex gap-2 overflow-x-scroll h-[15rem] p-2">
-                {post_imagens.map((img, i) => {
-                  return (
-                    <div
-                      key={i}
-                      className="w-fit h-full relative bg-accent shrink-0"
-                    >
-                      <span
-                        className="bg-red-800 w-3 h-3 rounded-full p-3 absolute flex justify-center items-center right-1 text-white top-1"
-                        onClick={async () => {
-                          await imagemFirebase.deleteImageFromUrl(img.url);
-                          const imgRemoved = await fetch(`/api/v1/imagens`, {
-                            method: "delete",
-                            headers: {
-                              "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify(img),
-                          });
-                          console.log(imgRemoved);
 
-                          setImagens((p) =>
-                            p.filter((imgs) => imgs.id !== img.id)
-                          );
-                        }}
-                      >
-                        X
-                      </span>
-
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={img.url} alt="" className="h-full" />
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {isPostUserId && post_imagens.length < _item.maxImagens && (
-              <label className="bg-cyan-700 hover:bg-cyan-400 focus:outline-cyan-400 focus:outline-4 cursor-pointer block w-fit p-2 rounded m-2 text-white">
-                <FontAwesomeIcon className="text-3xl" icon={faImage} />
-                <input
-                  type="file"
-                  className="hidden"
-                  accept="image/*"
-                  multiple
-                  max={3}
-                  onChange={(e) => selecionarImagens(e)}
-                />
-              </label>
-            )}
-
-            {isPostUserId && previewImagens.length > 0 && (
-              <div
-                id="preview-imagens"
-                className="flex gap-3 flex-wrap justify-center bg-gray-400 py-4"
-              >
-                {previewImagens.map((img, index) => (
-                  <div key={img.id} className="relative w-fit">
-                    <div
-                      className="absolute cursor-pointer bg-red-900 hover:bg-red-500 rounded-full h-8 w-8 text-center p-1 -right-2 -top-2 peer"
-                      onClick={() => {
-                        setPreviewImagens((p) => {
-                          const imgs = previewImagens.find(
-                            (im) => im.id === img.id
-                          );
-                          if (imgs) URL.revokeObjectURL(imgs.url);
-                          return p.filter((_, i) => i !== index);
-                        });
-                      }}
-                    >
-                      X
-                    </div>
-                    <Card
-                      key={index}
-                      className="border-3 border-cyan-600 bg-cyan-800 peer-hover:bg-red-500/40 peer-hover:border-red-500"
-                    >
-                      <Image src={img.url} alt={""} width={600} height={300} />
-                    </Card>
-                  </div>
-                ))}
-              </div>
-            )}
-            {isPostUserId && post_imagens.length < _item.maxImagens && (
-              <button
-                className="btn bg-amber-400 text-white font-bold"
-                onClick={async () => {
-                  if (
-                    post_imagens.length + previewImagens.length >
-                    _item.maxImagens
-                  ) {
-                    setAlert(
-                      <Alert
-                        msg={"Limite de 3 imagens por postagem"}
-                        onClose={() => setAlert(<></>)}
-                      />
-                    );
-                    return;
-                  }
-
-                  if (previewImagens.length < 1 || previewImagens.length > 3) {
-                    setAlert(
-                      <Alert
-                        msg={"Selecione Pelo menos 1 imagem e no maximo 3"}
-                        onClose={() => setAlert(<></>)}
-                      />
-                    );
-                    return;
-                  }
-
-                  const imagesFirebase =
-                    await imagemFirebase.uploadImageFirebase(previewImagens);
-
-                  if (item.user_id !== user_id) return;
-
-                  if (imagesFirebase.length < 1) return;
-
-                  const imgs = imagesFirebase.map((img: { url: string }) => {
-                    return { url: img.url, post_id: item.id, user_id: user_id };
-                  });
-
-                  await fetch("/api/v1/uploadImages", {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(imgs),
-                  });
-
-                  setPreviewImagens([]);
-                  router.replace(router.asPath);
-                }}
-              >
-                salvar
-              </button>
-            )}
             <section id="dados-postagem">
               <div
                 id="actions"
@@ -414,6 +281,140 @@ export default function DetailsPostPage({ user_id }: Props) {
                     </div>
                   )}
                 </div>
+
+                <section id="postuseractions">
+                  {isPostUserId && (
+                    <div>
+                      <h2 className="text-2xl text-center p-2">
+                        Adicionar ou remover imagens
+                      </h2>
+                      <h3>Imagens Atuais</h3>
+                      <div className="flex gap-2 overflow-x-scroll h-[15rem] p-2 bg-gray-400 rounded-md">
+                        {post_imagens.map((img, i) => {
+                          return (
+                            <ImageCardPreview
+                              key={"img-" + i}
+                              image={img}
+                              onClick={() => {
+                                deletarImagem(img);
+                              }}
+                            />
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {isPostUserId && previewImagens.length > 0 && (
+                    <div>
+                      <h3>Novas Imagens</h3>
+                      <div
+                        id="preview-imagens"
+                        className="flex gap-3 flex-wrap justify-center bg-gray-400 py-4"
+                      >
+                        {previewImagens.map((img, index) => (
+                          <ImageCardPreview
+                            key={img.id}
+                            image={img}
+                            onClick={() => {
+                              setPreviewImagens((p) => {
+                                const imgs = previewImagens.find(
+                                  (im) => im.id === img.id
+                                );
+                                if (imgs) URL.revokeObjectURL(imgs.url);
+                                return p.filter((_, i) => i !== index);
+                              });
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  <div className="flex justify-between  p-2">
+                    {isPostUserId && post_imagens.length < _item.maxImagens && (
+                      <label className="bg-cyan-700 hover:bg-cyan-400 focus:outline-cyan-400 focus:outline-4 cursor-pointer block w-fit p-2 rounded  text-white">
+                        <FontAwesomeIcon className="text-3xl" icon={faImage} />
+                        <input
+                          type="file"
+                          className="hidden"
+                          accept="image/*"
+                          multiple
+                          max={3}
+                          onChange={(e) => selecionarImagens(e)}
+                        />
+                      </label>
+                    )}
+
+                    {isPostUserId &&
+                      post_imagens.length < _item.maxImagens &&
+                      previewImagens.length > 0 && (
+                        <button
+                          className="btn bg-green-700 text-white font-bold hover:bg-green-800"
+                          onClick={async () => {
+                            if (
+                              post_imagens.length + previewImagens.length >
+                              _item.maxImagens
+                            ) {
+                              setAlert(
+                                <Alert
+                                  msg={"Limite de 3 imagens por postagem"}
+                                  onClose={() => setAlert(<></>)}
+                                />
+                              );
+                              return;
+                            }
+
+                            if (
+                              previewImagens.length < 1 ||
+                              previewImagens.length > 3
+                            ) {
+                              setAlert(
+                                <Alert
+                                  msg={
+                                    "Selecione Pelo menos 1 imagem e no maximo 3"
+                                  }
+                                  onClose={() => setAlert(<></>)}
+                                />
+                              );
+                              return;
+                            }
+
+                            const imagesFirebase =
+                              await imagemFirebase.uploadImageFirebase(
+                                previewImagens
+                              );
+
+                            if (item.user_id !== user_id) return;
+
+                            if (imagesFirebase.length < 1) return;
+
+                            const imgs = imagesFirebase.map(
+                              (img: { url: string }) => {
+                                return {
+                                  url: img.url,
+                                  post_id: item.id,
+                                  user_id: user_id,
+                                };
+                              }
+                            );
+
+                            await fetch("/api/v1/uploadImages", {
+                              method: "POST",
+                              headers: {
+                                "Content-Type": "application/json",
+                              },
+                              body: JSON.stringify(imgs),
+                            });
+
+                            setPreviewImagens([]);
+                            router.replace(router.asPath);
+                          }}
+                        >
+                          salvar
+                        </button>
+                      )}
+                  </div>
+                </section>
               </div>
               {alert}
             </section>
@@ -423,6 +424,19 @@ export default function DetailsPostPage({ user_id }: Props) {
       </main>
     </>
   );
+
+  async function deletarImagem(img: ImageType) {
+    await imagemFirebase.deleteImageFromUrl(img.url);
+    await fetch(`/api/v1/imagens`, {
+      method: "delete",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(img),
+    });
+
+    setImagens((p) => p.filter((imgs) => imgs.id !== img.id));
+  }
 
   function moveCursorToEnd(el: HTMLElement) {
     const range = document.createRange();
