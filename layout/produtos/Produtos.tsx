@@ -34,7 +34,7 @@ function Produtos<T>({ postagens = [], Card, className }: ProdutosProps<T>) {
     return items.map((item, v) => (
       <div key={v} className="flex flex-col gap-4">
         <Card item={item} key={`${v}`} />
-        {v < TotalItems - 1 && <VerticalDivider height={3} />}
+        {v < TotalItems - 1 && <VerticalDivider height={2} />}
       </div>
     ));
   }
