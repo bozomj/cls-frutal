@@ -301,7 +301,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                             <h3 className="p-2 text-white text-center text-xl">
                               Imagens Atuais
                             </h3>
-                            <div className="flex gap-2 overflow-x-scroll h-[15rem] p-2 bg-gray-400 justify-center ">
+                            <div className="flex gap-2 overflow-x-scroll h-[15rem] p-2 bg-gray-400 ">
                               {post_imagens[0] !== null &&
                                 post_imagens.map((img, i) => {
                                   return (
@@ -326,7 +326,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                           </h3>
                           <div
                             id="preview-imagens"
-                            className="flex gap-3  overflow-x-scroll h-[15rem] justify-center bg-gray-400 py-4"
+                            className="flex gap-3  overflow-x-scroll h-[15rem]  bg-gray-400 py-4"
                           >
                             {previewImagens.map((img, index) => (
                               <ImageCardPreview
