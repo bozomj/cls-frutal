@@ -55,7 +55,7 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({
   });
 
   return (
-    <div className="w-full h-[12rem] bg-green-200 rounded-2xl relative overflow-hidden shadow-sm shadow-gray-400 border">
+    <div className="w-full h-[12rem] rounded-2xl relative overflow-hidden shadow-sm shadow-gray-400">
       {activeAction && (
         <ArrowButton
           direction="left"

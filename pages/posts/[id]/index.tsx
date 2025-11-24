@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faImage, faUser } from "@fortawesome/free-regular-svg-icons";
-import { faPlus, faShare } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faShareFromSquare } from "@fortawesome/free-solid-svg-icons";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 
 import utils from "@/utils";
@@ -21,6 +21,7 @@ import MiniGalleryImage from "@/components/MiniGalleryImage";
 
 import ImageCardPreview from "@/components/ImageCardPreview";
 import WirePost from "@/wireframes/wirePost";
+import VerticalDivider from "@/components/VerticalDivider";
 
 type Props = {
   user_id?: string;
@@ -71,7 +72,6 @@ export default function DetailsPostPage({ user_id }: Props) {
       }
 
       const result = data;
-      console.log(data);
 
       setItem(result);
       setImagens(result.imagens);
@@ -84,11 +84,10 @@ export default function DetailsPostPage({ user_id }: Props) {
 
   useEffect(() => {
     if (!post_id) return;
-    //delay pra teste de wireframe
+
     async function fetchData() {
-      await new Promise(() => setTimeout(() => {}, 3000));
+      getPost(post_id);
     }
-    getPost(post_id);
 
     fetchData();
   }, [post_id, getPost]);
@@ -102,14 +101,36 @@ export default function DetailsPostPage({ user_id }: Props) {
         ) : (
           <section
             id="frame-1"
-            className="flex flex-auto flex-col gap-2 w-full max-w-[40rem] p-4 bg-gray-100 rounded-2xl shadow-sm shadow-gray-400 my-2 "
+            className="flex flex-auto flex-col gap-2 w-full max-w-[40rem] p-4 bg-gray-100 rounded-2xl shadow-sm shadow-gray-400 my-2 max-h-max"
           >
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                {imgProfileUrl ? (
+                  <CircleAvatar
+                    imagem={utils.getUrlImage(imgProfileUrl)}
+                    size={2.5}
+                  />
+                ) : (
+                  <FontAwesomeIcon
+                    icon={faUser}
+                    className="text-2xl rounded-full p-2 w-6  bg-gray-400 flex items-center justify-center cursor-pointer text-gray-300 hover:bg-gray-600 transition duration-200 "
+                  />
+                )}
+                <span className="text-[1em]">
+                  {utils.string.capitalizar(item.name ?? "")}
+                </span>
+              </div>
+              <span className="text-[0.8em]">
+                Publicado {utils.formatarData(item.created_at)}
+              </span>
+            </div>
             <FullImageView
               images={post_imagens}
               index={imagemIndex}
               visible={visible}
               onClose={closeFullImages}
             />
+
             <div id="frame-2" className="bg-gray-300 rounded-2xl flex-auto p-2">
               <MiniGalleryImage
                 post_imagens={post_imagens}
@@ -125,42 +146,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                 <div
                   id="actions"
                   className="flex justify-between items-center py-4"
-                >
-                  <div className="flex items-center gap-2">
-                    {imgProfileUrl ? (
-                      <CircleAvatar
-                        imagem={utils.getUrlImage(imgProfileUrl)}
-                        size={3}
-                      />
-                    ) : (
-                      <FontAwesomeIcon
-                        icon={faUser}
-                        className="text-2xl rounded-full p-2 w-6  bg-gray-400 flex items-center justify-center cursor-pointer text-gray-300 hover:bg-gray-600 transition duration-200 "
-                      />
-                    )}
-                    <span className="text-[1em]">
-                      {utils.string.capitalizar(item.name ?? "")}
-                    </span>
-                  </div>
-
-                  <div className="flex gap-2 items-center text-2xl">
-                    <a
-                      target="_blank"
-                      className="rounded-3xl bg-green-800 w-10 h-10 flex items-center justify-center p-2 text-white self-end hover:bg-green-600 transition duration-200"
-                      href={`https://wa.me/55${item.phone}?text=ola gostariad e falar com voce`}
-                    >
-                      <FontAwesomeIcon icon={faWhatsapp} />
-                    </a>
-                    <button
-                      className="rounded-3xl bg-cyan-800 w-10 h-10 flex items-center justify-center p-2 text-white self-end hover:bg-cyan-500 transition duration-200"
-                      onClick={() =>
-                        navigator.clipboard.writeText(window.location.href)
-                      }
-                    >
-                      <FontAwesomeIcon icon={faShare} />
-                    </button>
-                  </div>
-                </div>
+                ></div>
 
                 <div>
                   <div className="flex  justify-between items-start flex-col-reverse">
@@ -196,10 +182,6 @@ export default function DetailsPostPage({ user_id }: Props) {
                         </span>
                       </label>
                     </h1>
-
-                    <span className="text-[0.8em]">
-                      Publicado {utils.formatarData(item.created_at)}
-                    </span>
                   </div>
                   <span className="font-bold text-green-700  ">
                     {isPostUserId && (
@@ -267,6 +249,24 @@ export default function DetailsPostPage({ user_id }: Props) {
                       >
                         {item.description}
                       </p>
+                    </div>
+                    <VerticalDivider height={1} />
+                    <div className="flex items-center justify-end text-xl gap-2">
+                      <a
+                        target="_blank"
+                        className="text-green-700 text-2xl hover:text-green-900 hover:text-3xl"
+                        href={`https://wa.me/55${item.phone}?text=ola gostariad e falar com voce`}
+                      >
+                        <FontAwesomeIcon icon={faWhatsapp} />
+                      </a>
+                      <button
+                        className="text-teal-500 btn hover:text-teal-700 hover:text-2xl"
+                        onClick={() =>
+                          navigator.clipboard.writeText(window.location.href)
+                        }
+                      >
+                        <FontAwesomeIcon icon={faShareFromSquare} />
+                      </button>
                     </div>
 
                     {isPostUserId && (
