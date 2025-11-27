@@ -58,7 +58,6 @@ function Dashboard({ ctx }: { ctx: string }) {
     getUser();
     getMyPost();
   }, [ctx, getMyPost]);
-  console.log(user);
 
   return (
     <>
@@ -103,7 +102,7 @@ function Dashboard({ ctx }: { ctx: string }) {
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={utils.getUrlImage(user.url)}
+                  src={utils.getUrlImageR2(user.url ?? "")}
                   alt=""
                   className="w-full h-full object-cover"
                 />

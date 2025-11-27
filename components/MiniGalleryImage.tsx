@@ -26,7 +26,7 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
         <img
           className=" max-h-full rounded-md hover:outline-3 hover:outline-cyan-600"
           tabIndex={1}
-          src={utils.getUrlImage(imgPrincipal)}
+          src={utils.getUrlImageR2(imgPrincipal)}
           alt=""
           onClick={() => {
             onClick();
@@ -64,7 +64,7 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
                 {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
                 <img
                   className={`cursor-pointer object-contain rounded-md`}
-                  src={utils.getUrlImage(img.url)}
+                  src={utils.getUrlImageR2(img.url)}
                 />
               </div>
             );

@@ -22,6 +22,7 @@ import MiniGalleryImage from "@/components/MiniGalleryImage";
 import ImageCardPreview from "@/components/ImageCardPreview";
 import WirePost from "@/wireframes/wirePost";
 import VerticalDivider from "@/components/VerticalDivider";
+import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
 
 type Props = {
   user_id?: string;
@@ -53,7 +54,7 @@ export default function DetailsPostPage({ user_id }: Props) {
   const [alert, setAlert] = useState(<></>);
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [item, setItem] = useState(_item);
-  const [previewImagens, setPreviewImagens] = useState<ImageType[]>([]);
+  const [previewImagens, setPreviewImagens] = useState<[]>([]);
   const [isPostUserId, IsPostUserId] = useState(false);
   const [imgProfileUrl, setImageProfile] = useState<string | null>(null);
   const [visible, setVisible] = useState(false);
@@ -107,7 +108,7 @@ export default function DetailsPostPage({ user_id }: Props) {
               <div className="flex items-center gap-2">
                 {imgProfileUrl ? (
                   <CircleAvatar
-                    imagem={utils.getUrlImage(imgProfileUrl)}
+                    imagem={utils.getUrlImageR2(imgProfileUrl)}
                     size={2.5}
                   />
                 ) : (
@@ -304,10 +305,11 @@ export default function DetailsPostPage({ user_id }: Props) {
                             <div className="flex gap-2 overflow-x-scroll h-[15rem] p-2 bg-gray-400 ">
                               {post_imagens[0] !== null &&
                                 post_imagens.map((img, i) => {
+                                  const newImg = utils.getUrlImageR2(img.url);
                                   return (
                                     <ImageCardPreview
                                       key={"img-" + i}
-                                      image={img}
+                                      image={{ ...img, url: newImg }}
                                       onClick={() => {
                                         deletarImagem(img);
                                       }}
@@ -403,19 +405,27 @@ export default function DetailsPostPage({ user_id }: Props) {
                                   return;
                                 }
 
-                                const imagesFirebase =
-                                  await imagemFirebase.uploadImageFirebase(
-                                    previewImagens
-                                  );
+                                // const imagesFirebase =
+                                //   await imagemFirebase.uploadImageFirebase(
+                                //     previewImagens
+                                //   );
+
+                                const newImgs = previewImagens.map(
+                                  (im) => im.file
+                                );
+
+                                const images = await controllerCloudflare.save(
+                                  newImgs
+                                );
 
                                 if (item.user_id !== user_id) return;
 
-                                if (imagesFirebase.length < 1) return;
+                                if (images.files.length < 1) return;
 
-                                const imgs = imagesFirebase.map(
+                                const imgs = images.files.map(
                                   (img: { url: string }) => {
                                     return {
-                                      url: img.url,
+                                      url: img,
                                       post_id: item.id,
                                       user_id: user_id,
                                     };

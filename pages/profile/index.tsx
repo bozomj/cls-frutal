@@ -13,10 +13,11 @@ import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
 import ProductCardDashboard from "@/components/ProductCardDasboard";
-import { imagemFirebase } from "@/storage/firebase";
 import Modal from "@/components/Modal";
 import FooterLayout from "@/layout/FooterLayout";
 import Link from "next/link";
+import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
+import controllerPostgres from "@/storage/postgres/controllerPostgres";
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<UserType>();
@@ -42,7 +43,7 @@ const Profile: React.FC = () => {
   }, [init]);
 
   useEffect(() => produtosRef.current?.focus());
-
+  console.log(user);
   return (
     <>
       <Header />
@@ -53,7 +54,7 @@ const Profile: React.FC = () => {
 
           <section id="profile" className="flex flex-col gap-2 ">
             <div className="relative w-fit">
-              <CircleAvatar imagem={utils.getUrlImage(user?.url)} />
+              <CircleAvatar imagem={utils.getUrlImageR2(user?.url || "")} />
 
               <label
                 id="btn-camera"
@@ -137,21 +138,18 @@ const Profile: React.FC = () => {
   }
 
   async function salvar(image: File) {
-    const imgs = await imagemFirebase.uploadImageFirebase([
-      {
-        file: image,
-      },
-    ]);
+    try {
+      const img = await controllerCloudflare.save([image]);
 
-    await fetch("/api/v1/user/setImageProfile", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ user_id: user?.id, url: imgs[0].url }),
-    });
+      await controllerPostgres.saveImageProfile({
+        user_id: user?.id,
+        url: img.files[0],
+      });
 
-    setUser(await userController.getUserLogin());
+      setUser(await userController.getUserLogin());
+    } catch (error) {
+      console.log(error);
+    }
   }
 };
 

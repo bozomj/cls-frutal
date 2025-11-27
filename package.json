@@ -3,13 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    
     "dev": "docker rm -f clf-postgres-dev 2>/dev/null || true && docker-compose up -d && next dev",
-  "firebase": "firebase emulators:start --project clsfrutal --config=./firebase/firebase.json --import=./exportdatabase --export-on-exit",
-  "init": "concurrently \"npm run dev\" \"npm run firebase\"",
+    "firebase": "firebase emulators:start --project clsfrutal --config=./firebase/firebase.json --import=./exportdatabase --export-on-exit",
+    "init": "concurrently \"npm run dev\" \"npm run firebase\"",
     "build": "next build",
     "start": "next start",
-    
     "lint": "next lint",
     "db:up": "docker-compose up -d",
     "db:down": "docker-compose down",
@@ -21,9 +19,9 @@
     "migrate:up": "node-pg-migrate up",
     "migrate:down": "node-pg-migrate down",
     "seed": "ts-node seeds/createAminUser.ts"
-    
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.940.0",
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@fortawesome/free-regular-svg-icons": "^6.7.2",
@@ -36,6 +34,7 @@
     "firebase": "^12.0.0",
     "formidable": "^3.5.4",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2",
     "next": "15.2.4",
     "next-connect": "^1.0.0",
     "pg": "^8.14.1",
@@ -50,6 +49,7 @@
     "@types/formidable": "^3.4.5",
     "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.9",
+    "@types/multer": "^2.0.0",
     "@types/node": "^20.17.31",
     "@types/pg": "^8.11.12",
     "@types/react": "^19",

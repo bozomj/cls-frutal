@@ -34,7 +34,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <span
               className="blur absolute h-full w-full block "
               style={{
-                backgroundImage: `url(${utils.getUrlImage(item.imageurl)}) `,
+                backgroundImage: `url(${utils.getUrlImageR2(
+                  item.imageurl ?? ""
+                )}) `,
                 backgroundSize: "100% 100%",
                 opacity: "30%",
               }}
@@ -42,7 +44,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               className="object-contain absolute h-full"
-              src={utils.getUrlImage(item.imageurl)}
+              src={utils.getUrlImageR2(item.imageurl ?? "")}
               alt=""
             />
           </div>

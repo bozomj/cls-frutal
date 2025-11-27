@@ -52,7 +52,7 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             className="bg-gray-200 max-h-[10rem] w-fit self-center"
-            src={utils.getUrlImage(item.imageurl)}
+            src={utils.getUrlImageR2(item.imageurl ?? "")}
             alt={""}
           />
         </div>
