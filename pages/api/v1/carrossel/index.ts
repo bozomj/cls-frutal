@@ -37,8 +37,8 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   const imagens = req.body;
 
   const data = [];
-  for (const image of imagens) {
-    const result = await carrosselImages.save(image.url);
+  for (const image of imagens.files) {
+    const result = await carrosselImages.save(image);
     data.push(result);
   }
 

@@ -14,8 +14,25 @@ async function save(image: File[]) {
   return img;
 }
 
+async function del(url: string) {
+  const result = await fetch(`/api/v1/imagens/delete/`, {
+    method: "delete",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ url }),
+  });
+
+  const data = await result.json();
+  console.log("status", data);
+  if (data.status === 204) throw data;
+
+  return data;
+}
+
 const controllerCloudflare = {
   save,
+  del,
 };
 
 export default controllerCloudflare;

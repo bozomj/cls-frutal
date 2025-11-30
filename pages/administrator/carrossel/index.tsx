@@ -7,10 +7,10 @@ import { faAdd } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ChangeEvent, useEffect, useState } from "react";
 import utils from "@/utils";
-import { imagemFirebase } from "@/storage/firebase";
 import InputFile from "@/components/InputFile";
 import carrosselController from "@/controllers/carrosselController";
 import CarrosselScroll from "@/components/CarrosselScroll";
+import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
 
 interface Props {
   user: UserType;
@@ -90,10 +90,11 @@ function CarrosselPageAdmin({ user }: Props) {
   }
 
   async function salvarImagens() {
-    const dataImage = imagensPreviews.map((image) => ({ file: image.file }));
+    const dataImage = imagensPreviews.map((image) => image.file);
 
     try {
-      const imagens = await imagemFirebase.uploadImageFirebase(dataImage);
+      // const imagens = await imagemFirebase.uploadImageFirebase(dataImage);
+      const imagens = await controllerCloudflare.save(dataImage);
 
       await fetch("/api/v1/carrossel", {
         method: "POST",
@@ -137,7 +138,7 @@ function CarrosselPageAdmin({ user }: Props) {
         </button>
         {/*  eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={database ? utils.getUrlImage(e?.url ?? "") || "" : e.url}
+          src={database ? utils.getUrlImageR2(e?.url ?? "") || "" : e.url}
           width={10}
           height={10}
           alt=""
@@ -150,7 +151,12 @@ function CarrosselPageAdmin({ user }: Props) {
   }
 
   async function removeCarrosselImage(e: { url: string }) {
-    await imagemFirebase.deleteImageFromUrl(e.url);
+    try {
+      await controllerCloudflare.del(e.url);
+    } catch (error: unknown) {
+      return error;
+    }
+
     await carrosselController.deleteImage(e);
 
     const data = await carrosselController.getImagesCarrossel();

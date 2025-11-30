@@ -31,12 +31,29 @@ export async function uploadFile(filePath: string, key: string, type: string) {
 }
 
 export async function deleteFile(key: string) {
-  await r2Client.send(
-    new DeleteObjectCommand({
-      Bucket: process.env.CLOUDFLARE_R2_BUCKET!,
-      Key: key,
-    })
-  );
+  try {
+    const deleted = await r2Client.send(
+      new DeleteObjectCommand({
+        Bucket: process.env.CLOUDFLARE_R2_BUCKET!,
+        Key: key,
+      })
+    );
+
+    if (deleted.$metadata.httpStatusCode !== 204)
+      throw {
+        message: "Falha ao deletar no Storage",
+        status: deleted.$metadata.httpStatusCode,
+      };
+
+    return { ok: true, status: deleted.$metadata.httpStatusCode };
+  } catch (error) {
+    const err = error as { status: string };
+    throw {
+      message: "Erro ao deletar imagem",
+      imagem: key,
+      cause: err,
+    };
+  }
 }
 
 export async function getFileStream(key: string) {

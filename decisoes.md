@@ -45,6 +45,8 @@ x criar cadastro para as fotos do carrosel (possiveis propagandas para o site)
 
 x carrossel criar botoes pra navegar entre os banner
 
+- consertar bug de uma imagem no carrossel;
+
 usuarios [
 diego@hotmail.com
 matheus@hotmail.com | senha 12345

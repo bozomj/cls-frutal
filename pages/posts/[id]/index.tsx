@@ -14,7 +14,6 @@ import Alert from "@/components/Alert";
 import Footer from "@/layout/FooterLayout";
 import CircleAvatar from "@/components/CircleAvatar";
 
-import { imagemFirebase } from "@/storage/firebase";
 import postController from "@/controllers/postController";
 import FullImageView from "@/components/FullImageView";
 import MiniGalleryImage from "@/components/MiniGalleryImage";
@@ -54,7 +53,7 @@ export default function DetailsPostPage({ user_id }: Props) {
   const [alert, setAlert] = useState(<></>);
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [item, setItem] = useState(_item);
-  const [previewImagens, setPreviewImagens] = useState<[]>([]);
+  const [previewImagens, setPreviewImagens] = useState<ImageType[]>([]);
   const [isPostUserId, IsPostUserId] = useState(false);
   const [imgProfileUrl, setImageProfile] = useState<string | null>(null);
   const [visible, setVisible] = useState(false);
@@ -92,7 +91,7 @@ export default function DetailsPostPage({ user_id }: Props) {
 
     fetchData();
   }, [post_id, getPost]);
-
+  console.log(previewImagens);
   return (
     <>
       <Header />
@@ -332,12 +331,12 @@ export default function DetailsPostPage({ user_id }: Props) {
                           >
                             {previewImagens.map((img, index) => (
                               <ImageCardPreview
-                                key={img.id}
+                                key={img.url}
                                 image={img}
                                 onClick={() => {
                                   setPreviewImagens((p) => {
                                     const imgs = previewImagens.find(
-                                      (im) => im.id === img.id
+                                      (im) => im.url === img.url
                                     );
                                     if (imgs) URL.revokeObjectURL(imgs.url);
                                     return p.filter((_, i) => i !== index);
@@ -405,11 +404,6 @@ export default function DetailsPostPage({ user_id }: Props) {
                                   return;
                                 }
 
-                                // const imagesFirebase =
-                                //   await imagemFirebase.uploadImageFirebase(
-                                //     previewImagens
-                                //   );
-
                                 const newImgs = previewImagens.map(
                                   (im) => im.file
                                 );
@@ -463,12 +457,9 @@ export default function DetailsPostPage({ user_id }: Props) {
 
   async function deletarImagem(img: ImageType) {
     try {
-      await imagemFirebase.deleteImageFromUrl(img.url);
+      await controllerCloudflare.del(img.url);
     } catch (error) {
-      console.log({
-        error: error,
-        message: "Imagem pode não existir no firebase",
-      });
+      return { error };
     }
     await fetch(`/api/v1/imagens`, {
       method: "delete",

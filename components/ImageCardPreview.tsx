@@ -1,7 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Card from "./Card";
 import { faRemove } from "@fortawesome/free-solid-svg-icons";
-import utils from "@/utils";
 
 type ImageFile = {
   id: number;

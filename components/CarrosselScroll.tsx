@@ -77,7 +77,7 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({
             <img
               className="min-w-full"
               key={key}
-              src={utils.getUrlImage(e.url)}
+              src={utils.getUrlImageR2(e.url)}
               alt=""
             />
           );
