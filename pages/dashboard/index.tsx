@@ -102,7 +102,7 @@ function Dashboard({ ctx }: { ctx: string }) {
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={utils.getUrlImageR2(user.url ?? "")}
+                  src={utils.getUrlImageR2(user.url ?? "d")}
                   alt=""
                   className="w-full h-full object-cover"
                 />
@@ -171,9 +171,9 @@ function Dashboard({ ctx }: { ctx: string }) {
 
   async function getUser() {
     const response = await fetch(`/api/v1/user`);
-    const user = await response.json();
-    console.log(user);
-    setUser(user);
+    const responseBody = await response.json();
+
+    setUser(responseBody.user);
   }
 }
 

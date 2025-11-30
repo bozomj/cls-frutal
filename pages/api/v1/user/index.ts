@@ -1,6 +1,7 @@
 //endpoint para listar todos os usuários
 
 import autenticator from "@/models/autenticator";
+import profileImages from "@/models/perfil_images";
 import User from "@/models/user";
 
 import { NextApiRequest, NextApiResponse } from "next";
@@ -16,12 +17,13 @@ export default router.handler();
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const id = (req.headers.cookie || "").split("=")[1];
-    console.log("TOKEN", id);
+
     const user = autenticator.verifyToken(id);
 
     const users = await User.findById(user.id);
+    const imagemProfile = await profileImages.getImagesProfile(user.id);
 
-    res.status(200).json(users[0]);
+    res.status(200).json({ user: users[0], imagemProfile });
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar usuários", cause: error });
   }

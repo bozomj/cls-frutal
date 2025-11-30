@@ -47,6 +47,8 @@ x carrossel criar botoes pra navegar entre os banner
 
 - consertar bug de uma imagem no carrossel;
 
+- precisa listar todas imagems do perfil e suas ações de deletar e alterar a principal
+
 usuarios [
 diego@hotmail.com
 matheus@hotmail.com | senha 12345

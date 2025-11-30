@@ -15,7 +15,6 @@ import Prompt from "@/components/Prompt";
 import categoriaController from "@/controllers/categoriaController";
 import { CategoriaType } from "@/models/categoria";
 import utils from "@/utils";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 type postTypeSimple = {
   title: string;
@@ -50,7 +49,6 @@ function getUniqueId() {
 export default function Produto() {
   const router = useRouter();
 
-  const [categoria, setCategoria] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [valor, setValor] = useState("");
@@ -395,7 +393,7 @@ export default function Produto() {
     post.user_id = "";
 
     setValor("");
-    setCategoria("");
+    // setCategoria("");
     setTitle("");
     setDescription("");
     setImagens([]);
@@ -441,7 +439,7 @@ export default function Produto() {
 
   function changeCategoria(e: string) {
     setSelected(e);
-    if ((post.categoria_id = parseInt(e))) setCategoria(e);
+    post.categoria_id = parseInt(e);
   }
 
   function removeImagePreview(image: ImageFile) {
