@@ -11,8 +11,19 @@ const router = createRouter<NextApiRequest, NextApiResponse>();
 
 // ⛔ IMPORTANTE
 // Adiciona o middleware MULTER antes do handler
-router.use(upload.array("file"));
+// router.use(upload.array("file"));
 
+// Adapter para rodar middlewares Express dentro do next-connect
+function multerMiddleware(req: NextApiRequest, res: NextApiResponse) {
+  return new Promise((resolve, reject) => {
+    upload.array("file")(req as any, res as any, (err: any) => {
+      if (err) reject(err);
+      resolve(true);
+    });
+  });
+}
+
+router.use(multerMiddleware);
 router.post(postHandler);
 router.get(getHandler);
 
