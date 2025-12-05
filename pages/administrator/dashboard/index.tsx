@@ -3,10 +3,11 @@ import userController from "@/controllers/userController";
 import Chart from "chart.js/auto";
 
 import { useEffect, useState } from "react";
-import LayoutPage from "../layout";
-import { getAdminProps } from "../../../lib/hoc";
+
 import { GetServerSidePropsContext } from "next";
 import { UserType } from "@/models/user";
+import LayoutPage from "@/components/layout";
+import { getAdminProps } from "@/lib/hoc";
 
 interface Props {
   user: UserType;

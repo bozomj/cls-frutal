@@ -1,7 +1,5 @@
-import LayoutPage from "../layout";
 import { GetServerSidePropsContext } from "next";
 import { UserType } from "@/models/user";
-import { getAdminProps } from "../../../lib/hoc";
 
 import { faAdd } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,6 +9,8 @@ import InputFile from "@/components/InputFile";
 import carrosselController from "@/controllers/carrosselController";
 import CarrosselScroll from "@/components/CarrosselScroll";
 import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
+import LayoutPage from "@/components/layout";
+import { getAdminProps } from "@/lib/hoc";
 
 interface Props {
   user: UserType;
