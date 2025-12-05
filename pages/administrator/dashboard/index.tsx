@@ -4,7 +4,7 @@ import Chart from "chart.js/auto";
 
 import { useEffect, useState } from "react";
 import LayoutPage from "../layout";
-import { getAdminProps } from "../hoc";
+import { getAdminProps } from "../../../lib/hoc";
 import { GetServerSidePropsContext } from "next";
 import { UserType } from "@/models/user";
 

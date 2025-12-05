@@ -1,7 +1,7 @@
 import LayoutPage from "../layout";
 import { GetServerSidePropsContext } from "next";
 import { UserType } from "@/models/user";
-import { getAdminProps } from "../hoc";
+import { getAdminProps } from "../../../lib/hoc";
 
 import { faAdd } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

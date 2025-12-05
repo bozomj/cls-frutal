@@ -1,5 +1,5 @@
 import autenticator from "@/models/autenticator";
-import User, { UserType } from "@/models/user";
+import { UserType } from "@/models/user";
 
 import { GetServerSidePropsContext } from "next";
 
