@@ -93,7 +93,6 @@ function CarrosselPageAdmin({ user }: Props) {
     const dataImage = imagensPreviews.map((image) => image.file);
 
     try {
-      // const imagens = await imagemFirebase.uploadImageFirebase(dataImage);
       const imagens = await controllerCloudflare.save(dataImage);
 
       await fetch("/api/v1/carrossel", {
@@ -123,7 +122,7 @@ function CarrosselPageAdmin({ user }: Props) {
     click?: (v: unknown, index: number) => void;
     database?: boolean;
   }) {
-    const itens = imgs.map((e: { url: string }, index) => (
+    const itens = imgs.map((e, index) => (
       <div
         key={index}
         className="relative rounded-md overflow-hidden w-[30rem]"
@@ -151,12 +150,6 @@ function CarrosselPageAdmin({ user }: Props) {
   }
 
   async function removeCarrosselImage(e: { url: string }) {
-    try {
-      await controllerCloudflare.del(e.url);
-    } catch (error: unknown) {
-      return error;
-    }
-
     await carrosselController.deleteImage(e);
 
     const data = await carrosselController.getImagesCarrossel();

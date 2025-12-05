@@ -22,6 +22,7 @@ import ImageCardPreview from "@/components/ImageCardPreview";
 import WirePost from "@/wireframes/wirePost";
 import VerticalDivider from "@/components/VerticalDivider";
 import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
+import CapitalizeText from "@/components/CapitalizeText";
 
 type Props = {
   user_id?: string;
@@ -116,9 +117,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                     className="text-2xl rounded-full p-2 w-6  bg-gray-400 flex items-center justify-center cursor-pointer text-gray-300 hover:bg-gray-600 transition duration-200 "
                   />
                 )}
-                <span className="text-[1em]">
-                  {utils.string.capitalizar(item.name ?? "")}
-                </span>
+                <CapitalizeText txt={item.name ?? ""} />
               </div>
               <span className="text-[0.8em]">
                 Publicado {utils.formatarData(item.created_at)}
@@ -143,11 +142,6 @@ export default function DetailsPostPage({ user_id }: Props) {
               />
 
               <section id="dados-postagem">
-                <div
-                  id="actions"
-                  className="flex justify-between items-center py-4"
-                ></div>
-
                 <div>
                   <div className="flex  justify-between items-start flex-col-reverse">
                     <h1 className="text-xl font-bold w-full">
@@ -155,28 +149,26 @@ export default function DetailsPostPage({ user_id }: Props) {
                         {isPostUserId && (
                           <FontAwesomeIcon
                             icon={faEdit}
+                            className="text-xl pr-2  text-green-800 cursor-pointer peer"
                             onClick={() => {
                               titleRef.current!.focus();
                             }}
-                            className="text-xl pr-2  text-green-800 cursor-pointer peer"
                           />
                         )}
                         <span
                           ref={titleRef}
                           className="focus:outline-2 focus:outline-gray-400 p-2 "
-                          {...(isPostUserId
-                            ? {
-                                contentEditable: true,
-                                suppressContentEditableWarning: true,
-                                onInput: () => {
-                                  setButtonDisabled(false);
-                                },
-                                onBlur: (e) => {
-                                  const value = e.currentTarget.innerText;
-                                  setItem((p) => ({ ...p, title: value }));
-                                },
-                              }
-                            : {})}
+                          {...(isPostUserId && {
+                            contentEditable: true,
+                            suppressContentEditableWarning: true,
+                            onInput: () => {
+                              setButtonDisabled(false);
+                            },
+                            onBlur: (e) => {
+                              const value = e.currentTarget.innerText;
+                              setItem((p) => ({ ...p, title: value }));
+                            },
+                          })}
                         >
                           {item.title}
                         </span>
@@ -377,8 +369,9 @@ export default function DetailsPostPage({ user_id }: Props) {
                               className="btn bg-green-700 text-white font-bold hover:bg-green-800"
                               onClick={async () => {
                                 if (
+                                  post_imagens[0] != null &&
                                   post_imagens.length + previewImagens.length >
-                                  _item.maxImagens
+                                    _item.maxImagens
                                 ) {
                                   setAlert(
                                     <Alert
@@ -456,11 +449,6 @@ export default function DetailsPostPage({ user_id }: Props) {
   );
 
   async function deletarImagem(img: ImageType) {
-    try {
-      await controllerCloudflare.del(img.url);
-    } catch (error) {
-      return { error };
-    }
     await fetch(`/api/v1/imagens`, {
       method: "delete",
       headers: {

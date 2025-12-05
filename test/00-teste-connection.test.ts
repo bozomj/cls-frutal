@@ -13,10 +13,6 @@ beforeAll(async () => {
   await cleanDatabase();
 });
 
-afterAll(async () => {
-  // await cleanDatabase();
-});
-
 describe("database", () => {
   it("Listar migrações pendentes", async () => {
     const result = await migrator.listPendingMigrations();

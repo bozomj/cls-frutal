@@ -1,8 +1,5 @@
-import autenticator from "@/models/autenticator";
-
 async function getUserLogin() {
-  const { result } = await autenticator.isAuthenticated();
-  const user = await fetch(`/api/v1/user/id/${result.id}`);
+  const user = await fetch(`/api/v1/user`);
   return await user.json();
 }
 

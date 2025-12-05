@@ -1,6 +1,7 @@
 import autenticator from "@/models/autenticator";
 import carrosselImages from "@/models/carrosselImages";
 import User from "@/models/user";
+import { deleteFile } from "@/storage/cloudflare/r2Cliente";
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
@@ -20,7 +21,7 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   const token = req.cookies.token || "";
-  // const token = randomUUID();
+
   let verified;
   try {
     verified = autenticator.verifyToken(token);
@@ -49,8 +50,8 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
 
 async function delHandler(req: NextApiRequest, res: NextApiResponse) {
   const imagens = req.body;
-  const deleted = await carrosselImages.remove(imagens.url);
+  await carrosselImages.remove(imagens.url);
+  await deleteFile(imagens.url);
 
-  console.log("deletando....", deleted);
   return res.status(200).json({ ok: "ok" });
 }

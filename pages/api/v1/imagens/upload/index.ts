@@ -1,6 +1,7 @@
 import { createRouter } from "next-connect";
 import { NextApiRequest, NextApiResponse } from "next";
 
+import fs from "fs";
 import multer from "multer";
 import { uploadFile } from "@/storage/cloudflare/r2Cliente";
 
@@ -20,6 +21,7 @@ export default router.handler();
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
   return res.status(404);
 }
+
 async function postHandler(req: any, res: NextApiResponse) {
   try {
     const files = req.files; // ← várias imagens
@@ -37,6 +39,9 @@ async function postHandler(req: any, res: NextApiResponse) {
       // envia para Cloudflare R2
       await uploadFile(file.path, filenameWithExt, file.mimetype);
 
+      fs.unlink(file.path, (err) => {
+        if (err) console.error("Erro ao remover temp");
+      });
       uploaded.push(filenameWithExt); // salvar só o nome no banco
     }
 

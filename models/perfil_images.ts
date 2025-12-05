@@ -35,9 +35,17 @@ async function getImagesProfile(id: string) {
   return result;
 }
 
+async function del(id: string) {
+  const query = `delete from perfil_images where id = $1`;
+
+  const result = await database.query(query, [id]);
+  return result;
+}
+
 const profileImages = {
   getImagesProfile,
   saveProfileImage,
+  del,
 };
 
 export default profileImages;

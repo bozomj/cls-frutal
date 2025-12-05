@@ -18,14 +18,14 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
     );
 
     if (existAdmin.length > 0) {
-      res.status(500).json({
+      return res.status(500).json({
         message: "Usuario Administrador já está cadastrado",
       });
     }
 
-    const user = await createAdminUser();
-    console.log(user);
-    res.status(201).json(user);
+    await createAdminUser();
+
+    res.status(201).json({ message: "usuario cadastrado com sucesso!" });
   } catch (e) {
     res.status(500).json({
       messsage: "Erro ao inserir usuario administrador",

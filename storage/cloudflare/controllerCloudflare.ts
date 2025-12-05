@@ -24,9 +24,6 @@ async function del(url: string) {
   });
 
   const data = await result.json();
-  console.log("status", data);
-  if (data.status === 204) throw data;
-
   return data;
 }
 

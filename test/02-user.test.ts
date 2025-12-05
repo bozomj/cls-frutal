@@ -10,8 +10,12 @@ describe("User", () => {
   });
 
   it("insert user admin", async () => {
-    await fetch("http://localhost:3000/api/v1/user/insertadmin_", {
-      method: "POST",
-    });
+    const result = await fetch(
+      "http://localhost:3000/api/v1/user/insertadmin_",
+      {
+        method: "POST",
+      }
+    );
+    await result.text();
   });
 });

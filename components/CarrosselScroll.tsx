@@ -87,10 +87,9 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({
         <img
           className="min-w-full"
           key={totalItems}
-          src={utils.getUrlImage(items[0]?.url)}
+          src={utils.getUrlImageR2(items[0]?.url)}
           alt=""
         />
-        ;
       </div>
       {activeAction && (
         <ArrowButton

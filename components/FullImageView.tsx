@@ -79,11 +79,11 @@ const FullImageView: React.FC<FullImageViewProps> = ({
         >
           <FontAwesomeIcon icon={faAngleLeft} />
         </button>
-        {/* <div className="flex flex-col bg-red gap-2 order-1 h-full justify-center w-full overflow-hidden"> */}
+
         <div className="h-full relative flex-4">
           <Image
             className="flex-1"
-            src={utils.getUrlImage(images[imagemIndex]?.url) || ""}
+            src={utils.getUrlImageR2(images[imagemIndex]?.url) || ""}
             alt=""
             fill
             style={{ objectFit: "contain" }}

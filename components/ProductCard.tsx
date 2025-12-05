@@ -66,7 +66,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             className={
               "text-green-700 text-2xl hover:text-green-900 hover:text-3xl"
             }
-            href={`https://wa.me/55${item.phone}`}
+            href={`https://web.whatsapp.com/send/?phone=55${item.phone}&text&type=phone_number&app_absent=0`}
             target="_blank"
           >
             <FontAwesomeIcon icon={faWhatsapp} />

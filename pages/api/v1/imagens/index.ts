@@ -1,6 +1,7 @@
 import autenticator from "@/models/autenticator";
 import imagem from "@/models/imagem";
 import Post from "@/models/post";
+import { deleteFile } from "@/storage/cloudflare/r2Cliente";
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
@@ -43,7 +44,13 @@ async function delHandler(req: NextApiRequest, res: NextApiResponse) {
   const post = await Post.getById(body.post_id);
   const postUserId = post.user_id;
 
-  const removed = postUserId === user.id ? await imagem.del(body.id) : null;
+  console.log(body.url);
 
-  return res.status(200).json(removed);
+  if (postUserId === user.id) {
+    const removed = await imagem.del(body.id);
+    await deleteFile(body.url);
+    return res.status(200).json(removed);
+  }
+
+  return res.status(403).json({});
 }

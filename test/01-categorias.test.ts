@@ -7,14 +7,14 @@ beforeAll(async () => {
 });
 
 describe("Categorias", () => {
+  it("inserir uma categoria aleatoria", async () => {
+    await insertCategorias();
+  });
+
   it("mostrar todas categorias", async () => {
     const categorias = await categoria.getAll();
 
     expect(categorias).toEqual(expect.any(Array));
-  });
-
-  it("inserir uma categoria aleatoria", async () => {
-    await insertCategorias();
   });
 
   it("listar categorias via api", async () => {

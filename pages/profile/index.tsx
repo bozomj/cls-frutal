@@ -18,12 +18,14 @@ import FooterLayout from "@/layout/FooterLayout";
 import Link from "next/link";
 import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
 import controllerPostgres from "@/storage/postgres/controllerPostgres";
+import ImageCardPreview from "@/components/ImageCardPreview";
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<UserType>();
   const [posts, setPosts] = useState([]);
   const { paginacao, setPaginacao } = usePagination();
   const [showmodal, setShowModal] = useState(<></>);
+  const [imagesProfile, setImagesProfile] = useState([]);
 
   const produtosRef = useRef<HTMLInputElement>(null);
 
@@ -31,11 +33,18 @@ const Profile: React.FC = () => {
   const initial = current * limite;
 
   const init = useCallback(async () => {
-    setUser(await userController.getUserLogin());
-    const p = await userController.getPost(initial, limite);
-    setPosts(p.posts);
-    setPaginacao((prev) => ({ ...prev, totalItens: p.total.total }));
-    console.log(posts);
+    try {
+      const userData = await userController.getUserLogin();
+      setUser(userData.user);
+      setImagesProfile(userData.imagemProfile);
+
+      const p = await userController.getPost(initial, limite);
+      setPosts(p.posts);
+      setPaginacao((prev) => ({ ...prev, totalItens: p.total.total }));
+    } catch (error) {
+      console.error("Falha ao carregar dados do perfil:", error);
+      // Adicionar feedback de erro para o usuário aqui
+    }
   }, [initial, limite, setPaginacao]);
 
   useEffect(() => {
@@ -52,33 +61,71 @@ const Profile: React.FC = () => {
         <div className="w-full md:w-[40rem]">
           <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
 
-          <section id="profile" className="flex flex-col gap-2 ">
-            <div className="relative w-fit">
-              <CircleAvatar imagem={utils.getUrlImageR2(user?.url || "")} />
+          <section className="flex overflow-hidden gap-2">
+            <div id="profile" className="flex flex-col gap-2 ">
+              <div className="relative w-fit">
+                <CircleAvatar
+                  size={8}
+                  imagem={utils.getUrlImageR2(user?.url || "")}
+                />
 
-              <label
-                id="btn-camera"
-                className={`w-10 h-10 absolute right-1 bottom-1 
+                <label
+                  id="btn-camera"
+                  className={`w-10 h-10 absolute right-1 bottom-1 
                   rounded-full border-2 border-cyan-50 
                 bg-cyan-100  hover:bg-cyan-200
                   text-2xl text-cyan-800 
                   flex justify-center items-center 
                   cursor-pointer`}
-              >
-                <FontAwesomeIcon icon={faCamera} />
-                {showmodal}
-                <input type="file" className="hidden" onChange={fileSelect} />
-              </label>
+                >
+                  <FontAwesomeIcon icon={faCamera} />
+                  {showmodal}
+                  <input type="file" className="hidden" onChange={fileSelect} />
+                </label>
+              </div>
+
+              <h1>{utils.string.capitalizar(user?.name ?? "")}</h1>
+              {user?.is_admin && (
+                <div className="text-sm text-gray-600 font-bold">
+                  <Link href="/administrator" className="hover:underline">
+                    Painel Administrador
+                  </Link>
+                </div>
+              )}
             </div>
 
-            <h1>{utils.string.capitalizar(user?.name ?? "")}</h1>
-            {user?.is_admin && (
-              <div className="text-sm text-gray-600 font-bold">
-                <Link href="/administrator" className="hover:underline">
-                  Painel Administrador
-                </Link>
-              </div>
-            )}
+            <div
+              id="imagen-do-perfil"
+              className="flex gap-2 p-2 overflow-x-scroll flex-1 bg-gray-300"
+            >
+              {imagesProfile.map(
+                (img: { id: number; url: string; file: File }) => {
+                  const newImg = {
+                    ...img,
+                    url: utils.getUrlImageR2(img?.url ?? ""),
+                  };
+                  return (
+                    <ImageCardPreview
+                      image={newImg}
+                      onClick={async () => {
+                        const result = await fetch(
+                          "/api/v1/user/setImageProfile",
+                          {
+                            method: "DELETE",
+                            headers: {
+                              "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(img),
+                          }
+                        );
+                        await result.json();
+                      }}
+                      key={newImg.url}
+                    />
+                  );
+                }
+              )}
+            </div>
           </section>
 
           <section className="border-t-2 border-gray-400 flex flex-col py-4 mt-4">

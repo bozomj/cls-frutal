@@ -10,8 +10,8 @@ export default async function createAminUser() {
   };
 
   try {
-    User.create(user);
+    await User.create(user);
   } catch (error) {
-    console.log(error);
+    return error;
   }
 }
