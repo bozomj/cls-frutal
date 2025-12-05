@@ -1,9 +1,10 @@
 import { UserType } from "@/models/user";
 
-import LayoutPage from "./layout";
 import { useEffect } from "react";
-import { getAdminProps } from "../../lib/hoc";
+
 import { GetServerSidePropsContext } from "next";
+import LayoutPage from "@/components/layout";
+import { getAdminProps } from "@/lib/hoc";
 
 interface Props {
   user: UserType;
