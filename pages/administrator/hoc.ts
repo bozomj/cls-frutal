@@ -12,11 +12,10 @@ export async function getAdminProps(context: GetServerSidePropsContext) {
 
   try {
     const auth = autenticator.verifyToken(token);
-    user = (await User.findById(auth.id))[0];
+    // user = (await User.findById(auth.id))[0];
+    user = fetch("./api/v1/user/id/" + auth.id);
 
     if (user.is_admin !== true) throw new Error("User is not admin");
-
-    console.log("User:", user);
   } catch (error) {
     console.log({ error: error });
     return {
