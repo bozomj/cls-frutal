@@ -14,7 +14,7 @@ export async function getAdminProps(context: GetServerSidePropsContext) {
     const auth = autenticator.verifyToken(token);
     const baseUrl = process.env.URLDOMAIN || "http://localhost:3000";
     // user = (await User.findById(auth.id))[0];
-    const result = await fetch(baseUrl + "./api/v1/user/id/" + auth.id);
+    const result = await fetch(baseUrl + "/api/v1/user/id/" + auth.id);
     user = await result.json();
 
     if (user.is_admin !== true) throw new Error("User is not admin");
