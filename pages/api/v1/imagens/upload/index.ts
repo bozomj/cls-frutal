@@ -23,7 +23,14 @@ function multerMiddleware(req: NextApiRequest, res: NextApiResponse) {
   });
 }
 
-router.use(multerMiddleware);
+router.use(async (req, res, next) => {
+  try {
+    await multerMiddleware(req, res);
+    next();
+  } catch (err) {
+    res.status(500).json({ error: "Erro no upload" });
+  }
+});
 router.post(postHandler);
 router.get(getHandler);
 

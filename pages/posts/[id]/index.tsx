@@ -419,19 +419,13 @@ export default function DetailsPostPage({ user_id }: Props) {
                                   }
                                 );
 
-                                await fetch(
-                                  `${
-                                    process.env.URLDOMAIN ||
-                                    "http://localhost:300"
-                                  }/api/v1/uploadImages`,
-                                  {
-                                    method: "POST",
-                                    headers: {
-                                      "Content-Type": "application/json",
-                                    },
-                                    body: JSON.stringify(imgs),
-                                  }
-                                );
+                                await fetch("/api/v1/uploadImages", {
+                                  method: "POST",
+                                  headers: {
+                                    "Content-Type": "application/json",
+                                  },
+                                  body: JSON.stringify(imgs),
+                                });
 
                                 setPreviewImagens([]);
                                 router.replace(router.asPath);

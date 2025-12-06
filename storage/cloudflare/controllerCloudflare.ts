@@ -5,13 +5,13 @@ async function save(image: File[]) {
     form.append("file", img);
   }
 
-  const baseUrl = process.env.URLDOMAIN || "http://localhost:3000";
-  const result = await fetch(baseUrl + "/api/v1/imagens/upload", {
+  const result = await fetch("http://localhost:3000/api/v1/imagens/upload", {
     method: "post",
     body: form,
   });
 
   const img = await result.json();
+  console.log(img);
   return img;
 }
 
