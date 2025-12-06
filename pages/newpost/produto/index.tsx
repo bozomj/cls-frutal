@@ -363,26 +363,16 @@ export default function Produto() {
     }
 
     try {
-      const imgs = imagens.map((im) => im.file);
-      const imagensFirebase = await controllerCloudflare.save(imgs);
+      const nimgs = imagens.map((im) => im.file);
+      const images = await controllerCloudflare.save(nimgs);
 
-      if (imagemFirebase != null) {
-        const imgs = imagensFirebase!.map((img: { url: string }) => {
-          return {
-            url: img.url,
-            post_id: jsonresult[0].id,
-            user_id: post.user_id,
-          };
-        });
-
-        await fetch("/api/v1/uploadImages", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(imgs),
-        });
-      }
+      await fetch("/api/v1/uploadImages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(imagens),
+      });
     } catch (error) {
       console.log(error);
     }
