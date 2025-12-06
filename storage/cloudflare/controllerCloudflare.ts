@@ -5,7 +5,7 @@ async function save(image: File[]) {
     form.append("file", img);
   }
 
-  const result = await fetch("http://localhost:3000/api/v1/imagens/upload", {
+  const result = await fetch("/api/v1/imagens/upload", {
     method: "post",
     body: form,
   });
