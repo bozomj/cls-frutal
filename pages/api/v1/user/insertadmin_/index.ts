@@ -1,5 +1,4 @@
 import User from "@/models/user";
-import createAdminUser from "@/seeds/createAdminUser";
 
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
@@ -8,6 +7,22 @@ const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router.get(getHandler);
 router.post(postHandler);
+
+async function createAminUser() {
+  const user = {
+    name: process.env.USERMASTER_NAME || "",
+    email: process.env.USERMASTER_EMAIL || "",
+    password: process.env.USERMASTER_PASSWORD || "",
+    phone: "34997668902",
+    is_admin: true,
+  };
+
+  try {
+    await User.create(user);
+  } catch (error) {
+    return error;
+  }
+}
 
 export default router.handler();
 
@@ -23,7 +38,7 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    await createAdminUser();
+    await createAminUser();
 
     res.status(201).json({ message: "usuario cadastrado com sucesso!" });
   } catch (e) {
