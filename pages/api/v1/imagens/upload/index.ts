@@ -5,7 +5,7 @@ import fs from "fs";
 import multer from "multer";
 import { uploadFile } from "@/storage/cloudflare/r2Cliente";
 
-const upload = multer({ dest: "tmp/" });
+const upload = multer({ dest: "/tmp" });
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
