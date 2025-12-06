@@ -188,6 +188,8 @@ const Profile: React.FC = () => {
     try {
       const img = await controllerCloudflare.save([image]);
 
+      console.log(">>>", img);
+
       await controllerPostgres.saveImageProfile({
         user_id: user?.id,
         url: img.files[0],
