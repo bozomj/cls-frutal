@@ -364,14 +364,22 @@ export default function Produto() {
 
     try {
       const nimgs = imagens.map((im) => im.file);
-      const images = await controllerCloudflare.save(nimgs);
+      const uploaded = await controllerCloudflare.save(nimgs);
+
+      const imgs = uploaded.files!.map((img: { url: string }) => {
+        return {
+          url: img,
+          post_id: jsonresult[0].id,
+          user_id: post.user_id,
+        };
+      });
 
       await fetch("/api/v1/uploadImages", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(imagens),
+        body: JSON.stringify(imgs),
       });
     } catch (error) {
       console.log(error);
