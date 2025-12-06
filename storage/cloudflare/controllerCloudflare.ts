@@ -11,7 +11,7 @@ async function save(image: File[]) {
   });
 
   const img = await result.json();
-  console.log(img);
+
   return img;
 }
 

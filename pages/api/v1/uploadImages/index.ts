@@ -1,7 +1,5 @@
 import { createRouter } from "next-connect";
 import { NextApiRequest, NextApiResponse } from "next";
-import path from "path";
-import fs from "fs";
 import imagem from "@/models/imagem";
 import Post from "@/models/post";
 
@@ -9,9 +7,6 @@ const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router.post(postHandler);
 router.get(getHandler);
-
-const uploadDir = path.join(process.cwd(), "/public/uploads");
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
 
 export default router.handler();
 

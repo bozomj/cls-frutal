@@ -15,6 +15,7 @@ import Prompt from "@/components/Prompt";
 import categoriaController from "@/controllers/categoriaController";
 import { CategoriaType } from "@/models/categoria";
 import utils from "@/utils";
+import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
 
 type postTypeSimple = {
   title: string;
@@ -75,7 +76,7 @@ export default function Produto() {
         URL.revokeObjectURL(img.url);
       });
     };
-  });
+  }, []);
 
   const style = {
     input:
@@ -362,7 +363,7 @@ export default function Produto() {
     }
 
     try {
-      const imagensFirebase = await imagemFirebase.uploadImageFirebase(imagens);
+      const imagensFirebase = await controllerCloudflare.save(imagens);
 
       if (imagemFirebase != null) {
         const imgs = imagensFirebase!.map((img: { url: string }) => {
