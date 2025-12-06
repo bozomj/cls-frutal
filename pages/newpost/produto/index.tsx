@@ -363,7 +363,8 @@ export default function Produto() {
     }
 
     try {
-      const imagensFirebase = await controllerCloudflare.save(imagens);
+      const imgs = imagens.map((im) => im.file);
+      const imagensFirebase = await controllerCloudflare.save(imgs);
 
       if (imagemFirebase != null) {
         const imgs = imagensFirebase!.map((img: { url: string }) => {
