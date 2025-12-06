@@ -1,7 +1,9 @@
 import { Client } from "pg";
 import dotenv from "dotenv";
 
-dotenv.config({ path: ".env.development" });
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config({ path: ".env.development" });
+}
 
 async function getNewClient() {
   const client = new Client({
