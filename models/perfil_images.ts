@@ -25,6 +25,33 @@ async function saveProfileImage(img: Record<string, unknown>) {
     };
   }
 }
+async function update(img: Record<string, unknown>) {
+  try {
+    await database.query(
+      `
+      UPDATE perfil_images
+        SET selected = false
+        WHERE user_id = $1;
+      `,
+      [img.user_id]
+    );
+
+    const result = await database.query(
+      `
+      UPDATE perfil_images
+        SET selected = true
+        WHERE id = $1;
+      `,
+      [img.id]
+    );
+    return result;
+  } catch (error) {
+    throw {
+      message: "erro ao salvar",
+      cause: error,
+    };
+  }
+}
 
 async function getImagesProfile(id: string) {
   const query = `
@@ -45,6 +72,7 @@ async function del(id: string) {
 const profileImages = {
   getImagesProfile,
   saveProfileImage,
+  update,
   del,
 };
 

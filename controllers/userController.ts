@@ -18,10 +18,23 @@ async function getTotalUsers() {
   return data.total;
 }
 
+async function updateImageProfile(img: unknown) {
+  const resutl = await fetch("/api/v1/user/setImageProfile", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(img),
+  });
+
+  return await resutl.json();
+}
+
 const userController = {
   getUserLogin,
   getPost,
   getTotalUsers,
+  updateImageProfile,
 };
 
 export default userController;

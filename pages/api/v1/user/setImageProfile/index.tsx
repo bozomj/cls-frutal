@@ -8,8 +8,22 @@ const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router.post(postHandler);
 router.delete(deltHandler);
+router.put(updateHandler);
 
 export default router.handler();
+
+async function updateHandler(req: NextApiRequest, res: NextApiResponse) {
+  const token = req.cookies.token;
+  const user = autenticator.verifyToken(token ?? "");
+  const body = req.body;
+
+  if (body.user_id !== user.id)
+    return res.status(403).json({ message: "usuario não permitido!!" });
+
+  await profileImages.update(body);
+
+  return res.status(201).json({ message: "Imagem de Perfil alterada." });
+}
 
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   const body = req.body;

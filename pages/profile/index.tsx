@@ -11,7 +11,7 @@ import { usePagination } from "@/contexts/PaginactionContext";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCamera } from "@fortawesome/free-solid-svg-icons";
+import { faCamera, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import ProductCardDashboard from "@/components/ProductCardDasboard";
 import Modal from "@/components/Modal";
 import FooterLayout from "@/layout/FooterLayout";
@@ -20,12 +20,19 @@ import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
 import controllerPostgres from "@/storage/postgres/controllerPostgres";
 import ImageCardPreview from "@/components/ImageCardPreview";
 
+type imageProfileType = {
+  id: number;
+  url: string;
+  file: File;
+  selected: boolean;
+};
+
 const Profile: React.FC = () => {
   const [user, setUser] = useState<UserType>();
   const [posts, setPosts] = useState([]);
   const { paginacao, setPaginacao } = usePagination();
   const [showmodal, setShowModal] = useState(<></>);
-  const [imagesProfile, setImagesProfile] = useState([]);
+  const [imagesProfile, setImagesProfile] = useState<imageProfileType[]>([]);
 
   const produtosRef = useRef<HTMLInputElement>(null);
 
@@ -52,7 +59,7 @@ const Profile: React.FC = () => {
   }, [init]);
 
   useEffect(() => produtosRef.current?.focus());
-  console.log(user);
+
   return (
     <>
       <Header />
@@ -98,15 +105,25 @@ const Profile: React.FC = () => {
               id="imagen-do-perfil"
               className="flex gap-2 p-2 overflow-x-scroll flex-1 bg-gray-300"
             >
-              {imagesProfile.map(
-                (img: { id: number; url: string; file: File }) => {
-                  const newImg = {
-                    ...img,
-                    url: utils.getUrlImageR2(img?.url ?? ""),
-                  };
-                  return (
+              {imagesProfile?.map((img: imageProfileType) => {
+                const newImg = {
+                  ...img,
+                  url: utils.getUrlImageR2(img?.url ?? ""),
+                };
+                return (
+                  <div key={newImg.url} className="relative">
+                    <button
+                      type="button"
+                      className={`absolute z-10 btn ${
+                        newImg.selected ? "text-green-400" : "text-white"
+                      } text-3xl bottom-0`}
+                      onClick={() => updateProfileImage(newImg, img.url)}
+                    >
+                      <FontAwesomeIcon icon={faCircleCheck} />
+                    </button>
                     <ImageCardPreview
                       image={newImg}
+                      className="max-w-full"
                       onClick={async () => {
                         const result = await fetch(
                           "/api/v1/user/setImageProfile",
@@ -120,11 +137,10 @@ const Profile: React.FC = () => {
                         );
                         await result.json();
                       }}
-                      key={newImg.url}
                     />
-                  );
-                }
-              )}
+                  </div>
+                );
+              })}
             </div>
           </section>
 
@@ -182,6 +198,21 @@ const Profile: React.FC = () => {
         </Modal>
       );
     }
+  }
+
+  async function updateProfileImage(newImg: imageProfileType, imgUrl: string) {
+    await userController.updateImageProfile(newImg);
+
+    setUser((user) => {
+      return { ...user, url: imgUrl } as UserType;
+    });
+
+    setImagesProfile((oldImages) =>
+      oldImages.map((img) => ({
+        ...img,
+        selected: img.id === newImg.id,
+      }))
+    );
   }
 
   async function salvar(image: File) {

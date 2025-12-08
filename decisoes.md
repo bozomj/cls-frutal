@@ -47,7 +47,9 @@ x carrossel criar botoes pra navegar entre os banner
 
 x consertar bug de uma imagem no carrossel;
 
-- precisa listar todas imagems do perfil e suas ações de deletar e alterar a principal
+x precisa listar todas imagems do perfil e suas ações de deletar e alterar a principal
+
+- mudar imagem de perfil das ja cadastradas.
 
 usuarios [
 diego@hotmail.com
