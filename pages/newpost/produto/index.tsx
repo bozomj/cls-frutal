@@ -10,12 +10,12 @@ import Alert from "@/components/Alert";
 
 import { useRouter } from "next/navigation";
 
-import { imagemFirebase } from "@/storage/firebase";
 import Prompt from "@/components/Prompt";
 import categoriaController from "@/controllers/categoriaController";
 import { CategoriaType } from "@/models/categoria";
 import utils from "@/utils";
 import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
+import LinearProgressIndicator from "@/components/LinearProgressIndicator";
 
 type postTypeSimple = {
   title: string;
@@ -450,14 +450,6 @@ export default function Produto() {
       return prev.filter((img) => img.id !== image.id);
     });
   }
-}
-
-function LinearProgressIndicator() {
-  return (
-    <div className="h-2 w-full rounded bg-cyan-800 overflow-hidden">
-      <div className="w-full h-full bg-cyan-500 transform origin-left animate-loading"></div>
-    </div>
-  );
 }
 
 function ImagePreview({

@@ -37,11 +37,22 @@ async function update(post: unknown) {
   return updated;
 }
 
+async function delImage(img: unknown) {
+  fetch(`/api/v1/imagens`, {
+    method: "delete",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(img),
+  });
+}
+
 const postController = {
   getTotal,
   getAll,
   getPostId,
   update,
+  delImage,
 };
 
 export default postController;

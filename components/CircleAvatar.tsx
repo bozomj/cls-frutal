@@ -1,3 +1,6 @@
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 interface CircleAvatarProps {
   imagem?: string;
   size?: number;
@@ -9,7 +12,7 @@ const CircleAvatar: React.FC<CircleAvatarProps> = ({
   size = 10,
   className,
 }) => {
-  return (
+  return imagem ? (
     <div
       className={`
         block
@@ -25,6 +28,11 @@ const CircleAvatar: React.FC<CircleAvatarProps> = ({
         backgroundImage: `url(${imagem})`,
       }}
     ></div>
+  ) : (
+    <FontAwesomeIcon
+      icon={faUser}
+      className="text-2xl rounded-full p-2 w-6  bg-gray-400 flex items-center justify-center cursor-pointer text-gray-300 hover:bg-gray-600 transition duration-200 "
+    />
   );
 };
 
