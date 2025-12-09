@@ -19,13 +19,8 @@ import Link from "next/link";
 import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
 import controllerPostgres from "@/storage/postgres/controllerPostgres";
 import ImageCardPreview from "@/components/ImageCardPreview";
-
-type imageProfileType = {
-  id: number;
-  url: string;
-  file: File;
-  selected: boolean;
-};
+import { imageProfileType } from "@/models/perfil_images";
+import PerfilImageController from "@/controllers/perfilImageController";
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<UserType>();
@@ -73,7 +68,7 @@ const Profile: React.FC = () => {
               <div className="relative w-fit">
                 <CircleAvatar
                   size={8}
-                  imagem={utils.getUrlImageR2(user?.url || "")}
+                  imagem={utils.getUrlImageR2(user?.url || null)}
                 />
 
                 <label
@@ -91,13 +86,14 @@ const Profile: React.FC = () => {
                 </label>
               </div>
 
-              <h1>{utils.string.capitalizar(user?.name ?? "")}</h1>
+              <h1>{utils.string.capitalizar(user?.name || null)}</h1>
               {user?.is_admin && (
-                <div className="text-sm text-gray-600 font-bold">
-                  <Link href="/administrator" className="hover:underline">
-                    Painel Administrador
-                  </Link>
-                </div>
+                <Link
+                  href="/administrator"
+                  className="hover:underline text-sm font-bold text-gray-600"
+                >
+                  Painel Administrador
+                </Link>
               )}
             </div>
 
@@ -114,30 +110,23 @@ const Profile: React.FC = () => {
                   <div key={newImg.url} className="relative min-w-fit ">
                     <button
                       type="button"
-                      className={`absolute z-10 btn ${
+                      className={`absolute z-10 btn hover:text-green-300 ${
                         newImg.selected ? "text-green-400" : "text-white"
                       } text-3xl bottom-0`}
                       onClick={() => updateProfileImage(newImg, img.url)}
                     >
-                      <FontAwesomeIcon icon={faCircleCheck} />
+                      <FontAwesomeIcon
+                        icon={faCircleCheck}
+                        className="border-2 rounded-full border-white"
+                      />
                     </button>
                     <ImageCardPreview
                       image={newImg}
                       className="max-w-full"
                       onClick={async (e) => {
-                        const result = await fetch(
-                          "/api/v1/user/setImageProfile",
-                          {
-                            method: "DELETE",
-                            headers: {
-                              "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify(img),
-                          }
-                        );
-                        const deletedImage = await result.json();
+                        const deleted = await PerfilImageController.del(img);
 
-                        if (deletedImage.message === "Imagem deletada") {
+                        if (deleted.message === "Imagem deletada") {
                           setImagesProfile((prev) => {
                             return prev.filter((im) => im.id !== e.id);
                           });
@@ -185,13 +174,10 @@ const Profile: React.FC = () => {
     if (result != null) {
       setShowModal(
         <Modal
-          onClose={() => {
-            setShowModal(<></>);
-          }}
+          onClose={() => setShowModal(<></>)}
           onConfirm={async () => {
             await salvar(result.resized);
 
-            console.log(result.previewImg);
             setShowModal(<></>);
           }}
         >
@@ -236,7 +222,7 @@ const Profile: React.FC = () => {
       setUser(userdata.user);
       setImagesProfile(userdata.imagemProfile);
     } catch (error) {
-      console.log(error);
+      throw { message: "erro ao salvar imagem", cause: error };
     }
   }
 };

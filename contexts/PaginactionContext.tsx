@@ -20,7 +20,7 @@ const PaginationContext = createContext<PaginationContextType | undefined>(
 export const PaginationProvider = ({ children }: { children: ReactNode }) => {
   const [paginacao, setPaginacao] = useState<Paginacao>({
     current: 0,
-    limite: 15,
+    limite: 10,
     totalItens: 0,
     maxPage: 0,
   });
