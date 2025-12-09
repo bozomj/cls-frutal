@@ -43,5 +43,5 @@ async function deltHandler(req: NextApiRequest, res: NextApiResponse) {
   await profileImages.del(body.id);
   await deleteFile(body.url);
 
-  return res.status(403).json({ message: "nao permitido" });
+  return res.status(201).json({ message: "Imagem deletada" });
 }

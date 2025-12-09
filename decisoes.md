@@ -6,9 +6,6 @@ X colocar uma parte da descricao dos postes em produtos
 
 X cadastrar com nome de usuario tudo minusculo
 
-- enviar post ao clicar whatsapp do vendedor. pra ele saber qual produto esta interessado
-  usando a api wa.me/ não é possivel, apenas suando a API paga(Cloud API da Meta)
-
 X separar os dados de <Produtos /> deixar apenas a funcao de renderizar os dados
 
 X separar a parte de renderizar os card de produtos usado em <Produtos />
@@ -39,17 +36,14 @@ x botao de adicionar foto na pagina de produto
 
 x criar cadastro para as fotos do carrosel (possiveis propagandas para o site)
 
-- redirecionar pagina ao cadastrar usuario
-
-- concertar erro ao deletar imagem e ela não existir no firebase
+x redirecionar pagina ao cadastrar usuario
 
 x carrossel criar botoes pra navegar entre os banner
 
 x consertar bug de uma imagem no carrossel;
 
 x precisa listar todas imagems do perfil e suas ações de deletar e alterar a principal
-
-- mudar imagem de perfil das ja cadastradas.
+x mudar imagem de perfil das ja cadastradas.
 
 usuarios [
 diego@hotmail.com

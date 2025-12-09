@@ -111,7 +111,7 @@ const Profile: React.FC = () => {
                   url: utils.getUrlImageR2(img?.url ?? ""),
                 };
                 return (
-                  <div key={newImg.url} className="relative">
+                  <div key={newImg.url} className="relative min-w-fit ">
                     <button
                       type="button"
                       className={`absolute z-10 btn ${
@@ -124,7 +124,7 @@ const Profile: React.FC = () => {
                     <ImageCardPreview
                       image={newImg}
                       className="max-w-full"
-                      onClick={async () => {
+                      onClick={async (e) => {
                         const result = await fetch(
                           "/api/v1/user/setImageProfile",
                           {
@@ -135,7 +135,13 @@ const Profile: React.FC = () => {
                             body: JSON.stringify(img),
                           }
                         );
-                        await result.json();
+                        const deletedImage = await result.json();
+
+                        if (deletedImage.message === "Imagem deletada") {
+                          setImagesProfile((prev) => {
+                            return prev.filter((im) => im.id !== e.id);
+                          });
+                        }
                       }}
                     />
                   </div>
@@ -182,8 +188,10 @@ const Profile: React.FC = () => {
           onClose={() => {
             setShowModal(<></>);
           }}
-          onConfirm={() => {
-            salvar(result.resized);
+          onConfirm={async () => {
+            await salvar(result.resized);
+
+            console.log(result.previewImg);
             setShowModal(<></>);
           }}
         >
@@ -224,7 +232,9 @@ const Profile: React.FC = () => {
         url: img.files[0],
       });
 
-      setUser(await userController.getUserLogin());
+      const userdata = await userController.getUserLogin();
+      setUser(userdata.user);
+      setImagesProfile(userdata.imagemProfile);
     } catch (error) {
       console.log(error);
     }

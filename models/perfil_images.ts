@@ -55,7 +55,7 @@ async function update(img: Record<string, unknown>) {
 
 async function getImagesProfile(id: string) {
   const query = `
-  SELECT * FROM perfil_images WHERE user_id = $1
+  SELECT * FROM perfil_images WHERE user_id = $1;
   `;
 
   const result = await database.query(query, [id]);
