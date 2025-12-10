@@ -18,18 +18,10 @@ import ProductCardDashboard from "@/components/ProductCardDasboard";
 import { usePagination } from "@/contexts/PaginactionContext";
 import utils from "@/utils";
 import Link from "next/link";
-
-type UserType = {
-  id?: string;
-  name?: string;
-  email?: string;
-  title?: string;
-  createdAt?: string;
-  url?: string;
-};
+import { UserType } from "@/models/user";
 
 function Dashboard({ ctx }: { ctx: string }) {
-  const [user, setUser] = useState<UserType>({});
+  const [user, setUser] = useState<UserType | null>(null);
   const [listPost, setPosts] = useState([]);
   const produtosRef = useRef<HTMLInputElement>(null);
   const { paginacao, setPaginacao } = usePagination();
@@ -96,30 +88,31 @@ function Dashboard({ ctx }: { ctx: string }) {
 
               {/* <div className="flex flex-col  gap-2"> */}
               <span
-                className="group-focus:w-[8rem] group-focus:h-[8rem] rounded-full  w-[3rem] h-[3rem]    bg-white transition-all duration-500
+                className="group-focus:w-[8rem] group-focus:h-[8rem] rounded-full  w-[3rem] h-[3rem]    bg-gray-400 transition-all duration-500
               md:w-[8rem] md:h-[8rem] overflow-hidden border-2 border-white
               "
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={utils.getUrlImageR2(user.url ?? "d")}
-                  alt=""
-                  className="w-full h-full object-cover"
-                />
+                {user?.url && (
+                  //eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={utils.getUrlImageR2(user.url ?? null)}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
+                )}
               </span>
 
               <ListTile
-                title={user.name ?? ""}
+                title={user?.name ?? ""}
                 icon={faUser}
                 url={`/profile`}
                 onClick={() => {}}
                 className="md:hover:bg-gray-400/50  duration-500 rounded md:hover:text-gray-950 "
               />
-              {/* </div> */}
 
               <li>
                 <ListTile
-                  title={user.email ?? ""}
+                  title={user?.email ?? ""}
                   icon={faEnvelope}
                   onClick={() => {}}
                   className="md:hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 "

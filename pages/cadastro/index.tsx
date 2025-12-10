@@ -4,6 +4,7 @@ import { useState } from "react";
 import router from "next/router";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import autenticator from "@/models/autenticator";
+import httpUser from "@/http/user";
 
 export default function Cadastro() {
   const [error, setError] = useState<Record<string, string>>({});
@@ -55,13 +56,7 @@ export default function Cadastro() {
       password: string,
       phone: string
     ) {
-      const user = await fetch("/api/v1/user", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, email, password, phone }),
-      });
+      const user = await httpUser.create({ name, email, password, phone });
 
       const data = await user.json();
 
