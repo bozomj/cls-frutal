@@ -1,5 +1,5 @@
 import Card from "@/components/Card";
-import userController from "@/controllers/userController";
+
 import Chart from "chart.js/auto";
 
 import { useEffect, useState } from "react";
@@ -8,6 +8,7 @@ import { GetServerSidePropsContext } from "next";
 import { UserType } from "@/models/user";
 import LayoutPage from "@/components/layout";
 import { getAdminProps } from "@/lib/hoc";
+import httpUser from "@/http/user";
 
 interface Props {
   user: UserType;
@@ -61,7 +62,7 @@ function AdminDashboard({ user }: Props) {
 
   function init() {
     getTotalPost().then(setTotalPost);
-    userController.getTotalUsers().then(setTotalUsers);
+    httpUser.getTotalUsers().then(setTotalUsers);
     const chart = initChart();
 
     return () => {
