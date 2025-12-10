@@ -6,11 +6,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ChangeEvent, useEffect, useState } from "react";
 import utils from "@/utils";
 import InputFile from "@/components/InputFile";
-import carrosselController from "@/controllers/carrosselController";
+
 import CarrosselScroll from "@/components/CarrosselScroll";
 import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
 import LayoutPage from "@/components/layout";
 import { getAdminProps } from "@/lib/hoc";
+import httpCarrosselImage from "@/http/carrossel_image";
 
 interface Props {
   user: UserType;
@@ -28,7 +29,7 @@ function CarrosselPageAdmin({ user }: Props) {
   >([]);
 
   useEffect(() => {
-    carrosselController.getImagesCarrossel().then(setImgCarrossel);
+    httpCarrosselImage.getImagesCarrossel().then(setImgCarrossel);
   }, []);
 
   return (
@@ -107,7 +108,7 @@ function CarrosselPageAdmin({ user }: Props) {
       console.log(err.message);
     }
 
-    const data = await carrosselController.getImagesCarrossel();
+    const data = await httpCarrosselImage.getImagesCarrossel();
 
     setImgCarrossel(data);
     setPreviewImagens([]);
@@ -150,9 +151,9 @@ function CarrosselPageAdmin({ user }: Props) {
   }
 
   async function removeCarrosselImage(e: { url: string }) {
-    await carrosselController.deleteImage(e);
+    await httpCarrosselImage.deleteImage(e);
 
-    const data = await carrosselController.getImagesCarrossel();
+    const data = await httpCarrosselImage.getImagesCarrossel();
     setImgCarrossel(data);
   }
 }
