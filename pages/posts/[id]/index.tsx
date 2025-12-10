@@ -14,7 +14,6 @@ import Alert from "@/components/Alert";
 import Footer from "@/layout/FooterLayout";
 import CircleAvatar from "@/components/CircleAvatar";
 
-import postController from "@/controllers/postController";
 import FullImageView from "@/components/FullImageView";
 import MiniGalleryImage from "@/components/MiniGalleryImage";
 
@@ -26,7 +25,8 @@ import CapitalizeText from "@/components/CapitalizeText";
 import LinearProgressIndicator from "@/components/LinearProgressIndicator";
 import Modal from "@/components/Modal";
 import { ImageType } from "@/models/imagem";
-import imageController from "@/controllers/imageController";
+import httpPost from "@/http/post";
+import httpImage from "@/http/image";
 
 type Props = {
   user_id?: string;
@@ -73,7 +73,7 @@ export default function DetailsPostPage({ user_id }: Props) {
 
   const getPost = useCallback(
     async (id: string) => {
-      const data = await postController.getPostId(id);
+      const data = await httpPost.getPostId(id);
 
       if (data.length < 1 || data.message) {
         router.replace("/");
@@ -433,14 +433,14 @@ export default function DetailsPostPage({ user_id }: Props) {
       };
     });
 
-    await imageController.uploadImages(imgs);
+    await httpImage.uploadImages(imgs);
 
     setPreviewImagens([]);
     router.replace(router.asPath);
   }
 
   async function deletarImagem(img: ImageType) {
-    await postController.delImage(img);
+    await httpPost.delImage(img);
 
     setImagens((p) => p.filter((imgs) => imgs.id !== img.id));
     setModal(<></>);
@@ -458,7 +458,7 @@ export default function DetailsPostPage({ user_id }: Props) {
   }
 
   async function postUpdate() {
-    const updated = await postController.update(item);
+    const updated = await httpPost.update(item);
 
     if (updated.id) {
       setAlert(
