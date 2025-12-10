@@ -5,7 +5,7 @@ import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import CircleAvatar from "@/components/CircleAvatar";
 
 import utils from "@/utils";
-import userController from "@/controllers/userController";
+
 import Produtos from "@/layout/produtos/Produtos";
 import { usePagination } from "@/contexts/PaginactionContext";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
@@ -17,10 +17,12 @@ import Modal from "@/components/Modal";
 import FooterLayout from "@/layout/FooterLayout";
 import Link from "next/link";
 import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
-import controllerPostgres from "@/storage/postgres/controllerPostgres";
 import ImageCardPreview from "@/components/ImageCardPreview";
 import { imageProfileType } from "@/models/perfil_images";
-import PerfilImageController from "@/controllers/perfilImageController";
+
+import httpUser from "@/http/user";
+import httpPost from "@/http/post";
+import httpPerfilImages from "@/http/perfil_images";
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<UserType>();
@@ -36,11 +38,12 @@ const Profile: React.FC = () => {
 
   const init = useCallback(async () => {
     try {
-      const userData = await userController.getUserLogin();
+      const userData = await httpUser.getUserLogin();
       setUser(userData.user);
       setImagesProfile(userData.imagemProfile);
 
-      const p = await userController.getPost(initial, limite);
+      const p = await httpPost.getPostCurrentUser(initial, limite);
+
       setPosts(p.posts);
       setPaginacao((prev) => ({ ...prev, totalItens: p.total.total }));
     } catch (error) {
@@ -124,7 +127,8 @@ const Profile: React.FC = () => {
                       image={newImg}
                       className="max-w-full"
                       onClick={async (e) => {
-                        const deleted = await PerfilImageController.del(img);
+                        const deleted =
+                          await httpPerfilImages.deleteImageProfile(img);
 
                         if (deleted.message === "Imagem deletada") {
                           setImagesProfile((prev) => {
@@ -195,7 +199,7 @@ const Profile: React.FC = () => {
   }
 
   async function updateProfileImage(newImg: imageProfileType, imgUrl: string) {
-    await userController.updateImageProfile(newImg);
+    await httpPerfilImages.updateImageProfile(newImg);
 
     setUser((user) => {
       return { ...user, url: imgUrl } as UserType;
@@ -213,12 +217,12 @@ const Profile: React.FC = () => {
     try {
       const img = await controllerCloudflare.save([image]);
 
-      await controllerPostgres.saveImageProfile({
+      await httpPerfilImages.saveImageProfile({
         user_id: user?.id,
         url: img.files[0],
       });
 
-      const userdata = await userController.getUserLogin();
+      const userdata = await httpUser.getUserLogin();
       setUser(userdata.user);
       setImagesProfile(userdata.imagemProfile);
     } catch (error) {

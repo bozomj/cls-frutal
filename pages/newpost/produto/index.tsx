@@ -11,11 +11,12 @@ import Alert from "@/components/Alert";
 import { useRouter } from "next/navigation";
 
 import Prompt from "@/components/Prompt";
-import categoriaController from "@/controllers/categoriaController";
+
 import { CategoriaType } from "@/models/categoria";
 import utils from "@/utils";
 import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
 import LinearProgressIndicator from "@/components/LinearProgressIndicator";
+import httpCategoria from "@/http/categoria";
 
 type postTypeSimple = {
   title: string;
@@ -131,10 +132,7 @@ export default function Produto() {
              ${postError.categoria_id ? "outline-2 outline-red-600" : ""}
               `}
               value={selected}
-              onChange={(e) => {
-                console.log(selected, e.target.value);
-                changeCategoria(e.target.value);
-              }}
+              onChange={(e) => changeCategoria(e.target.value)}
             >
               <option key={0} value={"0"} className="text-gray-400">
                 Selecione a categoria
@@ -164,7 +162,7 @@ export default function Produto() {
                     value={""}
                     confirm={async (e: string | null) => {
                       if (e) {
-                        const result = await categoriaController.save({
+                        const result = await httpCategoria.save({
                           descricao: e,
                         });
 
@@ -270,13 +268,13 @@ export default function Produto() {
   );
 
   async function getCategorias() {
-    const categorias = await (await fetch("/api/v1/categorias")).json();
+    const categorias = await httpCategoria.getAll();
 
-    const c = categorias.map((e: CategoriaType) => {
-      return { value: e.id, label: e.descricao };
-    });
-
-    setCategoriasValues([...c]);
+    setCategoriasValues(
+      categorias.map((e: CategoriaType) => {
+        return { value: e.id, label: e.descricao };
+      })
+    );
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>): void {

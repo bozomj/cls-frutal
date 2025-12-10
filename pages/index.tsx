@@ -3,8 +3,10 @@ import Header from "@/components/Header";
 
 import ProductCard from "@/components/ProductCard";
 import { usePagination } from "@/contexts/PaginactionContext";
-import carrosselController from "@/controllers/carrosselController";
-import postController from "@/controllers/postController";
+import httpCarrosselImage from "@/http/carrossel_image";
+
+import httpPost from "@/http/post";
+
 import Footer from "@/layout/FooterLayout";
 import Produtos from "@/layout/produtos/Produtos";
 
@@ -28,8 +30,8 @@ const Home: React.FC<HomeProps> = () => {
   const getPosts = useCallback(async () => {
     const initial = current * limite;
 
-    const total = await postController.getTotal(search);
-    const posts = await postController.getAll(search, initial, limite);
+    const total = await httpPost.getTotal(search);
+    const posts = await httpPost.getAll(search, initial, limite);
 
     setPaginacao((prev) => ({
       ...prev,
@@ -41,7 +43,7 @@ const Home: React.FC<HomeProps> = () => {
 
   useEffect(() => {
     getPosts();
-    carrosselController.getImagesCarrossel().then(setImgCarrossel);
+    httpCarrosselImage.getImagesCarrossel().then(setImgCarrossel);
   }, [getPosts]);
 
   useEffect(() => produtosRef.current?.focus());

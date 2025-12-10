@@ -8,8 +8,8 @@ async function uploadImages(imgs: unknown) {
   });
 }
 
-const imageController = {
+const httpImage = {
   uploadImages,
 };
 
-export default imageController;
+export default httpImage;

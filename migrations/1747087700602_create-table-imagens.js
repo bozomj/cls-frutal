@@ -10,6 +10,7 @@ exports.up = (pgm) => {
       notNull: true,
       unique: true,
     },
+
     post_id: {
       type: "uuid",
       notNull: true,

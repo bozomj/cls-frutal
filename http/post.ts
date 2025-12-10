@@ -1,3 +1,10 @@
+async function getPostCurrentUser(initial: number, limit: number) {
+  const posts = await fetch(
+    `/api/v1/posts/user?initial=${initial}&limit=${limit}`
+  );
+  return await posts.json();
+}
+
 async function getTotal(search: string | string[]) {
   const total = await (
     await fetch("api/v1/poststotal?q=" + (search || ""))
@@ -47,12 +54,13 @@ async function delImage(img: unknown) {
   });
 }
 
-const postController = {
+const httpPost = {
+  getPostCurrentUser,
   getTotal,
-  getAll,
   getPostId,
+  getAll,
   update,
   delImage,
 };
 
-export default postController;
+export default httpPost;

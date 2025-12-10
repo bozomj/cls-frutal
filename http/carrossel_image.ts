@@ -17,9 +17,9 @@ async function deleteImage(img: { url: string }) {
   return result;
 }
 
-const carrosselController = {
+const httpCarrosselImage = {
   getImagesCarrossel,
   deleteImage,
 };
 
-export default carrosselController;
+export default httpCarrosselImage;
