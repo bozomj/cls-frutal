@@ -6,6 +6,7 @@ import { ReactNode, useState } from "react";
 import Alert from "./Alert";
 import { faShareFromSquare } from "@fortawesome/free-solid-svg-icons";
 import VerticalDivider from "./VerticalDivider";
+import Image from "next/image";
 
 interface ProductCardProps {
   item: PostType;
@@ -31,22 +32,20 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </span>
         <a href={`/posts/${item.id}`} target="_blank">
           <div className="flex flex-1 justify-center bg-gray-400 overflow-hidden rounded-2xl h-[12rem] relative">
-            <span
-              className="blur absolute h-full w-full block "
-              style={{
-                backgroundImage: `url(${utils.getUrlImageR2(
-                  item.imageurl ?? ""
-                )}) `,
-                backgroundSize: "100% 100%",
-                opacity: "30%",
-              }}
-            ></span>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              className="object-contain absolute h-full"
+            <Image
+              className="absolute h-full w-full object-fill blur-xl opacity-70"
               src={utils.getUrlImageR2(item.imageurl ?? "")}
-              alt=""
+              alt={""}
+              fill
             />
+            {item.imageurl && (
+              <Image
+                className="absolute object-contain"
+                src={utils.getUrlImageR2(item.imageurl ?? "")}
+                alt={""}
+                fill
+              />
+            )}
           </div>
 
           <div className="flex-1 flex text-gray-900 gap-2 w-[100%]  overflow-hidden flex-col py-2">
@@ -66,7 +65,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             className={
               "text-green-700 text-2xl hover:text-green-900 hover:text-3xl"
             }
-            href={`https://web.whatsapp.com/send/?phone=55${item.phone}&text&type=phone_number&app_absent=0`}
+            href={`https://api.whatsapp.com/send/?phone=55${item.phone}&text=gostei desse post&type=phone_number&app_absent=0`}
             target="_blank"
           >
             <FontAwesomeIcon icon={faWhatsapp} />

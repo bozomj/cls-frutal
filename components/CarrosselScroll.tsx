@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useRef, useState } from "react";
 import PointIndicator from "./PointIndicator";
 import utils from "@/utils";
+import Image from "next/image";
 
 interface CarrosselScrollProps {
   items: { url: string }[];
@@ -73,23 +74,21 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({
       >
         {items.map((e: { url: string }, key: number) => {
           return (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              className="min-w-full"
-              key={key}
-              src={utils.getUrlImageR2(e.url)}
-              alt=""
-            />
+            <div className="min-w-full relative" key={key}>
+              <Image src={utils.getUrlImageR2(e.url)} alt="" fill />
+            </div>
           );
         })}
         {/* repete a primeira imagem no final para dar ilusão de rolagem infinita */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          className="min-w-full"
-          key={totalItems}
-          src={utils.getUrlImageR2(items[0]?.url)}
-          alt=""
-        />
+
+        <div className="min-w-full relative">
+          <Image
+            key={totalItems}
+            src={utils.getUrlImageR2(items[0]?.url)}
+            alt=""
+            fill
+          />
+        </div>
       </div>
       {activeAction && (
         <ArrowButton

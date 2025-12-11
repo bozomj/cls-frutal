@@ -5,6 +5,7 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import Modal from "./Modal";
 import utils from "@/utils";
 import { faEdit } from "@fortawesome/free-regular-svg-icons";
+import Image from "next/image";
 
 interface ProductCardDashboardProps {
   item: PostType;
@@ -48,12 +49,12 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
       </div>
 
       <div className="flex flex-col w-full  overflow-hidden h-full gap-2 ">
-        <div className="bg-gray-200 rounded-2xl flex justify-center">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            className="bg-gray-200 max-h-[10rem] w-fit self-center"
+        <div className="bg-gray-200 rounded-2xl h-[10rem] relative">
+          <Image
             src={utils.getUrlImageR2(item.imageurl ?? "")}
-            alt={""}
+            fill
+            alt=""
+            className="object-contain"
           />
         </div>
 

@@ -1,4 +1,5 @@
 import utils from "@/utils";
+import Image from "next/image";
 
 interface MiniGalleryImageProps {
   post_imagens: unknown[];
@@ -20,17 +21,14 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
     >
       <div
         id="imagem_principal"
-        className="w-full cursor-pointer order-2 self-center h-full items-center flex justify-center bg-gray-100 rounded-r-2xl p-1"
+        className="w-full cursor-pointer order-2 self-center h-full items-center flex justify-center bg-gray-100 rounded-r-2xl p-1 relative"
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          className=" max-h-full rounded-md hover:outline-3 hover:outline-cyan-600"
-          tabIndex={1}
-          src={utils.getUrlImageR2(imgPrincipal)}
+        <Image
           alt=""
-          onClick={() => {
-            onClick();
-          }}
+          src={utils.getUrlImageR2(imgPrincipal)}
+          fill
+          className="object-contain max-h-full rounded-md hover:outline-3 hover:outline-cyan-600"
+          onClick={onClick}
         />
       </div>
 
@@ -51,9 +49,9 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
 
             return (
               <div
-                className={`flex flex-1 justify-center w-full bg-gray-100  shrink h-1/3 ${rounded} overflow-hidden  max-h-1/3 relative
+                className={`flex-1 justify-center w-full bg-gray-100  shrink h-1/3 ${rounded} overflow-hidden  max-h-1/3 
                       border-3 border-gray-100 p-1
-                      hover:border-cyan-600 
+                      hover:border-cyan-600 relative
                       `}
                 key={img.id}
                 onClick={() => {
@@ -61,10 +59,11 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
                   selectImg(key);
                 }}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
-                <img
-                  className={`cursor-pointer object-contain rounded-md`}
+                <Image
+                  className={`cursor-pointer object-contain  rounded-xl overflow-hidden `}
+                  alt=""
                   src={utils.getUrlImageR2(img.url)}
+                  fill
                 />
               </div>
             );

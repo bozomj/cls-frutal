@@ -19,6 +19,7 @@ import { usePagination } from "@/contexts/PaginactionContext";
 import utils from "@/utils";
 import Link from "next/link";
 import { UserType } from "@/models/user";
+import Image from "next/image";
 
 function Dashboard({ ctx }: { ctx: string }) {
   const [user, setUser] = useState<UserType | null>(null);
@@ -86,21 +87,20 @@ function Dashboard({ ctx }: { ctx: string }) {
                 <FontAwesomeIcon icon={faClose} />
               </span>
 
-              {/* <div className="flex flex-col  gap-2"> */}
-              <span
+              <div
                 className="group-focus:w-[8rem] group-focus:h-[8rem] rounded-full  w-[3rem] h-[3rem]    bg-gray-400 transition-all duration-500
-              md:w-[8rem] md:h-[8rem] overflow-hidden border-2 border-white
+              md:w-[8rem] md:h-[8rem] overflow-hidden border-2 border-white relative
               "
               >
                 {user?.url && (
-                  //eslint-disable-next-line @next/next/no-img-element
-                  <img
+                  <Image
                     src={utils.getUrlImageR2(user.url ?? null)}
                     alt=""
+                    fill
                     className="w-full h-full object-cover"
                   />
                 )}
-              </span>
+              </div>
 
               <ListTile
                 title={user?.name ?? ""}

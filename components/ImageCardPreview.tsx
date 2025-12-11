@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Card from "./Card";
 import { faRemove } from "@fortawesome/free-solid-svg-icons";
+import Image from "next/image";
 
 type ImageFile = {
   id: number;
@@ -25,8 +26,7 @@ function ImageCardPreview({
     >
       <RemoveButton />
       <Card className="border-3 h-full border-cyan-600 bg-cyan-800 peer-hover:bg-red-500/40 peer-hover:border-red-500">
-        {/* eslint-disable-next-line @next/next/no-img-element  */}
-        <img
+        <Image
           className="rounded-md cursor-pointer h-full object-cover"
           src={image.url}
           alt=""
