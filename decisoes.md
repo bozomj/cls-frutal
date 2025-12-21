@@ -45,6 +45,8 @@ x consertar bug de uma imagem no carrossel;
 x precisa listar todas imagems do perfil e suas ações de deletar e alterar a principal
 x mudar imagem de perfil das ja cadastradas.
 
+x mudar ImageCropper para conter os botoes de confirmar e cancelar, confirmar retorna a imagem cortada;
+
 usuarios [
 diego@hotmail.com
 matheus@hotmail.com | senha 12345

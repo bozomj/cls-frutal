@@ -23,13 +23,15 @@ import { imageProfileType } from "@/models/perfil_images";
 import httpUser from "@/http/user";
 import httpPost from "@/http/post";
 import httpPerfilImages from "@/http/perfil_images";
-import ImageCropper from "@/components/ImageCropper";
+import ImageCropper, { CroppedAreaPixelsType } from "@/components/ImageCropper";
+import { useBackdrop } from "@/ui/backdrop/useBackdrop";
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<UserType>();
   const [posts, setPosts] = useState([]);
   const { paginacao, setPaginacao } = usePagination();
-  const [showmodal, setShowModal] = useState(<></>);
+  const { closeContent, openContent } = useBackdrop();
+
   const [imagesProfile, setImagesProfile] = useState<imageProfileType[]>([]);
 
   const produtosRef = useRef<HTMLInputElement>(null);
@@ -85,7 +87,7 @@ const Profile: React.FC = () => {
                   cursor-pointer`}
                 >
                   <FontAwesomeIcon icon={faCamera} />
-                  {showmodal}
+
                   <input type="file" className="hidden" onChange={fileSelect} />
                 </label>
               </div>
@@ -175,35 +177,15 @@ const Profile: React.FC = () => {
 
   async function fileSelect(e: ChangeEvent<HTMLInputElement>) {
     const result = await selecionarImagens(e);
-    let crop: unknown | null = null;
+    let crop: CroppedAreaPixelsType | null = null;
     if (result != null) {
-      setShowModal(
-        <Modal
-          onClose={() => setShowModal(<></>)}
-          onConfirm={async () => {
-            if (crop != null) {
-              const blob = await utils.imagem.getCroppedImg(
-                result.previewImg,
-                crop
-              );
-
-              const file = new File([blob], "avatar.jpg", {
-                type: "image/jpeg",
-              });
-
-              await salvar(file);
-            }
-
-            setShowModal(<></>);
+      openContent(
+        <ImageCropper
+          image={result.previewImg}
+          onConfirm={async (file) => {
+            await salvar(file);
           }}
-        >
-          <ImageCropper
-            image={result.previewImg}
-            onFinish={async (e) => {
-              crop = e;
-            }}
-          />
-        </Modal>
+        />
       );
     }
   }

@@ -1,3 +1,4 @@
+import { CroppedAreaPixelsType } from "@/components/ImageCropper";
 import autenticator from "@/models/autenticator";
 import { GetServerSidePropsContext } from "next";
 
@@ -24,7 +25,10 @@ function loadImage(url: string | undefined): Promise<string | undefined> {
   });
 }
 
-export async function getCroppedImg(imageSrc: string, crop: any) {
+export async function getCroppedImg(
+  imageSrc: string,
+  crop: CroppedAreaPixelsType
+) {
   const image = new Image();
   image.src = imageSrc;
   await new Promise((resolve) => (image.onload = resolve));
@@ -47,9 +51,12 @@ export async function getCroppedImg(imageSrc: string, crop: any) {
     crop.height
   );
 
-  return new Promise<Blob>((resolve) => {
+  const blobImage = await new Promise<Blob>((resolve) => {
     canvas.toBlob((blob) => resolve(blob!), "image/jpeg", 0.9);
   });
+
+  const file = new File([blobImage], "blobFile.jpeg", { type: "image/jpeg" });
+  return file;
 }
 
 function formatarData(data: string) {

@@ -297,40 +297,18 @@ export default function Produto() {
             height={150}
             loading="eager"
             onClick={() => {
-              let crop = { width: 0, height: 0, x: 0, y: 0 };
               openContent(
-                <Modal
-                  onConfirm={async () => {
-                    const blob = await utils.imagem.getCroppedImg(
-                      image.url,
-                      crop
-                    );
-
-                    const file = new File([blob], image.file.name, {
-                      type: image.file.type,
-                    });
-
-                    const newImg = { ...image, file };
-
-                    newImg.url = URL.createObjectURL(file);
+                <ImageCropper
+                  image={image.url}
+                  onConfirm={(file) => {
+                    const url = URL.createObjectURL(file);
+                    const newImg = { ...image, file, url };
 
                     setImagens((imgs) =>
                       imgs.map((img) => (img.id === image.id ? newImg : img))
                     );
-
-                    closeContent();
                   }}
-                  onClose={function (): void {
-                    closeContent();
-                  }}
-                >
-                  <ImageCropper
-                    image={image.url}
-                    onFinish={async (e: any) => {
-                      crop = e;
-                    }}
-                  />
-                </Modal>
+                />
               );
             }}
           />
