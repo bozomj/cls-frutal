@@ -23,6 +23,7 @@ import { imageProfileType } from "@/models/perfil_images";
 import httpUser from "@/http/user";
 import httpPost from "@/http/post";
 import httpPerfilImages from "@/http/perfil_images";
+import ImageCropper from "@/components/ImageCropper";
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<UserType>();
@@ -174,25 +175,34 @@ const Profile: React.FC = () => {
 
   async function fileSelect(e: ChangeEvent<HTMLInputElement>) {
     const result = await selecionarImagens(e);
-
+    let crop: unknown | null = null;
     if (result != null) {
       setShowModal(
         <Modal
           onClose={() => setShowModal(<></>)}
           onConfirm={async () => {
-            await salvar(result.resized);
+            if (crop != null) {
+              const blob = await utils.imagem.getCroppedImg(
+                result.previewImg,
+                crop
+              );
+
+              const file = new File([blob], "avatar.jpg", {
+                type: "image/jpeg",
+              });
+
+              await salvar(file);
+            }
 
             setShowModal(<></>);
           }}
         >
-          <div className="flex rounded-2xl flex-1 justify-center items-center w-full bg-gray-300 p-2">
-            {/*  eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={result.previewImg}
-              alt="preview"
-              className="rounded-2xl"
-            />
-          </div>
+          <ImageCropper
+            image={result.previewImg}
+            onFinish={async (e) => {
+              crop = e;
+            }}
+          />
         </Modal>
       );
     }

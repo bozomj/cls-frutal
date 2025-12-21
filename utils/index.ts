@@ -24,6 +24,35 @@ function loadImage(url: string | undefined): Promise<string | undefined> {
   });
 }
 
+export async function getCroppedImg(imageSrc: string, crop: any) {
+  const image = new Image();
+  image.src = imageSrc;
+  await new Promise((resolve) => (image.onload = resolve));
+
+  const canvas = document.createElement("canvas");
+  canvas.width = crop.width;
+  canvas.height = crop.height;
+
+  const ctx = canvas.getContext("2d")!;
+
+  ctx.drawImage(
+    image,
+    crop.x,
+    crop.y,
+    crop.width,
+    crop.height,
+    0,
+    0,
+    crop.width,
+    crop.height
+  );
+
+  return new Promise<Blob>((resolve) => {
+    canvas.toBlob((blob) => resolve(blob!), "image/jpeg", 0.9);
+  });
+}
+
+
 function formatarData(data: string) {
   const diasSemana = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
   const d = new Date(data);
@@ -170,6 +199,7 @@ const utils = {
 
   imagem: {
     resizeImageFile,
+    getCroppedImg
   },
 };
 
