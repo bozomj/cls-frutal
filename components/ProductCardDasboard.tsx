@@ -54,6 +54,7 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
             src={utils.getUrlImageR2(item.imageurl ?? "")}
             fill
             alt=""
+            loading="eager"
             className="object-contain"
           />
         </div>

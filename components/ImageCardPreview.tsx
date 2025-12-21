@@ -29,11 +29,11 @@ function ImageCardPreview({
       <RemoveButton />
       <Card className="border-3 h-full border-cyan-600 bg-cyan-800 peer-hover:bg-red-500/40 peer-hover:border-red-500">
         <Image
-          className="rounded-md cursor-pointer h-full object-cover"
+          className="rounded-md cursor-pointer h-full w-full  object-cover"
           src={image.url}
           alt=""
-          width={150}
-          height={150}
+          width={500}
+          height={500}
           onClick={onImageClick}
         />
       </Card>

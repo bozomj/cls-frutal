@@ -31,7 +31,7 @@ const CircleAvatar: React.FC<CircleAvatarProps> = ({
       }}
     >
       {imagem ? (
-        <Image src={imagem ?? ""} fill alt="" />
+        <Image src={imagem ?? ""} fill alt="" sizes="150" loading="eager" />
       ) : (
         <FontAwesomeIcon
           className="text-white"
