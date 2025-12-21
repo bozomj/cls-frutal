@@ -44,6 +44,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 src={utils.getUrlImageR2(item.imageurl ?? "")}
                 alt={""}
                 fill
+                loading="eager"
               />
             )}
           </div>

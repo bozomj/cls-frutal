@@ -4,6 +4,7 @@ import Head from "next/head";
 
 import type { AppProps } from "next/app";
 import { PaginationProvider } from "@/contexts/PaginactionContext";
+import BackdropProvider from "@/ui/backdrop/BackdropProvider";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -16,7 +17,9 @@ export default function App({ Component, pageProps }: AppProps) {
       </Head>
 
       <PaginationProvider>
-        <Component {...pageProps} />
+        <BackdropProvider>
+          <Component {...pageProps} />
+        </BackdropProvider>
       </PaginationProvider>
     </>
   );

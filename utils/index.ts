@@ -52,7 +52,6 @@ export async function getCroppedImg(imageSrc: string, crop: any) {
   });
 }
 
-
 function formatarData(data: string) {
   const diasSemana = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
   const d = new Date(data);
@@ -179,7 +178,7 @@ function resizeImageFile(
 }
 
 function getUrlImageR2(url: string | null) {
-  if (url == null) return "";
+  if (url == null) return "/img/images.png";
   return `https://pub-cf2ec8db2f184d2ab44495473e1c1c12.r2.dev/${url}`;
 }
 
@@ -199,7 +198,7 @@ const utils = {
 
   imagem: {
     resizeImageFile,
-    getCroppedImg
+    getCroppedImg,
   },
 };
 

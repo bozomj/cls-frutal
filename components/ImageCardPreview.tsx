@@ -13,12 +13,14 @@ interface ImageCardPreviewProps {
   image: ImageFile;
   onClick: (image: ImageFile) => void;
   className?: string;
+  onImageClick?: () => void;
 }
 
 function ImageCardPreview({
   image,
   onClick,
   className,
+  onImageClick,
 }: ImageCardPreviewProps) {
   return (
     <div
@@ -32,6 +34,7 @@ function ImageCardPreview({
           alt=""
           width={150}
           height={150}
+          onClick={onImageClick}
         />
       </Card>
     </div>

@@ -17,6 +17,12 @@ import utils from "@/utils";
 import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
 import LinearProgressIndicator from "@/components/LinearProgressIndicator";
 import httpCategoria from "@/http/categoria";
+import Image from "next/image";
+import { backdrop } from "@/ui/backdrop";
+import Modal from "@/components/Modal";
+import Cropper, { Point } from "react-easy-crop";
+import ImageCropper from "@/components/ImageCropper";
+import { height, width } from "@fortawesome/free-solid-svg-icons/faBars";
 
 type postTypeSimple = {
   title: string;
@@ -47,9 +53,9 @@ let uniqueId = 0;
 function getUniqueId() {
   return uniqueId++;
 }
-
 export default function Produto() {
   const router = useRouter();
+  const { openContent, closeContent } = backdrop.useBackdrop();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -267,6 +273,71 @@ export default function Produto() {
     </>
   );
 
+  function ImagePreview({
+    image,
+    onClick,
+  }: {
+    image: ImageFile;
+    onClick: (image: ImageFile) => void;
+  }) {
+    return (
+      <div className="relative w-fit">
+        <div
+          className="absolute cursor-pointer bg-red-900 hover:bg-red-500 rounded-full h-8 w-8 text-center p-1 -right-2 -top-2 peer"
+          onClick={() => onClick(image)}
+        >
+          X
+        </div>
+        <Card className="border-3 border-cyan-600 bg-cyan-800 peer-hover:bg-red-500/40 peer-hover:border-red-500">
+          <Image
+            className="rounded-md cursor-pointer"
+            src={image.url}
+            alt=""
+            width={150}
+            height={150}
+            loading="eager"
+            onClick={() => {
+              let crop = { width: 0, height: 0, x: 0, y: 0 };
+              openContent(
+                <Modal
+                  onConfirm={async () => {
+                    const blob = await utils.imagem.getCroppedImg(
+                      image.url,
+                      crop
+                    );
+
+                    const file = new File([blob], image.file.name, {
+                      type: image.file.type,
+                    });
+
+                    const newImg = { ...image, file };
+
+                    newImg.url = URL.createObjectURL(file);
+
+                    setImagens((imgs) =>
+                      imgs.map((img) => (img.id === image.id ? newImg : img))
+                    );
+
+                    closeContent();
+                  }}
+                  onClose={function (): void {
+                    closeContent();
+                  }}
+                >
+                  <ImageCropper
+                    image={image.url}
+                    onFinish={async (e: any) => {
+                      crop = e;
+                    }}
+                  />
+                </Modal>
+              );
+            }}
+          />
+        </Card>
+      </div>
+    );
+  }
   async function getCategorias() {
     const categorias = await httpCategoria.getAll();
 
@@ -448,35 +519,6 @@ export default function Produto() {
       return prev.filter((img) => img.id !== image.id);
     });
   }
-}
-
-function ImagePreview({
-  image,
-  onClick,
-}: {
-  image: ImageFile;
-  onClick: (image: ImageFile) => void;
-}) {
-  return (
-    <div className="relative w-fit">
-      <div
-        className="absolute cursor-pointer bg-red-900 hover:bg-red-500 rounded-full h-8 w-8 text-center p-1 -right-2 -top-2 peer"
-        onClick={() => onClick(image)}
-      >
-        X
-      </div>
-      <Card className="border-3 border-cyan-600 bg-cyan-800 peer-hover:bg-red-500/40 peer-hover:border-red-500">
-        {/*  eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          className="rounded-md cursor-pointer"
-          src={image.url}
-          alt=""
-          width={150}
-          height={150}
-        />
-      </Card>
-    </div>
-  );
 }
 
 export const getServerSideProps: GetServerSideProps = async (

@@ -11,7 +11,7 @@ function Produtos<T>({ postagens = [], Card, className }: ProdutosProps<T>) {
   return (
     <>
       <div
-        className={`shadow-sm shadow-gray-400 flex flex-col items-center   max-w-full rounded-2xl bg-white ${className}`}
+        className={`shadow-sm shadow-gray-400 flex flex-col items-center  flex-1 max-w-full rounded-2xl bg-white ${className}`}
       >
         <a id="pst" href=""></a>
         <section className="flex flex-col gap-4 p-4 w-full h-fit">
