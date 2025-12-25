@@ -185,7 +185,7 @@ function resizeImageFile(
 }
 
 function getUrlImageR2(url: string | null) {
-  if (url == null) return "/img/images.png";
+  if (url == null || url == undefined) return "/img/images.png";
   return `https://pub-cf2ec8db2f184d2ab44495473e1c1c12.r2.dev/${url}`;
 }
 

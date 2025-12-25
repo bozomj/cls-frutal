@@ -131,7 +131,7 @@ export default function DetailsPostPage({ user_id }: Props) {
               onClose={closeFullImages}
             />
 
-            <div className="bg-gray-300 rounded-2xl flex-auto p-2">
+            <div className="bg-gray-200 rounded-2xl flex-auto p-2">
               <MiniGalleryImage
                 post_imagens={post_imagens}
                 imgPrincipal={imgPrincial as string}
@@ -145,11 +145,11 @@ export default function DetailsPostPage({ user_id }: Props) {
               <div id="dados-postagem">
                 <div className="flex  justify-between items-start flex-col-reverse">
                   <h1 className="text-xl font-bold w-full">
-                    <label className="flex  gap-2 items-center">
+                    <label className="flex  items-center">
                       {isPostUserId && (
                         <FontAwesomeIcon
                           icon={faEdit}
-                          className="text-xl pr-2  text-green-800 cursor-pointer peer"
+                          className="text-xl pr-2 text-green-800 cursor-pointer peer"
                           onClick={() => {
                             titleRef.current!.focus();
                           }}
@@ -157,7 +157,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                       )}
                       <span
                         ref={titleRef}
-                        className="focus:outline-2 focus:outline-gray-400 p-2 "
+                        className="focus:outline-2 focus:outline-gray-400 pt-2 text-gray-800 "
                         {...(isPostUserId && {
                           contentEditable: true,
                           suppressContentEditableWarning: true,
@@ -175,75 +175,47 @@ export default function DetailsPostPage({ user_id }: Props) {
                     </label>
                   </h1>
                 </div>
-                <span className="font-bold text-green-700  ">
-                  {isPostUserId && (
-                    <FontAwesomeIcon
-                      className="text-xl pr-4 text-green-800 cursor-pointer"
-                      onClick={() => valorRef.current!.focus()}
-                      icon={faEdit}
-                    />
-                  )}
-                  <span className="pl-2">{"R$:"}</span>
-                  <span
-                    ref={valorRef}
-                    className="focus:outline-2  focus:outline-gray-400 p-2"
-                    {...(isPostUserId
-                      ? {
-                          contentEditable: true,
-                          suppressContentEditableWarning: true,
-                          onInput: (v) => {
-                            const e = utils.extractNumberInString(
-                              v.currentTarget.innerText
-                            );
-                            v.currentTarget.innerHTML = utils
-                              .stringForDecimalNumber(e)
-                              .toFixed(2);
 
-                            moveCursorToEnd(v.currentTarget);
-                          },
-                          onBlur: (v) => {
-                            const e = v.currentTarget.innerText;
-                            setButtonDisabled(false);
-                            setItem((p) => ({ ...p, valor: e }));
-                          },
-                        }
-                      : {})}
-                  >
-                    {item.valor}
-                  </span>
-                </span>
-                <div className="border-t-1 border-t-gray-400 py-2 my-4">
-                  <h2 className="">Sobre este item</h2>
-                  <div className="flex items-center">
+                <div className=" flex justify-between items-baseline ">
+                  <div className="font-bold text-green-700">
                     {isPostUserId && (
                       <FontAwesomeIcon
-                        icon={faEdit}
-                        onClick={() => descricaoRef.current!.focus()}
                         className="text-xl pr-4 text-green-800 cursor-pointer"
+                        onClick={() => valorRef.current!.focus()}
+                        icon={faEdit}
                       />
                     )}
-                    <p
-                      ref={descricaoRef}
-                      className="focus:outline-2 focus:outline-gray-400 p-2"
+                    <span className="text-lg">{"R$:"}</span>
+                    <span
+                      ref={valorRef}
+                      className="focus:outline-2 text-xl focus:outline-gray-400 p-2"
                       {...(isPostUserId
                         ? {
                             contentEditable: true,
                             suppressContentEditableWarning: true,
-                            onInput: () => {
-                              setButtonDisabled(false);
+                            onInput: (v) => {
+                              const e = utils.extractNumberInString(
+                                v.currentTarget.innerText
+                              );
+                              v.currentTarget.innerHTML = utils
+                                .stringForDecimalNumber(e)
+                                .toFixed(2);
+
+                              moveCursorToEnd(v.currentTarget);
                             },
-                            onBlur: (e) => {
-                              const value = e.currentTarget.innerText;
-                              setItem((p) => ({ ...p, description: value }));
+                            onBlur: (v) => {
+                              const e = v.currentTarget.innerText;
+                              setButtonDisabled(false);
+                              setItem((p) => ({ ...p, valor: e }));
                             },
                           }
                         : {})}
                     >
-                      {item.description}
-                    </p>
+                      {item.valor}
+                    </span>
                   </div>
-                  <VerticalDivider height={1} />
-                  <div className="flex items-center justify-end text-xl gap-2">
+
+                  <div className="flex items-center justify-end text-2xl gap-2">
                     <a
                       target="_blank"
                       className="text-green-700 text-2xl hover:text-green-900 hover:text-3xl"
@@ -260,6 +232,39 @@ export default function DetailsPostPage({ user_id }: Props) {
                       <FontAwesomeIcon icon={faShareFromSquare} />
                     </button>
                   </div>
+                </div>
+
+                <div className="">
+                  <div className="flex  gap-2">
+                    {isPostUserId && (
+                      <FontAwesomeIcon
+                        icon={faEdit}
+                        onClick={() => descricaoRef.current!.focus()}
+                        className="text-xl text-green-800 cursor-pointer"
+                      />
+                    )}
+                    <h2 className="">Sobre este item</h2>
+                  </div>
+
+                  <p
+                    ref={descricaoRef}
+                    className="focus:outline-2 focus:outline-gray-400 "
+                    {...(isPostUserId
+                      ? {
+                          contentEditable: true,
+                          suppressContentEditableWarning: true,
+                          onInput: () => {
+                            setButtonDisabled(false);
+                          },
+                          onBlur: (e) => {
+                            const value = e.currentTarget.innerText;
+                            setItem((p) => ({ ...p, description: value }));
+                          },
+                        }
+                      : {})}
+                  >
+                    {item.description}
+                  </p>
 
                   {isPostUserId && (
                     <div className="border-t-1 border-gray-400 flex justify-end py-4 mt-4">

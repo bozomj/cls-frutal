@@ -75,7 +75,7 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({
         {items.map((e: { url: string }, key: number) => {
           return (
             <div className="min-w-full relative" key={key}>
-              <Image src={utils.getUrlImageR2(e.url)} alt="" fill />
+              <Image src={utils.getUrlImageR2(e.url)} alt="" fill sizes="100" />
             </div>
           );
         })}

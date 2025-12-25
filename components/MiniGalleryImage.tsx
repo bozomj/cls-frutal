@@ -17,7 +17,7 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
   return (
     <section
       id="lista_imagems"
-      className="flex gap-1 border-3 border-gray-400 p-2 rounded-2xl w-full items-cente h-[25rem]"
+      className="flex gap-1 border-3 border-gray-400 p-2 rounded-2xl w-full items-cente h-80"
     >
       <div
         id="imagem_principal"
