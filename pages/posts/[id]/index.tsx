@@ -53,9 +53,6 @@ export default function DetailsPostPage({ user_id }: Props) {
   const router = useRouter();
   const post_id = router.query.id as string;
 
-  const [modal, setModal] = useState(<></>);
-  const [alert, setAlert] = useState(<></>);
-
   const [post_imagens, setImagens] = useState<ImageType[]>([]);
   const [imgPrincial, setImgPrincipal] = useState<string>();
   const [imagemIndex, setImagemIndex] = useState<number>(0);
@@ -70,7 +67,7 @@ export default function DetailsPostPage({ user_id }: Props) {
   const [previewImagens, setPreviewImagens] = useState<ImageType[]>([]);
   const [imgProfileUrl, setImageProfile] = useState<string | null>(null);
 
-  const titleRef = useRef<HTMLElement | null>(null);
+  const titleRef = useRef<HTMLHeadingElement | null>(null);
   const valorRef = useRef<HTMLElement | null>(null);
   const descricaoRef = useRef<HTMLParagraphElement | null>(null);
   const usebackdrop = useBackdrop();
@@ -143,288 +140,273 @@ export default function DetailsPostPage({ user_id }: Props) {
                 }}
               />
 
-              <div id="dados-postagem">
-                <div className="flex  justify-between items-start flex-col-reverse">
-                  <h1 className="text-xl font-bold w-full">
-                    <label className="flex  items-center">
-                      {isPostUserId && (
-                        <FontAwesomeIcon
-                          icon={faEdit}
-                          className="text-xl pr-2 text-green-800 cursor-pointer peer"
-                          onClick={() => {
-                            titleRef.current!.focus();
-                          }}
-                        />
-                      )}
-                      <span
-                        ref={titleRef}
-                        className="focus:outline-2 focus:outline-gray-400 pt-2 text-gray-800 "
-                        {...(isPostUserId && {
-                          contentEditable: true,
-                          suppressContentEditableWarning: true,
-                          onInput: () => {
-                            setButtonDisabled(false);
-                          },
-                          onBlur: (e) => {
-                            const value = e.currentTarget.innerText;
-                            setItem((p) => ({ ...p, title: value }));
-                          },
-                        })}
-                      >
-                        {item.title}
-                      </span>
-                    </label>
-                  </h1>
-                </div>
+              <div className="flex  gap-2 items-center  font-bold w-full mt-2">
+                {isPostUserId && (
+                  <FontAwesomeIcon
+                    icon={faEdit}
+                    className="text-xl text-green-800 cursor-pointer peer"
+                    onClick={() => titleRef.current!.focus()}
+                  />
+                )}
+                <h1
+                  ref={titleRef}
+                  className="focus:outline-2 text-xl  focus:outline-gray-400 text-gray-800 "
+                  {...(isPostUserId && {
+                    contentEditable: true,
+                    suppressContentEditableWarning: true,
+                    onInput: () => {
+                      setButtonDisabled(false);
+                    },
+                    onBlur: (e) => {
+                      const value = e.currentTarget.innerText;
+                      setItem((p) => ({ ...p, title: value }));
+                    },
+                  })}
+                >
+                  {item.title}
+                </h1>
+              </div>
 
-                <div className=" flex justify-between items-baseline ">
-                  <div className="font-bold text-green-700">
-                    {isPostUserId && (
-                      <FontAwesomeIcon
-                        className="text-xl pr-4 text-green-800 cursor-pointer"
-                        onClick={() => valorRef.current!.focus()}
-                        icon={faEdit}
-                      />
-                    )}
-                    <span className="text-lg">{"R$:"}</span>
-                    <span
-                      ref={valorRef}
-                      className="focus:outline-2 text-xl focus:outline-gray-400 p-2"
-                      {...(isPostUserId
-                        ? {
-                            contentEditable: true,
-                            suppressContentEditableWarning: true,
-                            onInput: (v) => {
-                              const e = utils.extractNumberInString(
-                                v.currentTarget.innerText
-                              );
-                              v.currentTarget.innerHTML = utils
-                                .stringForDecimalNumber(e)
-                                .toFixed(2);
-
-                              moveCursorToEnd(v.currentTarget);
-                            },
-                            onBlur: (v) => {
-                              const e = v.currentTarget.innerText;
-                              setButtonDisabled(false);
-                              setItem((p) => ({ ...p, valor: e }));
-                            },
-                          }
-                        : {})}
-                    >
-                      {item.valor}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-end text-2xl ">
-                    <a
-                      target="_blank"
-                      className="text-green-700  btn text-2xl hover:text-green-900 hover:bg-gray-300"
-                      href={`https://wa.me/55${item.phone}?text=ola gostariad e falar com voce`}
-                    >
-                      <FontAwesomeIcon icon={faWhatsapp} />
-                    </a>
-                    <button
-                      className="text-teal-500 btn text-xl hover:text-teal-700 hover:bg-gray-300"
-                      onClick={copiarLink}
-                    >
-                      <FontAwesomeIcon icon={faShareFromSquare} />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="">
-                  <div className="flex  gap-2">
-                    {isPostUserId && (
-                      <FontAwesomeIcon
-                        icon={faEdit}
-                        onClick={() => descricaoRef.current!.focus()}
-                        className="text-xl text-green-800 cursor-pointer"
-                      />
-                    )}
-                    <h2 className="text-gray-500">Sobre este item</h2>
-                  </div>
-
-                  <p
-                    ref={descricaoRef}
-                    className="focus:outline-2 focus:outline-gray-400 text-gray-700"
+              <div className=" flex justify-between items-baseline ">
+                <div className="font-bold text-green-700">
+                  {isPostUserId && (
+                    <FontAwesomeIcon
+                      className="text-xl pr-4 text-green-800 cursor-pointer"
+                      onClick={() => valorRef.current!.focus()}
+                      icon={faEdit}
+                    />
+                  )}
+                  <span className="text-lg">{"R$:"}</span>
+                  <span
+                    ref={valorRef}
+                    className="focus:outline-2 text-xl focus:outline-gray-400 p-2"
                     {...(isPostUserId
                       ? {
                           contentEditable: true,
                           suppressContentEditableWarning: true,
-                          onInput: () => setButtonDisabled(false),
-                          onBlur: (e) => {
-                            const value = e.currentTarget.innerText;
-                            setItem((p) => ({ ...p, description: value }));
+                          onInput: (v) => {
+                            const e = utils.extractNumberInString(
+                              v.currentTarget.innerText
+                            );
+                            v.currentTarget.innerHTML = utils
+                              .stringForDecimalNumber(e)
+                              .toFixed(2);
+
+                            moveCursorToEnd(v.currentTarget);
+                          },
+                          onBlur: (v) => {
+                            const e = v.currentTarget.innerText;
+                            setButtonDisabled(false);
+                            setItem((p) => ({ ...p, valor: e }));
                           },
                         }
                       : {})}
                   >
-                    {item.description}
-                  </p>
-
-                  {isPostUserId && (
-                    <div className="border-t-1 border-gray-400 flex justify-end py-4 mt-4">
-                      <button
-                        type="button"
-                        disabled={buttonDisabled}
-                        className={` p-2 rounded-md  font-bold  ${
-                          !buttonDisabled
-                            ? "text-white bg-cyan-600 cursor-pointer"
-                            : "bg-gray-500 text-gray-800"
-                        }`}
-                        onClick={postUpdate}
-                      >
-                        Editar
-                      </button>
-                    </div>
-                  )}
+                    {item.valor}
+                  </span>
                 </div>
 
-                {isPostUserId && (
-                  <section
-                    id="postuseractions"
-                    className="outline-0 outline-gray-400 rounded-2xl"
+                <div className="flex items-center justify-end text-2xl ">
+                  <a
+                    target="_blank"
+                    className="text-green-700  btn text-2xl hover:text-green-900 hover:bg-gray-300"
+                    href={`https://wa.me/55${item.phone}?text=ola gostariad e falar com voce`}
                   >
-                    {isPostUserId && (
-                      <div>
-                        <h2 className="text-2xl text-center p-2">
-                          Adicionar ou remover imagens
-                        </h2>
-                        <div className="bg-gray-500 rounded py-2">
-                          <h3 className="p-2 text-white text-center text-xl">
-                            Imagens Atuais
-                          </h3>
-                          <div className="flex gap-2 overflow-x-scroll h-[15rem] p-2 bg-gray-400 ">
-                            {post_imagens[0] !== null &&
-                              post_imagens.map((img, i) => {
-                                const newImg = utils.getUrlImageR2(img.url);
-                                return (
-                                  <ImageCardPreview
-                                    key={"img-" + i}
-                                    image={{ ...img, url: newImg }}
-                                    onClick={() => {
-                                      usebackdrop.openContent(
-                                        <Modal
-                                          onConfirm={() => deletarImagem(img)}
-                                          onClose={() =>
-                                            usebackdrop.closeContent()
-                                          }
-                                        >
-                                          <div className="relative flex ">
-                                            <Image
-                                              className="object-contain h-auto w-auto"
-                                              alt=""
-                                              src={utils.getUrlImageR2(img.url)}
-                                              width={60}
-                                              height={60}
-                                              loading="eager"
-                                            />
-                                          </div>
-                                          Deseja remover esta imagem
-                                        </Modal>
-                                      );
-                                    }}
-                                  />
-                                );
-                              })}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    {loadingImages && (
-                      <div className="m-3">
-                        <LinearProgressIndicator />
-                      </div>
-                    )}
-                    {previewImagens.length > 0 && (
-                      <div className="bg-gray-500 mt-2 rounded overflow-hidden">
-                        <h3 className="text-white text-xl text-center p-2">
-                          Novas Imagens
-                        </h3>
-                        <div
-                          id="preview-imagens"
-                          className="flex gap-3  overflow-x-scroll h-[15rem]  bg-gray-400 py-4"
-                        >
-                          {previewImagens.map((img, index) => (
-                            <ImageCardPreview
-                              key={img.url}
-                              image={img}
-                              onClick={() => {
-                                setPreviewImagens((p) => {
-                                  const imgs = previewImagens.find(
-                                    (im) => im.url === img.url
-                                  );
-                                  if (imgs) URL.revokeObjectURL(imgs.url);
-                                  return p.filter((_, i) => i !== index);
-                                });
-                              }}
-                              onImageClick={() => {
-                                console.log(img);
-                                usebackdrop.openContent(
-                                  <ImageCropper
-                                    image={img.url}
-                                    onConfirm={(newim) => {
-                                      const url = URL.createObjectURL(newim);
-                                      const newImg = {
-                                        id: img.id,
-                                        file: newim,
-                                        url: url,
-                                      };
-                                      setPreviewImagens((imgs) =>
-                                        imgs.map((im) =>
-                                          im.id === img.id
-                                            ? { ...im, ...newImg }
-                                            : im
-                                        )
-                                      );
-                                    }}
-                                  />
-                                );
-                              }}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    <div className="flex justify-between  p-2">
-                      {isPostUserId &&
-                        post_imagens.length < _item.maxImagens && (
-                          <label className="bg-cyan-800 hover:bg-cyan-600  cursor-pointer block w-fit p-2 pr-3 pt-3 rounded  text-white relative">
-                            <FontAwesomeIcon
-                              icon={faPlus}
-                              className=" absolute rounded-full top-1 right-1 text-md"
-                            />
-                            <FontAwesomeIcon
-                              className="text-3xl"
-                              icon={faImage}
-                            />
-                            <input
-                              type="file"
-                              className="hidden"
-                              accept="image/*"
-                              multiple
-                              max={3}
-                              onChange={(e) => selecionarImagens(e)}
-                            />
-                          </label>
-                        )}
-
-                      {previewImagens.length > 0 && (
-                        <button
-                          className="btn bg-green-700 text-white font-bold hover:bg-green-800"
-                          onClick={uploadImages}
-                        >
-                          salvar
-                        </button>
-                      )}
-                    </div>
-                  </section>
-                )}
-
-                {alert}
-                {modal}
+                    <FontAwesomeIcon icon={faWhatsapp} />
+                  </a>
+                  <button
+                    className="text-teal-500 btn text-xl hover:text-teal-700 hover:bg-gray-300"
+                    onClick={copiarLink}
+                  >
+                    <FontAwesomeIcon icon={faShareFromSquare} />
+                  </button>
+                </div>
               </div>
+
+              <div className="">
+                <div className="flex  gap-2">
+                  {isPostUserId && (
+                    <FontAwesomeIcon
+                      icon={faEdit}
+                      onClick={() => descricaoRef.current!.focus()}
+                      className="text-xl text-green-800 cursor-pointer"
+                    />
+                  )}
+                  <h2 className="text-gray-500">Sobre este item</h2>
+                </div>
+
+                <p
+                  ref={descricaoRef}
+                  className="focus:outline-2 focus:outline-gray-400 text-gray-700"
+                  {...(isPostUserId
+                    ? {
+                        contentEditable: true,
+                        suppressContentEditableWarning: true,
+                        onInput: () => setButtonDisabled(false),
+                        onBlur: (e) => {
+                          const value = e.currentTarget.innerText;
+                          setItem((p) => ({ ...p, description: value }));
+                        },
+                      }
+                    : {})}
+                >
+                  {item.description}
+                </p>
+
+                {isPostUserId && (
+                  <div className="border-t-1 border-gray-400 flex justify-end py-4 mt-4">
+                    <button
+                      type="button"
+                      disabled={buttonDisabled}
+                      className={` p-2 rounded-md  font-bold  ${
+                        !buttonDisabled
+                          ? "text-white bg-cyan-600 cursor-pointer"
+                          : "bg-gray-500 text-gray-800"
+                      }`}
+                      onClick={postUpdate}
+                    >
+                      Editar
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {isPostUserId && (
+                <section
+                  id="postuseractions"
+                  className="outline-0 outline-gray-400 rounded-2xl"
+                >
+                  {isPostUserId && (
+                    <div>
+                      <h2 className="text-2xl text-center p-2">
+                        Adicionar ou remover imagens
+                      </h2>
+                      <div className="bg-gray-500 rounded py-2">
+                        <h3 className="p-2 text-white text-center text-xl">
+                          Imagens Atuais
+                        </h3>
+                        <div className="flex gap-2 overflow-x-scroll h-[15rem] p-2 bg-gray-400 ">
+                          {post_imagens[0] !== null &&
+                            post_imagens.map((img, i) => {
+                              const newImg = utils.getUrlImageR2(img.url);
+                              return (
+                                <ImageCardPreview
+                                  key={"img-" + i}
+                                  image={{ ...img, url: newImg }}
+                                  onClick={() => {
+                                    usebackdrop.openContent(
+                                      <Modal
+                                        onConfirm={() => deletarImagem(img)}
+                                        onClose={() =>
+                                          usebackdrop.closeContent()
+                                        }
+                                      >
+                                        <div className="relative flex ">
+                                          <Image
+                                            className="object-contain h-auto w-auto"
+                                            alt=""
+                                            src={utils.getUrlImageR2(img.url)}
+                                            width={60}
+                                            height={60}
+                                            loading="eager"
+                                          />
+                                        </div>
+                                        Deseja remover esta imagem
+                                      </Modal>
+                                    );
+                                  }}
+                                />
+                              );
+                            })}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {loadingImages && (
+                    <div className="m-3">
+                      <LinearProgressIndicator />
+                    </div>
+                  )}
+                  {previewImagens.length > 0 && (
+                    <div className="bg-gray-500 mt-2 rounded overflow-hidden">
+                      <h3 className="text-white text-xl text-center p-2">
+                        Novas Imagens
+                      </h3>
+                      <div
+                        id="preview-imagens"
+                        className="flex gap-3  overflow-x-scroll h-[15rem]  bg-gray-400 py-4"
+                      >
+                        {previewImagens.map((img, index) => (
+                          <ImageCardPreview
+                            key={img.url}
+                            image={img}
+                            onClick={() => {
+                              setPreviewImagens((p) => {
+                                const imgs = previewImagens.find(
+                                  (im) => im.url === img.url
+                                );
+                                if (imgs) URL.revokeObjectURL(imgs.url);
+                                return p.filter((_, i) => i !== index);
+                              });
+                            }}
+                            onImageClick={() => {
+                              console.log(img);
+                              usebackdrop.openContent(
+                                <ImageCropper
+                                  image={img.url}
+                                  onConfirm={(newim) => {
+                                    const url = URL.createObjectURL(newim);
+                                    const newImg = {
+                                      id: img.id,
+                                      file: newim,
+                                      url: url,
+                                    };
+                                    setPreviewImagens((imgs) =>
+                                      imgs.map((im) =>
+                                        im.id === img.id
+                                          ? { ...im, ...newImg }
+                                          : im
+                                      )
+                                    );
+                                  }}
+                                />
+                              );
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  <div className="flex justify-between  p-2">
+                    {isPostUserId && post_imagens.length < _item.maxImagens && (
+                      <label className="bg-cyan-800 hover:bg-cyan-600  cursor-pointer block w-fit p-2 pr-3 pt-3 rounded  text-white relative">
+                        <FontAwesomeIcon
+                          icon={faPlus}
+                          className=" absolute rounded-full top-1 right-1 text-md"
+                        />
+                        <FontAwesomeIcon className="text-3xl" icon={faImage} />
+                        <input
+                          type="file"
+                          className="hidden"
+                          accept="image/*"
+                          multiple
+                          max={3}
+                          onChange={(e) => selecionarImagens(e)}
+                        />
+                      </label>
+                    )}
+
+                    {previewImagens.length > 0 && (
+                      <button
+                        className="btn bg-green-700 text-white font-bold hover:bg-green-800"
+                        onClick={uploadImages}
+                      >
+                        salvar
+                      </button>
+                    )}
+                  </div>
+                </section>
+              )}
             </div>
           </div>
         )}
@@ -446,34 +428,27 @@ export default function DetailsPostPage({ user_id }: Props) {
   }
 
   async function uploadImages() {
+    if (item.user_id !== user_id) return;
+
+    let msgError = "";
     if (
       post_imagens[0] != null &&
       post_imagens.length + previewImagens.length > _item.maxImagens
-    ) {
-      setAlert(
-        <Alert
-          msg={"Limite de 3 imagens por postagem"}
-          onClose={() => setAlert(<></>)}
-        />
-      );
-      return;
-    }
+    )
+      msgError = "Limite de 3 imagens por postagem";
 
-    if (previewImagens.length < 1 || previewImagens.length > 3) {
-      setAlert(
-        <Alert
-          msg={"Selecione Pelo menos 1 imagem e no maximo 3"}
-          onClose={() => setAlert(<></>)}
-        />
+    if (previewImagens.length < 1 || previewImagens.length > 3)
+      msgError = "Selecione Pelo menos 1 imagem e no maximo 3";
+
+    if (msgError !== "") {
+      return usebackdrop.openContent(
+        <Alert msg={msgError} onClose={() => usebackdrop.closeContent()} />
       );
-      return;
     }
 
     const newImgs = previewImagens.map((im) => im.file);
 
     const images = await controllerCloudflare.save(newImgs);
-
-    if (item.user_id !== user_id) return;
 
     if (images.files.length < 1) return;
 
@@ -495,7 +470,7 @@ export default function DetailsPostPage({ user_id }: Props) {
     await httpPost.delImage(img);
 
     setImagens((p) => p.filter((imgs) => imgs.id !== img.id));
-    setModal(<></>);
+    usebackdrop.closeContent();
   }
 
   function moveCursorToEnd(el: HTMLElement) {
@@ -513,10 +488,10 @@ export default function DetailsPostPage({ user_id }: Props) {
     const updated = await httpPost.update(item);
 
     if (updated.id) {
-      setAlert(
+      usebackdrop.openContent(
         <Alert
           msg={"Update Realizado com sucesso!"}
-          onClose={() => setAlert(<></>)}
+          onClose={() => usebackdrop.closeContent()}
         />
       );
       setButtonDisabled(true);
