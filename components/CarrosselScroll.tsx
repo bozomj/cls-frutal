@@ -56,7 +56,7 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({
   });
 
   return (
-    <div className="w-full h-[12rem] rounded-2xl relative overflow-hidden shadow-sm shadow-gray-400">
+    <div className="w-full h-32 rounded-2xl relative overflow-hidden shadow-sm shadow-gray-400">
       {activeAction && (
         <ArrowButton
           direction="left"
@@ -73,7 +73,6 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({
         }}
       >
         {items.map((e: { url: string }, key: number) => {
-          console.log(">>>>", e, "<<<");
           return (
             <div className="min-w-full relative" key={key}>
               <Image src={utils.getUrlImageR2(e.url)} alt="" fill />

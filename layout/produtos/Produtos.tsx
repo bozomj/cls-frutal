@@ -12,9 +12,10 @@ function Produtos<T>({ postagens = [], Card, className }: ProdutosProps<T>) {
     <>
       <div
         className={`shadow-sm shadow-gray-400 flex flex-col items-center  flex-1 max-w-full rounded-2xl bg-white ${className}`}
+        // className={`shadow-sm shadow-gray-400 grid grid-cols-2  flex-1 max-w-full rounded-2xl bg-white ${className}`}
       >
         <a id="pst" href=""></a>
-        <section className="flex flex-col gap-4 p-4 w-full h-fit">
+        <section className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-2 p-2  w-full h-fit ">
           {makeItens(postagens)}
         </section>
         <Paginacao />
@@ -32,9 +33,9 @@ function Produtos<T>({ postagens = [], Card, className }: ProdutosProps<T>) {
       ];
 
     return items.map((item, v) => (
-      <div key={v} className="flex flex-col gap-4">
+      <div key={v} className="flex flex-col gap-4 ">
         <Card item={item} key={`${v}`} />
-        {v < TotalItems - 1 && <VerticalDivider height={2} />}
+        {/* {v < TotalItems - 1 && <VerticalDivider height={2} />} */}
       </div>
     ));
   }

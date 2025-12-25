@@ -47,6 +47,8 @@ x mudar imagem de perfil das ja cadastradas.
 
 x mudar ImageCropper para conter os botoes de confirmar e cancelar, confirmar retorna a imagem cortada;
 
+- usar url state para paginação
+
 usuarios [
 diego@hotmail.com
 matheus@hotmail.com | senha 12345

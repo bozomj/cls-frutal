@@ -22,25 +22,19 @@ const ProductCard: React.FC<ProductCardProps> = ({
   return (
     <div
       className={`
-        bg-gray-200 border-2 border-gray-200  p-2 rounded-2xl flex justify-center transition duration-400
+        bg-gray-100 border-2 border-gray-100  p-1 rounded-lg flex justify-center transition duration-400
          hover:border-gray-300  text-gray-800 ${className} 
         `}
     >
-      <div className="flex flex-col w-full overflow-hidden gap-2 ">
-        <span className="text-sm text-right">
-          Publicado {utils.formatarData(`${item.created_at}`)}
+      <div className="flex flex-col w-full overflow-hidden">
+        <span className="text-xs text-right">
+          {/* {utils.formatarData(`${item.created_at}`)} */}
         </span>
         <a href={`/posts/${item.id}`} target="_blank">
-          <div className="flex flex-1 justify-center bg-gray-400 overflow-hidden rounded-2xl h-[12rem] relative">
-            <Image
-              className="absolute h-full w-full object-fill blur-xl opacity-70"
-              src={utils.getUrlImageR2(item.imageurl ?? "")}
-              alt={""}
-              fill
-            />
+          <div className="  flex flex-1 justify-center h-40 relative ">
             {item.imageurl && (
               <Image
-                className="absolute object-contain"
+                className="object-contain"
                 src={utils.getUrlImageR2(item.imageurl ?? "")}
                 alt={""}
                 fill
@@ -49,19 +43,22 @@ const ProductCard: React.FC<ProductCardProps> = ({
             )}
           </div>
 
-          <div className="flex-1 flex text-gray-900 gap-2 w-[100%]  overflow-hidden flex-col py-2">
-            <h2 className=" font-bold block  whitespace-wrap">
+          <div className="flex-1 flex  text-gray-900  w-[100%]  overflow-hidden flex-col py-2">
+            <h2 className=" font-bold block whitespace-wrap text-gray-900 truncate">
               {item.title ?? ""}
             </h2>
-            <span className="h-5 text-green-700 font-bold block text-xl">
-              R$: {item.valor}
+            <span className="h-5 text-green-900 font-bold block text-lg">
+              <span className="text-xs">R$: </span>
+              {item.valor}
             </span>
-            <p className="text-sm truncate">{item.description}</p>
+            {/* <p className="text-sm text-gray-600 line-clamp-2"> */}
+            {/* {item.description} */}
+            {/* </p> */}
           </div>
         </a>
-        <VerticalDivider height={1} />
+        {/* <VerticalDivider height={1} /> */}
 
-        <Row className="h-7">
+        {/* <Row className="h-7">
           <a
             className={
               "text-green-700 text-2xl hover:text-green-900 hover:text-3xl"
@@ -79,7 +76,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           >
             <FontAwesomeIcon icon={faShareFromSquare} />
           </button>
-        </Row>
+        </Row> */}
       </div>
       {showAlert}
     </div>
