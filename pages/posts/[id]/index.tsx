@@ -27,6 +27,8 @@ import Modal from "@/components/Modal";
 import { ImageType } from "@/models/imagem";
 import httpPost from "@/http/post";
 import httpImage from "@/http/image";
+import { useBackdrop } from "@/ui/backdrop/useBackdrop";
+import ImageCropper from "@/components/ImageCropper";
 
 type Props = {
   user_id?: string;
@@ -70,6 +72,7 @@ export default function DetailsPostPage({ user_id }: Props) {
   const titleRef = useRef<HTMLElement | null>(null);
   const valorRef = useRef<HTMLElement | null>(null);
   const descricaoRef = useRef<HTMLParagraphElement | null>(null);
+  const usebackdrop = useBackdrop();
 
   const getPost = useCallback(
     async (id: string) => {
@@ -341,6 +344,29 @@ export default function DetailsPostPage({ user_id }: Props) {
                                   if (imgs) URL.revokeObjectURL(imgs.url);
                                   return p.filter((_, i) => i !== index);
                                 });
+                              }}
+                              onImageClick={() => {
+                                console.log(img);
+                                usebackdrop.openContent(
+                                  <ImageCropper
+                                    image={img.url}
+                                    onConfirm={(newim) => {
+                                      const url = URL.createObjectURL(newim);
+                                      const newImg = {
+                                        id: img.id,
+                                        file: newim,
+                                        url: url,
+                                      };
+                                      setPreviewImagens((imgs) =>
+                                        imgs.map((im) =>
+                                          im.id === img.id
+                                            ? { ...im, ...newImg }
+                                            : im
+                                        )
+                                      );
+                                    }}
+                                  />
+                                );
                               }}
                             />
                           ))}
