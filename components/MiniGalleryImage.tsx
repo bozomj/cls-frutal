@@ -21,7 +21,7 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
     >
       <div
         id="imagem_principal"
-        className="w-full cursor-pointer order-2 self-center h-full items-center flex justify-center bg-gray-100 rounded-r-2xl p-1 relative"
+        className="w-full cursor-pointer order-2 self-center h-full items-center flex justify-center bg-gray-50 rounded-r-2xl p-1 relative"
       >
         <Image
           alt=""
@@ -49,7 +49,7 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
 
             return (
               <div
-                className={`flex-1 justify-center w-full bg-gray-100  shrink h-1/3 ${rounded} overflow-hidden  max-h-1/3 
+                className={`flex-1 justify-center w-full bg-gray-50  shrink h-1/3 ${rounded} overflow-hidden  max-h-1/3 
                       border-3 border-gray-100 p-1
                       hover:border-cyan-600 relative
                       `}

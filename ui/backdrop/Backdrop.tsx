@@ -8,7 +8,7 @@ function Backdrop() {
 
   return (
     <div
-      className="fixed top-0 left-0 w-full h-full bg-black z-10"
+      className="fixed top-0 left-0 w-full h-full bg-gray-900/40 z-10"
       onClick={context.closeContent}
     >
       {context.content}

@@ -19,7 +19,7 @@ import MiniGalleryImage from "@/components/MiniGalleryImage";
 
 import ImageCardPreview from "@/components/ImageCardPreview";
 import WirePost from "@/wireframes/wirePost";
-import VerticalDivider from "@/components/VerticalDivider";
+
 import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
 import CapitalizeText from "@/components/CapitalizeText";
 import LinearProgressIndicator from "@/components/LinearProgressIndicator";
@@ -29,6 +29,7 @@ import httpPost from "@/http/post";
 import httpImage from "@/http/image";
 import { useBackdrop } from "@/ui/backdrop/useBackdrop";
 import ImageCropper from "@/components/ImageCropper";
+import Image from "next/image";
 
 type Props = {
   user_id?: string;
@@ -115,11 +116,11 @@ export default function DetailsPostPage({ user_id }: Props) {
             <div className="flex gap-2  items-center">
               <CircleAvatar
                 imagem={utils.getUrlImageR2(imgProfileUrl)}
-                size={2.5}
+                size={2}
               />
               <CapitalizeText txt={item.name} />
 
-              <span className="text-[0.8em] ml-auto">
+              <span className="text-xs ml-auto">
                 Publicado {utils.formatarData(item.created_at)}
               </span>
             </div>
@@ -215,19 +216,17 @@ export default function DetailsPostPage({ user_id }: Props) {
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-end text-2xl gap-2">
+                  <div className="flex items-center justify-end text-2xl ">
                     <a
                       target="_blank"
-                      className="text-green-700 text-2xl hover:text-green-900 hover:text-3xl"
+                      className="text-green-700  btn text-2xl hover:text-green-900 hover:bg-gray-300"
                       href={`https://wa.me/55${item.phone}?text=ola gostariad e falar com voce`}
                     >
                       <FontAwesomeIcon icon={faWhatsapp} />
                     </a>
                     <button
-                      className="text-teal-500 btn hover:text-teal-700 hover:text-2xl"
-                      onClick={() =>
-                        navigator.clipboard.writeText(window.location.href)
-                      }
+                      className="text-teal-500 btn text-xl hover:text-teal-700 hover:bg-gray-300"
+                      onClick={copiarLink}
                     >
                       <FontAwesomeIcon icon={faShareFromSquare} />
                     </button>
@@ -243,19 +242,17 @@ export default function DetailsPostPage({ user_id }: Props) {
                         className="text-xl text-green-800 cursor-pointer"
                       />
                     )}
-                    <h2 className="">Sobre este item</h2>
+                    <h2 className="text-gray-500">Sobre este item</h2>
                   </div>
 
                   <p
                     ref={descricaoRef}
-                    className="focus:outline-2 focus:outline-gray-400 "
+                    className="focus:outline-2 focus:outline-gray-400 text-gray-700"
                     {...(isPostUserId
                       ? {
                           contentEditable: true,
                           suppressContentEditableWarning: true,
-                          onInput: () => {
-                            setButtonDisabled(false);
-                          },
+                          onInput: () => setButtonDisabled(false),
                           onBlur: (e) => {
                             const value = e.currentTarget.innerText;
                             setItem((p) => ({ ...p, description: value }));
@@ -307,11 +304,23 @@ export default function DetailsPostPage({ user_id }: Props) {
                                     key={"img-" + i}
                                     image={{ ...img, url: newImg }}
                                     onClick={() => {
-                                      setModal(
+                                      usebackdrop.openContent(
                                         <Modal
                                           onConfirm={() => deletarImagem(img)}
-                                          onClose={() => setModal(<></>)}
+                                          onClose={() =>
+                                            usebackdrop.closeContent()
+                                          }
                                         >
+                                          <div className="relative flex ">
+                                            <Image
+                                              className="object-contain h-auto w-auto"
+                                              alt=""
+                                              src={utils.getUrlImageR2(img.url)}
+                                              width={60}
+                                              height={60}
+                                              loading="eager"
+                                            />
+                                          </div>
                                           Deseja remover esta imagem
                                         </Modal>
                                       );
@@ -423,6 +432,18 @@ export default function DetailsPostPage({ user_id }: Props) {
       </main>
     </>
   );
+
+  async function copiarLink() {
+    if (navigator.clipboard) {
+      await navigator.clipboard?.writeText(window.location.href);
+      usebackdrop.openContent(
+        <Alert
+          msg={"Link Copiado"}
+          onClose={() => usebackdrop.closeContent()}
+        />
+      );
+    }
+  }
 
   async function uploadImages() {
     if (
