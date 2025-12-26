@@ -10,19 +10,17 @@ import Alert from "@/components/Alert";
 
 import { useRouter } from "next/navigation";
 
-import Prompt from "@/components/Prompt";
-
 import { CategoriaType } from "@/models/categoria";
 import utils from "@/utils";
 import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
 import LinearProgressIndicator from "@/components/LinearProgressIndicator";
 import httpCategoria from "@/http/categoria";
 import Image from "next/image";
-import { backdrop } from "@/ui/backdrop";
-import Modal from "@/components/Modal";
-import Cropper, { Point } from "react-easy-crop";
+
 import ImageCropper from "@/components/ImageCropper";
-import { height, width } from "@fortawesome/free-solid-svg-icons/faBars";
+
+import { useBackdrop } from "@/ui/backdrop/useBackdrop";
+import { ButtonPrimary, ButtonSecondary } from "@/components/Buttons";
 
 type postTypeSimple = {
   title: string;
@@ -55,7 +53,6 @@ function getUniqueId() {
 }
 export default function Produto() {
   const router = useRouter();
-  const { openContent, closeContent } = backdrop.useBackdrop();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -65,14 +62,13 @@ export default function Produto() {
   const [selected, setSelected] = useState("0");
   const [loading, setLoading] = useState<boolean>(false);
 
-  const [showAlert, setAlert] = useState<JSX.Element | null>(null);
-  const [prompt, setPrompt] = useState(<></>);
-
   const [categoriasValues, setCategoriasValues] = useState<
     { value: string; label: string }[]
   >([]);
 
   const [postError, setError] = useState<Record<string, string>>({});
+
+  const usebackdrop = useBackdrop();
 
   useEffect(() => {
     if (categoriasValues.length < 2) getCategorias();
@@ -117,7 +113,7 @@ export default function Produto() {
               console.log(title);
             }}
           />
-          {/* <span className="text-red-800">{postError.description}</span> */}
+
           <textarea
             placeholder="Descrição"
             value={description}
@@ -158,47 +154,8 @@ export default function Produto() {
                 );
               })}
             </select>
-            <button
-              type="button"
-              className="bg-cyan-800  p-2 text-4xl cursor-pointer hover:bg-cyan-600 transition duration-300"
-              onClick={() =>
-                setPrompt(
-                  <Prompt
-                    msg={"Cadastrar Categoria"}
-                    value={""}
-                    confirm={async (e: string | null) => {
-                      if (e) {
-                        const result = await httpCategoria.save({
-                          descricao: e,
-                        });
-
-                        const msg = result.message || "Cadastro efetuado";
-
-                        setAlert(
-                          <Alert
-                            msg={msg}
-                            onClose={() => {
-                              setAlert(<></>);
-                            }}
-                          />
-                        );
-
-                        if (result.id) {
-                          getCategorias();
-                          changeCategoria(result.id);
-                        }
-                      }
-
-                      setPrompt(<></>);
-                    }}
-                  />
-                )
-              }
-            >
-              +
-            </button>
           </div>
-          {/* <span className="text-red-800">{postError.valor}</span> */}
+
           <input
             name="valor"
             type="text"
@@ -226,21 +183,20 @@ export default function Produto() {
               type="file"
               className="hidden"
               multiple
-              max={3}
               disabled={imagens.length >= 3}
               onChange={(e) => selecionarImagens(e)}
             />
           </label>
 
+          {loading && <LinearProgressIndicator />}
           <div
             id="preview"
-            className="flex gap-3 justify-center bg-gray-400 p-2 rounded overflow-x-scroll"
+            className="flex gap-3 bg-gray-400 p-2 rounded overflow-x-scroll"
           >
-            {loading && <LinearProgressIndicator />}
             {imagens.map((e) => {
               return (
                 <ImagePreview
-                  key={e.id}
+                  key={e.url}
                   image={e}
                   onClick={() => removeImagePreview(e)}
                 />
@@ -248,27 +204,11 @@ export default function Produto() {
             })}
           </div>
 
-          <span id="actions" className="flex gap-2 items-center">
-            <button
-              name="btn_cancelar"
-              className="text-cyan-800 font-bold
-                p-2 outline-1  rounded cursor-pointer
-                flex-1  hover:bg-cyan-600/10 transition duration-400 "
-              type="button"
-              onClick={() => router.back()}
-            >
-              Cancelar
-            </button>
-            <button
-              name="btn_salvar"
-              className="bg-cyan-800 font-bold p-2 flex-1 rounded cursor-pointer transition duration-500 hover:bg-cyan-700"
-            >
-              Salvar
-            </button>
-          </span>
+          <div id="actions" className="flex gap-2 items-center">
+            <ButtonSecondary onClick={() => router.back()} label="Cancelar" />
+            <ButtonPrimary label={"Salvar"} onClick={() => {}} />
+          </div>
         </form>
-        {showAlert}
-        {prompt}
       </main>
     </>
   );
@@ -281,14 +221,14 @@ export default function Produto() {
     onClick: (image: ImageFile) => void;
   }) {
     return (
-      <div className="relative w-fit">
+      <div className="relative min-w-2/3  ">
         <div
-          className="absolute cursor-pointer bg-red-900 hover:bg-red-500 rounded-full h-8 w-8 text-center p-1 -right-2 -top-2 peer"
+          className="absolute cursor-pointer bg-red-900 hover:bg-red-500 rounded-full h-8 w-8 text-center p-1 -right-2 -top-2 peer "
           onClick={() => onClick(image)}
         >
           X
         </div>
-        <Card className="border-3 border-cyan-600 bg-cyan-800 peer-hover:bg-red-500/40 peer-hover:border-red-500">
+        <Card className="border-3 border-cyan-600 bg-cyan-800 peer-hover:bg-red-500/40 peer-hover:border-red-500 min-w-full">
           <Image
             className="rounded-md cursor-pointer"
             src={image.url}
@@ -297,7 +237,7 @@ export default function Produto() {
             height={150}
             loading="eager"
             onClick={() => {
-              openContent(
+              usebackdrop.openContent(
                 <ImageCropper
                   image={image.url}
                   onConfirm={(file) => {
@@ -371,13 +311,11 @@ export default function Produto() {
         : "";
 
     if (msg != "") {
-      setAlert(
+      usebackdrop.openContent(
         <Alert
           msg={msg}
           show={true}
-          onClose={() => {
-            setAlert(<></>);
-          }}
+          onClose={() => usebackdrop.closeContent()}
         />
       );
       return;
@@ -445,12 +383,12 @@ export default function Produto() {
     setDescription("");
     setImagens([]);
 
-    setAlert(
+    usebackdrop.openContent(
       <Alert
         msg={"Post Inserido com Sucesso!!"}
         show={true}
         onClose={() => {
-          setAlert(<></>);
+          usebackdrop.closeContent();
           setTimeout(() => {
             router.back();
           }, 1000);
@@ -461,9 +399,12 @@ export default function Produto() {
 
   async function selecionarImagens(e: ChangeEvent<HTMLInputElement>) {
     const files = e.target.files || [];
+    const maxImage = 3;
+    let totalImage = maxImage - imagens.length;
 
     if (files) {
       for (let i = 0; i < files.length; i++) {
+        if (totalImage <= 0) break;
         const file = files[i];
 
         // Verifica se o arquivo é uma imagem
@@ -478,7 +419,8 @@ export default function Produto() {
           setImagens((e) => [...e, { id: id, file: resized, url: imgURL }]);
 
           setLoading(false);
-          console.log(imagens);
+
+          totalImage -= 1;
         }
       }
     }

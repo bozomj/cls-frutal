@@ -8,8 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import router from "next/router";
 
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { usePagination } from "@/contexts/PaginactionContext";
 
 interface HeaderProps {
@@ -26,11 +25,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
     status: false,
     user: null,
   });
-  const itemsMenu = [
-    { label: "produtos", link: "/newpost" },
-    { label: "serviços", link: "" },
-    { label: "vagas", link: "" },
-  ];
+  const itemsMenu = [{ label: "produtos", link: "/newpost" }];
 
   useEffect(init, []);
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
@@ -112,7 +107,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
             className={`
           bg-white
             w-8/12 h-full
-            relative z-[11] p-2
+            relative z-[11] 
             overflow-hidden
             duration-[600ms]    
             md:static
@@ -123,21 +118,30 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
               e.stopPropagation();
             }}
           >
-            <label
-              htmlFor="activeSubmenu"
-              className="
-                absolute right-4
-                cursor-pointer
-                md:hidden"
-              onClick={closeSlideMenu}
-            >
-              <FontAwesomeIcon icon={faClose} />
-            </label>
+            <div className=" bg-cyan-950 h-40 p-2 md:hidden mb-4">
+              <label
+                htmlFor="activeSubmenu"
+                className="absolute right-4 cursor-pointer md:hidden text-white"
+                onClick={closeSlideMenu}
+              >
+                <FontAwesomeIcon icon={faClose} />
+              </label>
+              <div className="relative h-7 w-10/12">
+                <Image
+                  src={"/img/logo.svg"}
+                  fill
+                  sizes="50"
+                  className="object-contain w-10/12"
+                  objectPosition="left"
+                  alt=""
+                />
+              </div>
+            </div>
             <ul
               className="
               flex flex-col justify-end
               w-full
-              md:flex-row md:gap-2
+              md:flex-row  gap-2
               "
             >
               {mapItemsMenu()}
