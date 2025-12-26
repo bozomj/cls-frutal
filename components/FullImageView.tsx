@@ -86,6 +86,7 @@ const FullImageView: React.FC<FullImageViewProps> = ({
             src={utils.getUrlImageR2(images[imagemIndex]?.url) || ""}
             alt=""
             fill
+            sizes="100"
             style={{ objectFit: "contain" }}
           />
         </div>

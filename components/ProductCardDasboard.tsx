@@ -6,6 +6,8 @@ import Modal from "./Modal";
 import utils from "@/utils";
 import { faEdit } from "@fortawesome/free-regular-svg-icons";
 import Image from "next/image";
+import { useBackdrop } from "@/ui/backdrop/useBackdrop";
+import httpPost from "@/http/post";
 
 interface ProductCardDashboardProps {
   item: PostType;
@@ -16,19 +18,19 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
   item,
   className,
 }: ProductCardDashboardProps) => {
-  const [showmodal, setShowModal] = useState(<></>);
   const [deleted, setDeleted] = useState(false);
+  const usebackdrop = useBackdrop();
 
   if (deleted) return null;
 
   return (
     <article
-      className={`bg-gray-300 relative flex-col text-white  gap-2 p-2 rounded-2xl flex justify-center ${className} `}
+      className={`bg-gray-200 relative flex-col text-white  gap-2 p-2 rounded-2xl flex justify-center ${className} `}
     >
       <div className="flex justify-between items-center">
-        <span className="text-gray-800">
+        <p className="text-gray-800">
           pub: {utils.formatarData(`${item.created_at}` || "")}
-        </span>
+        </p>
         <div id="list-actions" className="flex justify-end gap-4">
           <a
             href={`/posts/${item.id}`}
@@ -43,13 +45,12 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
             onClick={async () => deletePostId(item.id ?? "")}
           >
             <FontAwesomeIcon icon={faTrash} />
-            {showmodal}
           </button>
         </div>
       </div>
 
       <div className="flex flex-col w-full  overflow-hidden h-full gap-2 ">
-        <div className="bg-gray-200 rounded-2xl h-[10rem] relative">
+        <div className="bg-gray-200 rounded-xl h-40 relative">
           <Image
             src={utils.getUrlImageR2(item.imageurl ?? "")}
             fill
@@ -60,10 +61,12 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
         </div>
 
         <div className=" flex text-gray-900 flex-col ">
-          <span className="text-xl w-fit overflow-hidden">
+          <span className="text-xl w-fit overflow-hidden font-bold text-gray-800">
             {item.title ?? ""}
           </span>
-          <span className="w-full text-green-800">R$: {item.valor}</span>
+          <p className="w-full text-green-800 font-bold">
+            R$: <span className="text-xl">{item.valor}</span>
+          </p>
           <span className="w-full">{item.description ?? ""}</span>
         </div>
       </div>
@@ -71,31 +74,20 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
   );
 
   async function deletePostId(id: string) {
-    setShowModal(
+    usebackdrop.openContent(
       <Modal
         onConfirm={async function (): Promise<void> {
-          await deletePost(id);
+          await httpPost.deletePost(id);
           setDeleted(true);
-          setShowModal(<></>);
+          usebackdrop.closeContent();
         }}
         onClose={function (): void {
-          setShowModal(<></>);
+          usebackdrop.closeContent();
         }}
       >
         {"Deseja deletar este post?"}
       </Modal>
     );
-  }
-
-  async function deletePost(
-    id: string
-    //  callback: () => void
-  ) {
-    await fetch(`api/v1/posts/${id}`, {
-      method: "DELETE",
-    });
-
-    // callback();
   }
 };
 

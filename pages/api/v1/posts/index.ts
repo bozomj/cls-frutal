@@ -3,6 +3,10 @@ import Post from "@/models/post";
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
+export interface AuthenticatedRequest extends NextApiRequest {
+  user: { id: string };
+}
+
 const auth = async (
   req: NextApiRequest,
   res: NextApiResponse,
@@ -11,7 +15,7 @@ const auth = async (
   try {
     const token = req.cookies.token || "";
     const user = autenticator.verifyToken(token);
-    (req as unknown as { user: { id: string } }).user = user;
+    (req as AuthenticatedRequest).user = user;
     next();
   } catch (e: unknown) {
     const error = e as { message: string };
@@ -57,9 +61,7 @@ async function putHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const body = req.body;
     const post = await Post.getById(body.id);
-    const user = (req as unknown as { user: { id: string } }).user;
-
-    console.log(user.id, post.user_id);
+    const user = (req as AuthenticatedRequest).user;
 
     if (!post) {
       return res.status(404).json({ message: "Post não encontrado" });

@@ -3,6 +3,10 @@ import imagem from "./imagem";
 
 import { deleteObject, ref } from "firebase/storage";
 import { storage } from "@/storage/firebase";
+import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
+import httpImage from "@/http/image";
+import httpPost from "@/http/post";
+import { deleteFile } from "@/storage/cloudflare/r2Cliente";
 
 export type PostType = {
   id?: string;
@@ -140,9 +144,8 @@ async function deletePost(id: string, userId: string) {
   const imagens = await imagem.getByPostID(id);
 
   for (const img of imagens) {
-    const deleteRef = ref(storage, img.url);
     try {
-      await deleteObject(deleteRef);
+      await deleteFile(img.url);
     } catch (error) {
       console.log("Erro ao deletar imagem no firebase", error);
     }

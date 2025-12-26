@@ -7,29 +7,31 @@ import { faEdit, faImage } from "@fortawesome/free-regular-svg-icons";
 import { faPlus, faShareFromSquare } from "@fortawesome/free-solid-svg-icons";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 
-import utils from "@/utils";
 import { GetServerSidePropsContext } from "next";
-
-import Alert from "@/components/Alert";
 import Footer from "@/layout/FooterLayout";
-import CircleAvatar from "@/components/CircleAvatar";
 
-import FullImageView from "@/components/FullImageView";
-import MiniGalleryImage from "@/components/MiniGalleryImage";
-
-import ImageCardPreview from "@/components/ImageCardPreview";
-import WirePost from "@/wireframes/wirePost";
-
-import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
-import CapitalizeText from "@/components/CapitalizeText";
-import LinearProgressIndicator from "@/components/LinearProgressIndicator";
-import Modal from "@/components/Modal";
 import { ImageType } from "@/models/imagem";
+import Image from "next/image";
+
+import utils from "@/utils";
+import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
 import httpPost from "@/http/post";
 import httpImage from "@/http/image";
 import { useBackdrop } from "@/ui/backdrop/useBackdrop";
-import ImageCropper from "@/components/ImageCropper";
-import Image from "next/image";
+import WirePost from "@/wireframes/wirePost";
+
+import {
+  Alert,
+  CircleAvatar,
+  FullImageView,
+  MiniGalleryImage,
+  ImageCardPreview,
+  CapitalizeText,
+  LinearProgressIndicator,
+  Modal,
+  ImageCropper,
+  IconButton,
+} from "@/components";
 
 type Props = {
   user_id?: string;
@@ -109,8 +111,8 @@ export default function DetailsPostPage({ user_id }: Props) {
         {!item.id ? (
           <WirePost />
         ) : (
-          <div className="flex flex-auto flex-col gap-2 w-full max-w-[40rem] p-4 bg-gray-100 rounded-2xl shadow-sm shadow-gray-400 my-2 max-h-max">
-            <div className="flex gap-2  items-center">
+          <article className="flex flex-auto flex-col gap-2 w-full max-w-[40rem] p-4 bg-gray-100 rounded-2xl shadow-sm shadow-gray-400 my-2 max-h-max">
+            <header className="flex gap-2  items-center">
               <CircleAvatar
                 imagem={utils.getUrlImageR2(imgProfileUrl)}
                 size={2}
@@ -120,7 +122,7 @@ export default function DetailsPostPage({ user_id }: Props) {
               <span className="text-xs ml-auto">
                 Publicado {utils.formatarData(item.created_at)}
               </span>
-            </div>
+            </header>
 
             <FullImageView
               images={post_imagens}
@@ -129,7 +131,7 @@ export default function DetailsPostPage({ user_id }: Props) {
               onClose={closeFullImages}
             />
 
-            <div className="bg-gray-200 rounded-2xl flex-auto p-2">
+            <section className="bg-gray-200 rounded-2xl flex-auto p-2">
               <MiniGalleryImage
                 post_imagens={post_imagens}
                 imgPrincipal={imgPrincial as string}
@@ -142,7 +144,7 @@ export default function DetailsPostPage({ user_id }: Props) {
 
               <div className="flex  gap-2 items-center  font-bold w-full mt-2">
                 {isPostUserId && (
-                  <FontAwesomeIcon
+                  <IconButton
                     icon={faEdit}
                     className="text-xl text-green-800 cursor-pointer peer"
                     onClick={() => titleRef.current!.focus()}
@@ -168,42 +170,44 @@ export default function DetailsPostPage({ user_id }: Props) {
               </div>
 
               <div className=" flex justify-between items-baseline ">
-                <div className="font-bold text-green-700">
+                <div className="font-bold text-green-700 flex gap-2">
                   {isPostUserId && (
-                    <FontAwesomeIcon
-                      className="text-xl pr-4 text-green-800 cursor-pointer"
+                    <IconButton
+                      className="text-xl text-green-800 cursor-pointer"
                       onClick={() => valorRef.current!.focus()}
                       icon={faEdit}
                     />
                   )}
-                  <span className="text-lg">{"R$:"}</span>
-                  <span
-                    ref={valorRef}
-                    className="focus:outline-2 text-xl focus:outline-gray-400 p-2"
-                    {...(isPostUserId
-                      ? {
-                          contentEditable: true,
-                          suppressContentEditableWarning: true,
-                          onInput: (v) => {
-                            const e = utils.extractNumberInString(
-                              v.currentTarget.innerText
-                            );
-                            v.currentTarget.innerHTML = utils
-                              .stringForDecimalNumber(e)
-                              .toFixed(2);
+                  <p>
+                    R$:
+                    <span
+                      className="p-2 focus:outline-gray-400 focus:outline-2 text-xl "
+                      ref={valorRef}
+                      {...(isPostUserId
+                        ? {
+                            contentEditable: true,
+                            suppressContentEditableWarning: true,
+                            onInput: (v) => {
+                              const e = utils.extractNumberInString(
+                                v.currentTarget.innerText
+                              );
+                              v.currentTarget.innerHTML = utils
+                                .stringForDecimalNumber(e)
+                                .toFixed(2);
 
-                            moveCursorToEnd(v.currentTarget);
-                          },
-                          onBlur: (v) => {
-                            const e = v.currentTarget.innerText;
-                            setButtonDisabled(false);
-                            setItem((p) => ({ ...p, valor: e }));
-                          },
-                        }
-                      : {})}
-                  >
-                    {item.valor}
-                  </span>
+                              moveCursorToEnd(v.currentTarget);
+                            },
+                            onBlur: (v) => {
+                              const e = v.currentTarget.innerText;
+                              setButtonDisabled(false);
+                              setItem((p) => ({ ...p, valor: e }));
+                            },
+                          }
+                        : {})}
+                    >
+                      {item.valor}
+                    </span>
+                  </p>
                 </div>
 
                 <div className="flex items-center justify-end text-2xl ">
@@ -224,12 +228,12 @@ export default function DetailsPostPage({ user_id }: Props) {
               </div>
 
               <div className="">
-                <div className="flex  gap-2">
+                <div className="flex items-center gap-2">
                   {isPostUserId && (
-                    <FontAwesomeIcon
+                    <IconButton
+                      className="text-xl text-green-800 cursor-pointer"
                       icon={faEdit}
                       onClick={() => descricaoRef.current!.focus()}
-                      className="text-xl text-green-800 cursor-pointer"
                     />
                   )}
                   <h2 className="text-gray-500">Sobre este item</h2>
@@ -407,8 +411,8 @@ export default function DetailsPostPage({ user_id }: Props) {
                   </div>
                 </section>
               )}
-            </div>
-          </div>
+            </section>
+          </article>
         )}
         <Footer />
       </main>

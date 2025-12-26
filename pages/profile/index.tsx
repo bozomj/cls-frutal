@@ -147,7 +147,11 @@ const Profile: React.FC = () => {
           </section>
 
           <section className="border-t-2 border-gray-400 flex flex-col py-4 mt-4">
-            <Produtos postagens={posts} Card={ProductCardDashboard} />
+            <Produtos
+              postagens={posts}
+              Card={ProductCardDashboard}
+              className="grid-cols-1!"
+            />
           </section>
         </div>
       </main>

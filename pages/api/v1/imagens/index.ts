@@ -41,10 +41,9 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 async function delHandler(req: NextApiRequest, res: NextApiResponse) {
   const body = req.body;
   const user = (req as unknown as { user: { id: string } }).user;
+
   const post = await Post.getById(body.post_id);
   const postUserId = post.user_id;
-
-  console.log(body.url);
 
   if (postUserId === user.id) {
     const removed = await imagem.del(body.id);

@@ -45,12 +45,21 @@ async function update(post: unknown) {
 }
 
 async function delImage(img: unknown) {
-  fetch(`/api/v1/imagens`, {
+  const result = await fetch(`/api/v1/imagens`, {
     method: "delete",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(img),
+  });
+
+  const resultBody = await result.json();
+  console.log(resultBody);
+}
+
+async function deletePost(id: string) {
+  await fetch(`api/v1/posts/${id}`, {
+    method: "DELETE",
   });
 }
 
@@ -61,6 +70,7 @@ const httpPost = {
   getAll,
   update,
   delImage,
+  deletePost,
 };
 
 export default httpPost;

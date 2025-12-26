@@ -27,6 +27,7 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
           alt=""
           src={utils.getUrlImageR2(imgPrincipal)}
           fill
+          sizes="70"
           className="object-contain max-h-full rounded-md hover:outline-3 hover:outline-cyan-600"
           onClick={onClick}
         />
@@ -55,7 +56,6 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
                       `}
                 key={img.id}
                 onClick={() => {
-                  console.log(key);
                   selectImg(key);
                 }}
               >
@@ -64,6 +64,7 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
                   alt=""
                   src={utils.getUrlImageR2(img.url)}
                   fill
+                  sizes="70"
                 />
               </div>
             );
