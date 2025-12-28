@@ -9,6 +9,7 @@ import httpPost from "@/http/post";
 
 import Footer from "@/layout/FooterLayout";
 import Produtos from "@/layout/produtos/Produtos";
+import Image from "next/image";
 
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -58,6 +59,13 @@ const Home: React.FC<HomeProps> = () => {
         >
           <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
           <CarrosselScroll items={imgCarrossel} time={5} />
+          <div className="w-full h-fit relative">
+            <img
+              alt=""
+              src={"https://s0.2mdn.net/simgad/8987822436431936518"}
+              className="w-full rounded-md"
+            />
+          </div>
           <Produtos Card={ProductCard} postagens={postagens} />
         </section>
         <Footer />

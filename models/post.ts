@@ -1,11 +1,6 @@
 import database from "@/database/database";
 import imagem from "./imagem";
 
-import { deleteObject, ref } from "firebase/storage";
-import { storage } from "@/storage/firebase";
-import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
-import httpImage from "@/http/image";
-import httpPost from "@/http/post";
 import { deleteFile } from "@/storage/cloudflare/r2Cliente";
 
 export type PostType = {
@@ -21,7 +16,18 @@ export type PostType = {
   name: string;
   created_at?: EpochTimeStamp;
   updated_at?: EpochTimeStamp;
+  status: string;
 };
+
+export enum PostStatus {
+  DRAFT = "draft",
+  PENDING = "pending",
+  ACTIVE = "active",
+  PAUSED = "paused",
+  EXPIRED = "expired",
+  REJECTED = "rejected",
+  DELETED = "deleted",
+}
 
 function isPostType(obj: unknown): obj is PostType {
   if (typeof obj !== "object" || obj === null) return false;
@@ -49,7 +55,7 @@ async function create(pst: PostType) {
   });
 
   const query =
-    "INSERT INTO posts (user_id, title, description, valor, categoria_id) VALUES ($1,$2,$3,$4,$5) RETURNING *;";
+    "INSERT INTO posts (user_id, title, description, valor, categoria_id, status) VALUES ($1,$2,$3,$4,$5,$6 ) RETURNING *;";
 
   try {
     return await database.query(query, [
@@ -58,6 +64,7 @@ async function create(pst: PostType) {
       pst.description,
       pst.valor,
       pst.categoria_id,
+      PostStatus.PENDING,
     ]);
   } catch (error) {
     throw {
@@ -213,6 +220,7 @@ async function getByUserID(
     };
   }
 }
+
 async function getByUserIDTotal(id: string, search: string) {
   try {
     const total = await database.query(

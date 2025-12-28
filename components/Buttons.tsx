@@ -39,6 +39,7 @@ export function ButtonSecondary({
 
 const Buttons = {
   ButtonPrimary,
+  ButtonSecondary,
 };
 
 export default Buttons;

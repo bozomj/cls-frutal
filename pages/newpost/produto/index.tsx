@@ -5,7 +5,7 @@ import autenticator from "@/models/autenticator";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { ChangeEvent, JSX, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Alert from "@/components/Alert";
 
 import { useRouter } from "next/navigation";
