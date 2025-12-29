@@ -63,12 +63,27 @@ async function deletePost(id: string) {
   });
 }
 
+async function getPostByStatus(
+  initial: string,
+  limite: string,
+  status: string
+) {
+  const result = await fetch(
+    `/api/v1/administrator/posts?status=${status}&initial=${initial}&limit=${limite}`
+  );
+  const resultBody = await result.json();
+  return resultBody;
+}
+
 const httpPost = {
   getPostCurrentUser,
   getTotal,
   getPostId,
   getAll,
+  getPostByStatus,
+
   update,
+
   delImage,
   deletePost,
 };

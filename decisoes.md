@@ -49,6 +49,8 @@ x mudar ImageCropper para conter os botoes de confirmar e cancelar, confirmar re
 
 - usar url state para paginação
 
+- melhorar funcoes de query no banco para trazer apenas dados que sera usado.
+
 usuarios [
 diego@hotmail.com
 matheus@hotmail.com | senha 12345

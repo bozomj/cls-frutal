@@ -2,6 +2,7 @@ import database from "@/database/database";
 import imagem from "./imagem";
 
 import { deleteFile } from "@/storage/cloudflare/r2Cliente";
+import { PostStatus } from "@/shared/post_status";
 
 export type PostType = {
   id?: string;
@@ -14,20 +15,10 @@ export type PostType = {
   imageurl?: string;
   phone: string;
   name: string;
-  created_at?: EpochTimeStamp;
-  updated_at?: EpochTimeStamp;
+  created_at?: string;
+  updated_at?: string;
   status: string;
 };
-
-export enum PostStatus {
-  DRAFT = "draft",
-  PENDING = "pending",
-  ACTIVE = "active",
-  PAUSED = "paused",
-  EXPIRED = "expired",
-  REJECTED = "rejected",
-  DELETED = "deleted",
-}
 
 function isPostType(obj: unknown): obj is PostType {
   if (typeof obj !== "object" || obj === null) return false;
@@ -281,7 +272,8 @@ async function search(txt: string, initial: string, limit: string | null) {
       `WITH ultimos_posts AS (
         SELECT *
         FROM posts
-        WHERE title ILIKE $1 OR description ILIKE $1
+        WHERE
+        status = $4 AND (title ILIKE $1 OR description ILIKE $1)
         ORDER BY created_at DESC
         LIMIT $2 OFFSET $3
       )
@@ -296,12 +288,40 @@ async function search(txt: string, initial: string, limit: string | null) {
       ) i ON true;
 
         `,
-      [`%${txt}%`, limit, initial]
+      [`%${txt}%`, limit, initial, PostStatus.ACTIVE]
     );
 
     return posts;
   } catch (error) {
     return { message: error };
+  }
+}
+
+async function getPostByStatus(initial: string, limit: string, status: string) {
+  try {
+    const posts = await database.query(
+      `SELECT * FROM (
+        select distinct on (posts.id)
+         posts.*, 
+         users.phone AS phone,
+         users.name as name,
+         imagens.url as imageUrl
+        from posts
+        left join imagens on imagens.post_id = posts.id
+        LEFT JOIN users ON users.id = posts.user_id
+        where status = $3
+      ) AS sub ORDER BY sub.created_at desc
+       limit $1 offset  $2
+       `,
+      [limit, initial, status]
+    );
+
+    return posts;
+  } catch (error) {
+    throw {
+      message: "Erro ao listar todas postagens pendentes",
+      cause: error,
+    };
   }
 }
 
@@ -316,6 +336,7 @@ const Post = {
 
   getTotal,
   getByUserIDTotal,
+  getPostByStatus,
 };
 
 export default Post;

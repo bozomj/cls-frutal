@@ -101,7 +101,7 @@ const LayoutPage = ({ user, children }: Props) => {
               title="Postagens"
               icon={faPodcast}
               onClick={() => {}}
-              url="/newpost/produto"
+              url="/administrator/posts"
               className="select-none no-drag"
             />
           </ul>

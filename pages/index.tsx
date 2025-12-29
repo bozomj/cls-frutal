@@ -59,11 +59,11 @@ const Home: React.FC<HomeProps> = () => {
         >
           <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
           <CarrosselScroll items={imgCarrossel} time={5} />
-          <div className="w-full h-fit relative">
+          <div className="w-full  relative flex justify-center">
             <img
               alt=""
               src={"https://s0.2mdn.net/simgad/8987822436431936518"}
-              className="w-full rounded-md"
+              className="h-full  rounded-md"
             />
           </div>
           <Produtos Card={ProductCard} postagens={postagens} />
