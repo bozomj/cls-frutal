@@ -8,6 +8,7 @@ import { faEdit } from "@fortawesome/free-regular-svg-icons";
 import Image from "next/image";
 import { useBackdrop } from "@/ui/backdrop/useBackdrop";
 import httpPost from "@/http/post";
+import { PostStatus } from "@/shared/post_status";
 
 interface ProductCardDashboardProps {
   item: PostType;
@@ -21,13 +22,46 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
   const [deleted, setDeleted] = useState(false);
   const usebackdrop = useBackdrop();
 
+  const statusColor = {
+    pending: {
+      border: "border-amber-500",
+      text: "text-amber-600",
+    },
+    active: {
+      border: "border-green-500",
+      text: "text-green-600",
+    },
+    draft: {
+      border: "border-gray-600",
+      text: "text-gray-600",
+    },
+    paused: {
+      border: "border-gray-600",
+      text: "text-gray-600",
+    },
+    expired: {
+      border: "border-gray-600",
+      text: "text-gray-600",
+    },
+    rejected: {
+      border: "border-gray-600",
+      text: "text-gray-600",
+    },
+    deleted: {
+      border: "border-gray-600",
+      text: "text-gray-600",
+    },
+  } as const;
+
   if (deleted) return null;
 
   return (
     <article
-      className={`bg-gray-200 relative flex-col text-white  gap-2 p-2 rounded-2xl flex justify-center ${className} `}
+      className={`bg-gray-200 relative flex-col text-white gap-2 p-2 rounded-2xl flex justify-center border-2 ${
+        statusColor[item.status].border
+      } ${className ?? ""}`}
     >
-      <div className="flex justify-between items-center">
+      <div className="flex  justify-between items-center">
         <p className="text-gray-800">
           pub: {utils.formatarData(`${item.created_at}` || "")}
         </p>
@@ -49,8 +83,8 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
         </div>
       </div>
 
-      <div className="flex flex-col w-full  overflow-hidden h-full gap-2 ">
-        <div className="bg-gray-200 rounded-xl h-40 relative">
+      <div className="flex w-full  overflow-hidden h-full gap-2 ">
+        <div className="bg-gray-200 rounded-xl h-40 relative w-1/3">
           <Image
             src={utils.getUrlImageR2(item.imageurl ?? "")}
             fill
@@ -60,7 +94,7 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
           />
         </div>
 
-        <div className=" flex text-gray-900 flex-col ">
+        <div className=" flex text-gray-900 flex-col  w-full ">
           <span className="text-xl w-fit overflow-hidden font-bold text-gray-800">
             {item.title ?? ""}
           </span>
@@ -68,6 +102,13 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
             R$: <span className="text-xl">{item.valor}</span>
           </p>
           <span className="w-full">{item.description ?? ""}</span>
+          <span
+            className={`${
+              statusColor[item.status].text
+            } mt-auto ml-auto font-bold`}
+          >
+            Status: {item.status}
+          </span>
         </div>
       </div>
     </article>

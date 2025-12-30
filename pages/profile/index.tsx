@@ -126,6 +126,7 @@ const Profile: React.FC = () => {
                         className="border-2 rounded-full border-white"
                       />
                     </button>
+
                     <ImageCardPreview
                       image={newImg}
                       className="max-w-full"

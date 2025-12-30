@@ -17,7 +17,7 @@ export type PostType = {
   name: string;
   created_at?: string;
   updated_at?: string;
-  status: string;
+  status: PostStatus;
 };
 
 function isPostType(obj: unknown): obj is PostType {

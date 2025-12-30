@@ -1,3 +1,4 @@
+import { ButtonPrimary } from "./Buttons";
 import PortalWrapper from "./PortalWrapper";
 
 interface ModalProps {

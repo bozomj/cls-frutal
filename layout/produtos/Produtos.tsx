@@ -34,11 +34,7 @@ function Produtos<T>({ postagens = [], Card, className }: ProdutosProps<T>) {
         </h2>,
       ];
 
-    return items.map((item, v) => (
-      <div key={v} className="flex flex-col gap-4 ">
-        <Card item={item} key={`${v}`} />
-      </div>
-    ));
+    return items.map((item, v) => <Card item={item} key={`${v}`} />);
   }
 }
 
