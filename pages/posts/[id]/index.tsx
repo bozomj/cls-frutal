@@ -33,9 +33,6 @@ import {
   IconButton,
 } from "@/components";
 import OwnerGuard from "@/components/guards/OwnerGuard";
-import VerticalDivider from "@/components/VerticalDivider";
-import PostView from "@/components/post/PostView";
-import { PostType } from "@/models/post";
 
 type Props = {
   user_id?: string;
@@ -54,8 +51,6 @@ export default function DetailsPostPage({ user_id }: Props) {
     user_id: "",
     updated_at: "",
     maxImagens: 3,
-    img_profile: "",
-    status: "",
   };
 
   const router = useRouter();
@@ -109,154 +104,184 @@ export default function DetailsPostPage({ user_id }: Props) {
     fetchData();
   }, [post_id, getPost]);
 
-  if (!item.id) return <WirePost />;
-
   return (
     <>
       <Header />
       <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center text-black ">
-        <section className="w-[40rem] h-screen flex flex-col">
-          <PostView post={item} />
+        {!item.id ? (
+          <WirePost />
+        ) : (
+          <article className="flex flex-auto flex-col gap-2 w-full max-w-[40rem] p-4 bg-gray-100 rounded-2xl shadow-sm shadow-gray-400 my-2 h-full">
+            <PostHeader />
 
-          <OwnerGuard isOwner={isPostUserId}>
-            <section
-              id="postuseractions"
-              className="outline-0 outline-gray-400 shadow-sm shadow-gray-400 rounded-2xl bg-gray-100 p-4"
-            >
-              <div>
-                <h2 className="text-2xl text-center p-2 font-bold">
-                  Adicionar ou remover imagens
-                </h2>
-                <div className="bg-gray-500 rounded py-2">
-                  <h3 className="p-2 text-white text-center text-xl">
-                    Imagens Atuais
-                  </h3>
-                  <div className="flex gap-2 overflow-x-scroll h-[15rem] p-2 bg-gray-400 ">
-                    {post_imagens[0] !== null &&
-                      post_imagens.map((img, i) => {
-                        const newImg = utils.getUrlImageR2(img.url);
-                        return (
-                          <ImageCardPreview
-                            key={"img-" + i}
-                            image={{ ...img, url: newImg }}
-                            onClick={() => {
-                              usebackdrop.openContent(
-                                <Modal
-                                  onConfirm={() => deletarImagem(img)}
-                                  onClose={() => usebackdrop.closeContent()}
-                                >
-                                  <div className="relative flex ">
-                                    <Image
-                                      className="object-contain h-auto w-auto"
-                                      alt=""
-                                      src={utils.getUrlImageR2(img.url)}
-                                      width={60}
-                                      height={60}
-                                      loading="eager"
-                                    />
-                                  </div>
-                                  Deseja remover esta imagem
-                                </Modal>
-                              );
-                            }}
-                          />
-                        );
-                      })}
-                  </div>
+            <div>
+              <section className="bg-gray-200 rounded-2xl flex-auto p-2">
+                <MiniGalleryImage
+                  post_imagens={post_imagens}
+                  imgPrincipal={imgPrincial as string}
+                  onClick={() =>
+                    usebackdrop.openContent(
+                      <FullImageView
+                        images={post_imagens}
+                        index={imagemIndex}
+                        visible={true}
+                        onClose={closeFullImages}
+                      />
+                    )
+                  }
+                  selectImg={(i) => {
+                    setImgPrincipal(post_imagens[i].url);
+                    setImagemIndex(i);
+                  }}
+                />
+                <ItemTitle />
+                <div className=" flex justify-between items-baseline ">
+                  <ItemValor />
+                  <ButtonsActions />
                 </div>
-              </div>
+                <ItemDescription />
+              </section>
 
-              {loadingImages && (
-                <div className="m-3">
-                  <LinearProgressIndicator />
-                </div>
-              )}
-              {previewImagens.length > 0 && (
-                <div className="bg-gray-500 mt-2 rounded overflow-hidden">
-                  <h3 className="text-white text-xl text-center p-2">
-                    Novas Imagens
-                  </h3>
-                  <div
-                    id="preview-imagens"
-                    className="flex gap-3  overflow-x-scroll h-[15rem]  bg-gray-400 py-4"
-                  >
-                    {previewImagens.map((img, index) => {
-                      console.log(img);
-                      img.id = crypto.randomUUID();
-                      return (
-                        <ImageCardPreview
-                          key={img.id}
-                          image={img}
-                          onClick={() => {
-                            setPreviewImagens((p) => {
-                              const imgToRemove = p.find(
-                                (im) => im.url === img.url
-                              );
-                              if (imgToRemove)
-                                URL.revokeObjectURL(imgToRemove.url);
-                              return p.filter((_, i) => i !== index);
-                            });
-                          }}
-                          onImageClick={() => {
-                            usebackdrop.openContent(
-                              <ImageCropper
-                                image={img.url}
-                                onConfirm={(newim) => {
-                                  const url = URL.createObjectURL(newim);
-                                  const newImg = {
-                                    id: img.id,
-                                    file: newim,
-                                    url: url,
-                                  };
-                                  setPreviewImagens((imgs) =>
-                                    imgs.map((im) =>
-                                      im.id === img.id
-                                        ? { ...im, ...newImg }
-                                        : im
-                                    )
+              <OwnerGuard isOwner={isPostUserId}>
+                <section
+                  id="postuseractions"
+                  className="outline-0 outline-gray-400 rounded-2xl bg-gray-200 mt-4"
+                >
+                  <div>
+                    <h2 className="text-2xl text-center p-2 font-bold">
+                      Adicionar ou remover imagens
+                    </h2>
+                    <div className="bg-gray-500 rounded py-2">
+                      <h3 className="p-2 text-white text-center text-xl">
+                        Imagens Atuais
+                      </h3>
+                      <div className="flex gap-2 overflow-x-scroll h-[15rem] p-2 bg-gray-400 ">
+                        {post_imagens[0] !== null &&
+                          post_imagens.map((img, i) => {
+                            const newImg = utils.getUrlImageR2(img.url);
+                            return (
+                              <ImageCardPreview
+                                key={"img-" + i}
+                                image={{ ...img, url: newImg }}
+                                onClick={() => {
+                                  usebackdrop.openContent(
+                                    <Modal
+                                      onConfirm={() => deletarImagem(img)}
+                                      onClose={() => usebackdrop.closeContent()}
+                                    >
+                                      <div className="relative flex ">
+                                        <Image
+                                          className="object-contain h-auto w-auto"
+                                          alt=""
+                                          src={utils.getUrlImageR2(img.url)}
+                                          width={60}
+                                          height={60}
+                                          loading="eager"
+                                        />
+                                      </div>
+                                      Deseja remover esta imagem
+                                    </Modal>
                                   );
                                 }}
                               />
                             );
-                          }}
-                        />
-                      );
-                    })}
+                          })}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              )}
-              <div className="flex justify-between  p-2">
-                {post_imagens.length < _item.maxImagens && (
-                  <label className="bg-cyan-800 hover:bg-cyan-600  cursor-pointer block w-fit p-2 pr-3 pt-3 rounded  text-white relative">
-                    <FontAwesomeIcon
-                      icon={faPlus}
-                      className=" absolute rounded-full top-1 right-1 text-md"
-                    />
-                    <FontAwesomeIcon className="text-3xl" icon={faImage} />
-                    <input
-                      type="file"
-                      className="hidden"
-                      accept="image/*"
-                      multiple
-                      max={3}
-                      onChange={(e) => selecionarImagens(e)}
-                    />
-                  </label>
-                )}
 
-                {previewImagens.length > 0 && (
-                  <button
-                    className="btn bg-green-700 text-white font-bold hover:bg-green-800"
-                    onClick={uploadImages}
-                  >
-                    salvar
-                  </button>
-                )}
-              </div>
-            </section>
-          </OwnerGuard>
-        </section>
+                  {loadingImages && (
+                    <div className="m-3">
+                      <LinearProgressIndicator />
+                    </div>
+                  )}
+                  {previewImagens.length > 0 && (
+                    <div className="bg-gray-500 mt-2 rounded overflow-hidden">
+                      <h3 className="text-white text-xl text-center p-2">
+                        Novas Imagens
+                      </h3>
+                      <div
+                        id="preview-imagens"
+                        className="flex gap-3  overflow-x-scroll h-[15rem]  bg-gray-400 py-4"
+                      >
+                        {previewImagens.map((img, index) => {
+                          console.log(img);
+                          img.id = crypto.randomUUID();
+                          return (
+                            <ImageCardPreview
+                              key={img.id}
+                              image={img}
+                              onClick={() => {
+                                setPreviewImagens((p) => {
+                                  const imgToRemove = p.find(
+                                    (im) => im.url === img.url
+                                  );
+                                  if (imgToRemove)
+                                    URL.revokeObjectURL(imgToRemove.url);
+                                  return p.filter((_, i) => i !== index);
+                                });
+                              }}
+                              onImageClick={() => {
+                                usebackdrop.openContent(
+                                  <ImageCropper
+                                    image={img.url}
+                                    onConfirm={(newim) => {
+                                      const url = URL.createObjectURL(newim);
+                                      const newImg = {
+                                        id: img.id,
+                                        file: newim,
+                                        url: url,
+                                      };
+                                      setPreviewImagens((imgs) =>
+                                        imgs.map((im) =>
+                                          im.id === img.id
+                                            ? { ...im, ...newImg }
+                                            : im
+                                        )
+                                      );
+                                    }}
+                                  />
+                                );
+                              }}
+                            />
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                  <div className="flex justify-between  p-2">
+                    {post_imagens.length < _item.maxImagens && (
+                      <label className="bg-cyan-800 hover:bg-cyan-600  cursor-pointer block w-fit p-2 pr-3 pt-3 rounded  text-white relative">
+                        <FontAwesomeIcon
+                          icon={faPlus}
+                          className=" absolute rounded-full top-1 right-1 text-md"
+                        />
+                        <FontAwesomeIcon className="text-3xl" icon={faImage} />
+                        <input
+                          type="file"
+                          className="hidden"
+                          accept="image/*"
+                          multiple
+                          max={3}
+                          onChange={(e) => selecionarImagens(e)}
+                        />
+                      </label>
+                    )}
 
+                    {previewImagens.length > 0 && (
+                      <button
+                        className="btn bg-green-700 text-white font-bold hover:bg-green-800"
+                        onClick={uploadImages}
+                      >
+                        salvar
+                      </button>
+                    )}
+                  </div>
+                </section>
+              </OwnerGuard>
+            </div>
+          </article>
+        )}
         <Footer />
       </main>
     </>

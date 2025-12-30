@@ -154,7 +154,11 @@ function Dashboard({ ctx }: { ctx: string }) {
               </div>
             </span>
             <section className="flex flex-col">
-              <Produtos Card={ProductCardDashboard} postagens={listPost} />
+              <Produtos
+                Card={ProductCardDashboard}
+                postagens={listPost}
+                className="grid-cols-1!"
+              />
             </section>
           </section>
         </div>
