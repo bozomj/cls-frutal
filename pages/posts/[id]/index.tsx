@@ -32,6 +32,8 @@ import {
   ImageCropper,
   IconButton,
 } from "@/components";
+import OwnerGuard from "@/components/guards/OwnerGuard";
+import VerticalDivider from "@/components/VerticalDivider";
 
 type Props = {
   user_id?: string;
@@ -63,7 +65,6 @@ export default function DetailsPostPage({ user_id }: Props) {
 
   const [isPostUserId, IsPostUserId] = useState(false);
   const [loadingImages, setLoadingImages] = useState(false);
-  const [fullImageVisible, setfullImageVisible] = useState(false);
 
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [previewImagens, setPreviewImagens] = useState<ImageType[]>([]);
@@ -104,257 +105,123 @@ export default function DetailsPostPage({ user_id }: Props) {
     fetchData();
   }, [post_id, getPost]);
 
+  if (!item.id) return <WirePost />;
+
   return (
     <>
       <Header />
       <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center text-black ">
-        {!item.id ? (
-          <WirePost />
-        ) : (
-          <article className="flex flex-auto flex-col gap-2 w-full max-w-[40rem] p-4 bg-gray-100 rounded-2xl shadow-sm shadow-gray-400 my-2 max-h-max">
-            <header className="flex gap-2  items-center">
-              <CircleAvatar
-                imagem={utils.getUrlImageR2(imgProfileUrl)}
-                size={2}
-              />
-              <CapitalizeText txt={item.name} />
+        <article className="flex flex-auto flex-col gap-2 w-full max-w-[40rem] p-4 bg-gray-100 rounded-2xl shadow-sm shadow-gray-400 my-2 h-full">
+          <PostHeader />
 
-              <span className="text-xs ml-auto">
-                Publicado {utils.formatarData(item.created_at)}
-              </span>
-            </header>
-
-            <FullImageView
-              images={post_imagens}
-              index={imagemIndex}
-              visible={fullImageVisible}
-              onClose={closeFullImages}
-            />
-
+          <div>
             <section className="bg-gray-200 rounded-2xl flex-auto p-2">
               <MiniGalleryImage
                 post_imagens={post_imagens}
                 imgPrincipal={imgPrincial as string}
-                onClick={() => setfullImageVisible(true)}
+                onClick={() =>
+                  usebackdrop.openContent(
+                    <FullImageView
+                      images={post_imagens}
+                      index={imagemIndex}
+                      visible={true}
+                      onClose={closeFullImages}
+                    />
+                  )
+                }
                 selectImg={(i) => {
                   setImgPrincipal(post_imagens[i].url);
                   setImagemIndex(i);
                 }}
               />
-
-              <div className="flex  gap-2 items-center  font-bold w-full mt-2">
-                {isPostUserId && (
-                  <IconButton
-                    icon={faEdit}
-                    className="text-xl text-green-800 cursor-pointer peer"
-                    onClick={() => titleRef.current!.focus()}
-                  />
-                )}
-                <h1
-                  ref={titleRef}
-                  className="focus:outline-2 text-xl  focus:outline-gray-400 text-gray-800 "
-                  {...(isPostUserId && {
-                    contentEditable: true,
-                    suppressContentEditableWarning: true,
-                    onInput: () => {
-                      setButtonDisabled(false);
-                    },
-                    onBlur: (e) => {
-                      const value = e.currentTarget.innerText;
-                      setItem((p) => ({ ...p, title: value }));
-                    },
-                  })}
-                >
-                  {item.title}
-                </h1>
-              </div>
-
+              <ItemTitle />
               <div className=" flex justify-between items-baseline ">
-                <div className="font-bold text-green-700 flex gap-2">
-                  {isPostUserId && (
-                    <IconButton
-                      className="text-xl text-green-800 cursor-pointer"
-                      onClick={() => valorRef.current!.focus()}
-                      icon={faEdit}
-                    />
-                  )}
-                  <p>
-                    R$:
-                    <span
-                      className="p-2 focus:outline-gray-400 focus:outline-2 text-xl "
-                      ref={valorRef}
-                      {...(isPostUserId
-                        ? {
-                            contentEditable: true,
-                            suppressContentEditableWarning: true,
-                            onInput: (v) => {
-                              const e = utils.extractNumberInString(
-                                v.currentTarget.innerText
-                              );
-                              v.currentTarget.innerHTML = utils
-                                .stringForDecimalNumber(e)
-                                .toFixed(2);
-
-                              moveCursorToEnd(v.currentTarget);
-                            },
-                            onBlur: (v) => {
-                              const e = v.currentTarget.innerText;
-                              setButtonDisabled(false);
-                              setItem((p) => ({ ...p, valor: e }));
-                            },
-                          }
-                        : {})}
-                    >
-                      {item.valor}
-                    </span>
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-end text-2xl ">
-                  <a
-                    target="_blank"
-                    className="text-green-700  btn text-2xl hover:text-green-900 hover:bg-gray-300"
-                    href={`https://wa.me/55${item.phone}?text=ola gostariad e falar com voce`}
-                  >
-                    <FontAwesomeIcon icon={faWhatsapp} />
-                  </a>
-                  <button
-                    className="text-teal-500 btn text-xl hover:text-teal-700 hover:bg-gray-300"
-                    onClick={copiarLink}
-                  >
-                    <FontAwesomeIcon icon={faShareFromSquare} />
-                  </button>
-                </div>
+                <ItemValor />
+                <ButtonsActions />
               </div>
+              <ItemDescription />
+            </section>
 
-              <div className="">
-                <div className="flex items-center gap-2">
-                  {isPostUserId && (
-                    <IconButton
-                      className="text-xl text-green-800 cursor-pointer"
-                      icon={faEdit}
-                      onClick={() => descricaoRef.current!.focus()}
-                    />
-                  )}
-                  <h2 className="text-gray-500">Sobre este item</h2>
+            <OwnerGuard isOwner={isPostUserId}>
+              <section
+                id="postuseractions"
+                className="outline-0 outline-gray-400 rounded-2xl bg-gray-200 mt-4"
+              >
+                <div>
+                  <h2 className="text-2xl text-center p-2 font-bold">
+                    Adicionar ou remover imagens
+                  </h2>
+                  <div className="bg-gray-500 rounded py-2">
+                    <h3 className="p-2 text-white text-center text-xl">
+                      Imagens Atuais
+                    </h3>
+                    <div className="flex gap-2 overflow-x-scroll h-[15rem] p-2 bg-gray-400 ">
+                      {post_imagens[0] !== null &&
+                        post_imagens.map((img, i) => {
+                          const newImg = utils.getUrlImageR2(img.url);
+                          return (
+                            <ImageCardPreview
+                              key={"img-" + i}
+                              image={{ ...img, url: newImg }}
+                              onClick={() => {
+                                usebackdrop.openContent(
+                                  <Modal
+                                    onConfirm={() => deletarImagem(img)}
+                                    onClose={() => usebackdrop.closeContent()}
+                                  >
+                                    <div className="relative flex ">
+                                      <Image
+                                        className="object-contain h-auto w-auto"
+                                        alt=""
+                                        src={utils.getUrlImageR2(img.url)}
+                                        width={60}
+                                        height={60}
+                                        loading="eager"
+                                      />
+                                    </div>
+                                    Deseja remover esta imagem
+                                  </Modal>
+                                );
+                              }}
+                            />
+                          );
+                        })}
+                    </div>
+                  </div>
                 </div>
 
-                <p
-                  ref={descricaoRef}
-                  className="focus:outline-2 focus:outline-gray-400 text-gray-700"
-                  {...(isPostUserId
-                    ? {
-                        contentEditable: true,
-                        suppressContentEditableWarning: true,
-                        onInput: () => setButtonDisabled(false),
-                        onBlur: (e) => {
-                          const value = e.currentTarget.innerText;
-                          setItem((p) => ({ ...p, description: value }));
-                        },
-                      }
-                    : {})}
-                >
-                  {item.description}
-                </p>
-
-                {isPostUserId && (
-                  <div className="border-t-1 border-gray-400 flex justify-end py-4 mt-4">
-                    <button
-                      type="button"
-                      disabled={buttonDisabled}
-                      className={` p-2 rounded-md  font-bold  ${
-                        !buttonDisabled
-                          ? "text-white bg-cyan-600 cursor-pointer"
-                          : "bg-gray-500 text-gray-800"
-                      }`}
-                      onClick={postUpdate}
-                    >
-                      Editar
-                    </button>
+                {loadingImages && (
+                  <div className="m-3">
+                    <LinearProgressIndicator />
                   </div>
                 )}
-              </div>
-
-              {isPostUserId && (
-                <section
-                  id="postuseractions"
-                  className="outline-0 outline-gray-400 rounded-2xl"
-                >
-                  {isPostUserId && (
-                    <div>
-                      <h2 className="text-2xl text-center p-2">
-                        Adicionar ou remover imagens
-                      </h2>
-                      <div className="bg-gray-500 rounded py-2">
-                        <h3 className="p-2 text-white text-center text-xl">
-                          Imagens Atuais
-                        </h3>
-                        <div className="flex gap-2 overflow-x-scroll h-[15rem] p-2 bg-gray-400 ">
-                          {post_imagens[0] !== null &&
-                            post_imagens.map((img, i) => {
-                              const newImg = utils.getUrlImageR2(img.url);
-                              return (
-                                <ImageCardPreview
-                                  key={"img-" + i}
-                                  image={{ ...img, url: newImg }}
-                                  onClick={() => {
-                                    usebackdrop.openContent(
-                                      <Modal
-                                        onConfirm={() => deletarImagem(img)}
-                                        onClose={() =>
-                                          usebackdrop.closeContent()
-                                        }
-                                      >
-                                        <div className="relative flex ">
-                                          <Image
-                                            className="object-contain h-auto w-auto"
-                                            alt=""
-                                            src={utils.getUrlImageR2(img.url)}
-                                            width={60}
-                                            height={60}
-                                            loading="eager"
-                                          />
-                                        </div>
-                                        Deseja remover esta imagem
-                                      </Modal>
-                                    );
-                                  }}
-                                />
-                              );
-                            })}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  {loadingImages && (
-                    <div className="m-3">
-                      <LinearProgressIndicator />
-                    </div>
-                  )}
-                  {previewImagens.length > 0 && (
-                    <div className="bg-gray-500 mt-2 rounded overflow-hidden">
-                      <h3 className="text-white text-xl text-center p-2">
-                        Novas Imagens
-                      </h3>
-                      <div
-                        id="preview-imagens"
-                        className="flex gap-3  overflow-x-scroll h-[15rem]  bg-gray-400 py-4"
-                      >
-                        {previewImagens.map((img, index) => (
+                {previewImagens.length > 0 && (
+                  <div className="bg-gray-500 mt-2 rounded overflow-hidden">
+                    <h3 className="text-white text-xl text-center p-2">
+                      Novas Imagens
+                    </h3>
+                    <div
+                      id="preview-imagens"
+                      className="flex gap-3  overflow-x-scroll h-[15rem]  bg-gray-400 py-4"
+                    >
+                      {previewImagens.map((img, index) => {
+                        console.log(img);
+                        img.id = crypto.randomUUID();
+                        return (
                           <ImageCardPreview
-                            key={img.url}
+                            key={img.id}
                             image={img}
                             onClick={() => {
                               setPreviewImagens((p) => {
-                                const imgs = previewImagens.find(
+                                const imgToRemove = p.find(
                                   (im) => im.url === img.url
                                 );
-                                if (imgs) URL.revokeObjectURL(imgs.url);
+                                if (imgToRemove)
+                                  URL.revokeObjectURL(imgToRemove.url);
                                 return p.filter((_, i) => i !== index);
                               });
                             }}
                             onImageClick={() => {
-                              console.log(img);
                               usebackdrop.openContent(
                                 <ImageCropper
                                   image={img.url}
@@ -377,47 +244,78 @@ export default function DetailsPostPage({ user_id }: Props) {
                               );
                             }}
                           />
-                        ))}
-                      </div>
+                        );
+                      })}
                     </div>
-                  )}
-                  <div className="flex justify-between  p-2">
-                    {isPostUserId && post_imagens.length < _item.maxImagens && (
-                      <label className="bg-cyan-800 hover:bg-cyan-600  cursor-pointer block w-fit p-2 pr-3 pt-3 rounded  text-white relative">
-                        <FontAwesomeIcon
-                          icon={faPlus}
-                          className=" absolute rounded-full top-1 right-1 text-md"
-                        />
-                        <FontAwesomeIcon className="text-3xl" icon={faImage} />
-                        <input
-                          type="file"
-                          className="hidden"
-                          accept="image/*"
-                          multiple
-                          max={3}
-                          onChange={(e) => selecionarImagens(e)}
-                        />
-                      </label>
-                    )}
-
-                    {previewImagens.length > 0 && (
-                      <button
-                        className="btn bg-green-700 text-white font-bold hover:bg-green-800"
-                        onClick={uploadImages}
-                      >
-                        salvar
-                      </button>
-                    )}
                   </div>
-                </section>
-              )}
-            </section>
-          </article>
-        )}
+                )}
+                <div className="flex justify-between  p-2">
+                  {post_imagens.length < _item.maxImagens && (
+                    <label className="bg-cyan-800 hover:bg-cyan-600  cursor-pointer block w-fit p-2 pr-3 pt-3 rounded  text-white relative">
+                      <FontAwesomeIcon
+                        icon={faPlus}
+                        className=" absolute rounded-full top-1 right-1 text-md"
+                      />
+                      <FontAwesomeIcon className="text-3xl" icon={faImage} />
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        multiple
+                        max={3}
+                        onChange={(e) => selecionarImagens(e)}
+                      />
+                    </label>
+                  )}
+
+                  {previewImagens.length > 0 && (
+                    <button
+                      className="btn bg-green-700 text-white font-bold hover:bg-green-800"
+                      onClick={uploadImages}
+                    >
+                      salvar
+                    </button>
+                  )}
+                </div>
+              </section>
+            </OwnerGuard>
+          </div>
+        </article>
         <Footer />
       </main>
     </>
   );
+
+  function removePreviewImage(img: ImageType, index: number) {
+    setPreviewImagens((p) => {
+      const imgs = previewImagens.find((im) => im.url === img.url);
+      if (imgs) URL.revokeObjectURL(imgs.url);
+      return p.filter((_, i) => i !== index);
+    });
+  }
+
+  function openImageCropper(img: ImageType) {
+    usebackdrop.openContent(
+      <ImageCropper
+        image={img.url}
+        onConfirm={(newim) => {
+          const url = URL.createObjectURL(newim);
+          const newImg = {
+            id: img.id,
+            file: newim,
+            url: url,
+          };
+          setPreviewImagens((imgs) =>
+            imgs.map((im) => (im.id === img.id ? { ...im, ...newImg } : im))
+          );
+        }}
+      />
+    );
+  }
+
+  function imageUrl(url: string | null) {
+    return utils.getUrlImageR2(url);
+  }
 
   async function copiarLink() {
     if (navigator.clipboard) {
@@ -520,7 +418,7 @@ export default function DetailsPostPage({ user_id }: Props) {
           // const id = getUniqueId();
           setPreviewImagens((p) => [
             ...p,
-            { url: imgURL, id: i, file: resized },
+            { url: imgURL, id: crypto.randomUUID(), file: resized },
           ]);
 
           setLoadingImages(false);
@@ -532,9 +430,168 @@ export default function DetailsPostPage({ user_id }: Props) {
   function closeFullImages(i: number) {
     setImagemIndex(() => {
       setImgPrincipal(post_imagens[i]?.url);
-      setfullImageVisible(false);
       return i;
     });
+    usebackdrop.closeContent();
+  }
+
+  function PostHeader() {
+    return (
+      <header className="flex gap-2  items-center">
+        <CircleAvatar imagem={imageUrl(imgProfileUrl)} size={2} />
+        <CapitalizeText txt={item.name} />
+
+        <span className="text-xs ml-auto">
+          Publicado {utils.formatarData(item.created_at)}
+        </span>
+      </header>
+    );
+  }
+
+  function ItemTitle() {
+    return (
+      <div className="flex  gap-2 items-center  font-bold w-full mt-2">
+        <OwnerGuard isOwner={isPostUserId}>
+          <IconButton
+            icon={faEdit}
+            className="text-xl text-green-800 cursor-pointer peer"
+            onClick={() => titleRef.current!.focus()}
+          />
+        </OwnerGuard>
+        <h1
+          ref={titleRef}
+          className="focus:outline-2 text-xl  focus:outline-gray-400 text-gray-800 "
+          {...(isPostUserId && {
+            contentEditable: true,
+            suppressContentEditableWarning: true,
+            onInput: () => {
+              setButtonDisabled(false);
+            },
+            onBlur: (e) => {
+              const value = e.currentTarget.innerText;
+              setItem((p) => ({ ...p, title: value }));
+            },
+          })}
+        >
+          {item.title}
+        </h1>
+      </div>
+    );
+  }
+
+  function ItemValor() {
+    return (
+      <div className="font-bold text-green-700 flex gap-2">
+        <OwnerGuard isOwner={isPostUserId}>
+          <IconButton
+            className="text-xl text-green-800 cursor-pointer"
+            onClick={() => valorRef.current!.focus()}
+            icon={faEdit}
+          />
+        </OwnerGuard>
+
+        <p>
+          R$:
+          <span
+            className="p-2 focus:outline-gray-400 focus:outline-2 text-xl "
+            ref={valorRef}
+            {...(isPostUserId
+              ? {
+                  contentEditable: true,
+                  suppressContentEditableWarning: true,
+                  onInput: (v) => {
+                    const e = utils.extractNumberInString(
+                      v.currentTarget.innerText
+                    );
+                    v.currentTarget.innerHTML = utils
+                      .stringForDecimalNumber(e)
+                      .toFixed(2);
+
+                    moveCursorToEnd(v.currentTarget);
+                  },
+                  onBlur: (v) => {
+                    const e = v.currentTarget.innerText;
+                    setButtonDisabled(false);
+                    setItem((p) => ({ ...p, valor: e }));
+                  },
+                }
+              : {})}
+          >
+            {item.valor}
+          </span>
+        </p>
+      </div>
+    );
+  }
+
+  function ButtonsActions() {
+    return (
+      <div className="flex items-center justify-end text-2xl ">
+        <a
+          target="_blank"
+          className="text-green-700  btn text-2xl hover:text-green-900 hover:bg-gray-300"
+          href={`https://wa.me/55${item.phone}?text=ola gostariad e falar com voce`}
+        >
+          <FontAwesomeIcon icon={faWhatsapp} />
+        </a>
+        <button
+          className="text-teal-500 btn text-xl hover:text-teal-700 hover:bg-gray-300"
+          onClick={copiarLink}
+        >
+          <FontAwesomeIcon icon={faShareFromSquare} />
+        </button>
+      </div>
+    );
+  }
+
+  function ItemDescription() {
+    return (
+      <div className="">
+        <div className="flex items-center gap-2">
+          {isPostUserId && (
+            <IconButton
+              className="text-xl text-green-800 cursor-pointer"
+              icon={faEdit}
+              onClick={() => descricaoRef.current!.focus()}
+            />
+          )}
+          <h2 className="text-gray-500">Sobre este item</h2>
+        </div>
+        <p
+          ref={descricaoRef}
+          className="focus:outline-2 focus:outline-gray-400 text-gray-700"
+          {...(isPostUserId
+            ? {
+                contentEditable: true,
+                suppressContentEditableWarning: true,
+                onInput: () => setButtonDisabled(false),
+                onBlur: (e) => {
+                  const value = e.currentTarget.innerText;
+                  setItem((p) => ({ ...p, description: value }));
+                },
+              }
+            : {})}
+        >
+          {item.description}
+        </p>
+        <OwnerGuard isOwner={isPostUserId}>
+          <div className="border-t-1 border-gray-400 flex justify-end py-4 mt-4">
+            <button
+              type="button"
+              disabled={buttonDisabled}
+              className={` p-2 rounded-md  font-bold  ${
+                !buttonDisabled
+                  ? "text-white bg-cyan-600 cursor-pointer"
+                  : "bg-gray-500 text-gray-800"
+              }`}
+              onClick={postUpdate}
+            >
+              Editar
+            </button>
+          </div>
+        </OwnerGuard>
+      </div>
+    );
   }
 }
 

@@ -4,7 +4,7 @@ import { faRemove } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 
 type ImageFile = {
-  id: number;
+  id: string;
   file: File;
   url: string;
 };

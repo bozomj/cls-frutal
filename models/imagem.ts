@@ -1,6 +1,6 @@
 import database from "@/database/database";
 
-export type ImageType = { id: number; file: File; url: string };
+export type ImageType = { id: string; file: File; url: string };
 
 async function save(url: string, postId: string) {
   const query =

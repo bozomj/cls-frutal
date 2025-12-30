@@ -60,7 +60,7 @@ const LayoutPage = ({ user, children }: Props) => {
           <span className="bg-cyan-800 h-[0.1rem]"></span>
           <div className="flex gap-2 items-center ">
             <CircleAvatar
-              imagem={utils.getUrlImageR2(user.url ?? "")}
+              imagem={utils.getUrlImageR2(user.url ?? null)}
               size={5}
             />
             <div className=" text-xl">{user.name}</div>
