@@ -8,7 +8,7 @@ import { faEdit } from "@fortawesome/free-regular-svg-icons";
 import Image from "next/image";
 import { useBackdrop } from "@/ui/backdrop/useBackdrop";
 import httpPost from "@/http/post";
-import { PostStatus } from "@/shared/post_status";
+import { statusColor } from "@/constants/statusColor";
 
 interface ProductCardDashboardProps {
   item: PostType;
@@ -21,37 +21,6 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
 }: ProductCardDashboardProps) => {
   const [deleted, setDeleted] = useState(false);
   const usebackdrop = useBackdrop();
-
-  const statusColor = {
-    pending: {
-      border: "border-amber-500",
-      text: "text-amber-600",
-    },
-    active: {
-      border: "border-green-500",
-      text: "text-green-600",
-    },
-    draft: {
-      border: "border-gray-600",
-      text: "text-gray-600",
-    },
-    paused: {
-      border: "border-gray-600",
-      text: "text-gray-600",
-    },
-    expired: {
-      border: "border-gray-600",
-      text: "text-gray-600",
-    },
-    rejected: {
-      border: "border-gray-600",
-      text: "text-gray-600",
-    },
-    deleted: {
-      border: "border-gray-600",
-      text: "text-gray-600",
-    },
-  } as const;
 
   if (deleted) return null;
 

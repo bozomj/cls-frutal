@@ -18,6 +18,8 @@ export type PostType = {
   created_at?: string;
   updated_at?: string;
   status: PostStatus;
+  imagens: { url: string }[];
+  img_profile: string;
 };
 
 function isPostType(obj: unknown): obj is PostType {

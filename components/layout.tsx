@@ -109,7 +109,7 @@ const LayoutPage = ({ user, children }: Props) => {
 
         <main
           id="container"
-          className="flex flex-col gap-1 flex-1 overflow-hidden p-1"
+          className="flex flex-col gap-1 flex-1 overflow-hidden p-1 "
         >
           {children}
         </main>

@@ -1,3 +1,5 @@
+"use client";
+
 import { GetServerSidePropsContext } from "next";
 import { UserType } from "@/models/user";
 
@@ -6,15 +8,18 @@ import { getAdminProps } from "@/lib/hoc";
 import httpPost from "@/http/post";
 import { PostStatus } from "@/shared/post_status";
 import { useEffect, useState } from "react";
-import ListTile from "@/components/ListTile";
 import { PostType } from "@/models/post";
 import utils from "@/utils";
+import { useRouter } from "next/router";
+import { statusColor } from "@/constants/statusColor";
+import Link from "next/link";
 
 interface Props {
   user: UserType;
 }
 
 function PostsAdministrator({ user }: Props) {
+  const { query } = useRouter();
   const [postPending, setPostPending] = useState([]);
 
   useEffect(() => {
@@ -23,21 +28,32 @@ function PostsAdministrator({ user }: Props) {
 
   return (
     <LayoutPage user={user}>
-      <div className="">
-        {postPending.map((post: PostType) => {
-          return (
-            <div key={post.id}>
-              <div className="flex gap-2 items-baseline">
-                <p className="font-bold text-lg truncate">{post.title}</p>
-                <p className="text-xs">
-                  {utils.formatarData(post?.created_at ?? "")}
-                </p>
-              </div>
-              <p className="text-xs truncate">{post.description}</p>
-            </div>
-          );
-        })}
-      </div>
+      <main className=" bg-gray-200">
+        <div className="flex flex-col gap-1">
+          {postPending.map((post: PostType) => {
+            return (
+              <Link href={`/administrator/posts/${post.id}`}>
+                <div
+                  key={post.id}
+                  className={`bg-white border-2 rounded-md p-2 ${
+                    statusColor[post.status].border
+                  }`}
+                >
+                  <div className="flex gap-2 items-baseline">
+                    <h2 className="text-gray-800 font-bold text-lg truncate">
+                      {post.title}
+                    </h2>
+                    <p className="text-xs">
+                      {utils.formatarData(post?.created_at ?? "")}
+                    </p>
+                  </div>
+                  <p className="text-xs truncate">{post.description}</p>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </main>
     </LayoutPage>
   );
 }
