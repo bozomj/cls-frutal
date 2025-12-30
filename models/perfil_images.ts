@@ -1,7 +1,7 @@
 import database from "@/database/database";
 
 export type imageProfileType = {
-  id: number;
+  id: string;
   url: string;
   file: File;
   selected: boolean;
