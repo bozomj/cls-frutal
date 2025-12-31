@@ -1,3 +1,13 @@
+type postTypeSimple = {
+  title: string;
+  description: string;
+  user_id: string;
+  valor: number;
+  categoria_id: number;
+  created_at: number;
+  status?: string;
+};
+
 async function getPostCurrentUser(initial: number, limit: number) {
   const posts = await fetch(
     `/api/v1/posts/user?initial=${initial}&limit=${limit}`
@@ -32,9 +42,11 @@ async function getAll(
   return posts;
 }
 
-async function update(post: unknown) {
+async function update(
+  post: { id: string; user_id: string } & Partial<postTypeSimple>
+) {
   const result = await fetch("/api/v1/posts", {
-    method: "PUT",
+    method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(post),
   });
@@ -42,6 +54,16 @@ async function update(post: unknown) {
   const updated = await result.json();
 
   return updated;
+}
+
+async function savePost(post: postTypeSimple) {
+  return await fetch("/api/v1/posts", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(post),
+  });
 }
 
 async function delImage(img: unknown) {
@@ -81,9 +103,8 @@ const httpPost = {
   getPostId,
   getAll,
   getPostByStatus,
-
+  savePost,
   update,
-
   delImage,
   deletePost,
 };

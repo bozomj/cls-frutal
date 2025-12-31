@@ -67,29 +67,26 @@ async function create(pst: PostType) {
   }
 }
 
-async function update(pst: PostType) {
+async function update(id: string, userId: string, data: Partial<PostType>) {
+  const allowed = ["title", "description", "valor", "categoria_id", "status"];
+
+  const entries = Object.entries(data).filter(([k]) => allowed.includes(k));
+
+  if (!entries.length) return null;
+
+  const set = entries.map(([k], i) => `${k} = $${i + 1}`).join(", ");
+
+  const values = entries.map(([, v]) => v);
+
   const query = `
-    UPDATE posts 
-      SET title = $1,
-      description = $2,
-      valor = $3,
-      categoria_id = $4,
-      updated_at = $5
-    WHERE id = $6 and user_id = $7 
-    RETURNING
-      *`;
+    UPDATE posts
+    SET ${set}, updated_at = now()
+    WHERE id = $${values.length + 1}
+      AND user_id = $${values.length + 2}
+    RETURNING *;
+      `;
   try {
-    return (
-      await database.query(query, [
-        pst.title,
-        pst.description,
-        pst.valor,
-        pst.categoria_id,
-        pst.updated_at,
-        pst.id,
-        pst.user_id,
-      ])
-    )[0];
+    return (await database.query(query, [...values, id, userId]))[0];
   } catch (error) {
     throw {
       message: new Error("Erro ao fazer alteração"),

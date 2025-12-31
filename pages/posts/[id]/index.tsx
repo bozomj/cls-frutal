@@ -33,6 +33,7 @@ import {
   IconButton,
 } from "@/components";
 import OwnerGuard from "@/components/guards/OwnerGuard";
+import { up } from "@/migrations/1744414431860_create-table-users";
 
 type Props = {
   user_id?: string;
@@ -73,6 +74,8 @@ export default function DetailsPostPage({ user_id }: Props) {
   const valorRef = useRef<HTMLElement | null>(null);
   const descricaoRef = useRef<HTMLParagraphElement | null>(null);
   const usebackdrop = useBackdrop();
+
+  const [dataItem, setDataItem] = useState({});
 
   const getPost = useCallback(
     async (id: string) => {
@@ -388,16 +391,25 @@ export default function DetailsPostPage({ user_id }: Props) {
   }
 
   async function postUpdate() {
-    const updated = await httpPost.update(item);
-
-    if (updated.id) {
-      usebackdrop.openContent(
-        <Alert
-          msg={"Update Realizado com sucesso!"}
-          onClose={() => usebackdrop.closeContent()}
-        />
-      );
-      setButtonDisabled(true);
+    try {
+      const updated = await httpPost.update({
+        id: item.id,
+        user_id: item.user_id,
+        ...dataItem,
+      });
+      console.log(dataItem);
+      if (updated.id) {
+        usebackdrop.openContent(
+          <Alert
+            msg={"Update Realizado com sucesso!"}
+            onClose={() => usebackdrop.closeContent()}
+          />
+        );
+        setButtonDisabled(true);
+        setItem((p) => ({ ...p, ...dataItem }));
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -465,11 +477,12 @@ export default function DetailsPostPage({ user_id }: Props) {
           {...(isPostUserId && {
             contentEditable: true,
             suppressContentEditableWarning: true,
-            onInput: () => {
-              setButtonDisabled(false);
-            },
+            onInput: () => {},
             onBlur: (e) => {
               const value = e.currentTarget.innerText;
+              setDataItem({ ...dataItem, title: value });
+              titleRef.current?.focus();
+              setButtonDisabled(false);
               setItem((p) => ({ ...p, title: value }));
             },
           })}
@@ -512,6 +525,8 @@ export default function DetailsPostPage({ user_id }: Props) {
                   },
                   onBlur: (v) => {
                     const e = v.currentTarget.innerText;
+                    setDataItem((p) => ({ ...p, valor: e }));
+
                     setButtonDisabled(false);
                     setItem((p) => ({ ...p, valor: e }));
                   },
@@ -565,9 +580,11 @@ export default function DetailsPostPage({ user_id }: Props) {
             ? {
                 contentEditable: true,
                 suppressContentEditableWarning: true,
-                onInput: () => setButtonDisabled(false),
+                onInput: (e) => {},
                 onBlur: (e) => {
                   const value = e.currentTarget.innerText;
+                  setDataItem({ ...dataItem, description: value });
+                  setButtonDisabled(false);
                   setItem((p) => ({ ...p, description: value }));
                 },
               }

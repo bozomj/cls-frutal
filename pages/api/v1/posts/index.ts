@@ -27,7 +27,7 @@ const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router.get(getHandler);
 router.post(auth, postHandler);
-router.put(auth, putHandler);
+router.patch(auth, putHandler);
 
 export default router.handler();
 
@@ -59,6 +59,7 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
 async function putHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const body = req.body;
+    console.log(body);
     const post = await Post.getById(body.id);
     const user = (req as AuthenticatedRequest).user;
 
@@ -73,7 +74,7 @@ async function putHandler(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const updated = await Post.update({
+    const updated = await Post.update(body.id, user.id, {
       ...body,
       updated_at: new Date().toISOString(),
     });

@@ -21,6 +21,7 @@ import ImageCropper from "@/components/ImageCropper";
 
 import { useBackdrop } from "@/ui/backdrop/useBackdrop";
 import { ButtonPrimary, ButtonSecondary } from "@/components/Buttons";
+import httpPost from "@/http/post";
 
 type postTypeSimple = {
   title: string;
@@ -302,18 +303,17 @@ export default function Produto() {
   }
 
   async function salvar() {
-    console.log(post);
-    const msg =
+    const msgError =
       imagens.length < 1
         ? "Escolha Pelo menos uma imagem"
         : imagens.length > 3
         ? "Escolha no máximo 3 imagens"
         : "";
 
-    if (msg != "") {
+    if (msgError != "") {
       usebackdrop.openContent(
         <Alert
-          msg={msg}
+          msg={msgError}
           show={true}
           onClose={() => usebackdrop.closeContent()}
         />
@@ -340,7 +340,7 @@ export default function Produto() {
       return;
     }
 
-    const posted = await savePost(post);
+    const posted = await httpPost.savePost(post);
     const jsonresult = await posted.json();
 
     if (jsonresult.message == "erro ao inserir post") {
@@ -466,13 +466,3 @@ export const getServerSideProps: GetServerSideProps = async (
     },
   };
 };
-
-async function savePost(post: postTypeSimple) {
-  return await fetch("/api/v1/posts", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(post),
-  });
-}

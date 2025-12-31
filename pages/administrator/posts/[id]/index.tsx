@@ -6,10 +6,13 @@ import { UserType } from "@/models/user";
 import LayoutPage from "@/components/layout";
 import { getAdminProps } from "@/lib/hoc";
 
-import { useEffect } from "react";
-import Post, { PostType } from "@/models/post";
+import { useEffect, useState } from "react";
+import Post from "@/models/post";
 import PostView, { PostItemType } from "@/components/post/PostView";
-import { ButtonPrimary } from "@/components/Buttons";
+
+import { PostStatus } from "@/shared/post_status";
+import httpPost from "@/http/post";
+import OwnerGuard from "@/components/guards/OwnerGuard";
 
 interface Props {
   user: UserType;
@@ -17,6 +20,7 @@ interface Props {
 }
 
 function PostsAdministrator({ user, post }: Props) {
+  const [statePost, setStatePost] = useState(post.status);
   useEffect(() => {}, []);
 
   return (
@@ -25,8 +29,30 @@ function PostsAdministrator({ user, post }: Props) {
         <div className="w-[40rem] flex flex-col h-fit">
           <PostView post={post} />
 
-          <div className="flex bg-gray-100 shadow-sm shadow-gray-400 p-4 rounded-xl">
-            post status: {post.status}
+          <div className="flex bg-gray-100 shadow-sm shadow-gray-400 p-4 rounded-xl justify-between items-center">
+            <div>Status: {statePost}</div>{" "}
+            <OwnerGuard isOwner={post.status === PostStatus.ACTIVE}>
+              <button
+                className="btn bg-green-600 text-white font-bold"
+                // disabled={post.status === PostStatus.ACTIVE}
+                onClick={
+                  !(post.status === PostStatus.ACTIVE)
+                    ? () => {}
+                    : async () => {
+                        post.status = PostStatus.ACTIVE;
+                        const result = await httpPost.update({
+                          id: post.id,
+                          user_id: post.user_id,
+                          status: post.status,
+                        });
+
+                        setStatePost(result.status);
+                      }
+                }
+              >
+                Aprovar
+              </button>
+            </OwnerGuard>
           </div>
         </div>
       </div>

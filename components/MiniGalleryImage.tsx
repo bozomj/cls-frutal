@@ -14,6 +14,7 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
   selectImg,
   onClick,
 }) => {
+  if (!post_imagens) return <></>;
   return (
     <section
       id="lista_imagems"
