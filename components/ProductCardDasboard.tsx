@@ -1,4 +1,3 @@
-import { PostType } from "@/models/post";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -9,9 +8,10 @@ import Image from "next/image";
 import { useBackdrop } from "@/ui/backdrop/useBackdrop";
 import httpPost from "@/http/post";
 import { statusColor } from "@/constants/statusColor";
+import { PostDetailType } from "@/shared/post_types";
 
 interface ProductCardDashboardProps {
-  item: PostType;
+  item: PostDetailType;
   className?: string;
 }
 
