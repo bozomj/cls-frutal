@@ -1,9 +1,9 @@
-import { PostType } from "@/models/post";
+import { PostDetailType } from "@/shared/post_types";
 import utils from "@/utils";
 import Image from "next/image";
 
 interface ProductCardProps {
-  item: PostType;
+  item: PostDetailType;
   className?: string;
 }
 
