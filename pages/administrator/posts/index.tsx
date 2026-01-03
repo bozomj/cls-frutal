@@ -1,25 +1,25 @@
 "use client";
 
 import { GetServerSidePropsContext } from "next";
-import { UserType } from "@/models/user";
 
 import LayoutPage from "@/components/layout";
 import { getAdminProps } from "@/lib/hoc";
 import httpPost from "@/http/post";
 import { PostStatus } from "@/shared/post_status";
 import { useEffect, useState } from "react";
-import { PostType } from "@/models/post";
+
 import utils from "@/utils";
-import { useRouter } from "next/router";
+
 import { statusColor } from "@/constants/statusColor";
 import Link from "next/link";
+import { PostDetailType } from "@/shared/post_types";
+import { UserDBType } from "@/shared/user_types";
 
 interface Props {
-  user: UserType;
+  user: UserDBType;
 }
 
 function PostsAdministrator({ user }: Props) {
-  const { query } = useRouter();
   const [postPending, setPostPending] = useState([]);
 
   useEffect(() => {
@@ -30,11 +30,10 @@ function PostsAdministrator({ user }: Props) {
     <LayoutPage user={user}>
       <main className=" bg-gray-200">
         <div className="flex flex-col gap-1">
-          {postPending.map((post: PostType) => {
+          {postPending.map((post: PostDetailType) => {
             return (
-              <Link href={`/administrator/posts/${post.id}`}>
+              <Link key={post.id} href={`/administrator/posts/${post.id}`}>
                 <div
-                  key={post.id}
                   className={`bg-white border-2 rounded-md p-2 ${
                     statusColor[post.status].border
                   }`}

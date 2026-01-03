@@ -1,11 +1,5 @@
 import database from "@/database/database";
 
-export type CategoriaType = {
-  id?: number;
-  url: string;
-  created_at?: string;
-};
-
 async function getAll() {
   const query = "SELECT * FROM carrossel_images;";
 

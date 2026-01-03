@@ -10,7 +10,6 @@ import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 import { GetServerSidePropsContext } from "next";
 import Footer from "@/layout/FooterLayout";
 
-import { ImageType } from "@/models/imagem";
 import Image from "next/image";
 
 import utils from "@/utils";
@@ -33,7 +32,7 @@ import {
   IconButton,
 } from "@/components";
 import OwnerGuard from "@/components/guards/OwnerGuard";
-import { up } from "@/migrations/1744414431860_create-table-users";
+import { ImageDBType } from "@/shared/Image_types";
 
 type Props = {
   user_id?: string;
@@ -57,7 +56,7 @@ export default function DetailsPostPage({ user_id }: Props) {
   const router = useRouter();
   const post_id = router.query.id as string;
 
-  const [post_imagens, setImagens] = useState<ImageType[]>([]);
+  const [post_imagens, setImagens] = useState<ImageDBType[]>([]);
   const [imgPrincial, setImgPrincipal] = useState<string>();
   const [imagemIndex, setImagemIndex] = useState<number>(0);
 
@@ -67,7 +66,7 @@ export default function DetailsPostPage({ user_id }: Props) {
   const [loadingImages, setLoadingImages] = useState(false);
 
   const [buttonDisabled, setButtonDisabled] = useState(true);
-  const [previewImagens, setPreviewImagens] = useState<ImageType[]>([]);
+  const [previewImagens, setPreviewImagens] = useState<ImageDBType[]>([]);
   const [imgProfileUrl, setImageProfile] = useState<string | null>(null);
 
   const titleRef = useRef<HTMLHeadingElement | null>(null);
@@ -290,33 +289,6 @@ export default function DetailsPostPage({ user_id }: Props) {
     </>
   );
 
-  function removePreviewImage(img: ImageType, index: number) {
-    setPreviewImagens((p) => {
-      const imgs = previewImagens.find((im) => im.url === img.url);
-      if (imgs) URL.revokeObjectURL(imgs.url);
-      return p.filter((_, i) => i !== index);
-    });
-  }
-
-  function openImageCropper(img: ImageType) {
-    usebackdrop.openContent(
-      <ImageCropper
-        image={img.url}
-        onConfirm={(newim) => {
-          const url = URL.createObjectURL(newim);
-          const newImg = {
-            id: img.id,
-            file: newim,
-            url: url,
-          };
-          setPreviewImagens((imgs) =>
-            imgs.map((im) => (im.id === img.id ? { ...im, ...newImg } : im))
-          );
-        }}
-      />
-    );
-  }
-
   function imageUrl(url: string | null) {
     return utils.getUrlImageR2(url);
   }
@@ -372,7 +344,7 @@ export default function DetailsPostPage({ user_id }: Props) {
     router.replace(router.asPath);
   }
 
-  async function deletarImagem(img: ImageType) {
+  async function deletarImagem(img: ImageDBType) {
     await httpPost.delImage(img);
 
     setImagens((p) => p.filter((imgs) => imgs.id !== img.id));
@@ -580,7 +552,7 @@ export default function DetailsPostPage({ user_id }: Props) {
             ? {
                 contentEditable: true,
                 suppressContentEditableWarning: true,
-                onInput: (e) => {},
+
                 onBlur: (e) => {
                   const value = e.currentTarget.innerText;
                   setDataItem({ ...dataItem, description: value });

@@ -1,5 +1,9 @@
 import { createRouter } from "next-connect";
+import type { Request, Response } from "express";
 import { NextApiRequest, NextApiResponse } from "next";
+
+type NextReq = NextApiRequest & Request;
+type NextRes = NextApiResponse & Response;
 
 import fs from "fs";
 import multer from "multer";
@@ -7,16 +11,16 @@ import { uploadFile } from "@/storage/cloudflare/r2Cliente";
 
 const upload = multer({ dest: "/tmp" });
 
-const router = createRouter<NextApiRequest, NextApiResponse>();
+const router = createRouter<NextReq, NextRes>();
 
 // ⛔ IMPORTANTE
 // Adiciona o middleware MULTER antes do handler
 // router.use(upload.array("file"));
 
 // Adapter para rodar middlewares Express dentro do next-connect
-function multerMiddleware(req: NextApiRequest, res: NextApiResponse) {
+function multerMiddleware(req: NextReq, res: NextRes) {
   return new Promise((resolve, reject) => {
-    upload.array("file")(req as any, res as any, (err: any) => {
+    upload.array("file")(req, res, (err: unknown) => {
       if (err) reject(err);
       resolve(true);
     });
@@ -27,7 +31,7 @@ router.use(async (req, res, next) => {
   try {
     await multerMiddleware(req, res);
     next();
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: "Erro no upload" });
   }
 });
@@ -40,7 +44,7 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
   return res.status(404);
 }
 
-async function postHandler(req: any, res: NextApiResponse) {
+async function postHandler(req: NextReq, res: NextApiResponse) {
   try {
     const files = req.files; // ← várias imagens
 
@@ -48,19 +52,25 @@ async function postHandler(req: any, res: NextApiResponse) {
       return res.status(400).json({ error: "Nenhum arquivo enviado" });
     }
 
+    const filesArray: Express.Multer.File[] = Array.isArray(files)
+      ? files
+      : Object.values(files).flat();
+
     const uploaded = [];
 
-    for (const file of files) {
-      const [type, ext] = file.mimetype.split("/");
-      const filenameWithExt = `${file.filename}.${ext}`;
+    if (files !== undefined) {
+      for (const file of filesArray) {
+        const [ext] = file.mimetype.split("/");
+        const filenameWithExt = `${file.filename}.${ext}`;
 
-      // envia para Cloudflare R2
-      await uploadFile(file.path, filenameWithExt, file.mimetype);
+        // envia para Cloudflare R2
+        await uploadFile(file.path, filenameWithExt, file.mimetype);
 
-      fs.unlink(file.path, (err) => {
-        if (err) console.error("Erro ao remover temp");
-      });
-      uploaded.push(filenameWithExt); // salvar só o nome no banco
+        fs.unlink(file.path, (err) => {
+          if (err) console.error("Erro ao remover temp");
+        });
+        uploaded.push(filenameWithExt); // salvar só o nome no banco
+      }
     }
 
     return res.status(200).json({ files: uploaded });

@@ -1,5 +1,4 @@
 import { GetServerSidePropsContext } from "next";
-import { UserType } from "@/models/user";
 
 import { faAdd } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,9 +11,10 @@ import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
 import LayoutPage from "@/components/layout";
 import { getAdminProps } from "@/lib/hoc";
 import httpCarrosselImage from "@/http/carrossel_image";
+import { UserDBType } from "@/shared/user_types";
 
 interface Props {
-  user: UserType;
+  user: UserDBType;
 }
 
 type typeImagePreview = {

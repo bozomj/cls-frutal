@@ -18,11 +18,12 @@ import ProductCardDashboard from "@/components/ProductCardDasboard";
 import { usePagination } from "@/contexts/PaginactionContext";
 import utils from "@/utils";
 import Link from "next/link";
-import { UserType } from "@/models/user";
+
 import Image from "next/image";
+import { UserDBType } from "@/shared/user_types";
 
 function Dashboard({ ctx }: { ctx: string }) {
-  const [user, setUser] = useState<UserType | null>(null);
+  const [user, setUser] = useState<UserDBType | null>(null);
   const [listPost, setPosts] = useState([]);
   const produtosRef = useRef<HTMLInputElement>(null);
   const { paginacao, setPaginacao } = usePagination();

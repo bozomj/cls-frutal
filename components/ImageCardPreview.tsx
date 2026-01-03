@@ -2,16 +2,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Card from "./Card";
 import { faRemove } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
-
-type ImageFile = {
-  id: string;
-  file: File;
-  url: string;
-};
+import { ImageDBType } from "@/shared/Image_types";
 
 interface ImageCardPreviewProps {
-  image: ImageFile;
-  onClick: (image: ImageFile) => void;
+  image: ImageDBType;
+  onClick: (image: ImageDBType) => void;
   className?: string;
   onImageClick?: () => void;
 }

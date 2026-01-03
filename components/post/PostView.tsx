@@ -5,7 +5,7 @@ import MiniGalleryImage from "../MiniGalleryImage";
 import { useState } from "react";
 import { useBackdrop } from "@/ui/backdrop/useBackdrop";
 import FullImageView from "../FullImageView";
-import { PostType } from "@/models/post";
+import { PostDetailType } from "@/shared/post_types";
 
 export type PostItemType = {
   id: string;
@@ -24,7 +24,7 @@ export type PostItemType = {
 };
 
 interface PostViewProps {
-  post: PostItemType;
+  post: PostDetailType;
 }
 
 export default function PostView({ post }: PostViewProps) {

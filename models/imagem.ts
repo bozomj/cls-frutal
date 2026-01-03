@@ -1,7 +1,5 @@
 import database from "@/database/database";
 
-export type ImageType = { id: string; file: File; url: string };
-
 async function save(url: string, postId: string) {
   const query =
     "INSERT INTO imagens (url, post_id) VALUES ($1, $2) RETURNING *;";

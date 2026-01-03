@@ -2,7 +2,6 @@ import { createRouter } from "next-connect";
 import { NextApiRequest, NextApiResponse } from "next";
 import imagem from "@/models/imagem";
 import Post from "@/models/post";
-import autenticator from "@/models/autenticator";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 

@@ -1,5 +1,5 @@
 import autenticator from "@/models/autenticator";
-import { UserType } from "@/models/user";
+import { UserDBType } from "@/shared/user_types";
 
 import { GetServerSidePropsContext } from "next";
 
@@ -30,7 +30,7 @@ export async function getAdminProps(context: GetServerSidePropsContext) {
 
   return {
     props: {
-      user: JSON.parse(JSON.stringify(user)) as UserType,
+      user: JSON.parse(JSON.stringify(user)) as UserDBType,
     },
   };
 }

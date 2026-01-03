@@ -10,7 +10,6 @@ import Alert from "@/components/Alert";
 
 import { useRouter } from "next/navigation";
 
-import { CategoriaType } from "@/models/categoria";
 import utils from "@/utils";
 import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
 import LinearProgressIndicator from "@/components/LinearProgressIndicator";
@@ -22,29 +21,17 @@ import ImageCropper from "@/components/ImageCropper";
 import { useBackdrop } from "@/ui/backdrop/useBackdrop";
 import { ButtonPrimary, ButtonSecondary } from "@/components/Buttons";
 import httpPost from "@/http/post";
+import { PostDBType } from "@/shared/post_types";
+import { ImageDBType } from "@/shared/Image_types";
+import { CategoriaDBType } from "@/shared/categoria_types";
 
-type postTypeSimple = {
-  title: string;
-  description: string;
-  user_id: string;
-  valor: number;
-  categoria_id: number;
-  created_at: number;
-};
-
-const post: postTypeSimple = {
+const post: PostDBType = {
   title: "",
   description: "",
   user_id: "",
   valor: 0,
   categoria_id: 0,
   created_at: Date.now(),
-};
-
-type ImageFile = {
-  id: number;
-  file: File;
-  url: string;
 };
 
 let uniqueId = 0;
@@ -59,7 +46,7 @@ export default function Produto() {
   const [description, setDescription] = useState("");
   const [valor, setValor] = useState("");
 
-  const [imagens, setImagens] = useState<ImageFile[]>([]);
+  const [imagens, setImagens] = useState<ImageDBType[]>([]);
   const [selected, setSelected] = useState("0");
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -73,7 +60,9 @@ export default function Produto() {
 
   useEffect(() => {
     if (categoriasValues.length < 2) getCategorias();
+  }, [categoriasValues.length]);
 
+  useEffect(() => {
     //return funciona como "dispose" do Flutter
     return () => {
       imagens.forEach((img) => {
@@ -218,8 +207,8 @@ export default function Produto() {
     image,
     onClick,
   }: {
-    image: ImageFile;
-    onClick: (image: ImageFile) => void;
+    image: ImageDBType;
+    onClick: (image: ImageDBType) => void;
   }) {
     return (
       <div className="relative min-w-2/3  ">
@@ -261,7 +250,7 @@ export default function Produto() {
     const categorias = await httpCategoria.getAll();
 
     setCategoriasValues(
-      categorias.map((e: CategoriaType) => {
+      categorias.map((e: CategoriaDBType) => {
         return { value: e.id, label: e.descricao };
       })
     );
@@ -414,7 +403,7 @@ export default function Produto() {
           // Cria uma URL temporária para o arquivo
           const resized = (await utils.imagem.resizeImageFile(file)) as File;
           const imgURL = URL.createObjectURL(resized);
-          const id = getUniqueId();
+          const id = getUniqueId().toString();
 
           setImagens((e) => [...e, { id: id, file: resized, url: imgURL }]);
 
@@ -431,7 +420,7 @@ export default function Produto() {
     post.categoria_id = parseInt(e);
   }
 
-  function removeImagePreview(image: ImageFile) {
+  function removeImagePreview(image: ImageDBType) {
     setImagens((prev) => {
       const img = prev.find((img) => img.id === image.id);
       if (img) URL.revokeObjectURL(img.url);

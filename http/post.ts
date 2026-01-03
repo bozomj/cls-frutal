@@ -1,3 +1,5 @@
+import { PostDBType } from "@/shared/post_types";
+
 type postTypeSimple = {
   title: string;
   description: string;
@@ -56,7 +58,7 @@ async function update(
   return updated;
 }
 
-async function savePost(post: postTypeSimple) {
+async function savePost(post: PostDBType) {
   return await fetch("/api/v1/posts", {
     method: "POST",
     headers: {

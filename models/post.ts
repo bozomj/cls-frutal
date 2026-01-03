@@ -3,26 +3,9 @@ import imagem from "./imagem";
 
 import { deleteFile } from "@/storage/cloudflare/r2Cliente";
 import { PostStatus } from "@/shared/post_status";
+import { PostDetailType } from "@/shared/post_types";
 
-export type PostType = {
-  id?: string;
-  user_id: string;
-  title: string;
-  description: string;
-  valor: number;
-  email: string;
-  categoria_id: number;
-  imageurl?: string;
-  phone: string;
-  name: string;
-  created_at?: string;
-  updated_at?: string;
-  status: PostStatus;
-  imagens: { url: string }[];
-  img_profile: string;
-};
-
-function isPostType(obj: unknown): obj is PostType {
+function isPostType(obj: unknown): obj is PostDetailType {
   if (typeof obj !== "object" || obj === null) return false;
   const o = obj as Record<string, unknown>;
   return (
@@ -34,7 +17,7 @@ function isPostType(obj: unknown): obj is PostType {
   );
 }
 
-async function create(pst: PostType) {
+async function create(pst: PostDetailType) {
   if (!isPostType(pst)) {
     throw {
       message: "JSON incorreto",
@@ -67,7 +50,11 @@ async function create(pst: PostType) {
   }
 }
 
-async function update(id: string, userId: string, data: Partial<PostType>) {
+async function update(
+  id: string,
+  userId: string,
+  data: Partial<PostDetailType>
+) {
   const allowed = ["title", "description", "valor", "categoria_id", "status"];
 
   const entries = Object.entries(data).filter(([k]) => allowed.includes(k));

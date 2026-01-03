@@ -1,5 +1,4 @@
 import Paginacao from "@/components/Paginacao";
-import VerticalDivider from "@/components/VerticalDivider";
 
 interface ProdutosProps<T> {
   postagens: T[];

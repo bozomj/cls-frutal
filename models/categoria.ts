@@ -1,11 +1,7 @@
 import database from "@/database/database";
+import { CategoriaDBType } from "@/shared/categoria_types";
 
-export type CategoriaType = {
-  id?: number;
-  descricao: string;
-};
-
-async function save(descricao: CategoriaType["descricao"]) {
+async function save(descricao: CategoriaDBType["descricao"]) {
   const query =
     "INSERT INTO categorias (descricao) VALUES (LOWER($1)) RETURNING *;";
 

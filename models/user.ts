@@ -5,17 +5,6 @@ import autenticator from "@/models/autenticator";
 
 dotenv.config({ path: ".env.development" });
 
-export type UserType = {
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-  phone: string;
-  createdAt: string;
-  is_admin: boolean;
-  url?: string;
-};
-
 const User = {
   findAll: async () => {
     try {

@@ -1,12 +1,5 @@
 import database from "@/database/database";
 
-export type imageProfileType = {
-  id: string;
-  url: string;
-  file: File;
-  selected: boolean;
-};
-
 async function saveProfileImage(img: Record<string, unknown>) {
   try {
     await database.query(

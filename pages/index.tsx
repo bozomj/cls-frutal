@@ -9,7 +9,6 @@ import httpPost from "@/http/post";
 
 import Footer from "@/layout/FooterLayout";
 import Produtos from "@/layout/produtos/Produtos";
-import Image from "next/image";
 
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";

@@ -23,7 +23,7 @@ async function updateImageProfile(img: unknown) {
   return await resutl.json();
 }
 
-import { imageProfileType } from "@/models/perfil_images";
+import { imageProfileType } from "@/shared/Image_types";
 
 async function deleteImageProfile(img: imageProfileType) {
   const result = await fetch("/api/v1/user/setImageProfile", {

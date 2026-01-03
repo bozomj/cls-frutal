@@ -1,13 +1,12 @@
-import { UserType } from "@/models/user";
-
 import { useEffect } from "react";
 
 import { GetServerSidePropsContext } from "next";
 import LayoutPage from "@/components/layout";
 import { getAdminProps } from "@/lib/hoc";
+import { UserDBType } from "@/shared/user_types";
 
 interface Props {
-  user: UserType;
+  user: UserDBType;
 }
 
 const AdministratorPage = ({ user }: Props) => {

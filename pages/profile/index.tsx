@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import { UserType } from "@/models/user";
+
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 
 import CircleAvatar from "@/components/CircleAvatar";
@@ -13,24 +13,25 @@ import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import ProductCardDashboard from "@/components/ProductCardDasboard";
-import Modal from "@/components/Modal";
+
 import FooterLayout from "@/layout/FooterLayout";
 import Link from "next/link";
 import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
 import ImageCardPreview from "@/components/ImageCardPreview";
-import { imageProfileType } from "@/models/perfil_images";
 
 import httpUser from "@/http/user";
 import httpPost from "@/http/post";
 import httpPerfilImages from "@/http/perfil_images";
-import ImageCropper, { CroppedAreaPixelsType } from "@/components/ImageCropper";
+import ImageCropper from "@/components/ImageCropper";
 import { useBackdrop } from "@/ui/backdrop/useBackdrop";
+import { UserDBType } from "@/shared/user_types";
+import { imageProfileType } from "@/shared/Image_types";
 
 const Profile: React.FC = () => {
-  const [user, setUser] = useState<UserType>();
+  const [user, setUser] = useState<UserDBType>();
   const [posts, setPosts] = useState([]);
   const { paginacao, setPaginacao } = usePagination();
-  const { closeContent, openContent } = useBackdrop();
+  const { openContent } = useBackdrop();
 
   const [imagesProfile, setImagesProfile] = useState<imageProfileType[]>([]);
 
@@ -182,7 +183,7 @@ const Profile: React.FC = () => {
 
   async function fileSelect(e: ChangeEvent<HTMLInputElement>) {
     const result = await selecionarImagens(e);
-    let crop: CroppedAreaPixelsType | null = null;
+
     if (result != null) {
       openContent(
         <ImageCropper
@@ -199,7 +200,7 @@ const Profile: React.FC = () => {
     await httpPerfilImages.updateImageProfile(newImg);
 
     setUser((user) => {
-      return { ...user, url: imgUrl } as UserType;
+      return { ...user, url: imgUrl } as UserDBType;
     });
 
     setImagesProfile((oldImages) =>

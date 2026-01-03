@@ -1,5 +1,5 @@
 import CircleAvatar from "@/components/CircleAvatar";
-import { UserType } from "@/models/user";
+
 import { JSX, useRef } from "react";
 
 import ListTile from "@/components/ListTile";
@@ -10,9 +10,10 @@ import {
   faPodcast,
 } from "@fortawesome/free-solid-svg-icons";
 import utils from "@/utils";
+import { UserDBType } from "@/shared/user_types";
 
 interface Props {
-  user: UserType;
+  user: UserDBType;
   children: JSX.Element;
 }
 

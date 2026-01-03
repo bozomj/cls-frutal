@@ -1,22 +1,23 @@
 "use client";
 
 import { GetServerSidePropsContext } from "next";
-import { UserType } from "@/models/user";
 
 import LayoutPage from "@/components/layout";
 import { getAdminProps } from "@/lib/hoc";
 
 import { useEffect, useState } from "react";
 import Post from "@/models/post";
-import PostView, { PostItemType } from "@/components/post/PostView";
+import PostView from "@/components/post/PostView";
 
 import { PostStatus } from "@/shared/post_status";
 import httpPost from "@/http/post";
 import OwnerGuard from "@/components/guards/OwnerGuard";
+import { PostDetailType } from "@/shared/post_types";
+import { UserDBType } from "@/shared/user_types";
 
 interface Props {
-  user: UserType;
-  post: PostItemType;
+  user: UserDBType;
+  post: PostDetailType;
 }
 
 function PostsAdministrator({ user, post }: Props) {
@@ -31,21 +32,20 @@ function PostsAdministrator({ user, post }: Props) {
 
           <div className="flex bg-gray-100 shadow-sm shadow-gray-400 p-4 rounded-xl justify-between items-center">
             <div>Status: {statePost}</div>{" "}
-            <OwnerGuard isOwner={post.status === PostStatus.ACTIVE}>
+            <OwnerGuard isOwner={!(post.status === PostStatus.ACTIVE)}>
               <button
                 className="btn bg-green-600 text-white font-bold"
-                // disabled={post.status === PostStatus.ACTIVE}
                 onClick={
-                  !(post.status === PostStatus.ACTIVE)
+                  post.status === PostStatus.ACTIVE
                     ? () => {}
                     : async () => {
                         post.status = PostStatus.ACTIVE;
                         const result = await httpPost.update({
-                          id: post.id,
+                          id: post.id || "",
                           user_id: post.user_id,
                           status: post.status,
                         });
-
+                        console.log("clicou");
                         setStatePost(result.status);
                       }
                 }

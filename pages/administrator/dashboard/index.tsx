@@ -5,13 +5,14 @@ import Chart from "chart.js/auto";
 import { useEffect, useState } from "react";
 
 import { GetServerSidePropsContext } from "next";
-import { UserType } from "@/models/user";
+
 import LayoutPage from "@/components/layout";
 import { getAdminProps } from "@/lib/hoc";
 import httpUser from "@/http/user";
+import { UserDBType } from "@/shared/user_types";
 
 interface Props {
-  user: UserType;
+  user: UserDBType;
 }
 
 function AdminDashboard({ user }: Props) {
