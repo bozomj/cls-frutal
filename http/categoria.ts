@@ -1,6 +1,6 @@
-import { CategoriaType } from "@/models/categoria";
+import { CategoriaDBType } from "@/shared/categoria_types";
 
-async function save(categoria: CategoriaType) {
+async function save(categoria: CategoriaDBType) {
   const result = await fetch("/api/v1/categorias", {
     method: "POST",
     body: JSON.stringify(categoria),

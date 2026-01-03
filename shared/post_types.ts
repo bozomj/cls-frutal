@@ -7,6 +7,7 @@ export type PostDBType = {
   valor: number;
   categoria_id: number;
   created_at: number;
+  status?: string;
 };
 
 export type PostDetailType = {

@@ -1,15 +1,5 @@
 import { PostDBType } from "@/shared/post_types";
 
-type postTypeSimple = {
-  title: string;
-  description: string;
-  user_id: string;
-  valor: number;
-  categoria_id: number;
-  created_at: number;
-  status?: string;
-};
-
 async function getPostCurrentUser(initial: number, limit: number) {
   const posts = await fetch(
     `/api/v1/posts/user?initial=${initial}&limit=${limit}`
@@ -45,7 +35,7 @@ async function getAll(
 }
 
 async function update(
-  post: { id: string; user_id: string } & Partial<postTypeSimple>
+  post: { id: string; user_id: string } & Partial<PostDBType>
 ) {
   const result = await fetch("/api/v1/posts", {
     method: "PATCH",
