@@ -39,7 +39,7 @@ function ImageCardPreview({
     return (
       <button
         type="button"
-        className={`absolute cursor-pointer bg-red-900 hover:bg-red-500 rounded-full h-8 w-8 text-center p-1 -right-2 -top-2 peer  `}
+        className={` absolute cursor-pointer bg-red-900 hover:bg-red-500 rounded-full h-6 w-6 p-1 -right-2 -top-2 peer flex justify-center `}
         onClick={() => onClick(image)}
       >
         <FontAwesomeIcon icon={faRemove} />

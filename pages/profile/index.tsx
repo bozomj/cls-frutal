@@ -26,12 +26,15 @@ import ImageCropper from "@/components/ImageCropper";
 import { useBackdrop } from "@/ui/backdrop/useBackdrop";
 import { UserDBType } from "@/shared/user_types";
 import { imageProfileType } from "@/shared/Image_types";
+import { FullImageView } from "@/components";
+import WireProductCardDashboard from "@/wireframes/wireProductCardDashboard";
+import { PostDetailType } from "@/shared/post_types";
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<UserDBType>();
   const [posts, setPosts] = useState([]);
   const { paginacao, setPaginacao } = usePagination();
-  const { openContent } = useBackdrop();
+  const { openContent, closeContent } = useBackdrop();
 
   const [imagesProfile, setImagesProfile] = useState<imageProfileType[]>([]);
 
@@ -53,6 +56,7 @@ const Profile: React.FC = () => {
     } catch (error) {
       console.error("Falha ao carregar dados do perfil:", error);
       // Adicionar feedback de erro para o usuário aqui
+    } finally {
     }
   }, [initial, limite, setPaginacao]);
 
@@ -76,6 +80,18 @@ const Profile: React.FC = () => {
                 <CircleAvatar
                   size={8}
                   imagem={utils.getUrlImageR2(user?.url || null)}
+                  onClick={() => {
+                    openContent(
+                      <>
+                        <FullImageView
+                          images={[{ url: user?.url ?? "" }]}
+                          index={0}
+                          visible={true}
+                          onClose={() => closeContent()}
+                        />
+                      </>
+                    );
+                  }}
                 />
 
                 <label
@@ -106,7 +122,7 @@ const Profile: React.FC = () => {
 
             <div
               id="imagen-do-perfil"
-              className="flex gap-2 p-2 overflow-x-scroll flex-1 bg-gray-300"
+              className="flex gap-2 p-2 overflow-x-scroll flex-1 bg-gray-300 h-fit"
             >
               {imagesProfile?.map((img: imageProfileType) => {
                 const newImg = {
@@ -117,20 +133,23 @@ const Profile: React.FC = () => {
                   <div key={newImg.url} className="relative min-w-fit ">
                     <button
                       type="button"
-                      className={`absolute z-10 btn hover:text-green-300 ${
+                      className={`absolute z-10 hover:text-green-300  ${
                         newImg.selected ? "text-green-400" : "text-white"
-                      } text-3xl bottom-0`}
+                      } text-3xl bottom-0 left-1`}
                       onClick={() => updateProfileImage(newImg, img.url)}
                     >
                       <FontAwesomeIcon
                         icon={faCircleCheck}
-                        className="border-2 rounded-full border-white"
+                        className={`border-3 rounded-full ${
+                          newImg.selected ? "border-green-300" : "border-white"
+                        }`}
+                        size={"xs"}
                       />
                     </button>
 
                     <ImageCardPreview
                       image={newImg}
-                      className="max-w-full"
+                      className="max-w-full h-36!"
                       onClick={async (e) => {
                         const deleted =
                           await httpPerfilImages.deleteImageProfile(img);
@@ -149,11 +168,19 @@ const Profile: React.FC = () => {
           </section>
 
           <section className="border-t-2 border-gray-400 flex flex-col py-4 mt-4">
-            <Produtos
-              postagens={posts}
-              Card={ProductCardDashboard}
-              className="grid-cols-1!"
-            />
+            {posts.length < 1 ? (
+              <Produtos
+                postagens={[{}, {}, {}, {}] as PostDetailType[]}
+                Card={WireProductCardDashboard}
+                className="grid-cols-1!"
+              />
+            ) : (
+              <Produtos
+                postagens={posts}
+                Card={ProductCardDashboard}
+                className="grid-cols-1!"
+              />
+            )}
           </section>
         </div>
       </main>

@@ -95,6 +95,7 @@ const formatarMoeda = (value: string) => {
   const apenasNumeros = extractNumberInString(value);
 
   const numero = stringForDecimalNumber(apenasNumeros);
+
   const formatado = formatNumberForMoedaString(numero);
 
   return formatado;
@@ -109,10 +110,13 @@ function stringForDecimalNumber(str: string): number {
 }
 
 function formatNumberForMoedaString(number: number): string {
-  return number.toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
+  return Number(number)
+    .toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    })
+    .replace("R$", "")
+    .trim();
 }
 
 function capitalizar(str: string | null) {

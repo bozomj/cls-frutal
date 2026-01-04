@@ -53,7 +53,7 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
       </div>
 
       <div className="flex w-full  overflow-hidden h-full gap-2 ">
-        <div className="bg-gray-200 rounded-xl h-40 relative w-1/3">
+        <div className="bg-gray-200 rounded-xl h-20 relative min-w-1/3">
           <Image
             src={utils.getUrlImageR2(item.imageurl ?? "")}
             fill
@@ -63,18 +63,22 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
           />
         </div>
 
-        <div className=" flex text-gray-900 flex-col  w-full ">
-          <span className="text-xl w-fit overflow-hidden font-bold text-gray-800">
+        <div className=" flex text-gray-900 flex-col relative min-w-2/3">
+          <span className="truncate font-bold text-gray-800">
             {item.title ?? ""}
           </span>
-          <p className="w-full text-green-800 font-bold">
-            R$: <span className="text-xl">{item.valor}</span>
+
+          <p className=" truncate ">{item.description ?? ""}</p>
+          <p className="w-11/12 text-green-800 font-bold">
+            <span className="text-xs">R$: </span>
+            <span className="">
+              {utils.formatarMoeda(item.valor.toString())}
+            </span>
           </p>
-          <span className="w-full">{item.description ?? ""}</span>
           <span
             className={`${
               statusColor[item.status].text
-            } mt-auto ml-auto font-bold`}
+            } text-end font-bold mr-2 `}
           >
             Status: {item.status}
           </span>

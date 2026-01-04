@@ -1,4 +1,5 @@
 import Paginacao from "@/components/Paginacao";
+import { PostDBType } from "@/shared/post_types";
 
 interface ProdutosProps<T> {
   postagens: T[];

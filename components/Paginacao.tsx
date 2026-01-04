@@ -49,9 +49,11 @@ const Paginacao: React.FC<PaginacaoProps> = ({ className }: PaginacaoProps) => {
       id="paginacao"
       className={`flex justify-between  text-cyan-800 p-4 w-full  ${className}`}
     >
-      <Link href={`?${prevParams.toString()}`}>
+      <Link
+        href={`?${prevParams.toString()}`}
+        className={`${paginacao.current != 0 ? "" : "invisible"}`}
+      >
         <button
-          className={`${paginacao.current != 0 ? "" : "invisible"}`}
           onClick={() => {
             if (paginacao.current > 0) {
               setPaginacao((prev) => ({
@@ -87,9 +89,11 @@ const Paginacao: React.FC<PaginacaoProps> = ({ className }: PaginacaoProps) => {
           } `}
         ></span>
       </div>
-      <Link href={`?${nextParams.toString()}`}>
+      <Link
+        href={`?${nextParams.toString()}`}
+        className={`${paginacao.current < maxPage ? "" : "invisible"}`}
+      >
         <button
-          className={`${paginacao.current < maxPage ? "" : "invisible"}`}
           onClick={() => {
             if (paginacao.current < maxPage) {
               setPaginacao((prev) => ({

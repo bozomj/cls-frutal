@@ -6,12 +6,14 @@ interface CircleAvatarProps {
   imagem?: string;
   size?: number;
   className?: string;
+  onClick?: () => void;
 }
 
 const CircleAvatar: React.FC<CircleAvatarProps> = ({
   imagem,
   size = 10,
   className,
+  onClick,
 }) => {
   return (
     <div
@@ -38,6 +40,7 @@ const CircleAvatar: React.FC<CircleAvatarProps> = ({
           sizes="150"
           loading="eager"
           className="object-cover"
+          onClick={onClick}
         />
       ) : (
         <FontAwesomeIcon

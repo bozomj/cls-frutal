@@ -33,6 +33,7 @@ import {
 } from "@/components";
 import OwnerGuard from "@/components/guards/OwnerGuard";
 import { ImageDBType } from "@/shared/Image_types";
+import { v4 as uuidv4 } from "uuid";
 
 type Props = {
   user_id?: string;
@@ -208,7 +209,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                       >
                         {previewImagens.map((img, index) => {
                           console.log(img);
-                          img.id = crypto.randomUUID();
+                          img.id = uuidv4();
                           return (
                             <ImageCardPreview
                               key={img.id}
@@ -403,7 +404,7 @@ export default function DetailsPostPage({ user_id }: Props) {
           // const id = getUniqueId();
           setPreviewImagens((p) => [
             ...p,
-            { url: imgURL, id: crypto.randomUUID(), file: resized },
+            { url: imgURL, id: uuidv4(), file: resized },
           ]);
 
           setLoadingImages(false);
@@ -505,7 +506,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                 }
               : {})}
           >
-            {item.valor}
+            {utils.formatarMoeda(item.valor.toString())}
           </span>
         </p>
       </div>

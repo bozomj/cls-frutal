@@ -38,7 +38,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             </h2>
             <span className="h-5 text-green-700 font-bold block text-lg">
               <span className="text-xs">R$: </span>
-              {item.valor}
+              {utils.formatarMoeda(item.valor.toString())}
             </span>
           </div>
         </a>

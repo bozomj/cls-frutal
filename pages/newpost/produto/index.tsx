@@ -84,6 +84,7 @@ export default function Produto() {
           onSubmit={handleSubmit}
           className="flex flex-col gap-4 bg-gray-50 rounded p-4 md:w-[480px] m-4 w-full "
         >
+          <h1 className="text-gray-800 font-bold">Nova Publicação</h1>
           <span className="text-red-800 font-bold h-3">
             {Object.values(postError).some((msg) => msg != "")
               ? "Todos os Campos são obrigatorio"
