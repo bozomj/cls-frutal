@@ -2,7 +2,7 @@
 
 import { GetServerSidePropsContext } from "next";
 
-import LayoutPage from "@/components/layout";
+import LayoutPage from "@/layout/dashboard/layout";
 import { getAdminProps } from "@/lib/hoc";
 
 import { useEffect, useState } from "react";

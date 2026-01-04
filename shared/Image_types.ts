@@ -1,6 +1,7 @@
 export type ImageDBType = {
   id: string;
   file: File;
+  post_id?: string;
   url: string;
 };
 

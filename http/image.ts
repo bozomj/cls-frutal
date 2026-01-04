@@ -8,8 +8,18 @@ async function uploadImages(imgs: unknown) {
   });
 }
 
+async function getAllImagesPost() {
+  try {
+    const result = await fetch("/api/v1/imagens");
+    return await result.json();
+  } catch (error) {
+    return { error };
+  }
+}
+
 const httpImage = {
   uploadImages,
+  getAllImagesPost,
 };
 
 export default httpImage;

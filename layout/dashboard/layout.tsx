@@ -7,6 +7,7 @@ import {
   faCarrot,
   faDashboard,
   faHome,
+  faImage,
   faPodcast,
 } from "@fortawesome/free-solid-svg-icons";
 import utils from "@/utils";
@@ -104,6 +105,12 @@ const LayoutPage = ({ user, children }: Props) => {
               onClick={() => {}}
               url="/administrator/posts"
               className="select-none no-drag"
+            />
+            <ListTile
+              title="Imagens"
+              icon={faImage}
+              url="/administrator/imagens"
+              onClick={() => {}}
             />
           </ul>
         </aside>

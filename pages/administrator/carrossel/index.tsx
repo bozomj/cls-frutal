@@ -8,7 +8,7 @@ import InputFile from "@/components/InputFile";
 
 import CarrosselScroll from "@/components/CarrosselScroll";
 import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
-import LayoutPage from "@/components/layout";
+import LayoutPage from "@/layout/dashboard/layout";
 import { getAdminProps } from "@/lib/hoc";
 import httpCarrosselImage from "@/http/carrossel_image";
 import { UserDBType } from "@/shared/user_types";

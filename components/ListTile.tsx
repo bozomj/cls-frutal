@@ -24,7 +24,11 @@ const ListTile = ({
         className="flex gap-3 items-center cursor-pointer w-full select-none no-drag"
       >
         <span>
-          <FontAwesomeIcon icon={icon!} className="text-2xl w-8 select-none" />
+          {icon != null ? (
+            <FontAwesomeIcon icon={icon} className="text-2xl w-8 select-none" />
+          ) : (
+            <></>
+          )}
         </span>
 
         <span className="select-none">{title}</span>

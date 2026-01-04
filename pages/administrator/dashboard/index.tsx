@@ -6,10 +6,15 @@ import { useEffect, useState } from "react";
 
 import { GetServerSidePropsContext } from "next";
 
-import LayoutPage from "@/components/layout";
+import LayoutPage from "@/layout/dashboard/layout";
 import { getAdminProps } from "@/lib/hoc";
 import httpUser from "@/http/user";
 import { UserDBType } from "@/shared/user_types";
+import httpPost from "@/http/post";
+import { PostStatus } from "@/shared/post_status";
+import OwnerGuard from "@/components/guards/OwnerGuard";
+import { PostDetailType } from "@/shared/post_types";
+import utils from "@/utils";
 
 interface Props {
   user: UserDBType;
@@ -18,25 +23,72 @@ interface Props {
 function AdminDashboard({ user }: Props) {
   const [totalPost, setTotalPost] = useState();
   const [totalUsers, setTotalUsers] = useState();
+  const [pendingPost, setpendingPost] = useState<PostDetailType[]>([]);
 
   useEffect(init, []);
+  useEffect(() => {
+    getPendingPost().then((r) => setpendingPost(r));
+  }, []);
 
   return (
     <LayoutPage user={user}>
       <div className="flex flex-col gap-2">
-        <div className="flex gap-2">
-          <Card className={style}>
-            <h2>Total de Postagens</h2>
-            {totalPost}
-          </Card>
+        <section className="p-1 flex flex-col gap-2 rounded-md  bg-white shadow-sm shadow-gray-400">
+          <h2>Anuncios</h2>
+          <div className="flex gap-2 overflow-x-scroll h-30">
+            <div
+              className={` bg-gray-300 p-0! pt-2! font-bold flex-1 max-h-25! rounded-sm `}
+            >
+              <div className="flex flex-col items-center border-gray-300 border-2 rounded-md w-full h-full justify-center p-2 bg-white">
+                <h2>Total</h2>
+                {totalPost}
+              </div>
+            </div>
 
-          <Card className={style}>
-            <h2>Total de Usuários</h2>
-            {totalUsers}
-          </Card>
-        </div>
+            <Card className={`${style}`}>
+              <h2>Ativos</h2>
+              {totalUsers}
+            </Card>
 
-        <section className="w-[30rem]">
+            <Card className={`${style}`}>
+              <h2>Pendentes</h2>
+              {totalUsers}
+            </Card>
+
+            <Card className={`${style}`}>
+              <h2>Expirados</h2>
+              {totalUsers}
+            </Card>
+          </div>
+        </section>
+
+        <section className="p-1 flex flex-col gap-2 rounded-md  bg-white shadow-sm shadow-gray-400">
+          <h2>Aguardando Aprovacao</h2>
+          <OwnerGuard isOwner={pendingPost.length > 0}>
+            <div>
+              {pendingPost.map((post, i) => (
+                <div
+                  key={i}
+                  className={`bg-white border-2 rounded-md p-2 border-accent
+                    
+                  `}
+                >
+                  <div className="flex gap-2 items-baseline">
+                    <h2 className="text-gray-800 font-bold text-lg truncate ">
+                      {post.title}
+                    </h2>
+                    <p className="text-xs">
+                      {utils.formatarData(post?.created_at ?? "")}
+                    </p>
+                  </div>
+                  <p className="text-xs truncate">{post.description}</p>
+                </div>
+              ))}
+            </div>
+          </OwnerGuard>
+        </section>
+
+        <section className="w-full">
           <canvas id="grafico"></canvas>
         </section>
       </div>
@@ -72,15 +124,20 @@ function AdminDashboard({ user }: Props) {
   }
 }
 
+async function getPendingPost() {
+  const result = httpPost.getPostByStatus("0", "10", PostStatus.PENDING);
+  return result;
+}
+
 async function getTotalPost() {
   const result = await fetch("/api/v1/poststotal", { method: "GET" });
   const data = await result.json();
 
-  console.log(data);
   return data.total;
 }
 
-const style = " border-2 border-gray-300 text-xl font-bold min-w-fit";
+const style =
+  " border-2 border-t-10 border-gray-300  font-bold flex-1 max-h-25! gap-0! ";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   return getAdminProps(context);
