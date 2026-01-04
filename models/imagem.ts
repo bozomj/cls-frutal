@@ -1,11 +1,16 @@
 import database from "@/database/database";
+import { ImageStatus } from "@/shared/Image_types";
 
 async function save(url: string, postId: string) {
   const query =
-    "INSERT INTO imagens (url, post_id) VALUES ($1, $2) RETURNING *;";
+    "INSERT INTO imagens (url, post_id, status) VALUES ($1, $2, $3) RETURNING *;";
 
   try {
-    const result = await database.query(query, [url, postId]);
+    const result = await database.query(query, [
+      url,
+      postId,
+      ImageStatus.PENDING,
+    ]);
     return result;
   } catch (error: unknown) {
     throw {
@@ -39,9 +44,10 @@ async function delByPostId(id: string) {
 
 async function getByPostID(id: string) {
   const result = await database.query(
-    "select * from imagens where post_id = $1",
-    [id]
+    "select * from imagens where post_id = $1 and status = $2",
+    [id, ImageStatus.ACTIVE]
   );
+
   return result;
 }
 

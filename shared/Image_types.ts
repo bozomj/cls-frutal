@@ -3,6 +3,7 @@ export type ImageDBType = {
   file: File;
   post_id?: string;
   url: string;
+  status?: ImageStatus;
 };
 
 export type imageProfileType = {
@@ -11,3 +12,10 @@ export type imageProfileType = {
   file: File;
   selected: boolean;
 };
+
+export enum ImageStatus {
+  PENDING = "pending",
+  ACTIVE = "active",
+  REJECTED = "rejected",
+  DELETED = "deleted",
+}

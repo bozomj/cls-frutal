@@ -7,4 +7,5 @@ export type UserDBType = {
   createdAt: string;
   is_admin: boolean;
   url?: string;
+  status: string;
 };

@@ -4,6 +4,7 @@ import imagem from "./imagem";
 import { deleteFile } from "@/storage/cloudflare/r2Cliente";
 import { PostStatus } from "@/shared/post_status";
 import { PostDetailType } from "@/shared/post_types";
+import { ImageStatus } from "@/shared/Image_types";
 
 function isPostType(obj: unknown): obj is PostDetailType {
   if (typeof obj !== "object" || obj === null) return false;
@@ -231,15 +232,16 @@ async function getById(id: string) {
         perfil_images.url as img_profile,
         MIN(users.name) as name,
         json_agg(imagens.*) AS imagens
+
       FROM posts
-      LEFT JOIN imagens ON imagens.post_id = posts.id
+      LEFT JOIN imagens ON imagens.post_id = posts.id and imagens.status = $2
       LEFT JOIN users ON users.id = posts.user_id
       LEFT JOIN perfil_images ON perfil_images.user_id = posts.user_id AND perfil_images.selected = true
       WHERE posts.id = $1 
       GROUP BY posts.id, users.email, perfil_images.url, users.phone;
       
       `,
-      [id]
+      [id, ImageStatus.ACTIVE]
     );
 
     return posts.length < 1 ? posts : posts[0];

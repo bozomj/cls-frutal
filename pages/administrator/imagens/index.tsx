@@ -27,7 +27,7 @@ const adminImagePage = ({ user }: AdminImagePageProps) => {
             return (
               <div>
                 <h3>{img.id}</h3>
-                <h4>{img.post_id}</h4>
+                <h3>{img.status ?? "Sem status"}</h3>
 
                 <div className="min-w-1/5 flex-1 border-2 border-gray-400 relative rounded-md overflow-hidden h-60">
                   <Image

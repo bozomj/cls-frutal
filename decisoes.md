@@ -51,6 +51,8 @@ x mudar ImageCropper para conter os botoes de confirmar e cancelar, confirmar re
 
 - melhorar funcoes de query no banco para trazer apenas dados que sera usado.
 
+- quando adiciona imagem em um post ja aprovado, precisa que o post volte a ficar pendente
+
 usuarios [
 diego@hotmail.com
 matheus@hotmail.com | senha 12345
