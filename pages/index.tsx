@@ -4,6 +4,7 @@ import Paginacao from "@/components/Paginacao";
 
 import ProductCard from "@/components/ProductCard";
 import httpCarrosselImage from "@/http/carrossel_image";
+import httpPost from "@/http/post";
 
 import Footer from "@/layout/FooterLayout";
 import Produtos from "@/layout/produtos/Produtos";
@@ -16,25 +17,40 @@ import { useEffect, useRef, useState } from "react";
 
 interface HomeProps {
   title?: string;
-  posts: PostDetailType[];
-  total: any;
-  initial: number;
 }
 
-const Home: React.FC<HomeProps> = ({ posts, total, initial }) => {
+const Home: React.FC<HomeProps> = () => {
   const search = useRouter().query.q ?? "";
 
   const produtosRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
-  const postagens = posts;
+  // const postagens = posts;
+  const [postagens, setPostagens] = useState<PostDetailType[]>([]);
+
+  const initial = Number(router.query.initial ?? "0");
+  const limit = Number(router.query.limit ?? "5");
+
   const [imgCarrossel, setImgCarrossel] = useState([]);
 
-  const paginacao = {
-    limite: 5,
-    current: initial,
-    maxPage: total / 5,
-    totalItens: total,
-  };
+  const [paginacao, setPaginacao] = useState({
+    limite: limit,
+    current: initial * limit,
+    maxPage: Math.ceil(0 / limit),
+    totalItens: 0,
+  });
+
+  useEffect(() => {
+    httpPost.getAll(search, initial, limit).then((res) => {
+      setPaginacao((p) => ({
+        ...p,
+        current: initial * limit,
+        maxPage: Math.ceil(res[0].total / limit),
+        totalItens: res[0].total,
+      }));
+      setPostagens(res);
+    });
+  }, [limit, initial, search]);
 
   useEffect(() => {
     httpCarrosselImage.getImagesCarrossel().then(setImgCarrossel);
@@ -70,18 +86,18 @@ const Home: React.FC<HomeProps> = ({ posts, total, initial }) => {
 
 export default Home;
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const limit = Number(context.query.limit ?? 5);
-  const initial = Number(context.query.initial ?? 0) * limit;
-  const search = (context.query.q ?? "") as string;
+// export async function getServerSideProps(context: GetServerSidePropsContext) {
+//   const limit = Number(context.query.limit ?? 5);
+//   const initial = Number(context.query.initial ?? 0) * limit;
+//   const search = (context.query.q ?? "") as string;
 
-  const posts = await Post.search(search, initial.toString(), limit.toString());
-  const total = await Post.getTotal(search);
-  return {
-    props: {
-      posts: JSON.parse(JSON.stringify(posts)),
-      total: JSON.parse(JSON.stringify(total))[0].total,
-      initial: initial,
-    },
-  };
-}
+//   const posts = await Post.search(search, initial.toString(), limit.toString());
+//   const total = await Post.getTotal(search);
+//   return {
+//     props: {
+//       posts: JSON.parse(JSON.stringify(posts)),
+//       total: JSON.parse(JSON.stringify(total))[0].total,
+//       initial: initial,
+//     },
+//   };
+// }

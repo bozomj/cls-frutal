@@ -257,8 +257,11 @@ async function getById(id: string) {
 async function search(txt: string, initial: string, limit: string | null) {
   try {
     const posts = await database.query(
+      //preciso que coloque o total de resultado tbm pra usar como paginacao
+
       `WITH ultimos_posts AS (
-        SELECT *
+        SELECT *,
+        COUNT(*) OVER() AS total
         FROM posts
         WHERE
         status = $4 AND (title ILIKE $1 OR description ILIKE $1)
