@@ -15,38 +15,48 @@ import ListTile from "@/components/ListTile";
 
 import Produtos from "@/layout/produtos/Produtos";
 import ProductCardDashboard from "@/components/ProductCardDasboard";
-import { usePagination } from "@/contexts/PaginactionContext";
 import utils from "@/utils";
 import Link from "next/link";
 
 import Image from "next/image";
 import { UserDBType } from "@/shared/user_types";
+import Paginacao from "@/components/Paginacao";
+import { useRouter } from "next/router";
 
 function Dashboard({ ctx }: { ctx: string }) {
   const [user, setUser] = useState<UserDBType | null>(null);
   const [listPost, setPosts] = useState([]);
   const produtosRef = useRef<HTMLInputElement>(null);
-  const { paginacao, setPaginacao } = usePagination();
-  const { limite, current } = paginacao;
+
+  const router = useRouter();
+
+  const limit = Number(router.query.limit ?? 5);
+  const initial = Number(router.query.initial ?? 0) * limit;
+
+  const [paginacao, setPaginacao] = useState({
+    limite: limit,
+    current: initial,
+    maxPage: Math.max(Math.floor(initial / limit), 0),
+    totalItens: 0,
+  });
 
   const getMyPost = useCallback(async () => {
-    const initial = current * limite;
     const myPosts = await fetch(
-      `api/v1/posts/user?q=&limit=${limite}&initial=${initial}`,
-      {
-        method: "GET",
-      }
+      `api/v1/posts/user?q=&limit=${limit}&initial=${initial}`
     );
     const pst = await myPosts.json();
 
-    setPaginacao((prev) => ({
-      ...prev,
-      totalItens: pst.total.total,
-    }));
+    console.log(pst);
 
     setPosts(pst["posts"]);
+    setPaginacao((p) => ({ ...p, totalItens: Number(pst["total"].total) }));
+  }, [limit, initial]);
+
+  useEffect(() => {
+    if (!user) return;
+
     produtosRef.current?.focus();
-  }, [current, limite, setPaginacao]);
+  }, [limit, initial]);
 
   useEffect(() => {
     getUser();
@@ -160,6 +170,7 @@ function Dashboard({ ctx }: { ctx: string }) {
                 postagens={listPost}
                 className="grid-cols-1!"
               />
+              <Paginacao paginacao={paginacao} />
             </section>
           </section>
         </div>

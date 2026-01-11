@@ -297,7 +297,7 @@ async function getPostByStatus(initial: string, limit: string, status: string) {
         from posts
         left join imagens on imagens.post_id = posts.id
         LEFT JOIN users ON users.id = posts.user_id
-        where status = $3
+        where posts.status = $3
       ) AS sub ORDER BY sub.created_at desc
        limit $1 offset  $2
        `,

@@ -3,7 +3,7 @@ import "../lib/fontawesome";
 import Head from "next/head";
 
 import type { AppProps } from "next/app";
-import { PaginationProvider } from "@/contexts/PaginactionContext";
+
 import BackdropProvider from "@/ui/backdrop/BackdropProvider";
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -16,11 +16,9 @@ export default function App({ Component, pageProps }: AppProps) {
         />
       </Head>
 
-      <PaginationProvider>
-        <BackdropProvider>
-          <Component {...pageProps} />
-        </BackdropProvider>
-      </PaginationProvider>
+      <BackdropProvider>
+        <Component {...pageProps} />
+      </BackdropProvider>
     </>
   );
 }

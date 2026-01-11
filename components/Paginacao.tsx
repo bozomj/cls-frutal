@@ -1,4 +1,3 @@
-import { usePagination } from "@/contexts/PaginactionContext";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
@@ -15,10 +14,13 @@ export type PaginacaoType = {
 
 interface PaginacaoProps {
   className?: string;
+  paginacao: Partial<PaginacaoType>;
 }
 
-const Paginacao: React.FC<PaginacaoProps> = ({ className }: PaginacaoProps) => {
-  const { paginacao, setPaginacao } = usePagination();
+const Paginacao: React.FC<PaginacaoProps> = ({
+  className,
+  paginacao,
+}: PaginacaoProps) => {
   const router = useRouter();
   const urlQuerys = Object.entries(router.query).reduce<Record<string, string>>(
     (acc, [key, value]) => {
@@ -31,18 +33,15 @@ const Paginacao: React.FC<PaginacaoProps> = ({ className }: PaginacaoProps) => {
   const nextParams = new URLSearchParams(urlQuerys);
   const prevParams = new URLSearchParams(urlQuerys);
 
-  paginacao.current = parseInt(nextParams.get("initial") ?? "0");
-  paginacao.limite = parseInt(
-    nextParams.get("limit") ?? paginacao.limite.toString()
+  const current = parseInt(nextParams.get("initial") ?? "0");
+  const limite = parseInt(
+    nextParams.get("limit") ?? paginacao.limite!.toString()
   );
 
-  nextParams.set("initial", String(paginacao.current + 1));
-  prevParams.set("initial", String(paginacao.current - 1));
+  nextParams.set("initial", String(current + 1));
+  prevParams.set("initial", String(current - 1));
 
-  const maxPage = Math.max(
-    Math.ceil(paginacao.totalItens / paginacao.limite) - 1,
-    0
-  );
+  const maxPage = Math.max(Math.ceil(paginacao.totalItens! / limite) - 1, 0);
   console.log(paginacao);
   return (
     <div
@@ -51,25 +50,12 @@ const Paginacao: React.FC<PaginacaoProps> = ({ className }: PaginacaoProps) => {
     >
       <Link
         href={`?${prevParams.toString()}`}
-        className={`${paginacao.current != 0 ? "" : "invisible"}`}
+        className={`${current != 0 ? "" : "invisible"}`}
       >
-        <button
-          onClick={() => {
-            if (paginacao.current > 0) {
-              setPaginacao((prev) => ({
-                ...prev,
-                current: paginacao.current - 1,
-                maxPage: maxPage,
-              }));
-              // update(novaPaginacao);
-            }
-          }}
-        >
-          <FontAwesomeIcon
-            icon={faArrowLeft}
-            className="text-3xl hover:text-cyan-500 cursor-pointer"
-          />
-        </button>
+        <FontAwesomeIcon
+          icon={faArrowLeft}
+          className="text-3xl hover:text-cyan-500 cursor-pointer"
+        />
       </Link>
       <div className="flex items-center gap-2">
         <span
@@ -85,30 +71,18 @@ const Paginacao: React.FC<PaginacaoProps> = ({ className }: PaginacaoProps) => {
         ></span>
         <span
           className={`h-2 w-2 rounded-full bg-cyan-800 ${
-            paginacao.current < maxPage ? "" : "invisible"
+            current < maxPage ? "" : "invisible"
           } `}
         ></span>
       </div>
       <Link
         href={`?${nextParams.toString()}`}
-        className={`${paginacao.current < maxPage ? "" : "invisible"}`}
+        className={`${current < maxPage ? "" : "invisible"}`}
       >
-        <button
-          onClick={() => {
-            if (paginacao.current < maxPage) {
-              setPaginacao((prev) => ({
-                ...prev,
-                current: paginacao.current + 1,
-                maxPage: maxPage,
-              }));
-            }
-          }}
-        >
-          <FontAwesomeIcon
-            icon={faArrowRight}
-            className="text-3xl hover:text-cyan-500 cursor-pointer"
-          />
-        </button>
+        <FontAwesomeIcon
+          icon={faArrowRight}
+          className="text-3xl hover:text-cyan-500 cursor-pointer"
+        />
       </Link>
     </div>
   );

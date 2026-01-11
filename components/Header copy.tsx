@@ -10,7 +10,6 @@ import router from "next/router";
 
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { usePagination } from "@/contexts/PaginactionContext";
 
 interface HeaderProps {
   titulo?: string;
@@ -18,7 +17,6 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
-  const { resetPagination } = usePagination();
   const [toggle, setToggle] = useState(true);
   const [subH, alter] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
@@ -39,13 +37,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
   return (
     <header className="bg-secondary text-primary-dark p-4 relative w-full z-[1] flex flex-col gap-2  md:items-stretch ">
       <div className="flex justify-between  ">
-        <Link
-          href={"/"}
-          className=""
-          onClick={() => {
-            resetPagination();
-          }}
-        >
+        <Link href={"/"} className="" onClick={() => {}}>
           <Image
             src="/img/logo.svg"
             width="240"
@@ -60,7 +52,6 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
             <Link
               href={isAuthenticated.status ? "/dashboard" : "/login"}
               className="flex items-center gap-2 text-primary-dark hover:text-primary-light transition-colors"
-              onClick={() => resetPagination()}
             >
               <FontAwesomeIcon icon={faUser} className="text-2xl" />
             </Link>
@@ -87,7 +78,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
             e.preventDefault();
 
             onSubmit?.(searchTerm);
-            resetPagination();
+
             router.replace(`/?q=${encodeURIComponent(searchTerm)}`);
           }}
           className=" flex gap-2  flex-[1] justify-end  items-center"

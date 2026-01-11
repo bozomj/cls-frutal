@@ -1,50 +1,44 @@
 import CarrosselScroll from "@/components/CarrosselScroll";
 import Header from "@/components/Header";
+import Paginacao from "@/components/Paginacao";
 
 import ProductCard from "@/components/ProductCard";
-import { usePagination } from "@/contexts/PaginactionContext";
 import httpCarrosselImage from "@/http/carrossel_image";
-
-import httpPost from "@/http/post";
 
 import Footer from "@/layout/FooterLayout";
 import Produtos from "@/layout/produtos/Produtos";
+import Post from "@/models/post";
+import { PostDetailType } from "@/shared/post_types";
+import { GetServerSidePropsContext } from "next";
 
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface HomeProps {
   title?: string;
+  posts: PostDetailType[];
+  total: any;
+  initial: number;
 }
 
-const Home: React.FC<HomeProps> = () => {
+const Home: React.FC<HomeProps> = ({ posts, total, initial }) => {
   const search = useRouter().query.q ?? "";
+
   const produtosRef = useRef<HTMLInputElement>(null);
 
-  const [postagens, setPostagens] = useState([]);
+  const postagens = posts;
   const [imgCarrossel, setImgCarrossel] = useState([]);
 
-  const { paginacao, setPaginacao } = usePagination();
-  const { limite, current } = paginacao;
-
-  const getPosts = useCallback(async () => {
-    const initial = current * limite;
-
-    const total = await httpPost.getTotal(search);
-    const posts = await httpPost.getAll(search, initial, limite);
-
-    setPaginacao((prev) => ({
-      ...prev,
-      totalItens: total.total,
-    }));
-
-    setPostagens(posts);
-  }, [current, limite, search, setPaginacao]);
+  const paginacao = {
+    limite: 5,
+    current: initial,
+    maxPage: total / 5,
+    totalItens: total,
+  };
 
   useEffect(() => {
-    getPosts();
     httpCarrosselImage.getImagesCarrossel().then(setImgCarrossel);
-  }, [getPosts]);
+  }, []);
 
   useEffect(() => produtosRef.current?.focus());
 
@@ -66,6 +60,7 @@ const Home: React.FC<HomeProps> = () => {
             />
           </div>
           <Produtos Card={ProductCard} postagens={postagens} />
+          <Paginacao paginacao={paginacao} />
         </section>
         <Footer />
       </main>
@@ -74,3 +69,19 @@ const Home: React.FC<HomeProps> = () => {
 };
 
 export default Home;
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const limit = Number(context.query.limit ?? 5);
+  const initial = Number(context.query.initial ?? 0) * limit;
+  const search = (context.query.q ?? "") as string;
+
+  const posts = await Post.search(search, initial.toString(), limit.toString());
+  const total = await Post.getTotal(search);
+  return {
+    props: {
+      posts: JSON.parse(JSON.stringify(posts)),
+      total: JSON.parse(JSON.stringify(total))[0].total,
+      initial: initial,
+    },
+  };
+}

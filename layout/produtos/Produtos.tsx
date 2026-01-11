@@ -20,7 +20,6 @@ function Produtos<T>({ postagens = [], Card, className }: ProdutosProps<T>) {
         >
           {makeItens(postagens)}
         </section>
-        <Paginacao />
       </div>
     </>
   );

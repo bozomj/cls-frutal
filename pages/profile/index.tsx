@@ -7,7 +7,7 @@ import CircleAvatar from "@/components/CircleAvatar";
 import utils from "@/utils";
 
 import Produtos from "@/layout/produtos/Produtos";
-import { usePagination } from "@/contexts/PaginactionContext";
+
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -29,19 +29,29 @@ import { imageProfileType } from "@/shared/Image_types";
 import { FullImageView } from "@/components";
 import WireProductCardDashboard from "@/wireframes/wireProductCardDashboard";
 import { PostDetailType } from "@/shared/post_types";
+import { useRouter } from "next/router";
+import Paginacao from "@/components/Paginacao";
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<UserDBType>();
   const [posts, setPosts] = useState([]);
-  const { paginacao, setPaginacao } = usePagination();
+
+  const router = useRouter();
+
+  const limit = Number(router.query.limit ?? 5);
+  const initial = Number(router.query.initial ?? 0) * limit;
+
+  const [paginacao, setPaginacao] = useState({
+    limite: limit,
+    current: initial,
+    maxPage: Math.max(Math.floor(initial / limit), 0),
+    totalItens: 0,
+  });
   const { openContent, closeContent } = useBackdrop();
 
   const [imagesProfile, setImagesProfile] = useState<imageProfileType[]>([]);
 
   const produtosRef = useRef<HTMLInputElement>(null);
-
-  const { limite, current } = paginacao;
-  const initial = current * limite;
 
   const init = useCallback(async () => {
     try {
@@ -49,7 +59,7 @@ const Profile: React.FC = () => {
       setUser(userData.user);
       setImagesProfile(userData.imagemProfile);
 
-      const p = await httpPost.getPostCurrentUser(initial, limite);
+      const p = await httpPost.getPostCurrentUser(initial, limit);
 
       setPosts(p.posts);
       setPaginacao((prev) => ({ ...prev, totalItens: p.total.total }));
@@ -58,7 +68,7 @@ const Profile: React.FC = () => {
       // Adicionar feedback de erro para o usuário aqui
     } finally {
     }
-  }, [initial, limite, setPaginacao]);
+  }, [initial, limit, setPaginacao]);
 
   useEffect(() => {
     init();
@@ -181,6 +191,7 @@ const Profile: React.FC = () => {
                 className="grid-cols-1!"
               />
             )}
+            <Paginacao paginacao={paginacao} />
           </section>
         </div>
       </main>
