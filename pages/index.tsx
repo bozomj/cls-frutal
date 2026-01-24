@@ -3,60 +3,32 @@ import Header from "@/components/Header";
 import Paginacao from "@/components/Paginacao";
 
 import ProductCard from "@/components/ProductCard";
-import httpCarrosselImage from "@/http/carrossel_image";
+import { useCarrosselImages } from "@/hooks/useCarrosselImages";
+import { usePaginacao } from "@/hooks/usePaginacao";
+import { usePosts } from "@/hooks/usePosts";
+import { QueryParams, useQueryParams } from "@/hooks/useQueryParams";
+
 import httpPost from "@/http/post";
 
 import Footer from "@/layout/FooterLayout";
 import Produtos from "@/layout/produtos/Produtos";
-import Post from "@/models/post";
-import { PostDetailType } from "@/shared/post_types";
-import { GetServerSidePropsContext } from "next";
 
-import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
-interface HomeProps {
-  title?: string;
-}
+const Home: React.FC = () => {
+  const { params } = useQueryParams();
+  const { initial, limit } = params;
 
-const Home: React.FC<HomeProps> = () => {
-  const search = useRouter().query.q ?? "";
+  const imgCarrossel = useCarrosselImages();
+  const { postagens, total } = usePosts(fetcher, params);
+  const paginacao = usePaginacao(total, initial, limit);
 
-  const produtosRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
-
-  // const postagens = posts;
-  const [postagens, setPostagens] = useState<PostDetailType[]>([]);
-
-  const initial = Number(router.query.initial ?? "0");
-  const limit = Number(router.query.limit ?? "5");
-
-  const [imgCarrossel, setImgCarrossel] = useState([]);
-
-  const [paginacao, setPaginacao] = useState({
-    limite: limit,
-    current: initial * limit,
-    maxPage: Math.ceil(0 / limit),
-    totalItens: 0,
-  });
+  const produtosRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    httpPost.getAll(search, initial, limit).then((res) => {
-      setPaginacao((p) => ({
-        ...p,
-        current: initial * limit,
-        maxPage: Math.ceil(res[0].total / limit),
-        totalItens: res[0].total,
-      }));
-      setPostagens(res);
-    });
-  }, [limit, initial, search]);
-
-  useEffect(() => {
-    httpCarrosselImage.getImagesCarrossel().then(setImgCarrossel);
-  }, []);
-
-  useEffect(() => produtosRef.current?.focus());
+    if (postagens.length === 0) return;
+    produtosRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [initial, postagens]);
 
   return (
     <>
@@ -75,8 +47,13 @@ const Home: React.FC<HomeProps> = () => {
               className="h-full  rounded-md"
             />
           </div>
+
           <Produtos Card={ProductCard} postagens={postagens} />
-          <Paginacao paginacao={paginacao} />
+
+          <Paginacao
+            paginacao={paginacao}
+            className="shadow-md shadow-gray-400 rounded-2xl bg-white"
+          />
         </section>
         <Footer />
       </main>
@@ -84,20 +61,9 @@ const Home: React.FC<HomeProps> = () => {
   );
 };
 
+const fetcher = (params: QueryParams) => {
+  const { search, initial, limit } = params;
+  return httpPost.getAll(search, initial * limit, limit);
+};
+
 export default Home;
-
-// export async function getServerSideProps(context: GetServerSidePropsContext) {
-//   const limit = Number(context.query.limit ?? 5);
-//   const initial = Number(context.query.initial ?? 0) * limit;
-//   const search = (context.query.q ?? "") as string;
-
-//   const posts = await Post.search(search, initial.toString(), limit.toString());
-//   const total = await Post.getTotal(search);
-//   return {
-//     props: {
-//       posts: JSON.parse(JSON.stringify(posts)),
-//       total: JSON.parse(JSON.stringify(total))[0].total,
-//       initial: initial,
-//     },
-//   };
-// }

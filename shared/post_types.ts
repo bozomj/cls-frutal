@@ -26,4 +26,5 @@ export type PostDetailType = {
   status: PostStatus;
   imagens: { url: string }[];
   img_profile: string;
+  total: number;
 };

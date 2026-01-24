@@ -12,9 +12,7 @@ function Produtos<T>({ postagens = [], Card, className }: ProdutosProps<T>) {
     <>
       <div
         className={`shadow-sm shadow-gray-400 flex flex-col items-center  flex-1 max-w-full rounded-2xl bg-white ${className}`}
-        // className={`shadow-sm shadow-gray-400 grid grid-cols-2  flex-1 max-w-full rounded-2xl bg-white ${className}`}
       >
-        <a id="pst" href=""></a>
         <section
           className={`grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-2 p-2  w-full h-fit ${className}`}
         >

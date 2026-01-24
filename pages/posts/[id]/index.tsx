@@ -34,6 +34,7 @@ import {
 import OwnerGuard from "@/components/guards/OwnerGuard";
 import { ImageDBType } from "@/shared/Image_types";
 import { v4 as uuidv4 } from "uuid";
+import Head from "next/head";
 
 type Props = {
   user_id?: string;
@@ -109,6 +110,14 @@ export default function DetailsPostPage({ user_id }: Props) {
 
   return (
     <>
+      <Head>
+        <title>{item.title}</title>
+        <meta property="og:image" content={imgPrincial} />
+        <meta
+          property="og:description"
+          content={`Por apenas R$ ${item.description}`}
+        />
+      </Head>
       <Header />
       <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center text-black ">
         {!item.id ? (

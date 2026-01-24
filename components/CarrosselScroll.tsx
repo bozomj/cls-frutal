@@ -21,13 +21,14 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({
   const [index, setIndex] = useState<number>(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const totalItems = items.length;
-  const ref = scrollRef.current;
-  const width = ref?.clientWidth;
-  const max = width! * totalItems;
 
   const animado = useRef(false);
 
   useEffect(() => {
+    const ref = scrollRef.current;
+    const width = ref?.clientWidth || 0;
+    const max = width * totalItems;
+
     let frames: NodeJS.Timeout;
     const animate = async () => {
       if (animado.current) return;
@@ -52,7 +53,10 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({
     ref?.addEventListener("scroll", handleScroll);
 
     frames = setTimeout(animate, time * 1000);
-    return () => clearTimeout(frames);
+    return () => {
+      clearTimeout(frames);
+      ref?.removeEventListener("scroll", handleScroll);
+    };
   });
 
   return (
@@ -111,25 +115,30 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({
   }
 
   function moveRight() {
-    if (scrollRef.current) {
+    const ref = scrollRef.current;
+    if (ref) {
+      const width = ref.clientWidth;
+      const max = width * totalItems;
       const newIndex = index == 0 ? items.length - 1 : index - 1;
       setIndex(newIndex);
 
-      ref?.scrollBy({ left: -width!, behavior: "smooth" });
-      if (ref!.scrollLeft <= 0) {
-        ref?.scrollBy({ left: max! });
-        ref?.scrollBy({ left: -width!, behavior: "smooth" });
+      ref.scrollBy({ left: -width, behavior: "smooth" });
+      if (ref.scrollLeft <= 0) {
+        ref.scrollBy({ left: max });
+        ref.scrollBy({ left: -width, behavior: "smooth" });
       }
     }
     setTimeout(() => (animado.current = false), time * 1000);
   }
 
   function moveLeft() {
-    if (scrollRef.current) {
+    const ref = scrollRef.current;
+    if (ref) {
+      const width = ref.clientWidth;
       const newIndex = index == items?.length - 1 ? 0 : index + 1;
       setIndex(newIndex);
 
-      ref?.scrollBy({ left: width, behavior: "smooth" });
+      ref.scrollBy({ left: width, behavior: "smooth" });
     }
     setTimeout(() => (animado.current = false), time * 1000);
   }

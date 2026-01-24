@@ -54,7 +54,7 @@ async function create(pst: PostDetailType) {
 async function update(
   id: string,
   userId: string,
-  data: Partial<PostDetailType>
+  data: Partial<PostDetailType>,
 ) {
   const allowed = ["title", "description", "valor", "categoria_id", "status"];
 
@@ -89,7 +89,7 @@ async function getTotal(search: string) {
       `
           SELECT COUNT(title) as total FROM posts where title ilike $1 or description ilike $1;
         `,
-      [`%${search}%`]
+      [`%${search}%`],
     );
 
     return total;
@@ -113,7 +113,7 @@ async function listAllPost(initial: string, limit: string) {
       ) AS sub ORDER BY sub.created_at desc
        limit $1 offset  $2
        `,
-      [limit, initial]
+      [limit, initial],
     );
 
     return posts;
@@ -142,7 +142,7 @@ async function deletePost(id: string, userId: string) {
   try {
     const posts = await database.query(
       "delete from posts where id = $1 and user_id = $2 RETURNING *",
-      [id, userId]
+      [id, userId],
     );
     return posts;
   } catch (error) {
@@ -157,29 +157,34 @@ async function getByUserID(
   id: string,
   search: string,
   initial: string,
-  limit: string
+  limit: string,
 ) {
-  const query = `WITH ultimos_posts AS (
-        SELECT *
-        FROM posts
-        
-        WHERE posts.user_id = $1 
-          AND (posts.title ilike $2 or posts.description ilike $2 )
-          
-        ORDER BY created_at DESC
-        LIMIT $4 OFFSET $3
-      )
-      SELECT
-        p.*,
-        users.phone AS phone,
-        i.url AS imageurl
-      FROM ultimos_posts p
-      LEFT JOIN users ON users.id = p.user_id
-      LEFT JOIN LATERAL (
-        SELECT url FROM imagens WHERE post_id = p.id ORDER BY id ASC LIMIT 1
-      ) i ON true;
-
-        `;
+  const query = `
+WITH ultimos_posts AS (
+  SELECT
+    posts.*,
+    COUNT(*) OVER() AS total
+  FROM posts
+  WHERE posts.user_id = $1
+    AND (posts.title ILIKE $2 OR posts.description ILIKE $2)
+  ORDER BY created_at DESC
+  LIMIT $4 OFFSET $3
+)
+SELECT
+  p.*,
+  p.total,
+  users.phone AS phone,
+  i.url AS imageurl
+FROM ultimos_posts p
+LEFT JOIN users ON users.id = p.user_id
+LEFT JOIN LATERAL (
+  SELECT url
+  FROM imagens
+  WHERE post_id = p.id
+  ORDER BY id ASC
+  LIMIT 1
+) i ON true;
+`;
 
   try {
     const posts = await database.query(query, [
@@ -209,7 +214,7 @@ async function getByUserIDTotal(id: string, search: string) {
       from posts
       where posts.user_id = $1 and (posts.title ilike $2 or posts.description ilike $2 )
       `,
-      [id, `%${search}%`]
+      [id, `%${search}%`],
     );
 
     return total[0];
@@ -241,7 +246,7 @@ async function getById(id: string) {
       GROUP BY posts.id, users.email, perfil_images.url, users.phone;
       
       `,
-      [id, ImageStatus.ACTIVE]
+      [id, ImageStatus.ACTIVE],
     );
 
     return posts.length < 1 ? posts : posts[0];
@@ -279,7 +284,7 @@ async function search(txt: string, initial: string, limit: string | null) {
       ) i ON true;
 
         `,
-      [`%${txt}%`, limit, initial, PostStatus.ACTIVE]
+      [`%${txt}%`, limit, initial, PostStatus.ACTIVE],
     );
 
     return posts;
@@ -304,7 +309,7 @@ async function getPostByStatus(initial: string, limit: string, status: string) {
       ) AS sub ORDER BY sub.created_at desc
        limit $1 offset  $2
        `,
-      [limit, initial, status]
+      [limit, initial, status],
     );
 
     return posts;

@@ -23,15 +23,15 @@ async function gethandler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    const total = await Post.getByUserIDTotal(userId as string, search);
+    // const total = await Post.getByUserIDTotal(userId as string, search);
     const posts = await Post.getByUserID(
       userId as string,
       search,
       initial,
-      limit
+      limit,
     );
 
-    return res.status(200).json({ posts, total });
+    return res.status(200).json(posts);
   } catch (error) {
     return res.status(400).json({ message: "erro generico", cause: error });
   }

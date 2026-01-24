@@ -1,5 +1,5 @@
+import { useRef } from "react";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { useCallback, useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import {
@@ -19,59 +19,29 @@ import utils from "@/utils";
 import Link from "next/link";
 
 import Image from "next/image";
-import { UserDBType } from "@/shared/user_types";
+
 import Paginacao from "@/components/Paginacao";
-import { useRouter } from "next/router";
 
-function Dashboard({ ctx }: { ctx: string }) {
-  const [user, setUser] = useState<UserDBType | null>(null);
-  const [listPost, setPosts] = useState([]);
-  const produtosRef = useRef<HTMLInputElement>(null);
+import { usePosts } from "@/hooks/usePosts";
+import { usePaginacao } from "@/hooks/usePaginacao";
+import { useUser } from "@/hooks/useUser";
+import { QueryParams, useQueryParams } from "@/hooks/useQueryParams";
 
-  const router = useRouter();
+import httpPost from "@/http/post";
 
-  const limit = Number(router.query.limit ?? 5);
-  const initial = Number(router.query.initial ?? 0) * limit;
-
-  const [paginacao, setPaginacao] = useState({
-    limite: limit,
-    current: initial,
-    maxPage: Math.max(Math.floor(initial / limit), 0),
-    totalItens: 0,
-  });
-
-  const getMyPost = useCallback(async () => {
-    const myPosts = await fetch(
-      `api/v1/posts/user?q=&limit=${limit}&initial=${initial}`
-    );
-    const pst = await myPosts.json();
-
-    console.log(pst);
-
-    setPosts(pst["posts"]);
-    setPaginacao((p) => ({ ...p, totalItens: Number(pst["total"].total) }));
-  }, [limit, initial]);
-
-  useEffect(() => {
-    if (!user) return;
-
-    produtosRef.current?.focus();
-  }, [limit, initial]);
-
-  useEffect(() => {
-    getUser();
-    getMyPost();
-  }, [ctx, getMyPost]);
+function Dashboard() {
+  const { user } = useUser();
+  const { params } = useQueryParams();
+  const { postagens, total } = usePosts(fetcher, params);
+  const paginacao = usePaginacao(total, params.initial, params.limit);
+  const produtosRef = useRef<HTMLSpanElement>(null);
 
   return (
     <>
       <header className="z-[20]">
         <Header titulo="Dashboard" />
       </header>
-      <main
-        className="flex-auto overflow-y-scroll text-gray-800 bg-gray-300 flex-col flex justify-between  items-center scroll-smooth
-"
-      >
+      <main className="flex-auto overflow-y-scroll text-gray-800 bg-gray-300 flex-col flex justify-between  items-center scroll-smooth">
         <div className="flex-1 flex w-full md:justify-center">
           <span className="w-[4rem]"></span>
 
@@ -167,7 +137,7 @@ function Dashboard({ ctx }: { ctx: string }) {
             <section className="flex flex-col">
               <Produtos
                 Card={ProductCardDashboard}
-                postagens={listPost}
+                postagens={postagens}
                 className="grid-cols-1!"
               />
               <Paginacao paginacao={paginacao} />
@@ -177,18 +147,15 @@ function Dashboard({ ctx }: { ctx: string }) {
       </main>
     </>
   );
-
-  async function getUser() {
-    const response = await fetch(`/api/v1/user`);
-    const responseBody = await response.json();
-
-    setUser(responseBody.user);
-  }
 }
+export default Dashboard;
 
 //executa antes de carregar
 export const getServerSideProps: GetServerSideProps = async (
-  context: GetServerSidePropsContext
+  context: GetServerSidePropsContext,
 ) => utils.redirectNotToken(context, "/login");
 
-export default Dashboard;
+const fetcher = (params: QueryParams) => {
+  const { initial, limit } = params;
+  return httpPost.getPostCurrentUser(initial * limit, limit);
+};

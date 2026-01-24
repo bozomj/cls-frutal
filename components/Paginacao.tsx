@@ -42,11 +42,10 @@ const Paginacao: React.FC<PaginacaoProps> = ({
   prevParams.set("initial", String(current - 1));
 
   const maxPage = Math.max(Math.ceil(paginacao.totalItens! / limite) - 1, 0);
-  console.log(paginacao);
   return (
     <div
       id="paginacao"
-      className={`flex justify-between  text-cyan-800 p-4 w-full  ${className}`}
+      className={`flex justify-between  text-gray-400 p-4 w-full  ${className}`}
     >
       <Link
         href={`?${prevParams.toString()}`}
@@ -54,7 +53,7 @@ const Paginacao: React.FC<PaginacaoProps> = ({
       >
         <FontAwesomeIcon
           icon={faArrowLeft}
-          className="text-3xl hover:text-cyan-500 cursor-pointer"
+          className="text-3xl hover:text-cyan-700 cursor-pointer"
         />
       </Link>
       <div className="flex items-center gap-2">
@@ -81,7 +80,7 @@ const Paginacao: React.FC<PaginacaoProps> = ({
       >
         <FontAwesomeIcon
           icon={faArrowRight}
-          className="text-3xl hover:text-cyan-500 cursor-pointer"
+          className="text-3xl hover:text-cyan-700 cursor-pointer"
         />
       </Link>
     </div>

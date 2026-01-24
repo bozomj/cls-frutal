@@ -1,10 +1,11 @@
-import { PostDBType } from "@/shared/post_types";
+import { PostDBType, PostDetailType } from "@/shared/post_types";
 
 async function getPostCurrentUser(initial: number, limit: number) {
-  const posts = await fetch(
-    `/api/v1/posts/user?initial=${initial}&limit=${limit}`
-  );
-  return await posts.json();
+  const posts = await (
+    await fetch(`/api/v1/posts/user?initial=${initial}&limit=${limit}`)
+  ).json();
+
+  return posts;
 }
 
 async function getTotal(search: string | string[]) {

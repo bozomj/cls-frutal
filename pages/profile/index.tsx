@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef } from "react";
 
 import CircleAvatar from "@/components/CircleAvatar";
 
@@ -24,57 +24,31 @@ import httpPost from "@/http/post";
 import httpPerfilImages from "@/http/perfil_images";
 import ImageCropper from "@/components/ImageCropper";
 import { useBackdrop } from "@/ui/backdrop/useBackdrop";
-import { UserDBType } from "@/shared/user_types";
+
 import { imageProfileType } from "@/shared/Image_types";
 import { FullImageView } from "@/components";
 import WireProductCardDashboard from "@/wireframes/wireProductCardDashboard";
 import { PostDetailType } from "@/shared/post_types";
-import { useRouter } from "next/router";
+
 import Paginacao from "@/components/Paginacao";
+import { usePaginacao } from "@/hooks/usePaginacao";
+
+import { QueryParams, useQueryParams } from "@/hooks/useQueryParams";
+import { usePosts } from "@/hooks/usePosts";
+import { useUser } from "@/hooks/useUser";
 
 const Profile: React.FC = () => {
-  const [user, setUser] = useState<UserDBType>();
-  const [posts, setPosts] = useState([]);
-
-  const router = useRouter();
-
-  const limit = Number(router.query.limit ?? 5);
-  const initial = Number(router.query.initial ?? 0) * limit;
-
-  const [paginacao, setPaginacao] = useState({
-    limite: limit,
-    current: initial,
-    maxPage: Math.max(Math.floor(initial / limit), 0),
-    totalItens: 0,
-  });
+  const { user, imagemProfile, setUser, setImagemProfile } = useUser();
   const { openContent, closeContent } = useBackdrop();
 
-  const [imagesProfile, setImagesProfile] = useState<imageProfileType[]>([]);
+  const { params } = useQueryParams();
+  const { initial, limit } = params;
+  const { postagens, total } = usePosts(fetcher, params);
 
+  const paginacao = usePaginacao(total, initial, limit);
   const produtosRef = useRef<HTMLInputElement>(null);
 
-  const init = useCallback(async () => {
-    try {
-      const userData = await httpUser.getUserLogin();
-      setUser(userData.user);
-      setImagesProfile(userData.imagemProfile);
-
-      const p = await httpPost.getPostCurrentUser(initial, limit);
-
-      setPosts(p.posts);
-      setPaginacao((prev) => ({ ...prev, totalItens: p.total.total }));
-    } catch (error) {
-      console.error("Falha ao carregar dados do perfil:", error);
-      // Adicionar feedback de erro para o usuário aqui
-    } finally {
-    }
-  }, [initial, limit, setPaginacao]);
-
-  useEffect(() => {
-    init();
-  }, [init]);
-
-  useEffect(() => produtosRef.current?.focus());
+  useEffect(() => produtosRef.current?.focus(), []);
 
   return (
     <>
@@ -99,7 +73,7 @@ const Profile: React.FC = () => {
                           visible={true}
                           onClose={() => closeContent()}
                         />
-                      </>
+                      </>,
                     );
                   }}
                 />
@@ -134,7 +108,7 @@ const Profile: React.FC = () => {
               id="imagen-do-perfil"
               className="flex gap-2 p-2 overflow-x-scroll flex-1 bg-gray-300 h-fit"
             >
-              {imagesProfile?.map((img: imageProfileType) => {
+              {imagemProfile?.map((img: imageProfileType) => {
                 const newImg = {
                   ...img,
                   url: utils.getUrlImageR2(img?.url ?? ""),
@@ -165,8 +139,8 @@ const Profile: React.FC = () => {
                           await httpPerfilImages.deleteImageProfile(img);
 
                         if (deleted.message === "Imagem deletada") {
-                          setImagesProfile((prev) => {
-                            return prev.filter((im) => im.id !== e.id);
+                          setImagemProfile((prev) => {
+                            return prev?.filter((im) => im.id !== e.id) ?? [];
                           });
                         }
                       }}
@@ -178,7 +152,7 @@ const Profile: React.FC = () => {
           </section>
 
           <section className="border-t-2 border-gray-400 flex flex-col py-4 mt-4">
-            {posts.length < 1 ? (
+            {postagens.length < 1 ? (
               <Produtos
                 postagens={[{}, {}, {}, {}] as PostDetailType[]}
                 Card={WireProductCardDashboard}
@@ -186,7 +160,7 @@ const Profile: React.FC = () => {
               />
             ) : (
               <Produtos
-                postagens={posts}
+                postagens={postagens}
                 Card={ProductCardDashboard}
                 className="grid-cols-1!"
               />
@@ -229,7 +203,7 @@ const Profile: React.FC = () => {
           onConfirm={async (file) => {
             await salvar(file);
           }}
-        />
+        />,
       );
     }
   }
@@ -237,15 +211,21 @@ const Profile: React.FC = () => {
   async function updateProfileImage(newImg: imageProfileType, imgUrl: string) {
     await httpPerfilImages.updateImageProfile(newImg);
 
-    setUser((user) => {
-      return { ...user, url: imgUrl } as UserDBType;
-    });
+    // setUserImageUrl(imgUrl);
+    setUser((u) =>
+      u
+        ? {
+            ...u,
+            url: imgUrl,
+          }
+        : u,
+    );
 
-    setImagesProfile((oldImages) =>
-      oldImages.map((img) => ({
+    setImagemProfile((oldImages) =>
+      oldImages!.map((img) => ({
         ...img,
         selected: img.id === newImg.id,
-      }))
+      })),
     );
   }
 
@@ -259,8 +239,16 @@ const Profile: React.FC = () => {
       });
 
       const userdata = await httpUser.getUserLogin();
-      setUser(userdata.user);
-      setImagesProfile(userdata.imagemProfile);
+
+      setUser((u) =>
+        u
+          ? {
+              ...u,
+              url: img.files[0],
+            }
+          : u,
+      );
+      setImagemProfile(userdata.imagemProfile);
     } catch (error) {
       throw { message: "erro ao salvar imagem", cause: error };
     }
@@ -268,7 +256,14 @@ const Profile: React.FC = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (
-  context: GetServerSidePropsContext
+  context: GetServerSidePropsContext,
 ) => utils.redirectNotToken(context, "/login");
 
 export default Profile;
+
+const fetcher = (params: QueryParams) => {
+  const { limit, initial } = params;
+  return httpPost.getPostCurrentUser(initial * limit, limit);
+};
+
+//
