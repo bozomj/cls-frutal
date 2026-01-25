@@ -1,6 +1,7 @@
 import database from "@/database/database";
 import Post from "@/models/post";
 import User from "@/models/user";
+import { PostStatus } from "@/shared/post_status";
 
 beforeAll(async () => {
   await database.query("delete from imagens");
@@ -19,7 +20,6 @@ describe("teste da tabela post", () => {
       phone: "34997668902",
       password: "123456",
     });
-
     user = resultuser[0];
 
     const userLogado = await User.login("teste@hotmail.com", "123456");
@@ -30,7 +30,7 @@ describe("teste da tabela post", () => {
       user_id: user!.id,
       title: "testando um post 5",
       description: "tomate cereja com abacates",
-      categoria_id: 10,
+      categoria_id: 1,
       valor: 10.5,
     };
 
@@ -43,9 +43,21 @@ describe("teste da tabela post", () => {
       body: JSON.stringify(pst),
     });
 
-    await post.json();
-
     expect(post.status).toBe(201);
+
+    const posted = (await post.json())[0];
+
+    expect(posted).toEqual({
+      id: posted.id,
+      user_id: user!.id,
+      title: pst.title,
+      description: pst.description,
+      categoria_id: pst.categoria_id,
+      valor: pst.valor.toFixed(2),
+      created_at: posted.created_at,
+      updated_at: posted.updated_at,
+      status: PostStatus.PENDING,
+    });
   });
 
   it("erro ao inserir post com userId inexistente", async () => {
@@ -85,6 +97,6 @@ describe("teste da tabela post", () => {
     });
     const result = await posts.json();
 
-    expect(result.posts.length).toEqual(1);
+    expect(result.length).toEqual(1);
   });
 });

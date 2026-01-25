@@ -36,16 +36,25 @@ async function del(id: string) {
 async function delByPostId(id: string) {
   const result = await database.query(
     "delete from imagens where post_id = $1",
-    [id]
+    [id],
   );
 
   return result;
 }
 
-async function getByPostID(id: string) {
+async function getByPostID(id: string, status: string = ImageStatus.ACTIVE) {
   const result = await database.query(
     "select * from imagens where post_id = $1 and status = $2",
-    [id, ImageStatus.ACTIVE]
+    [id, status],
+  );
+
+  return result;
+}
+
+async function updateState(id: string, status: ImageStatus) {
+  const result = await database.query(
+    "update imagens set status = $2 where id = $1",
+    [id, status],
   );
 
   return result;
@@ -55,8 +64,9 @@ const imagem = {
   save,
   del,
   delByPostId,
-  getAll,
   getByPostID,
+  getAll,
+  updateState,
 };
 
 export default imagem;

@@ -14,6 +14,9 @@ import httpPost from "@/http/post";
 import OwnerGuard from "@/components/guards/OwnerGuard";
 import { PostDetailType } from "@/shared/post_types";
 import { UserDBType } from "@/shared/user_types";
+import imagem from "@/models/imagem";
+import { ImageStatus } from "@/shared/Image_types";
+import httpImage from "@/http/image";
 
 interface Props {
   user: UserDBType;
@@ -22,6 +25,7 @@ interface Props {
 
 function PostsAdministrator({ user, post }: Props) {
   const [statePost, setStatePost] = useState(post.status);
+  console.log(post);
   useEffect(() => {}, []);
 
   return (
@@ -39,13 +43,20 @@ function PostsAdministrator({ user, post }: Props) {
                   post.status === PostStatus.ACTIVE
                     ? () => {}
                     : async () => {
+                        post.imagens.forEach(async (img) => {
+                          await httpImage.updateState(
+                            img.id ?? "",
+                            ImageStatus.ACTIVE,
+                          );
+                        });
+
                         post.status = PostStatus.ACTIVE;
                         const result = await httpPost.update({
                           id: post.id || "",
                           user_id: post.user_id,
                           status: post.status,
                         });
-                        console.log("clicou");
+
                         setStatePost(result.status);
                       }
                 }
@@ -61,9 +72,10 @@ function PostsAdministrator({ user, post }: Props) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const postid = context.params?.id || null;
+  const postid = (context.params?.id || null) as string;
 
   const post = await Post.getById(postid as string);
+  const pendingImages = await imagem.getByPostID(postid, ImageStatus.PENDING);
 
   const ctx = await getAdminProps(context);
 
@@ -73,6 +85,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       ...ctx.props,
       post: {
         ...post,
+        imagens: pendingImages,
         created_at: post.created_at?.toISOString(),
         updated_at: post.updated_at?.toISOString(),
       },

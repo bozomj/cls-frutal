@@ -94,8 +94,9 @@ export default function DetailsPostPage({ user_id }: Props) {
       setImgPrincipal(result.imagens[0]?.url ?? null);
       setImageProfile(result.img_profile ?? null);
       IsPostUserId(result.user_id == user_id);
+      console.log(result);
     },
-    [user_id, router]
+    [user_id, router],
   );
 
   useEffect(() => {
@@ -138,7 +139,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                         index={imagemIndex}
                         visible={true}
                         onClose={closeFullImages}
-                      />
+                      />,
                     )
                   }
                   selectImg={(i) => {
@@ -192,7 +193,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                                         />
                                       </div>
                                       Deseja remover esta imagem
-                                    </Modal>
+                                    </Modal>,
                                   );
                                 }}
                               />
@@ -226,7 +227,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                               onClick={() => {
                                 setPreviewImagens((p) => {
                                   const imgToRemove = p.find(
-                                    (im) => im.url === img.url
+                                    (im) => im.url === img.url,
                                   );
                                   if (imgToRemove)
                                     URL.revokeObjectURL(imgToRemove.url);
@@ -248,11 +249,11 @@ export default function DetailsPostPage({ user_id }: Props) {
                                         imgs.map((im) =>
                                           im.id === img.id
                                             ? { ...im, ...newImg }
-                                            : im
-                                        )
+                                            : im,
+                                        ),
                                       );
                                     }}
-                                  />
+                                  />,
                                 );
                               }}
                             />
@@ -310,7 +311,7 @@ export default function DetailsPostPage({ user_id }: Props) {
         <Alert
           msg={"Link Copiado"}
           onClose={() => usebackdrop.closeContent()}
-        />
+        />,
       );
     }
   }
@@ -330,7 +331,7 @@ export default function DetailsPostPage({ user_id }: Props) {
 
     if (msgError !== "") {
       return usebackdrop.openContent(
-        <Alert msg={msgError} onClose={() => usebackdrop.closeContent()} />
+        <Alert msg={msgError} onClose={() => usebackdrop.closeContent()} />,
       );
     }
 
@@ -380,12 +381,12 @@ export default function DetailsPostPage({ user_id }: Props) {
         ...dataItem,
       });
       console.log(dataItem);
-      if (updated.id) {
+      if (updated?.id) {
         usebackdrop.openContent(
           <Alert
             msg={"Update Realizado com sucesso!"}
             onClose={() => usebackdrop.closeContent()}
-          />
+          />,
         );
         setButtonDisabled(true);
         setItem((p) => ({ ...p, ...dataItem }));
@@ -497,7 +498,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                   suppressContentEditableWarning: true,
                   onInput: (v) => {
                     const e = utils.extractNumberInString(
-                      v.currentTarget.innerText
+                      v.currentTarget.innerText,
                     );
                     v.currentTarget.innerHTML = utils
                       .stringForDecimalNumber(e)

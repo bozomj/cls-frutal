@@ -1,5 +1,6 @@
 import autenticator from "@/models/autenticator";
 import Post from "@/models/post";
+import User from "@/models/user";
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
@@ -10,7 +11,7 @@ export interface AuthenticatedRequest extends NextApiRequest {
 const auth = async (
   req: NextApiRequest,
   res: NextApiResponse,
-  next: () => void
+  next: () => void,
 ) => {
   try {
     const token = req.cookies.token || "";
@@ -27,7 +28,7 @@ const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router.get(getHandler);
 router.post(auth, postHandler);
-router.patch(auth, putHandler);
+router.patch(auth, patchHandler);
 
 export default router.handler();
 
@@ -48,6 +49,7 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   const body = req.body;
   try {
     const post = await Post.create(body);
+
     return res.status(201).json(post);
   } catch (error) {
     return res
@@ -56,25 +58,30 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-async function putHandler(req: NextApiRequest, res: NextApiResponse) {
+async function patchHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const body = req.body;
-    console.log(body);
+
     const post = await Post.getById(body.id);
     const user = (req as AuthenticatedRequest).user;
+    const userLogado = (await User.findById(user.id))[0];
 
     if (!post) {
       return res.status(404).json({ message: "Post não encontrado" });
     }
 
-    if (user.id !== post.user_id) {
+    console.log(
+      "teste de logica: ",
+      user.id !== post.user_id && userLogado.is_admin == false,
+    );
+    if (user.id !== post.user_id && userLogado.is_admin == false) {
       return res.status(403).json({
         message: "Forbidden",
         cause: "Post não pertence ao usuario atual",
       });
     }
 
-    const updated = await Post.update(body.id, user.id, {
+    const updated = await Post.update(body.id, post.user_id, {
       ...body,
       updated_at: new Date().toISOString(),
     });

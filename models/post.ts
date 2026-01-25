@@ -44,6 +44,7 @@ async function create(pst: PostDetailType) {
       PostStatus.PENDING,
     ]);
   } catch (error) {
+    console.log(error);
     throw {
       message: new Error("erro ao postar prodruto"),
       cause: error,

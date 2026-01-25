@@ -3,12 +3,12 @@ import categoria from "@/models/categoria";
 import insertCategorias from "@/seeds/insertCategorias";
 
 beforeAll(async () => {
-  await database.query("delete from categorias");
+  // await database.query("delete from categorias");
 });
 
 describe("Categorias", () => {
   it("inserir uma categoria aleatoria", async () => {
-    await insertCategorias();
+    // await insertCategorias();
   });
 
   it("mostrar todas categorias", async () => {

@@ -8,6 +8,22 @@ async function uploadImages(imgs: unknown) {
   });
 }
 
+async function updateState(id: string | null, status: string) {
+  if (id === null) return;
+
+  const result = await fetch("/api/v1/imagens", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ id, status }),
+  });
+
+  const resultBody = await result.json();
+
+  console.log(resultBody);
+}
+
 async function getAllImagesPost() {
   try {
     const result = await fetch("/api/v1/imagens");
@@ -20,6 +36,7 @@ async function getAllImagesPost() {
 const httpImage = {
   uploadImages,
   getAllImagesPost,
+  updateState,
 };
 
 export default httpImage;

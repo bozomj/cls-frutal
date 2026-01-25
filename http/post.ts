@@ -24,11 +24,11 @@ async function getPostId(id: string) {
 async function getAll(
   search: string | string[],
   initial: number,
-  limite: number
+  limite: number,
 ) {
   const posts = await (
     await fetch(
-      `api/v1/posts?search=${search}&initial=${initial}&limit=${limite}`
+      `api/v1/posts?search=${search}&initial=${initial}&limit=${limite}`,
     )
   ).json();
 
@@ -36,7 +36,7 @@ async function getAll(
 }
 
 async function update(
-  post: { id: string; user_id: string } & Partial<PostDBType>
+  post: { id: string; user_id: string } & Partial<PostDBType>,
 ) {
   const result = await fetch("/api/v1/posts", {
     method: "PATCH",
@@ -44,7 +44,7 @@ async function update(
     body: JSON.stringify(post),
   });
 
-  const updated = await result.json();
+  const updated = result.json();
 
   return updated;
 }
@@ -81,10 +81,10 @@ async function deletePost(id: string) {
 async function getPostByStatus(
   initial: string,
   limite: string,
-  status: string
+  status: string,
 ) {
   const result = await fetch(
-    `/api/v1/administrator/posts?status=${status}&initial=${initial}&limit=${limite}`
+    `/api/v1/administrator/posts?status=${status}&initial=${initial}&limit=${limite}`,
   );
   const resultBody = await result.json();
   return resultBody;

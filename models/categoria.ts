@@ -26,7 +26,7 @@ async function save(descricao: CategoriaDBType["descricao"]) {
 }
 
 async function getAll() {
-  const query = "SELECT * FROM categorias ORDER BY descricao";
+  const query = "SELECT * FROM categorias ORDER BY descricao;";
 
   try {
     const result = await database.query(query);

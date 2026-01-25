@@ -25,10 +25,7 @@ const adminImagePage = ({ user }: AdminImagePageProps) => {
           {imagens.map((img) => {
             console.log(img);
             return (
-              <div>
-                <h3>{img.id}</h3>
-                <h3>{img.status ?? "Sem status"}</h3>
-
+              <div className="min-w-50" key={img.id}>
                 <div className="min-w-1/5 flex-1 border-2 border-gray-400 relative rounded-md overflow-hidden h-60">
                   <Image
                     className="object-contain"
@@ -36,8 +33,10 @@ const adminImagePage = ({ user }: AdminImagePageProps) => {
                     src={utils.getUrlImageR2(img.url)}
                     fill
                     sizes="150"
+                    loading="eager"
                   />
                 </div>
+                <h3>{img.status ?? "Sem status"}</h3>
               </div>
             );
           })}
@@ -47,9 +46,7 @@ const adminImagePage = ({ user }: AdminImagePageProps) => {
   );
 
   function getAllImagesPost() {
-    httpImage.getAllImagesPost().then((r) => {
-      setImagens(r);
-    });
+    httpImage.getAllImagesPost().then(setImagens);
   }
 };
 

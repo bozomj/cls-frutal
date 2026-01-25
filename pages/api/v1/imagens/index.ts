@@ -1,6 +1,7 @@
 import autenticator from "@/models/autenticator";
 import imagem from "@/models/imagem";
 import Post from "@/models/post";
+import { ImageStatus } from "@/shared/Image_types";
 import { deleteFile } from "@/storage/cloudflare/r2Cliente";
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
@@ -8,7 +9,7 @@ import { createRouter } from "next-connect";
 const auth = async (
   req: NextApiRequest,
   res: NextApiResponse,
-  next: () => void
+  next: () => void,
 ) => {
   try {
     const token = req.cookies.token || "";
@@ -25,6 +26,7 @@ const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router.get(auth, getHandler);
 router.delete(auth, delHandler);
+router.patch(auth, patchHandler);
 
 export default router.handler();
 
@@ -52,4 +54,12 @@ async function delHandler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   return res.status(403).json({});
+}
+
+async function patchHandler(req: NextApiRequest, res: NextApiResponse) {
+  const body = req.body;
+
+  const updated = await imagem.updateState(body.id, body.status);
+
+  return res.status(200).json({ teste: "ola mundo", imagens: updated });
 }
