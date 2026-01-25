@@ -237,7 +237,10 @@ async function getById(id: string) {
         users.phone as phone,
         perfil_images.url as img_profile,
         MIN(users.name) as name,
-        json_agg(imagens.*) AS imagens
+        COALESCE(
+      json_agg(imagens.*) FILTER (WHERE imagens.id IS NOT NULL),
+      '[]'
+    ) AS imagens
 
       FROM posts
       LEFT JOIN imagens ON imagens.post_id = posts.id and imagens.status = $2
@@ -250,7 +253,7 @@ async function getById(id: string) {
       [id, ImageStatus.ACTIVE],
     );
 
-    return posts.length < 1 ? posts : posts[0];
+    return posts.length > 0 ? posts[0] : null;
   } catch (e) {
     throw {
       id: id,
