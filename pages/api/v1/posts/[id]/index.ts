@@ -34,14 +34,22 @@ async function deletehandler(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function gethandler(req: NextApiRequest, res: NextApiResponse) {
-  const id = req.query.id as string;
+  try {
+    const id = req.query.id as string;
 
-  if (!isUUID(id)) {
-    return res.status(400).json({ message: "ID invalido. Deve ser um UUID" });
-  } else {
-    const posts = await Post.getById(id);
-    // const imagens = await imagem.getByPostID(id);
+    if (!isUUID(id)) {
+      return res.status(400).json({ message: "ID inválido. Deve ser um UUID" });
+    }
 
-    return res.status(200).json(posts);
+    const post = await Post.getById(id);
+
+    if (!post) {
+      return res.status(404).json({ message: "Post não encontrado" });
+    }
+
+    return res.status(200).json(post);
+  } catch (error) {
+    console.error("ERRO API /posts/[id]:", error);
+    return res.status(500).json({ message: "Erro interno do servidor" });
   }
 }
