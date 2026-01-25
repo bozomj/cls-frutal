@@ -103,7 +103,7 @@ export default function DetailsPostPage({ user_id }: Props) {
     if (!post_id) return;
 
     async function fetchData() {
-      getPost(post_id);
+      await getPost(post_id);
     }
 
     fetchData();

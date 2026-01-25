@@ -1,5 +1,3 @@
-"use client";
-
 import { GetServerSidePropsContext } from "next";
 
 import LayoutPage from "@/layout/dashboard/layout";
@@ -45,7 +43,7 @@ function PostsAdministrator({ user, post }: Props) {
                     : async () => {
                         post.imagens.forEach(async (img) => {
                           await httpImage.updateState(
-                            img.id ?? "",
+                            img.id,
                             ImageStatus.ACTIVE,
                           );
                         });
