@@ -47,6 +47,7 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   const body = req.body;
+
   try {
     const post = await Post.create(body);
 
@@ -72,9 +73,13 @@ async function patchHandler(req: NextApiRequest, res: NextApiResponse) {
 
     console.log(
       "teste de logica: ",
-      user.id !== post.user_id && userLogado.is_admin == false,
+      { postUserId: post.user_id },
+      { userId: user.id },
+      { userLogado },
     );
+
     if (user.id !== post.user_id && userLogado.is_admin == false) {
+      console.log("entrou aqui: >>>>>>>");
       return res.status(403).json({
         message: "Forbidden",
         cause: "Post não pertence ao usuario atual",
@@ -85,7 +90,7 @@ async function patchHandler(req: NextApiRequest, res: NextApiResponse) {
       ...body,
       updated_at: new Date().toISOString(),
     });
-    return res.status(200).json(updated);
+    return res.status(201).json(updated);
   } catch (e) {
     return res.status(401).json({ message: "Unauthorized", cause: e });
   }

@@ -89,6 +89,8 @@ export default function DetailsPostPage({ user_id }: Props) {
 
       const result = data;
 
+      console.log(data);
+
       setItem(result);
       setImagens(result.imagens);
       setImgPrincipal(result.imagens[0]?.url ?? null);

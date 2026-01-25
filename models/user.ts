@@ -2,6 +2,7 @@ import database from "@/database/database";
 import password from "@/models/password";
 import dotenv from "dotenv";
 import autenticator from "@/models/autenticator";
+import { UserDBType } from "@/shared/user_types";
 
 dotenv.config({ path: ".env.development" });
 
@@ -9,7 +10,7 @@ const User = {
   findAll: async () => {
     try {
       const result = await database.query(
-        'SELECT id, name, email, phone, is_admin, "createdAt" FROM users;'
+        'SELECT id, name, email, phone, is_admin, "createdAt" FROM users;',
       );
 
       return result;
@@ -25,7 +26,7 @@ const User = {
     const result = await database.query(
       `
       SELECT COUNT(*) AS total FROM users;
-      `
+      `,
     );
     return result;
   },
@@ -40,7 +41,7 @@ const User = {
        AND perfil_images.selected = true
       where users.id = $1;
       `,
-      [id]
+      [id],
     );
 
     if (result < 1) {
@@ -59,7 +60,7 @@ const User = {
       dbClient = await database.getNewClient();
       const result = await database.query(
         "SELECT * from users where LOWER(name) = $1;",
-        [username]
+        [username],
       );
 
       return result;
@@ -78,13 +79,13 @@ const User = {
   findByEmail: async (email: string) => {
     const result = await database.query(
       "SELECT * from users where LOWER(email) = LOWER($1) limit 1;",
-      [email]
+      [email],
     );
     return result;
   },
 
   create: async (
-    userInputValues: Record<string, string | number | boolean>
+    userInputValues: Record<string, string | number | boolean>,
   ) => {
     try {
       await validateUniqueEmail(userInputValues.email as string);
@@ -112,7 +113,7 @@ const User = {
     }
 
     async function runInsertQuery(
-      userImputValues: Record<string, string | number | boolean>
+      userImputValues: Record<string, string | number | boolean>,
     ) {
       try {
         return await database.query(
@@ -121,9 +122,9 @@ const User = {
             userImputValues.name,
             userImputValues.email,
             await password.hashPassword(userInputValues.password as string),
-            userImputValues.is_admin || false,
+            false,
             userImputValues.phone,
-          ]
+          ],
         );
       } catch (error) {
         throw {
@@ -131,6 +132,36 @@ const User = {
           cause: { CAUSE: error },
         };
       }
+    }
+  },
+
+  update: async (user: Partial<UserDBType>) => {
+    //a query precisa ser montada conforme os valores que recece. pode ser um ou mais vindo de user. id é obrigatorio user é do tipo UserTypeDB
+
+    const allowed = ["id", "is_admin"];
+
+    const entries = Object.entries(user).filter(([k]) => allowed.includes(k));
+
+    if (!entries.length) return null;
+
+    const set = entries.map(([k], i) => `${k} = $${i + 1}`).join(", ");
+
+    const values = entries.map(([, v]) => v);
+
+    const query = `
+    UPDATE users
+    SET ${set}
+    WHERE id = $1
+    RETURNING *;
+    `;
+
+    try {
+      return (await database.query(query, [...values]))[0];
+    } catch (error) {
+      throw {
+        message: new Error("Erro ao fazer alteração"),
+        cause: error,
+      };
     }
   },
 
@@ -145,7 +176,7 @@ const User = {
 
     const passwordMatch = await password.comparePassword(
       senha,
-      user[0].password
+      user[0].password,
     );
 
     if (!passwordMatch) {
