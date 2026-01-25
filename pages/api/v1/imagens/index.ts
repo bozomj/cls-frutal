@@ -61,5 +61,5 @@ async function patchHandler(req: NextApiRequest, res: NextApiResponse) {
 
   const updated = await imagem.updateState(body.id, body.status);
 
-  return res.status(200).json({ teste: "ola mundo", imagens: updated });
+  return res.status(200).json({});
 }

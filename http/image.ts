@@ -20,8 +20,6 @@ async function updateState(id: string | null, status: string) {
   });
 
   const resultBody = await result.json();
-
-  console.log(resultBody);
 }
 
 async function getAllImagesPost() {

@@ -25,6 +25,8 @@ const Home: React.FC = () => {
 
   const produtosRef = useRef<HTMLSpanElement>(null);
 
+  console.log(postagens);
+
   useEffect(() => {
     if (postagens.length === 0) return;
     produtosRef.current?.scrollIntoView({ behavior: "smooth" });

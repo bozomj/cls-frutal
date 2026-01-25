@@ -284,7 +284,8 @@ async function search(txt: string, initial: string, limit: string | null) {
       FROM ultimos_posts p
       LEFT JOIN users ON users.id = p.user_id
       LEFT JOIN LATERAL (
-        SELECT url FROM imagens WHERE post_id = p.id ORDER BY id ASC LIMIT 1
+        SELECT url FROM imagens WHERE post_id = p.id and status = $4
+       ORDER BY id ASC LIMIT 1
       ) i ON true;
 
         `,
