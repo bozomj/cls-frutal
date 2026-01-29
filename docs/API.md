@@ -1,0 +1,32 @@
+# /api/v1
+
+- adiministrator `nada implementado`
+  > - /posts GET | `permite buscar posts`
+- authenticated
+  - GET | `retorna o token do logado`
+- carrossel
+  - GET | `retorna imagens do carrossel`
+  - POST | `insere imagens do carrossel`
+  - DELETE | `deleta imagens do carrossel`
+- categorias
+  - GET | `retorna categorias`
+  - POST | `insere categorias`
+- imagens
+  - upload
+- login
+- logout
+- migrations
+- posts
+  - [id]
+  - user
+- poststotal
+- status
+- uploadImages
+- user
+  - [name]
+  - id
+    - [id]
+  - insertadmin\_
+  - setImageProfile
+- users
+  - total

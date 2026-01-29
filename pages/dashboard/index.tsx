@@ -24,13 +24,14 @@ import Paginacao from "@/components/Paginacao";
 
 import { usePosts } from "@/hooks/usePosts";
 import { usePaginacao } from "@/hooks/usePaginacao";
-import { useUser } from "@/hooks/useUser";
+
 import { QueryParams, useQueryParams } from "@/hooks/useQueryParams";
 
 import httpPost from "@/http/post";
+import { useUserProvider } from "@/hooks/useUserProvider";
 
 function Dashboard() {
-  const { user } = useUser();
+  const { user } = useUserProvider().user;
   const { params } = useQueryParams();
   const { postagens, total } = usePosts(fetcher, params);
   const paginacao = usePaginacao(total, params.initial, params.limit);

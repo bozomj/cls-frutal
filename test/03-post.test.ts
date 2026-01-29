@@ -1,5 +1,4 @@
 import database from "@/database/database";
-import autenticator from "@/models/autenticator";
 import Post from "@/models/post";
 import User from "@/models/user";
 import { PostStatus } from "@/shared/post_status";
@@ -144,11 +143,6 @@ describe("teste da tabela post", () => {
       email: "roberto@hotmail.com",
       phone: "34997668902",
       password: "123456",
-      is_admin: true,
-    });
-
-    await User.update({
-      id: user[0].id,
       is_admin: true,
     });
 

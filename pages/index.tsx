@@ -7,6 +7,7 @@ import { useCarrosselImages } from "@/hooks/useCarrosselImages";
 import { usePaginacao } from "@/hooks/usePaginacao";
 import { usePosts } from "@/hooks/usePosts";
 import { QueryParams, useQueryParams } from "@/hooks/useQueryParams";
+import httpImage from "@/http/image";
 
 import httpPost from "@/http/post";
 
@@ -18,14 +19,11 @@ import { useEffect, useRef } from "react";
 const Home: React.FC = () => {
   const { params } = useQueryParams();
   const { initial, limit } = params;
+  const { postagens, total } = usePosts(fetcher, params);
 
   const imgCarrossel = useCarrosselImages();
-  const { postagens, total } = usePosts(fetcher, params);
   const paginacao = usePaginacao(total, initial, limit);
-
   const produtosRef = useRef<HTMLSpanElement>(null);
-
-  console.log(postagens);
 
   useEffect(() => {
     if (postagens.length === 0) return;

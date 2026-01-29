@@ -122,7 +122,7 @@ const User = {
             userImputValues.name,
             userImputValues.email,
             await password.hashPassword(userInputValues.password as string),
-            false,
+            userImputValues.is_admin || false,
             userImputValues.phone,
           ],
         );
@@ -136,8 +136,6 @@ const User = {
   },
 
   update: async (user: Partial<UserDBType>) => {
-    //a query precisa ser montada conforme os valores que recece. pode ser um ou mais vindo de user. id é obrigatorio user é do tipo UserTypeDB
-
     const allowed = ["id", "is_admin"];
 
     const entries = Object.entries(user).filter(([k]) => allowed.includes(k));

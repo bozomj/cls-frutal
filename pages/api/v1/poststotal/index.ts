@@ -8,6 +8,8 @@ router.get(getHandler);
 
 export default router.handler();
 
+/**
+ * Handler para a rota GET que retorna a contagem total de post */
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
   const search = (req.query.q as string) || "";
   try {

@@ -23,7 +23,11 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
     status: false,
     user: null,
   });
-  const itemsMenu = [{ label: "produtos", link: "/newpost" }];
+  const itemsMenu = [
+    { label: "produtos", link: "" },
+    { label: "roupas", link: "" },
+    { label: "Eletronicos", link: "" },
+  ];
 
   useEffect(init, []);
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;

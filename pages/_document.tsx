@@ -2,7 +2,7 @@ import { Html, Head, Main, NextScript } from "next/document";
 
 export default function Document() {
   return (
-    <Html lang="pt">
+    <Html lang="pt-br">
       <Head>
         {/* Outras tags globais como fontes ou favicon alternativo */}
       </Head>

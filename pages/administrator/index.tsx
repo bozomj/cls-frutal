@@ -10,8 +10,6 @@ interface Props {
 }
 
 const AdministratorPage = ({ user }: Props) => {
-  useEffect(() => {}, []);
-
   return (
     <LayoutPage user={user}>
       <section

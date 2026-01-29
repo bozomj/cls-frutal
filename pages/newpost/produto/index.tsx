@@ -6,7 +6,7 @@ import { faImage } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { ChangeEvent, useEffect, useState } from "react";
-import Alert from "@/components/Alert";
+import Alert from "@/components/ui/Alert";
 
 import { useRouter } from "next/navigation";
 
@@ -19,7 +19,7 @@ import Image from "next/image";
 import ImageCropper from "@/components/ImageCropper";
 
 import { useBackdrop } from "@/ui/backdrop/useBackdrop";
-import { ButtonPrimary, ButtonSecondary } from "@/components/Buttons";
+import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Buttons";
 import httpPost from "@/http/post";
 import { PostDBType } from "@/shared/post_types";
 import { ImageDBType } from "@/shared/Image_types";
@@ -236,10 +236,10 @@ export default function Produto() {
                     const newImg = { ...image, file, url };
 
                     setImagens((imgs) =>
-                      imgs.map((img) => (img.id === image.id ? newImg : img))
+                      imgs.map((img) => (img.id === image.id ? newImg : img)),
                     );
                   }}
-                />
+                />,
               );
             }}
           />
@@ -253,7 +253,7 @@ export default function Produto() {
     setCategoriasValues(
       categorias.map((e: CategoriaDBType) => {
         return { value: e.id, label: e.descricao };
-      })
+      }),
     );
   }
 
@@ -297,8 +297,8 @@ export default function Produto() {
       imagens.length < 1
         ? "Escolha Pelo menos uma imagem"
         : imagens.length > 3
-        ? "Escolha no máximo 3 imagens"
-        : "";
+          ? "Escolha no máximo 3 imagens"
+          : "";
 
     if (msgError != "") {
       usebackdrop.openContent(
@@ -306,7 +306,7 @@ export default function Produto() {
           msg={msgError}
           show={true}
           onClose={() => usebackdrop.closeContent()}
-        />
+        />,
       );
       return;
     }
@@ -383,7 +383,7 @@ export default function Produto() {
             router.back();
           }, 1000);
         }}
-      />
+      />,
     );
   }
 
@@ -432,7 +432,7 @@ export default function Produto() {
 }
 
 export const getServerSideProps: GetServerSideProps = async (
-  context: GetServerSidePropsContext
+  context: GetServerSidePropsContext,
 ) => {
   const token = context.req.cookies.token || "";
   let auth = null;

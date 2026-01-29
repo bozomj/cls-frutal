@@ -23,7 +23,7 @@ interface Props {
 
 function PostsAdministrator({ user, post }: Props) {
   const [statePost, setStatePost] = useState(post.status);
-  console.log(post);
+
   useEffect(() => {}, []);
 
   return (

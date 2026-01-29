@@ -71,15 +71,7 @@ async function patchHandler(req: NextApiRequest, res: NextApiResponse) {
       return res.status(404).json({ message: "Post não encontrado" });
     }
 
-    console.log(
-      "teste de logica: ",
-      { postUserId: post.user_id },
-      { userId: user.id },
-      { userLogado },
-    );
-
     if (user.id !== post.user_id && userLogado.is_admin == false) {
-      console.log("entrou aqui: >>>>>>>");
       return res.status(403).json({
         message: "Forbidden",
         cause: "Post não pertence ao usuario atual",

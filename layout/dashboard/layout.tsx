@@ -48,7 +48,7 @@ const LayoutPage = ({ user, children }: Props) => {
     const walk = x - startX.current; // diferença do movimento
     scrollRef.current.scrollLeft = scrollLeft.current - walk;
   };
-
+  console.log(user);
   return (
     <>
       <div className="flex flex-col bg-gray-100 flex-1 text-gray-800">

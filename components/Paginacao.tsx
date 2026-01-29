@@ -27,7 +27,7 @@ const Paginacao: React.FC<PaginacaoProps> = ({
       if (typeof value === "string") acc[key] = value;
       return acc;
     },
-    {}
+    {},
   );
 
   const nextParams = new URLSearchParams(urlQuerys);
@@ -35,13 +35,16 @@ const Paginacao: React.FC<PaginacaoProps> = ({
 
   const current = parseInt(nextParams.get("initial") ?? "0");
   const limite = parseInt(
-    nextParams.get("limit") ?? paginacao.limite!.toString()
+    nextParams.get("limit") ?? paginacao.limite!.toString(),
   );
 
   nextParams.set("initial", String(current + 1));
   prevParams.set("initial", String(current - 1));
 
   const maxPage = Math.max(Math.ceil(paginacao.totalItens! / limite) - 1, 0);
+
+  if (paginacao.maxPage! <= 1) return <></>;
+
   return (
     <div
       id="paginacao"

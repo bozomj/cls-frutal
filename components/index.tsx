@@ -1,5 +1,5 @@
 export { default as Header } from "./Header";
-export { default as Alert } from "./Alert";
+export { default as Alert } from "./ui/Alert";
 export { default as CircleAvatar } from "./CircleAvatar";
 export { default as FullImageView } from "./FullImageView";
 export { default as MiniGalleryImage } from "./MiniGalleryImage";

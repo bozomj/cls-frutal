@@ -1,4 +1,4 @@
-import { ButtonPrimary } from "./Buttons";
+import { ButtonPrimary } from "./ui/Buttons";
 import PortalWrapper from "./PortalWrapper";
 
 interface ModalProps {

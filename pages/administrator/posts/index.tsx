@@ -21,7 +21,7 @@ interface Props {
 
 function PostsAdministrator({ user }: Props) {
   const [postPending, setPostPending] = useState([]);
-
+  console.log(user);
   useEffect(() => {
     getPostsPending().then((e) => setPostPending(e));
   }, []);

@@ -29,7 +29,7 @@ export default router.handler();
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const existAdmin = await User.findByEmail(
-      process.env.USERMASTER_EMAIL || ""
+      process.env.USERMASTER_EMAIL || "",
     );
 
     if (existAdmin.length > 0) {

@@ -5,11 +5,14 @@ import { useState } from "react";
 import autenticator from "@/models/autenticator";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import router from "next/router";
+import { useUserProvider } from "@/hooks/useUserProvider";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
+  const { setUser } = useUserProvider();
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -33,6 +36,8 @@ const Login = () => {
         setError("E-mail ou senha inválidos");
       } else {
         setError("");
+        const user = await (await fetch("/api/v1/user")).json();
+        setUser(user);
         router.push("/");
       }
     } catch (error) {
@@ -85,7 +90,7 @@ const Login = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (
-  context: GetServerSidePropsContext
+  context: GetServerSidePropsContext,
 ) => {
   const token = context.req.cookies.token || null;
 

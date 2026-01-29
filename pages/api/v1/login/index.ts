@@ -40,7 +40,7 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
 
     res.setHeader(
       "Set-Cookie",
-      `token=${token}; HttpOnly; ${tokenSecure} ; Path=/; Max-Age=3600;`
+      `token=${token}; HttpOnly; ${tokenSecure} ; Path=/; Max-Age=3600; SameSite=Lax;`,
     );
 
     res

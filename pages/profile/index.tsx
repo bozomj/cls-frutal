@@ -39,16 +39,19 @@ import { useUser } from "@/hooks/useUser";
 
 const Profile: React.FC = () => {
   const { user, imagemProfile, setUser, setImagemProfile } = useUser();
-  const { openContent, closeContent } = useBackdrop();
+  const backdrop = useBackdrop();
 
   const { params } = useQueryParams();
   const { initial, limit } = params;
-  const { postagens, total } = usePosts(fetcher, params);
+  const { postagens, total, isLoad } = usePosts(fetcher, params);
 
   const paginacao = usePaginacao(total, initial, limit);
   const produtosRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => produtosRef.current?.focus(), []);
+  console.log(isLoad);
+  useEffect(() => {
+    produtosRef.current?.focus();
+  }, []);
 
   return (
     <>
@@ -65,13 +68,13 @@ const Profile: React.FC = () => {
                   size={8}
                   imagem={utils.getUrlImageR2(user?.url || null)}
                   onClick={() => {
-                    openContent(
+                    backdrop.openContent(
                       <>
                         <FullImageView
                           images={[{ url: user?.url ?? "" }]}
                           index={0}
                           visible={true}
-                          onClose={() => closeContent()}
+                          onClose={() => backdrop.closeContent()}
                         />
                       </>,
                     );
@@ -152,9 +155,11 @@ const Profile: React.FC = () => {
           </section>
 
           <section className="border-t-2 border-gray-400 flex flex-col py-4 mt-4">
-            {postagens.length < 1 ? (
+            {postagens.length < 1 && isLoad ? (
               <Produtos
-                postagens={[{}, {}, {}, {}] as PostDetailType[]}
+                postagens={
+                  [{}, {}, {}, {}, {}, {}, {}, {}, {}] as PostDetailType[]
+                }
                 Card={WireProductCardDashboard}
                 className="grid-cols-1!"
               />
@@ -197,7 +202,7 @@ const Profile: React.FC = () => {
     const result = await selecionarImagens(e);
 
     if (result != null) {
-      openContent(
+      backdrop.openContent(
         <ImageCropper
           image={result.previewImg}
           onConfirm={async (file) => {

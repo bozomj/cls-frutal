@@ -5,6 +5,8 @@ import Head from "next/head";
 import type { AppProps } from "next/app";
 
 import BackdropProvider from "@/ui/backdrop/BackdropProvider";
+import { UserProvider } from "@/contexts/userProvider";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -16,9 +18,11 @@ export default function App({ Component, pageProps }: AppProps) {
         />
       </Head>
 
-      <BackdropProvider>
-        <Component {...pageProps} />
-      </BackdropProvider>
+      <UserProvider>
+        <BackdropProvider>
+          <Component {...pageProps} />
+        </BackdropProvider>
+      </UserProvider>
     </>
   );
 }

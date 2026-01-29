@@ -49,6 +49,14 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function delHandler(req: NextApiRequest, res: NextApiResponse) {
+  const token = req.cookies.token || "";
+  const tokenVerified = autenticator.verifyToken(token);
+  const user = await User.findById(tokenVerified.id);
+
+  if (!user[0].is_admin) {
+    return res.status(403).json({ message: "Usuario não autorizado" });
+  }
+
   const imagens = req.body;
   await carrosselImages.remove(imagens.url);
   await deleteFile(imagens.url);

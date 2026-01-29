@@ -12,14 +12,21 @@ type Fetcher<T> = (params: Params) => Promise<T[]>;
 
 export function usePosts(fetcher: Fetcher<PostDetailType>, params: Params) {
   const [postagens, setPostagens] = useState<PostDetailType[]>([]);
+  const [isLoad, setIsLoad] = useState(true);
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    fetcher(params).then((posts) => {
-      setPostagens(posts);
-      setTotal(posts?.[0]?.total ?? 0);
-    });
-  }, [fetcher, params.initial, params.limit, params.search]);
+    setIsLoad(true);
 
-  return { postagens, total };
+    fetcher(params)
+      .then((posts) => {
+        setPostagens(posts);
+        setTotal(posts?.[0]?.total ?? 0);
+      })
+      .finally(() => {
+        setIsLoad(false);
+      });
+  }, [params.initial, params.limit, params.search]);
+
+  return { postagens, total, isLoad };
 }

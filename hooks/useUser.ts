@@ -12,6 +12,7 @@ export function useUser() {
     const response = await fetch(`/api/v1/user`);
     const responseBody = await response.json();
     setUser(responseBody.user);
+
     setImagemProfile(responseBody.imagemProfile);
   }
 
