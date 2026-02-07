@@ -47,6 +47,7 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 async function postHandler(req: NextReq, res: NextApiResponse) {
   try {
     const files = req.files; // ← várias imagens
+    console.log("arquivos recebidos:", files);
 
     if (!files || files.length === 0) {
       return res.status(400).json({ error: "Nenhum arquivo enviado" });
@@ -62,17 +63,18 @@ async function postHandler(req: NextReq, res: NextApiResponse) {
       for (const file of filesArray) {
         const [ext] = file.mimetype.split("/");
         const filenameWithExt = `${file.filename}.${ext}`;
+        console.log("tentando upload:", filenameWithExt);
 
         // envia para Cloudflare R2
         await uploadFile(file.path, filenameWithExt, file.mimetype);
-
+        console.log("upload concluído:", filenameWithExt);
         fs.unlink(file.path, (err) => {
           if (err) console.error("Erro ao remover temp");
         });
         uploaded.push(filenameWithExt); // salvar só o nome no banco
       }
     }
-
+    console.log("todos arquivos processados:", uploaded);
     return res.status(200).json({ files: uploaded });
   } catch (error) {
     console.error("Erro no upload:", error);

@@ -27,6 +27,12 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
     { label: "produtos", link: "" },
     { label: "roupas", link: "" },
     { label: "Eletronicos", link: "" },
+    { label: "produtos", link: "" },
+    { label: "roupas", link: "" },
+    { label: "Eletronicos", link: "" },
+    { label: "produtos", link: "" },
+    { label: "roupas", link: "" },
+    { label: "Eletronicos", link: "" },
   ];
 
   useEffect(init, []);
@@ -51,14 +57,14 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
       md:items-stretch 
       "
     >
-      <div className="flex justify-between gap-4 items-center">
+      <div className="flex justify-between gap-4 items-start w-full ">
         <Link href={"/"} className="" onClick={() => {}}>
           <Image
             src="/img/logo.svg"
             width="240"
             height={"120"}
             alt={""}
-            className="w-auto"
+            className=" min-w-[200px]"
             priority={true}
           />
         </Link>
@@ -70,8 +76,10 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
           w-full h-dvh
           has-[input:checked]:block 
           has-[input:checked]:left-0
-          md:static md:h-auto md: flex-1
-        `}
+          md:static md:h-auto
+          md:overflow-x-hidden
+           
+          `}
           onClick={closeSlideMenu}
         >
           <input
@@ -108,21 +116,27 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
             duration-[600ms]    
             md:static
             md:w-full
+            
+            flex flex-col
+            md:flex-row
+            
+            
+            
             `}
             style={{ left: isMobile && !toggle ? `0` : `-100%` }}
             onClick={(e) => {
               e.stopPropagation();
             }}
           >
-            <div className=" bg-cyan-950 h-40 p-2 md:hidden mb-4">
+            <div className=" bg-cyan-950 min-h-40 p-2 md:hidden mb-4 ">
               <label
                 htmlFor="activeSubmenu"
-                className="absolute right-4 cursor-pointer md:hidden text-white"
+                className="absolute right-4 cursor-pointer md:hidden  text-white"
                 onClick={closeSlideMenu}
               >
                 <FontAwesomeIcon icon={faClose} />
               </label>
-              <div className="relative h-7 w-10/12">
+              <div className="relative h-7 w-10/12 ">
                 <Image
                   src={"/img/logo.svg"}
                   fill
@@ -135,9 +149,17 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
             </div>
             <ul
               className="
-              flex flex-col justify-end
-              w-full
+              
+              m-auto
+              md:items-center
+              flex flex-col 
+              md:px-2
+              md:justify-start
+              md:overflow-y-hidden
               md:flex-row  gap-2
+              md:static
+              md:h-8
+              
               "
             >
               {mapItemsMenu()}
@@ -145,7 +167,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
           </nav>
         </section>
 
-        <div className="flex items-center gap-4 ">
+        <div className="flex items-start gap-4  ">
           {isAuthenticated.status ? (
             <Link
               href={isAuthenticated.status ? "/dashboard" : "/login"}
@@ -165,7 +187,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
         </div>
       </div>
 
-      <section className="flex justify-center items-center gap-4 flex-[1]">
+      <section className="flex justify-center items-center gap-4 flex-1 ">
         <div
           className="
         w-full
@@ -207,7 +229,6 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
             </button>
           </form>
         </div>
-
         <label
           htmlFor="activeSubmenu"
           className="md:hidden w-[32] h-[32] cursor-pointer hover:text-primary-light"

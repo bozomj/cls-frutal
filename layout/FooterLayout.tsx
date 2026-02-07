@@ -1,6 +1,6 @@
 export default function FooterLayout() {
   return (
-    <footer className="min-h-[10rem] min-w-full bg-cyan-950 p-4 flex flex-col">
+    <footer className="min-h-[10rem] min-w-full bg-white p-4 flex flex-col">
       <span className="text-center text-gray-50">
         CLF-Frutal Classificados &copy;
       </span>
