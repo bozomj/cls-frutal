@@ -22,14 +22,14 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
     >
       <div
         id="imagem_principal"
-        className="w-full cursor-pointer order-2 self-center h-full items-center flex justify-center bg-gray-50 rounded-r-2xl p-1 relative"
+        className="w-full cursor-pointer order-2 self-center h-full items-center  flex justify-center border-gray-100  bg-gray-50 rounded-r-2xl  overflow-hidden hover:border-cyan-600 relative border-3"
       >
         <Image
           alt=""
           src={utils.getUrlImageR2(imgPrincipal)}
           fill
           sizes="70"
-          className="object-contain max-h-full rounded-md hover:outline-3 hover:outline-cyan-600"
+          className={`cursor-pointer object-contain  rounded-xl overflow-hidden `}
           onClick={onClick}
         />
       </div>
@@ -46,8 +46,8 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
               key == 0
                 ? " rounded-tl-2xl"
                 : key < post_imagens.length - 1
-                ? "rounded-sm"
-                : "rounded-bl-2xl";
+                  ? "rounded-sm"
+                  : "rounded-bl-2xl";
 
             return (
               <div

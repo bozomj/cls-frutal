@@ -11,12 +11,17 @@ describe("User", () => {
 
   it("insert user admin", async () => {
     const result = await fetch(
-      "http://localhost:3000/api/v1/user/insertadmin_",
+      `http://localhost:3000/api/v1/user/insertadmin_?tokenUrl=${process.env.USERMASTER_TOKEN_URL}`,
       {
-        method: "POST",
+        method: "GET",
       },
     );
-    await result.text();
+    const txt = await result.json();
+
+    expect(result.status).toBe(201);
+    expect(txt).toEqual({
+      message: "usuario cadastrado com sucesso!",
+    });
   });
 
   it("result usuario comum ao tentar criar usuario admin", async () => {

@@ -5,8 +5,8 @@ import { createRouter } from "next-connect";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
-router.get(getHandler);
-router.post(postHandler);
+// router.get(getHandler);
+router.get(postHandler);
 
 async function createAminUser() {
   const user = {
@@ -27,15 +27,18 @@ async function createAminUser() {
 export default router.handler();
 
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
+  const { tokenUrl } = req.query;
+
+  if (!tokenUrl || tokenUrl !== process.env.USERMASTER_TOKEN_URL) {
+    return res.status(404).end();
+  }
   try {
     const existAdmin = await User.findByEmail(
       process.env.USERMASTER_EMAIL || "",
     );
 
     if (existAdmin.length > 0) {
-      return res.status(500).json({
-        message: "Usuario Administrador já está cadastrado",
-      });
+      return res.status(404).end();
     }
 
     await createAminUser();

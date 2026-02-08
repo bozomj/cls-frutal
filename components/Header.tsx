@@ -23,13 +23,8 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
     status: false,
     user: null,
   });
+
   const itemsMenu = [
-    { label: "produtos", link: "" },
-    { label: "roupas", link: "" },
-    { label: "Eletronicos", link: "" },
-    { label: "produtos", link: "" },
-    { label: "roupas", link: "" },
-    { label: "Eletronicos", link: "" },
     { label: "produtos", link: "" },
     { label: "roupas", link: "" },
     { label: "Eletronicos", link: "" },
@@ -68,104 +63,6 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
             priority={true}
           />
         </Link>
-
-        <section
-          ref={refSlideMenu}
-          className={`
-          absolute top-0 left-[-100%] z-[999]
-          w-full h-dvh
-          has-[input:checked]:block 
-          has-[input:checked]:left-0
-          md:static md:h-auto
-          md:overflow-x-hidden
-           
-          `}
-          onClick={closeSlideMenu}
-        >
-          <input
-            type="checkbox"
-            id="activeSubmenu"
-            checked={!toggle}
-            readOnly
-            onClick={(e) => {
-              e.stopPropagation();
-              change();
-            }}
-            className="peer hidden"
-          />
-          <label
-            id="fundopreto"
-            htmlFor="activeSubmenu"
-            className="
-            w-full h-full
-            absolute left-0 top-0 z-[10]
-            transitions-all duration-[800ms]
-            bg-gray-950/0
-
-          peer-checked:bg-gray-950/60
-            md:hidden
-            "
-          ></label>
-          <nav
-            id="slideMenuItems"
-            className={`
-          bg-white
-            w-8/12 h-full
-            relative z-[11] 
-            overflow-hidden
-            duration-[600ms]    
-            md:static
-            md:w-full
-            
-            flex flex-col
-            md:flex-row
-            
-            
-            
-            `}
-            style={{ left: isMobile && !toggle ? `0` : `-100%` }}
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            <div className=" bg-cyan-950 min-h-40 p-2 md:hidden mb-4 ">
-              <label
-                htmlFor="activeSubmenu"
-                className="absolute right-4 cursor-pointer md:hidden  text-white"
-                onClick={closeSlideMenu}
-              >
-                <FontAwesomeIcon icon={faClose} />
-              </label>
-              <div className="relative h-7 w-10/12 ">
-                <Image
-                  src={"/img/logo.svg"}
-                  fill
-                  sizes="50"
-                  className="object-contain w-10/12"
-                  objectPosition="left"
-                  alt=""
-                />
-              </div>
-            </div>
-            <ul
-              className="
-              
-              m-auto
-              md:items-center
-              flex flex-col 
-              md:px-2
-              md:justify-start
-              md:overflow-y-hidden
-              md:flex-row  gap-2
-              md:static
-              md:h-8
-              
-              "
-            >
-              {mapItemsMenu()}
-            </ul>
-          </nav>
-        </section>
 
         <div className="flex items-start gap-4  ">
           {isAuthenticated.status ? (
@@ -239,6 +136,101 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
             <FontAwesomeIcon icon={faXmark} className="text-3xl" />
           )}
         </label>
+      </section>
+      <section
+        ref={refSlideMenu}
+        className={`
+          absolute top-0 left-[-100%] z-[999]
+          w-full h-dvh
+          has-[input:checked]:block 
+          has-[input:checked]:left-0
+          md:static md:h-auto
+          md:overflow-x-hidden
+           
+          `}
+        onClick={closeSlideMenu}
+      >
+        <input
+          type="checkbox"
+          id="activeSubmenu"
+          checked={!toggle}
+          readOnly
+          onClick={(e) => {
+            e.stopPropagation();
+            change();
+          }}
+          className="peer hidden"
+        />
+        <label
+          id="fundopreto"
+          htmlFor="activeSubmenu"
+          className="
+            w-full h-full
+            absolute left-0 top-0 z-[10]
+            transitions-all duration-[800ms]
+            bg-gray-950/0
+
+          peer-checked:bg-gray-950/60
+            md:hidden
+            "
+        ></label>
+        <nav
+          id="slideMenuItems"
+          className={`
+          bg-white
+            w-8/12 h-full
+            relative z-[11] 
+            overflow-hidden
+            duration-[600ms]    
+            md:static
+            md:w-full
+            flex flex-col
+            md:flex-row
+            
+            
+            
+            `}
+          style={{ left: isMobile && !toggle ? `0` : `-100%` }}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          <div className=" bg-cyan-950 min-h-40 p-2 md:hidden mb-4 ">
+            <label
+              htmlFor="activeSubmenu"
+              className="absolute right-4 cursor-pointer md:hidden  text-white"
+              onClick={closeSlideMenu}
+            >
+              <FontAwesomeIcon icon={faClose} />
+            </label>
+            <div className="relative h-7 w-10/12 ">
+              <Image
+                src={"/img/logo.svg"}
+                fill
+                sizes="50"
+                className="object-contain w-10/12"
+                objectPosition="left"
+                alt=""
+              />
+            </div>
+          </div>
+          <ul
+            className="
+              flex flex-col 
+              overflow-y-scroll
+              md:m-auto
+              md:items-center
+              md:px-2
+              md:justify-start
+              md:overflow-y-hidden
+              md:flex-row  gap-2
+              md:static
+              md:py-2
+              "
+          >
+            {mapItemsMenu()}
+          </ul>
+        </nav>
       </section>
     </header>
   );

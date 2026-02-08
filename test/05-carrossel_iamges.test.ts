@@ -1,4 +1,5 @@
 import database from "@/database/database";
+import autenticator from "@/models/autenticator";
 import carrosselImages from "@/models/carrosselImages";
 import User from "@/models/user";
 
