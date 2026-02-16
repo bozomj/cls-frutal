@@ -8,7 +8,7 @@ async function uploadImages(imgs: unknown) {
   });
 }
 
-async function updateState(id: string | null, status: string) {
+async function updateState(id: string | null, status: string, post_id: string) {
   if (id === null) return;
 
   const result = await fetch("/api/v1/imagens", {
@@ -16,10 +16,11 @@ async function updateState(id: string | null, status: string) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ id, status }),
+    body: JSON.stringify({ id, status, post_id }),
   });
 
   const resultBody = await result.json();
+  return resultBody;
 }
 
 async function getAllImagesPost() {

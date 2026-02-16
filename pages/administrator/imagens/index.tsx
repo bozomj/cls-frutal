@@ -1,3 +1,4 @@
+import { Alert } from "@/components";
 import OwnerGuard from "@/components/guards/OwnerGuard";
 import { ToggleSlide } from "@/components/ui/ToogleSlide";
 import httpImage from "@/http/image";
@@ -6,6 +7,7 @@ import { getAdminProps } from "@/lib/hoc";
 import { ImageDBType, ImageStatus } from "@/shared/Image_types";
 
 import { UserDBType } from "@/shared/user_types";
+import { useBackdrop } from "@/ui/backdrop/useBackdrop";
 import utils from "@/utils";
 import { GetServerSidePropsContext } from "next";
 import Image from "next/image";
@@ -17,6 +19,7 @@ interface AdminImagePageProps {
 
 const adminImagePage = ({ user }: AdminImagePageProps) => {
   const [imagens, setImagens] = useState<ImageDBType[]>([]);
+  const backdrop = useBackdrop();
 
   useEffect(getAllImagesPost, []);
   return (
@@ -48,11 +51,30 @@ const adminImagePage = ({ user }: AdminImagePageProps) => {
                   </h3>
                   <ToggleSlide
                     value={img.status === ImageStatus.ACTIVE}
-                    onChange={() => {
+                    onChange={async () => {
                       const newStatus =
                         img.status === ImageStatus.ACTIVE
                           ? ImageStatus.PENDING
                           : ImageStatus.ACTIVE;
+
+                      const updated = await httpImage.updateState(
+                        img.id,
+                        newStatus,
+                        img.post_id ?? "",
+                      );
+                      if (updated.message) {
+                        console.log(updated.message);
+
+                        backdrop.openContent(
+                          <Alert
+                            msg={updated.message}
+                            onClose={() => backdrop.closeContent()}
+                          />,
+                        );
+
+                        return;
+                      }
+
                       setImagens((prev) =>
                         prev.map((item) =>
                           item.id === img.id
@@ -60,8 +82,6 @@ const adminImagePage = ({ user }: AdminImagePageProps) => {
                             : item,
                         ),
                       );
-
-                      httpImage.updateState(img.id, newStatus);
                     }}
                   />
                 </div>

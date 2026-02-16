@@ -37,6 +37,9 @@ import { QueryParams, useQueryParams } from "@/hooks/useQueryParams";
 import { usePosts } from "@/hooks/usePosts";
 import { useUser } from "@/hooks/useUser";
 
+import { HorizontalScroll } from "@/components/ui/HorizontalScroll";
+import Card from "@/components/Card";
+
 const Profile: React.FC = () => {
   const { user, imagemProfile, setUser, setImagemProfile } = useUser();
   const backdrop = useBackdrop();
@@ -106,11 +109,7 @@ const Profile: React.FC = () => {
                 </Link>
               )}
             </div>
-
-            <div
-              id="imagen-do-perfil"
-              className="flex gap-2 p-2 overflow-x-scroll flex-1 bg-gray-300 h-fit"
-            >
+            <div className=" flex gap-2 bg-gray-300 flex-1 h-[11em] overflow-x-auto p-2">
               {imagemProfile?.map((img: imageProfileType) => {
                 const newImg = {
                   ...img,
@@ -154,7 +153,9 @@ const Profile: React.FC = () => {
             </div>
           </section>
 
-          <section className="border-t-2 border-gray-400 flex flex-col py-4 mt-4">
+          <section></section>
+
+          <section className=" flex flex-col py-4 mt-4">
             {postagens.length < 1 && isLoad ? (
               <Produtos
                 postagens={

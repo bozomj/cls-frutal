@@ -22,7 +22,7 @@ function ImageCardPreview({
       className={`w-fit h-full relative shrink-0 max-w-2/3 text-white ${className}`}
     >
       <RemoveButton />
-      <Card className="border-3 h-full border-cyan-600 bg-cyan-800 peer-hover:bg-red-500/40 peer-hover:border-red-500">
+      <Card className="border-3 h-full border-cyan-600 bg-cyan-200 peer-hover:bg-red-500/40 peer-hover:border-red-500">
         <Image
           className="rounded-md cursor-pointer h-full w-full  object-cover"
           src={image.url}

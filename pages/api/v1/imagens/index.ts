@@ -15,7 +15,7 @@ const auth = async (
     const token = req.cookies.token || "";
     const user = autenticator.verifyToken(token);
     (req as unknown as { user: { id: string } }).user = user;
-    next();
+    return next();
   } catch (e: unknown) {
     const error = e as { message: string };
     res.status(401).json({ message: "Unauthorized", cause: error.message });
@@ -42,6 +42,7 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 
 async function delHandler(req: NextApiRequest, res: NextApiResponse) {
   const body = req.body;
+  console.log(body);
   const user = (req as unknown as { user: { id: string } }).user;
 
   const post = await Post.getById(body.post_id);
@@ -58,6 +59,16 @@ async function delHandler(req: NextApiRequest, res: NextApiResponse) {
 
 async function patchHandler(req: NextApiRequest, res: NextApiResponse) {
   const body = req.body;
+
+  const status = body.status;
+
+  const imagens = await imagem.getByPostID(body.post_id);
+
+  if (imagens.length >= 3 && status === ImageStatus.ACTIVE) {
+    return res
+      .status(401)
+      .json({ message: "Máximo de imagens por post atinginda" });
+  }
 
   const updated = await imagem.updateState(body.id, body.status);
 

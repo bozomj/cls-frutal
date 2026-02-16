@@ -35,6 +35,9 @@ import OwnerGuard from "@/components/guards/OwnerGuard";
 import { ImageDBType } from "@/shared/Image_types";
 import { v4 as uuidv4 } from "uuid";
 import Head from "next/head";
+import { PostStatus } from "@/shared/post_status";
+import Post from "@/models/post";
+import { notFound } from "next/navigation";
 
 type Props = {
   user_id?: string;
@@ -110,7 +113,7 @@ export default function DetailsPostPage({ user_id }: Props) {
 
     fetchData();
   }, [post_id, getPost]);
-
+  if (item.status !== PostStatus.ACTIVE) return <></>;
   return (
     <>
       <Head>
@@ -600,6 +603,13 @@ export default function DetailsPostPage({ user_id }: Props) {
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   const result = utils.redirectNotToken(ctx, "/");
+  const postId = ctx.query.id as string;
+  const post = await Post.getById(postId);
+
+  if (post === null || post!.status !== PostStatus.ACTIVE) {
+    ctx.res.statusCode = 404;
+    return { notFound: true };
+  }
 
   if ("redirect" in result) return { props: { user_id: null } };
 

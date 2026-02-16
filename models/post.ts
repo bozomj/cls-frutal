@@ -5,6 +5,7 @@ import { deleteFile } from "@/storage/cloudflare/r2Cliente";
 import { PostStatus } from "@/shared/post_status";
 import { PostDetailType } from "@/shared/post_types";
 import { ImageStatus } from "@/shared/Image_types";
+import { validate } from "uuid";
 
 function isPostType(obj: unknown): obj is PostDetailType {
   if (typeof obj !== "object" || obj === null) return false;
@@ -229,6 +230,8 @@ async function getByUserIDTotal(id: string, search: string) {
 }
 
 async function getById(id: string) {
+  const validateId = validate(id);
+  if (!validateId) return null;
   try {
     const posts = await database.query(
       `SELECT 

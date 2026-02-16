@@ -92,13 +92,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
         md:max-w-8/12
         "
         >
-          <h2
-            className="
-          hidden
-          text-center text-xl font-bold
-          md:block
-          "
-          >
+          <h2 className="hidden text-center text-xl font-bold md:block">
             COMPRE E VENDA NO CLASSIFICADOS FRUTAL
           </h2>
           <form
@@ -228,14 +222,14 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
               md:py-2
               "
           >
-            {mapItemsMenu()}
+            <MapItemsMenu />
           </ul>
         </nav>
       </section>
     </header>
   );
 
-  function mapItemsMenu() {
+  function MapItemsMenu() {
     return itemsMenu.map((key, value) => {
       return (
         <li key={value}>
