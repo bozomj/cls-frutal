@@ -38,6 +38,7 @@ import Head from "next/head";
 import { PostStatus } from "@/shared/post_status";
 import Post from "@/models/post";
 import { notFound } from "next/navigation";
+import { stat } from "fs";
 
 type Props = {
   user_id?: string;
@@ -56,6 +57,7 @@ export default function DetailsPostPage({ user_id }: Props) {
     user_id: "",
     updated_at: "",
     maxImagens: 3,
+    status: PostStatus.ACTIVE,
   };
 
   const router = useRouter();
