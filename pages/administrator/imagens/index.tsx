@@ -19,9 +19,11 @@ interface AdminImagePageProps {
 
 const adminImagePage = ({ user }: AdminImagePageProps) => {
   const [imagens, setImagens] = useState<ImageDBType[]>([]);
+  const [loading, setLoading] = useState(false);
   const backdrop = useBackdrop();
 
   useEffect(getAllImagesPost, []);
+
   return (
     <LayoutPage user={user}>
       <div className="flex w-full flex-wrap gap-2 justify-center">
@@ -52,26 +54,36 @@ const adminImagePage = ({ user }: AdminImagePageProps) => {
                   <ToggleSlide
                     value={img.status === ImageStatus.ACTIVE}
                     onChange={async () => {
+                      if (loading) {
+                        backdrop.openContent(
+                          <Alert
+                            msg={"Espere a ultima ação ser executada"}
+                            onClose={() => backdrop.closeContent()}
+                          />,
+                        );
+                        return;
+                      }
+
                       const newStatus =
                         img.status === ImageStatus.ACTIVE
                           ? ImageStatus.PENDING
                           : ImageStatus.ACTIVE;
 
+                      setLoading(true);
                       const updated = await httpImage.updateState(
                         img.id,
                         newStatus,
                         img.post_id ?? "",
                       );
-                      if (updated.message) {
-                        console.log(updated.message);
 
+                      if (updated.message) {
                         backdrop.openContent(
                           <Alert
                             msg={updated.message}
                             onClose={() => backdrop.closeContent()}
                           />,
                         );
-
+                        setLoading(false);
                         return;
                       }
 
@@ -82,6 +94,7 @@ const adminImagePage = ({ user }: AdminImagePageProps) => {
                             : item,
                         ),
                       );
+                      setLoading(false);
                     }}
                   />
                 </div>
