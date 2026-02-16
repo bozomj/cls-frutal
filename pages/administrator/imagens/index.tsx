@@ -47,10 +47,9 @@ const adminImagePage = ({ user }: AdminImagePageProps) => {
                 </div>
                 <div className="flex justify-between p-2">
                   <h3
-                    className={`${img.status === ImageStatus.ACTIVE ? "text-green-700" : "text-gray-400"} font-bold flex gap-4`}
+                    className={`${img.status === ImageStatus.ACTIVE ? "text-green-700" : "text-gray-400"} font-bold `}
                   >
                     {img.status ?? "Sem status"}
-                    <span>{loading ? "Carregando..." : ""}</span>
                   </h3>
                   <ToggleSlide
                     value={img.status === ImageStatus.ACTIVE}
