@@ -21,7 +21,9 @@ async function save(url: string, postId: string) {
 }
 
 async function getAll() {
-  const result = await database.query("select * from imagens");
+  const result = await database.query(
+    "select post_id, json_agg(imagens.*) as lista_imagens from imagens group by post_id",
+  );
 
   return result;
 }

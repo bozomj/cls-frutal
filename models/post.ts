@@ -330,13 +330,13 @@ async function getPostByStatus(initial: string, limit: string, status: string) {
 }
 
 const Post = {
-  getById,
   create,
-  search,
   deletePost,
+  update,
+  search,
+  getById,
   listAllPost,
   getByUserID,
-  update,
 
   getTotal,
   getByUserIDTotal,

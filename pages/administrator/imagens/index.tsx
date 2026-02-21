@@ -18,7 +18,9 @@ interface AdminImagePageProps {
 }
 
 const adminImagePage = ({ user }: AdminImagePageProps) => {
-  const [imagens, setImagens] = useState<ImageDBType[]>([]);
+  const [postList, setImagens] = useState<
+    { post_id: string; lista_imagens: ImageDBType[] }[]
+  >([]);
   const [loading, setLoading] = useState(false);
   const backdrop = useBackdrop();
 
@@ -26,77 +28,95 @@ const adminImagePage = ({ user }: AdminImagePageProps) => {
 
   return (
     <LayoutPage user={user}>
-      <div className="flex w-full flex-wrap gap-2 justify-center">
-        <OwnerGuard isOwner={imagens.length > 0}>
-          {imagens.map((img) => {
+      <div className="flex w-full  flex-col gap-4 justify-center">
+        <OwnerGuard isOwner={postList.length > 0}>
+          {postList.map((imagens) => {
             return (
               <div
-                className="min-w-50 p-2 bg-white rounded-md shadow-sm shadow-gray-400"
-                key={img.id}
+                key={imagens.post_id}
+                className="bg-white p-4 rounded-md  shadow-sm shadow-gray-400"
               >
-                <span className="text-gray-400">{img.post_id}</span>
-                <div className="min-w-1/5 flex-1 border-2 border-gray-400 relative rounded-md overflow-hidden h-60">
-                  <Image
-                    className="object-contain"
-                    alt=""
-                    src={utils.getUrlImageR2(img.url)}
-                    fill
-                    sizes="150"
-                    loading="eager"
-                  />
-                </div>
-                <div className="flex justify-between p-2">
-                  <h3
-                    className={`${img.status === ImageStatus.ACTIVE ? "text-green-700" : "text-gray-400"} font-bold `}
-                  >
-                    {img.status ?? "Sem status"}
-                  </h3>
-                  <ToggleSlide
-                    value={img.status === ImageStatus.ACTIVE}
-                    onChange={async () => {
-                      if (loading) {
-                        backdrop.openContent(
-                          <Alert
-                            msg={"Espere a ultima ação ser executada"}
-                            onClose={() => backdrop.closeContent()}
-                          />,
-                        );
-                        return;
-                      }
+                <h3 className="font-bold">{imagens.post_id}</h3>
+                <div className=" gap-4 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
+                  {imagens?.lista_imagens?.map((img) => {
+                    return (
+                      <div
+                        className="min-w-50 p-4 bg-white rounded-md shadow-sm shadow-gray-400"
+                        key={img.id}
+                      >
+                        <div className="min-w-1/5 flex-1 border-2 border-gray-400 relative rounded-md overflow-hidden h-60">
+                          <Image
+                            className="object-contain"
+                            alt=""
+                            src={utils.getUrlImageR2(img.url)}
+                            fill
+                            sizes="150"
+                            loading="eager"
+                          />
+                        </div>
+                        <div className="flex justify-between p-2">
+                          <h3
+                            className={`${img.status === ImageStatus.ACTIVE ? "text-green-700" : "text-gray-400"} font-bold `}
+                          >
+                            {img.status ?? "Sem status"}
+                          </h3>
+                          <ToggleSlide
+                            value={img.status === ImageStatus.ACTIVE}
+                            onChange={async () => {
+                              if (loading) {
+                                backdrop.openContent(
+                                  <Alert
+                                    msg={"Espere a ultima ação ser executada"}
+                                    onClose={() => backdrop.closeContent()}
+                                  />,
+                                );
+                                return;
+                              }
 
-                      const newStatus =
-                        img.status === ImageStatus.ACTIVE
-                          ? ImageStatus.PENDING
-                          : ImageStatus.ACTIVE;
+                              const newStatus =
+                                img.status === ImageStatus.ACTIVE
+                                  ? ImageStatus.PENDING
+                                  : ImageStatus.ACTIVE;
 
-                      setLoading(true);
-                      const updated = await httpImage.updateState(
-                        img.id,
-                        newStatus,
-                        img.post_id ?? "",
-                      );
+                              setLoading(true);
 
-                      if (updated.message) {
-                        backdrop.openContent(
-                          <Alert
-                            msg={updated.message}
-                            onClose={() => backdrop.closeContent()}
-                          />,
-                        );
-                        setLoading(false);
-                        return;
-                      }
+                              await new Promise((r) => setTimeout(r, 100));
 
-                      setImagens((prev) =>
-                        prev.map((item) =>
-                          item.id === img.id
-                            ? { ...item, status: newStatus }
-                            : item,
-                        ),
-                      );
-                      setLoading(false);
-                    }}
-                  />
+                              const updated = await httpImage.updateState(
+                                img.id,
+                                newStatus,
+                                img.post_id ?? "",
+                              );
+
+                              if (updated.message) {
+                                backdrop.openContent(
+                                  <Alert
+                                    msg={updated.message}
+                                    onClose={() => backdrop.closeContent()}
+                                  />,
+                                );
+                                setLoading(false);
+                                return;
+                              }
+
+                              setImagens((prev) =>
+                                prev.map((imagens) => {
+                                  const nList = imagens.lista_imagens.map(
+                                    (item) =>
+                                      item.id === img.id
+                                        ? { ...item, status: newStatus }
+                                        : item,
+                                  );
+                                  return { ...imagens, lista_imagens: nList };
+                                }),
+                              );
+                              setLoading(false);
+                            }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             );
