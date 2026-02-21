@@ -44,78 +44,88 @@ function Dashboard() {
       </header>
       <main className="flex-auto overflow-y-scroll text-gray-800 bg-gray-300 flex-col flex justify-between  items-center scroll-smooth">
         <div className="flex-1 flex w-full md:justify-center">
-          <span className="w-[4rem]"></span>
-
-          <section
-            tabIndex={0}
-            className="
-            group
+          <div className="group " tabIndex={0}>
+            <label
+              htmlFor="menu-toggle"
+              className="bg-black/50 absolute md:hidden w-0 group-has-checked:w-screen h-screen z-10 top-0 left-0"
+            ></label>
+            <input
+              type="checkbox"
+              name="menu-toggle"
+              id="menu-toggle"
+              className="hidden"
+            />
+            <label htmlFor="menu-toggle">
+              <section
+                tabIndex={1}
+                className="
+              
+            z-20
             flex flex-col items-start gap-2 
-            fixed z-[8] w-[4rem]  h-full p-1 overflow-x-hidden
+            fixed  w-[4rem]  h-full p-1 overflow-x-hidden
+            
             
           bg-gray-50 border-gray-50 
             border-r-4 
-            focus:w-3/4 
+            group-has-checked:w-3/4 
             md:min-w-[25rem] md:static md:h-auto md:w-fit md:focus:max-w-[25rem] 
           md:bg-gray-300 md:border-gray-300 md:text-gray-950  
             transition-all duration-500
             "
-          >
-            <ul className="flex flex-col w-full gap-2 md:w-[24rem] md:fixed  ">
-              <span
-                tabIndex={1}
-                className="self-end cursor-pointer hover:text-cyan-500 invisible group-focus:visible"
               >
-                <FontAwesomeIcon icon={faClose} />
-              </span>
-
-              <div
-                className="group-focus:w-[8rem] group-focus:h-[8rem] rounded-full  w-[3rem] h-[3rem]    bg-gray-400 transition-all duration-500
+                <ul className="flex flex-col w-full gap-2 md:w-[24rem] md:fixed  ">
+                  <span
+                    tabIndex={1}
+                    className="self-end cursor-pointer hover:text-cyan-500 invisible group-has-checked:visible md:group-has-checked:invisible"
+                  >
+                    <FontAwesomeIcon icon={faClose} />
+                  </span>
+                  <div
+                    className=" group-has-checked:w-[8rem]  group-has-checked:h-[8rem] rounded-full  w-[3rem] h-[3rem]    bg-gray-400 transition-all duration-500
               md:w-[8rem] md:h-[8rem] overflow-hidden border-2 border-white relative
               "
-              >
-                {user?.url && (
-                  <Image
-                    src={utils.getUrlImageR2(user.url ?? null)}
-                    alt=""
-                    fill
-                    className="w-full h-full object-cover"
+                  >
+                    {user?.url && (
+                      <Image
+                        src={utils.getUrlImageR2(user.url ?? null)}
+                        alt=""
+                        fill
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+                  </div>
+                  <ListTile
+                    title={user?.name ?? ""}
+                    icon={faUser}
+                    url={`/profile`}
+                    onClick={() => {}}
+                    className="md:hover:bg-gray-400/50  duration-500 rounded md:hover:text-gray-950 "
                   />
-                )}
-              </div>
-
-              <ListTile
-                title={user?.name ?? ""}
-                icon={faUser}
-                url={`/profile`}
-                onClick={() => {}}
-                className="md:hover:bg-gray-400/50  duration-500 rounded md:hover:text-gray-950 "
-              />
-
-              <li>
-                <ListTile
-                  title={user?.email ?? ""}
-                  icon={faEnvelope}
-                  onClick={() => {}}
-                  className="md:hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 "
-                />
-              </li>
-
-              <li>
-                <ListTile
-                  title="Produtos"
-                  icon={faClipboard}
-                  onClick={() => {}}
-                  url="/newpost"
-                  className="md:hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 "
-                />
-              </li>
-            </ul>
-          </section>
-
+                  <li>
+                    <ListTile
+                      title={user?.email ?? ""}
+                      icon={faEnvelope}
+                      onClick={() => {}}
+                      className="md:hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 "
+                    />
+                  </li>
+                  <li>
+                    <ListTile
+                      title="Produtos"
+                      icon={faClipboard}
+                      onClick={() => {}}
+                      url="/newpost"
+                      className="md:hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 "
+                    />
+                  </li>
+                </ul>
+              </section>
+            </label>
+          </div>
           <section
             className="flex-1 p-2 w-full  flex flex-col gap-2 scroll-smooth h-full 
           md:p-2 md:max-w-[40rem]
+          pl-[5rem]
            "
           >
             <span data-scroll-top tabIndex={1} ref={produtosRef}></span>

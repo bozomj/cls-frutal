@@ -34,21 +34,22 @@ function CarrosselPageAdmin({ user }: Props) {
 
   return (
     <LayoutPage user={user}>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 md:max-w-[960px] rounded-xl mx-auto bg-white p-2 shadow-md shadow-gray-400">
         <CarrosselScroll items={imgCarrossel} time={1} />
 
         <section className="flex flex-col items-center gap-2 ">
           <h2 className="text-3xl font-bold">Imagens Banner Carrossel</h2>
-          <div className="flex h-[15rem] bg-gray-300 p-2 overflow-x-scroll w-full">
+          <div className="grid items-center gap-2 grid-cols-[repeat(auto-fit,minmax(250px,1fr))]  bg-gray-300 p-2 w-full">
             <ImagensCarrossel imgs={imgCarrossel} database={true} />
           </div>
         </section>
 
-        <section className="flex flex-col items-center gap-2 mt-4 ">
+        <section className="flex flex-col items-center gap-2  ">
           <h2 className="text-3xl font-bold">Adicionar novas imagens</h2>
+
           <div
             id="preview"
-            className="flex h-[20rem] bg-gray-600 p-2 w-full overflow-x-scroll"
+            className="grid items-center gap-2 grid-cols-[repeat(auto-fit,minmax(250px,1fr))]  bg-gray-600 p-2 w-full overflow-x-scroll"
           >
             <ImagensCarrossel
               imgs={imagensPreviews}
@@ -126,10 +127,10 @@ function CarrosselPageAdmin({ user }: Props) {
     const itens = imgs.map((e, index) => (
       <div
         key={index}
-        className="relative rounded-md overflow-hidden w-[30rem]"
+        className="relative rounded-md  w-full hover:shadow-md hover:shadow-gray-400"
       >
         <button
-          className="absolute p-1 bg-red-600 right-0 flex items-center text-white cursor-pointer hover:bg-red-400 "
+          className="peer absolute p-1 bg-red-600 right-0 flex items-center text-white cursor-pointer hover:bg-red-400 rounded-tr-md "
           onClick={
             click ? () => click(e, index) : () => removeCarrosselImage(e)
           }
@@ -142,12 +143,12 @@ function CarrosselPageAdmin({ user }: Props) {
           width={10}
           height={10}
           alt=""
-          className="w-[30rem]   rounded-md h-full"
+          className="block w-full   rounded-md h-full peer-hover:outline-4 peer-hover:outline-red-700 "
         />
       </div>
     ));
 
-    return <div className="flex gap-2 mt-4">{itens}</div>;
+    return itens;
   }
 
   async function removeCarrosselImage(e: { url: string }) {

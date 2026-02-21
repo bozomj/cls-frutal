@@ -64,7 +64,7 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({
       {activeAction && (
         <ArrowButton
           direction="left"
-          className={`left-0 `}
+          className={`left-0 z-20 `}
           onClick={() => move("left")}
         />
       )}

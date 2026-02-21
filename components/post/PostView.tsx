@@ -29,7 +29,7 @@ interface PostViewProps {
 
 export default function PostView({ post }: PostViewProps) {
   const post_imagens = post.imagens;
-  const [imgPrincial, setImgPrincipal] = useState<string>();
+  const [imgPrincial, setImgPrincipal] = useState<string>(post_imagens[0]?.url);
   const [imagemIndex, setImagemIndex] = useState<number>(0);
 
   const usebackdrop = useBackdrop();
@@ -50,7 +50,7 @@ export default function PostView({ post }: PostViewProps) {
                   index={imagemIndex}
                   visible={true}
                   onClose={closeFullImages}
-                />
+                />,
               )
             }
             selectImg={(i) => {

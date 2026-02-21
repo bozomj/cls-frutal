@@ -30,14 +30,14 @@ function PostsAdministrator({ user, post }: Props) {
   return (
     <LayoutPage user={user}>
       <div className=" bg-gray-200  flex justify-center flex-1">
-        <div className="w-[40rem] flex flex-col h-fit">
+        <div className="w-[40rem] flex flex-col h-fit gap-2">
           <PostView post={post} />
           <h2>Imagens</h2>
           {imagesPost.map((img) => {
             return (
               <div
                 key={img.id}
-                className="flex flex-col gap-2 p-2 border-b border-gray-300"
+                className="flex flex-col gap-2 p-2 border-b border-gray-300 bg-gray-50 rounded-xl shadow-sm shadow-gray-400 "
               >
                 <div className="relative h-60 w-full">
                   <Image

@@ -37,8 +37,6 @@ import { v4 as uuidv4 } from "uuid";
 import Head from "next/head";
 import { PostStatus } from "@/shared/post_status";
 import Post from "@/models/post";
-import { notFound } from "next/navigation";
-import { stat } from "fs";
 
 type Props = {
   user_id?: string;
