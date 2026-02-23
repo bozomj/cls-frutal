@@ -45,10 +45,15 @@ async function delByPostId(id: string) {
 }
 
 async function getByPostID(id: string, status: string = ImageStatus.ACTIVE) {
-  const result = await database.query(
-    "select * from imagens where post_id = $1 and status = $2",
-    [id, status],
-  );
+  let query = "select * from imagens where post_id = $1 and status = $2";
+  let bind = [id, status];
+
+  if (status === ImageStatus.ANY) {
+    query = "select * from imagens where post_id = $1";
+    bind = [id];
+  }
+
+  const result = await database.query(query, bind);
 
   return result;
 }

@@ -24,39 +24,48 @@ function AdminDashboard({ user }: Props) {
   const [totalPost, setTotalPost] = useState();
   const [totalUsers, setTotalUsers] = useState();
   const [pendingPost, setpendingPost] = useState<PostDetailType[]>([]);
+  const [totalPostsExpirados, setTotalPostsExpirados] = useState([]);
 
   useEffect(init, []);
   useEffect(() => {
     getPendingPost().then((r) => setpendingPost(r));
+    httpPost.getPostByStatus("0", "10", PostStatus.EXPIRED).then((r) => {
+      setTotalPostsExpirados(r);
+    });
   }, []);
 
   return (
     <LayoutPage user={user}>
       <div className="flex flex-col gap-2">
         <section className="p-1 flex flex-col gap-2 rounded-md  bg-white shadow-sm shadow-gray-400">
-          <h2>Anuncios</h2>
+          <h2>Postagens</h2>
           <div className="flex gap-2 overflow-x-scroll h-30">
-            <div
-              className={` bg-gray-300 p-0! pt-2! font-bold flex-1 max-h-25! rounded-sm `}
-            >
-              <div className="flex flex-col items-center border-gray-300 border-2 rounded-md w-full h-full justify-center p-2 bg-white">
-                <h2>Total</h2>
-                {totalPost}
-              </div>
-            </div>
-
             <Card className={`${style}`}>
-              <h2>Ativos</h2>
-              {totalUsers}
+              <h2>Total</h2>
+              {totalPost}
             </Card>
 
             <Card className={`${style}`}>
               <h2>Pendentes</h2>
+              {pendingPost.length ?? 0}
+            </Card>
+            <Card className={`${style}`}>
+              <h2>Expirados</h2>
+              {totalPostsExpirados.length ?? 0}
+            </Card>
+          </div>
+        </section>
+
+        <section className="bg-white py-4 px-1 rounded-md shadow-sm shadow-gray-400">
+          <h2>Usuarios</h2>
+          <div className="flex gap-2">
+            <Card className={`${style} bg-white`}>
+              <h2>Total usuarios</h2>
               {totalUsers}
             </Card>
 
-            <Card className={`${style}`}>
-              <h2>Expirados</h2>
+            <Card className={`${style} bg-white`}>
+              <h2>Total usuarios</h2>
               {totalUsers}
             </Card>
           </div>
@@ -125,7 +134,7 @@ function AdminDashboard({ user }: Props) {
 }
 
 async function getPendingPost() {
-  const result = httpPost.getPostByStatus("0", "10", PostStatus.PENDING);
+  const result = await httpPost.getPostByStatus("0", "10", PostStatus.PENDING);
   return result;
 }
 

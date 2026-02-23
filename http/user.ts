@@ -21,10 +21,16 @@ async function create(user: unknown) {
   return result;
 }
 
+async function total() {
+  const result = await fetch("/api/v1/users/total");
+  return await result.json();
+}
+
 const httpUser = {
   create,
   getUserLogin,
   getTotalUsers,
+  total,
 };
 
 export default httpUser;

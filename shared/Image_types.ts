@@ -18,4 +18,5 @@ export enum ImageStatus {
   ACTIVE = "active",
   REJECTED = "rejected",
   DELETED = "deleted",
+  ANY = "any",
 }

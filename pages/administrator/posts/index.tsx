@@ -33,17 +33,35 @@ function PostsAdministrator({ user }: Props) {
   return (
     <LayoutPage user={user}>
       <main className=" bg-gray-200">
-        <h2>Postagens aguardando aprovação</h2>
-        <div className="flex flex-col gap-1">
-          <ProdCard postagens={postPending} borderColor="border-yellow-600" />
-        </div>
-        <h2>Postagens aprovadas</h2>
-        <div className="flex flex-col gap-1">
-          <ProdCard postagens={postAprovados} borderColor="border-green-700" />
-        </div>
-        <h2>Postagens rejeitados</h2>
-        <div className="flex flex-col gap-1">
-          <ProdCard postagens={postRejeitados} borderColor="border-red-700" />
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2 p-2 bg-white rounded-md shadow-sm shadow-gray-400">
+            <h2>Postagens aguardando aprovação</h2>
+            <div className="flex flex-col gap-1">
+              <ProdCard
+                postagens={postPending}
+                borderColor="border-yellow-600"
+              />
+            </div>
+          </div>
+          <div className="flex flex-col gap-2 p-2 bg-white rounded-md shadow-sm shadow-gray-400">
+            <h2>Postagens aprovadas</h2>
+            <div className="flex flex-col gap-1">
+              <ProdCard
+                postagens={postAprovados}
+                borderColor="border-green-700"
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2 p-2 bg-white rounded-md shadow-sm shadow-gray-400">
+            <h2>Postagens rejeitados</h2>
+            <div className="flex flex-col gap-1">
+              <ProdCard
+                postagens={postRejeitados}
+                borderColor="border-red-700"
+              />
+            </div>
+          </div>
         </div>
       </main>
     </LayoutPage>

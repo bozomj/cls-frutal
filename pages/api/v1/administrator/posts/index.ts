@@ -11,7 +11,7 @@ export interface AuthenticatedRequest extends NextApiRequest {
 const auth = async (
   req: NextApiRequest,
   res: NextApiResponse,
-  next: () => void
+  next: () => void,
 ) => {
   try {
     const token = req.cookies.token || "";
@@ -21,7 +21,6 @@ const auth = async (
 
     const userAuth = (await User.findById(user.id))[0];
     if (!userAuth.is_admin) throw { message: "Usuario nao é um admin" };
-    console.log(userAuth);
 
     next();
   } catch (e: unknown) {
