@@ -23,6 +23,7 @@ export type PostDetailType = {
   name: string;
   created_at?: string;
   updated_at?: string;
+  expires_at?: string;
   status: PostStatus;
   imagens: { url: string; id: string; status: string }[];
   img_profile: string;

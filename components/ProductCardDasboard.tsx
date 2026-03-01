@@ -29,6 +29,7 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
       className={`bg-gray-200 relative flex-col text-white gap-2 p-2 rounded-2xl flex justify-center border-2 ${
         statusColor[item.status].border
       } ${className ?? ""}`}
+      onClick={(e) => {}}
     >
       <div className="flex  justify-between items-center">
         <p className="text-gray-800">
@@ -51,7 +52,6 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
           </button>
         </div>
       </div>
-
       <div className="flex w-full  overflow-hidden h-full gap-2 ">
         <div className="bg-gray-200 rounded-xl h-20 relative min-w-1/3">
           <Image
@@ -62,7 +62,6 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
             className="object-contain"
           />
         </div>
-
         <div className=" flex text-gray-900 flex-col relative min-w-2/3">
           <span className="truncate font-bold text-gray-800">
             {item.title ?? ""}
@@ -84,6 +83,9 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
           </span>
         </div>
       </div>
+      <span className={`text-gray-800`}>
+        Expira: {utils.formatarData(item.expires_at || "")}
+      </span>
     </article>
   );
 
@@ -100,8 +102,26 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
         }}
       >
         {"Deseja deletar este post?"}
-      </Modal>
+      </Modal>,
     );
+  }
+
+  function calcularExpiracao(created_at: Date | string, dias: number): Date {
+    const dataCriacao = new Date(created_at);
+    const dataExpiracao = new Date(dataCriacao);
+
+    dataExpiracao.setDate(dataCriacao.getDate() + dias);
+
+    return dataExpiracao;
+  }
+  function diferencaEmDias(data1: Date | string, data2: Date | string): number {
+    const d1 = new Date(data1);
+    const d2 = new Date(data2);
+
+    const utc1 = Date.UTC(d1.getFullYear(), d1.getMonth(), d1.getDate());
+    const utc2 = Date.UTC(d2.getFullYear(), d2.getMonth(), d2.getDate());
+
+    return Math.floor((utc1 - utc2) / (1000 * 60 * 60 * 24));
   }
 };
 
