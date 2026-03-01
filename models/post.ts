@@ -33,7 +33,7 @@ async function create(pst: PostDetailType) {
   });
 
   const query =
-    "INSERT INTO posts (user_id, title, description, valor, categoria_id, status) VALUES ($1,$2,$3,$4,$5,$6 ) RETURNING *;";
+    "INSERT INTO posts (user_id, title, description, valor, categoria_id, status, expires_at) VALUES ($1,$2,$3,$4,$5,$6, NOW() + ($7 || ' days')::interval) RETURNING *;";
 
   try {
     return await database.query(query, [
@@ -43,6 +43,7 @@ async function create(pst: PostDetailType) {
       pst.valor,
       pst.categoria_id,
       PostStatus.PENDING,
+      30,
     ]);
   } catch (error) {
     console.log(error);

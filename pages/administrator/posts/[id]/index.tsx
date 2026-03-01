@@ -166,7 +166,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   const post = await Post.getById(postid as string);
   const pendingImages = await imagem.getByPostID(postid, ImageStatus.ANY);
-  console.log(pendingImages);
 
   const ctx = await getAdminProps(context);
 
@@ -179,6 +178,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         imagens: pendingImages,
         created_at: post.created_at?.toISOString(),
         updated_at: post.updated_at?.toISOString(),
+        expires_at: post.expires_at?.toISOString(),
       },
     },
   };

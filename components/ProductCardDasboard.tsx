@@ -29,7 +29,13 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
       className={`bg-gray-200 relative flex-col text-white gap-2 p-2 rounded-2xl flex justify-center border-2 ${
         statusColor[item.status].border
       } ${className ?? ""}`}
-      onClick={(e) => {}}
+      onClick={(e) => {
+        const result = diferencaEmDias(
+          new Date(item.expires_at ?? ""),
+          new Date(Date.now()),
+        );
+        console.log(result);
+      }}
     >
       <div className="flex  justify-between items-center">
         <p className="text-gray-800">
@@ -106,14 +112,6 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
     );
   }
 
-  function calcularExpiracao(created_at: Date | string, dias: number): Date {
-    const dataCriacao = new Date(created_at);
-    const dataExpiracao = new Date(dataCriacao);
-
-    dataExpiracao.setDate(dataCriacao.getDate() + dias);
-
-    return dataExpiracao;
-  }
   function diferencaEmDias(data1: Date | string, data2: Date | string): number {
     const d1 = new Date(data1);
     const d2 = new Date(data2);
