@@ -37,9 +37,6 @@ import { QueryParams, useQueryParams } from "@/hooks/useQueryParams";
 import { usePosts } from "@/hooks/usePosts";
 import { useUser } from "@/hooks/useUser";
 
-import { HorizontalScroll } from "@/components/ui/HorizontalScroll";
-import Card from "@/components/Card";
-
 const Profile: React.FC = () => {
   const { user, imagemProfile, setUser, setImagemProfile } = useUser();
   const backdrop = useBackdrop();
@@ -51,7 +48,6 @@ const Profile: React.FC = () => {
   const paginacao = usePaginacao(total, initial, limit);
   const produtosRef = useRef<HTMLInputElement>(null);
 
-  console.log(isLoad);
   useEffect(() => {
     produtosRef.current?.focus();
   }, []);

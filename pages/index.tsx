@@ -36,10 +36,13 @@ const Home: React.FC = () => {
       <main className="flex-auto overflow-y-scroll bg-gray-200 flex-col flex justify-between gap-2 items-center scroll-smooth ">
         <section
           tabIndex={0}
-          className="flex flex-col gap-2 w-full  flex-1 p-2 md:max-w-[40rem]"
+          className="flex  flex-col gap-2 w-full  flex-1 p-2 md:max-w-7xl"
         >
           <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
-          <CarrosselScroll items={imgCarrossel} time={5} />
+          <div className="flex justify-center">
+            <CarrosselScroll items={imgCarrossel} time={5} />
+          </div>
+
           <div className="w-full  relative flex justify-center">
             <img
               alt=""
@@ -47,9 +50,7 @@ const Home: React.FC = () => {
               className="h-full  rounded-md"
             />
           </div>
-
           <Produtos Card={ProductCard} postagens={postagens} />
-
           <Paginacao
             paginacao={paginacao}
             className="shadow-md shadow-gray-400 rounded-2xl bg-white"

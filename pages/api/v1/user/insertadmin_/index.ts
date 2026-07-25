@@ -5,8 +5,7 @@ import { createRouter } from "next-connect";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
-// router.get(getHandler);
-router.get(postHandler);
+router.get(getHandler);
 
 async function createAminUser() {
   const user = {
@@ -26,7 +25,8 @@ async function createAminUser() {
 
 export default router.handler();
 
-async function postHandler(req: NextApiRequest, res: NextApiResponse) {
+async function getHandler(req: NextApiRequest, res: NextApiResponse) {
+  console.log(req.query);
   const { tokenUrl } = req.query;
 
   if (!tokenUrl || tokenUrl !== process.env.USERMASTER_TOKEN_URL) {
@@ -50,8 +50,4 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
       cause: e,
     });
   }
-}
-
-async function getHandler(req: NextApiRequest, res: NextApiResponse) {
-  res.status(404).json({ message: "Pagina não encontrada", status: "404" });
 }

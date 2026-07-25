@@ -58,6 +58,7 @@ describe("teste da tabela post", () => {
       valor: pst.valor.toFixed(2),
       created_at: posted.created_at,
       updated_at: posted.updated_at,
+      expires_at: posted.expires_at,
       status: PostStatus.PENDING,
     });
   });
@@ -185,6 +186,7 @@ describe("teste da tabela post", () => {
       status: "active",
       title: "tentando atualizar post com user_admin",
       updated_at: result.updated_at,
+      expires_at: posted.expires_at,
       user_id: posted.user_id,
       valor: "10.50",
     });

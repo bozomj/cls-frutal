@@ -62,7 +62,7 @@ const FullImageView: React.FC<FullImageViewProps> = ({
       id="imgfull"
       className={`
           absolute top-0 z-[5] left-0 h-full w-full p-2 
-          bg-cyan-950/80 
+          bg-gray-800/80 
           justify-center items-center px-1 ${visible ? "flex" : "hidden"}
         `}
       onClick={() => {

@@ -46,7 +46,6 @@ async function create(pst: PostDetailType) {
       30,
     ]);
   } catch (error) {
-    console.log(error);
     throw {
       message: new Error("erro ao postar prodruto"),
       cause: error,
@@ -135,7 +134,7 @@ async function deletePost(id: string, userId: string) {
     try {
       await deleteFile(img.url);
     } catch (error) {
-      console.log("Erro ao deletar imagem no firebase", error);
+      console.log("Erro ao deletar imagem no AWS", error);
     }
   }
 

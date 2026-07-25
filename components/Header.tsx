@@ -5,6 +5,7 @@ import { faBars } from "@fortawesome/free-solid-svg-icons/faBars";
 import { faXmark } from "@fortawesome/free-solid-svg-icons/faXmark";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
+
 import Link from "next/link";
 import router from "next/router";
 
@@ -56,11 +57,11 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
         <Link href={"/"} className="" onClick={() => {}}>
           <Image
             src="/img/logo.svg"
-            width="240"
-            height={"120"}
+            width={0}
+            height={0}
             alt={""}
-            className=" min-w-[200px]"
             priority={true}
+            style={{ width: "240px", height: "auto" }}
           />
         </Link>
 
@@ -212,6 +213,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
             className="
               flex flex-col 
               overflow-y-scroll
+              h-full
               md:m-auto
               md:items-center
               md:px-2

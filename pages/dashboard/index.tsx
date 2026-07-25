@@ -42,9 +42,9 @@ function Dashboard() {
       <header className="z-[20]">
         <Header titulo="Dashboard" />
       </header>
-      <main className="flex-auto overflow-y-scroll text-gray-800 bg-gray-300 flex-col flex justify-between  items-center scroll-smooth">
-        <div className="flex-1 flex w-full md:justify-center">
-          <div className="group " tabIndex={0}>
+      <main className="flex-auto  overflow-y-scroll text-gray-800 bg-gray-300 flex-col flex justify-between  items-center scroll-smooth">
+        <div className="flex-1 flex w-full md:justify-center ">
+          <div className="group bg-gray-50 " tabIndex={0}>
             <label
               htmlFor="menu-toggle"
               className="bg-black/50 absolute md:hidden w-0 group-has-checked:w-screen h-screen z-10 top-0 left-0"
@@ -126,7 +126,7 @@ function Dashboard() {
             className="flex-1 p-2 w-full  flex flex-col gap-2 scroll-smooth h-full 
           md:p-2 md:max-w-[40rem]
           pl-[5rem]
-           "
+          "
           >
             <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
             <span className="flex flex-col gap-2">
@@ -145,7 +145,8 @@ function Dashboard() {
                 </Link>
               </div>
             </span>
-            <section className="flex flex-col">
+
+            <section className="flex flex-col h-dvh">
               <Produtos
                 Card={ProductCardDashboard}
                 postagens={postagens}

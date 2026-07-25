@@ -33,11 +33,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
           </div>
 
           <div className="flex-1 flex  text-gray-900  w-[100%]  overflow-hidden flex-col py-2">
-            <h2 className=" font-bold block whitespace-wrap text-gray-900 truncate">
+            <h2 className="  block whitespace-wrap text-gray-900 truncate">
               {item.title ?? ""}
             </h2>
-            <span className="h-5 text-green-700 font-bold block text-lg">
-              <span className="text-xs">R$: </span>
+            <span className="h-5 text-green-700 block text-lg">
+              <span className="text-xs">R$:</span>
               {utils.formatarMoeda(item.valor.toString())}
             </span>
           </div>

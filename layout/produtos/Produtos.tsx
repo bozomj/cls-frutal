@@ -14,7 +14,7 @@ function Produtos<T>({ postagens = [], Card, className }: ProdutosProps<T>) {
         className={`shadow-sm shadow-gray-400 flex flex-col items-center  flex-1 max-w-full rounded-2xl bg-white ${className}`}
       >
         <section
-          className={`grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-2 p-2  w-full h-fit ${className}`}
+          className={`grid grid-cols-2 md:grid-cols-[repeat(auto-fit,minmax(150px,197px))] gap-2 p-2  w-full h-fit ${className}`}
         >
           {makeItens(postagens)}
         </section>

@@ -9,6 +9,7 @@ import {
   faHome,
   faImage,
   faPodcast,
+  faSection,
 } from "@fortawesome/free-solid-svg-icons";
 import utils from "@/utils";
 import { UserDBType } from "@/shared/user_types";
@@ -78,10 +79,18 @@ const LayoutPage = ({ user, children }: Props) => {
             onMouseMove={handleMouseMove}
           >
             <ListTile
-              url="/administrator"
+              url="/"
               onClick={() => {}}
               title="Home"
               icon={faHome}
+              className="select-none no-drag"
+            />
+
+            <ListTile
+              url="/administrator"
+              onClick={() => {}}
+              title="Admin"
+              icon={faSection}
               className="select-none no-drag"
             />
 

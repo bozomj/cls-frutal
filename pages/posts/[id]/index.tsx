@@ -92,14 +92,11 @@ export default function DetailsPostPage({ user_id }: Props) {
 
       const result = data;
 
-      console.log(data);
-
       setItem(result);
       setImagens(result.imagens);
       setImgPrincipal(result.imagens[0]?.url ?? null);
       setImageProfile(result.img_profile ?? null);
       IsPostUserId(result.user_id == user_id);
-      console.log(result);
     },
     [user_id, router],
   );
@@ -129,24 +126,27 @@ export default function DetailsPostPage({ user_id }: Props) {
         {!item.id ? (
           <WirePost />
         ) : (
-          <article className="flex flex-auto flex-col gap-2 w-full max-w-[40rem] p-4 bg-gray-100 rounded-2xl shadow-sm shadow-gray-400 my-2 h-full">
+          <article className="flex flex-auto flex-col gap-2 w-full max-w-7xl p-4 bg-gray-100 rounded-2xl shadow-sm shadow-gray-400 my-2 h-full">
             <PostHeader />
 
             <div>
-              <section className="bg-gray-200 rounded-2xl flex-auto p-2">
+              <section className=" rounded-2xl flex-auto p-2">
                 <MiniGalleryImage
                   post_imagens={post_imagens}
                   imgPrincipal={imgPrincial as string}
-                  onClick={() =>
-                    usebackdrop.openContent(
-                      <FullImageView
-                        images={post_imagens}
-                        index={imagemIndex}
-                        visible={true}
-                        onClose={closeFullImages}
-                      />,
-                    )
-                  }
+                  className="md:max-w-1/2"
+                  onClick={() => {
+                    if (imgPrincial) {
+                      usebackdrop.openContent(
+                        <FullImageView
+                          images={post_imagens}
+                          index={imagemIndex}
+                          visible={true}
+                          onClose={closeFullImages}
+                        />,
+                      );
+                    }
+                  }}
                   selectImg={(i) => {
                     setImgPrincipal(post_imagens[i].url);
                     setImagemIndex(i);
@@ -451,7 +451,7 @@ export default function DetailsPostPage({ user_id }: Props) {
 
   function ItemTitle() {
     return (
-      <div className="flex  gap-2 items-center  font-bold w-full mt-2">
+      <div className="flex  gap-2 items-center w-full mt-2">
         <OwnerGuard isOwner={isPostUserId}>
           <IconButton
             icon={faEdit}
@@ -483,7 +483,7 @@ export default function DetailsPostPage({ user_id }: Props) {
 
   function ItemValor() {
     return (
-      <div className="font-bold text-green-700 flex gap-2">
+      <div className=" text-green-700 flex gap-2">
         <OwnerGuard isOwner={isPostUserId}>
           <IconButton
             className="text-xl text-green-800 cursor-pointer"

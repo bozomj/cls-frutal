@@ -78,7 +78,15 @@ describe("Categorias", () => {
   });
 
   it("deletar imagem carrossel no 2r com user admin", async () => {
-    const user = await User.login("roberto@hotmail.com", "123456");
+    await User.create({
+      name: "Tulio Alcantara",
+      email: "tulio@hotmail.com",
+      phone: "34997668902",
+      password: "123456",
+      is_admin: true,
+    });
+
+    const user = await User.login("tulio@hotmail.com", "123456");
 
     const result = await fetch("http://localhost:3000/api/v1/carrossel", {
       method: "DELETE",
