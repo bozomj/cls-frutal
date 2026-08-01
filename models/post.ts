@@ -246,14 +246,14 @@ async function getById(id: string) {
     ) AS imagens
 
       FROM posts
-      LEFT JOIN imagens ON imagens.post_id = posts.id and imagens.status = $2
+      LEFT JOIN imagens ON imagens.post_id = posts.id 
       LEFT JOIN users ON users.id = posts.user_id
       LEFT JOIN perfil_images ON perfil_images.user_id = posts.user_id AND perfil_images.selected = true
       WHERE posts.id = $1 
       GROUP BY posts.id, users.email, perfil_images.url, users.phone;
       
       `,
-      [id, ImageStatus.ACTIVE],
+      [id],
     );
 
     return posts.length > 0 ? posts[0] : null;

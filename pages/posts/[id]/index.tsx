@@ -32,7 +32,7 @@ import {
   IconButton,
 } from "@/components";
 import OwnerGuard from "@/components/guards/OwnerGuard";
-import { ImageDBType } from "@/shared/Image_types";
+import { ImageDBType, ImageStatus } from "@/shared/Image_types";
 import { v4 as uuidv4 } from "uuid";
 import Head from "next/head";
 import { PostStatus } from "@/shared/post_status";
@@ -111,6 +111,10 @@ export default function DetailsPostPage({ user_id }: Props) {
     fetchData();
   }, [post_id, getPost]);
   if (item.status !== PostStatus.ACTIVE) return <></>;
+
+  const imagenSAtivas = post_imagens.filter(
+    (img) => img.status === ImageStatus.ACTIVE,
+  );
   return (
     <>
       <Head>
@@ -132,14 +136,14 @@ export default function DetailsPostPage({ user_id }: Props) {
             <div>
               <section className=" rounded-2xl flex-auto p-2">
                 <MiniGalleryImage
-                  post_imagens={post_imagens}
+                  post_imagens={imagenSAtivas}
                   imgPrincipal={imgPrincial as string}
                   className="md:max-w-1/2"
                   onClick={() => {
                     if (imgPrincial) {
                       usebackdrop.openContent(
                         <FullImageView
-                          images={post_imagens}
+                          images={imagenSAtivas}
                           index={imagemIndex}
                           visible={true}
                           onClose={closeFullImages}
@@ -177,10 +181,13 @@ export default function DetailsPostPage({ user_id }: Props) {
                         {post_imagens[0] !== null &&
                           post_imagens.map((img, i) => {
                             const newImg = utils.getUrlImageR2(img.url);
+                            const isActive = img.status === ImageStatus.ACTIVE;
                             return (
                               <ImageCardPreview
                                 key={"img-" + i}
                                 image={{ ...img, url: newImg }}
+                                active={isActive}
+                                alertMsg={isActive ? "" : "Pendente!"}
                                 onClick={() => {
                                   usebackdrop.openContent(
                                     <Modal
