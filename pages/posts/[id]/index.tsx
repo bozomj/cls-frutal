@@ -4,7 +4,11 @@ import { useRouter } from "next/router";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faImage } from "@fortawesome/free-regular-svg-icons";
-import { faPlus, faShareFromSquare } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPlus,
+  faShare,
+  faShareFromSquare,
+} from "@fortawesome/free-solid-svg-icons";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 
 import { GetServerSidePropsContext } from "next";
@@ -37,6 +41,7 @@ import { v4 as uuidv4 } from "uuid";
 import Head from "next/head";
 import { PostStatus } from "@/shared/post_status";
 import Post from "@/models/post";
+import VerticalDivider from "@/components/VerticalDivider";
 
 type Props = {
   user_id?: string;
@@ -75,7 +80,7 @@ export default function DetailsPostPage({ user_id }: Props) {
   const [imgProfileUrl, setImageProfile] = useState<string | null>(null);
 
   const titleRef = useRef<HTMLHeadingElement | null>(null);
-  const valorRef = useRef<HTMLElement | null>(null);
+  const valorRef = useRef<HTMLParagraphElement | null>(null);
   const descricaoRef = useRef<HTMLParagraphElement | null>(null);
   const usebackdrop = useBackdrop();
 
@@ -126,15 +131,16 @@ export default function DetailsPostPage({ user_id }: Props) {
         />
       </Head>
       <Header />
-      <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center text-black ">
+      <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex gap-2 items-center text-black ">
         {!item.id ? (
           <WirePost />
         ) : (
-          <article className="flex flex-auto flex-col gap-2 w-full max-w-7xl p-4 bg-gray-100 rounded-2xl shadow-sm shadow-gray-400 my-2 h-full">
+          <article className="flex flex-col gap-2 w-full max-w-7xl p-4 bg-gray-100 rounded-2xl shadow-sm my-2 h-full">
             <PostHeader />
+            <VerticalDivider height={1} />
 
             <div>
-              <section className=" rounded-2xl flex-auto p-2">
+              <section className=" rounded-2xl flex-auto p-2 gap-4 flex flex-col md:flex-row">
                 <MiniGalleryImage
                   post_imagens={imagenSAtivas}
                   imgPrincipal={imgPrincial as string}
@@ -156,158 +162,142 @@ export default function DetailsPostPage({ user_id }: Props) {
                     setImagemIndex(i);
                   }}
                 />
-                <ItemTitle />
-                <div className=" flex justify-between items-baseline ">
+
+                <div className="flex flex-col w-full gap-1">
+                  <ItemTitle />
                   <ItemValor />
+                  <ItemDescription />
                   <ButtonsActions />
                 </div>
-                <ItemDescription />
               </section>
-
-              <OwnerGuard isOwner={isPostUserId}>
-                <section
-                  id="postuseractions"
-                  className="outline-0 outline-gray-400 rounded-2xl bg-gray-200 mt-4"
-                >
-                  <div>
-                    <h2 className="text-2xl text-center p-2 font-bold">
-                      Adicionar ou remover imagens
-                    </h2>
-                    <div className="bg-gray-500 rounded py-2">
-                      <h3 className="p-2 text-white text-center text-xl">
-                        Imagens Atuais
-                      </h3>
-                      <div className="flex gap-2 overflow-x-scroll h-[15rem] p-2 bg-gray-400 ">
-                        {post_imagens[0] !== null &&
-                          post_imagens.map((img, i) => {
-                            const newImg = utils.getUrlImageR2(img.url);
-                            const isActive = img.status === ImageStatus.ACTIVE;
-                            return (
-                              <ImageCardPreview
-                                key={"img-" + i}
-                                image={{ ...img, url: newImg }}
-                                active={isActive}
-                                alertMsg={isActive ? "" : "Pendente!"}
-                                onClick={() => {
-                                  usebackdrop.openContent(
-                                    <Modal
-                                      onConfirm={() => deletarImagem(img)}
-                                      onClose={() => usebackdrop.closeContent()}
-                                    >
-                                      <div className="relative flex ">
-                                        <Image
-                                          className="object-contain h-auto w-auto"
-                                          alt=""
-                                          src={utils.getUrlImageR2(img.url)}
-                                          width={60}
-                                          height={60}
-                                          loading="eager"
-                                        />
-                                      </div>
-                                      Deseja remover esta imagem
-                                    </Modal>,
-                                  );
-                                }}
-                              />
-                            );
-                          })}
-                      </div>
-                    </div>
-                  </div>
-
-                  {loadingImages && (
-                    <div className="m-3">
-                      <LinearProgressIndicator />
-                    </div>
-                  )}
-                  {previewImagens.length > 0 && (
-                    <div className="bg-gray-500 mt-2 rounded overflow-hidden">
-                      <h3 className="text-white text-xl text-center p-2">
-                        Novas Imagens
-                      </h3>
-                      <div
-                        id="preview-imagens"
-                        className="flex gap-3  overflow-x-scroll h-[15rem]  bg-gray-400 py-4"
-                      >
-                        {previewImagens.map((img, index) => {
-                          console.log(img);
-                          img.id = uuidv4();
-                          return (
-                            <ImageCardPreview
-                              key={img.id}
-                              image={img}
-                              onClick={() => {
-                                setPreviewImagens((p) => {
-                                  const imgToRemove = p.find(
-                                    (im) => im.url === img.url,
-                                  );
-                                  if (imgToRemove)
-                                    URL.revokeObjectURL(imgToRemove.url);
-                                  return p.filter((_, i) => i !== index);
-                                });
-                              }}
-                              onImageClick={() => {
-                                usebackdrop.openContent(
-                                  <ImageCropper
-                                    image={img.url}
-                                    onConfirm={(newim) => {
-                                      const url = URL.createObjectURL(newim);
-                                      const newImg = {
-                                        id: img.id,
-                                        file: newim,
-                                        url: url,
-                                      };
-                                      setPreviewImagens((imgs) =>
-                                        imgs.map((im) =>
-                                          im.id === img.id
-                                            ? { ...im, ...newImg }
-                                            : im,
-                                        ),
-                                      );
-                                    }}
-                                  />,
-                                );
-                              }}
-                            />
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-                  <div className="flex justify-between  p-2">
-                    {post_imagens.length < _item.maxImagens && (
-                      <label className="bg-cyan-800 hover:bg-cyan-600  cursor-pointer block w-fit p-2 pr-3 pt-3 rounded  text-white relative">
-                        <FontAwesomeIcon
-                          icon={faPlus}
-                          className=" absolute rounded-full top-1 right-1 text-md"
-                        />
-                        <FontAwesomeIcon className="text-3xl" icon={faImage} />
-                        <input
-                          type="file"
-                          className="hidden"
-                          accept="image/*"
-                          multiple
-                          max={3}
-                          onChange={(e) => selecionarImagens(e)}
-                        />
-                      </label>
-                    )}
-
-                    {previewImagens.length > 0 && (
-                      <button
-                        className="btn bg-green-700 text-white font-bold hover:bg-green-800"
-                        onClick={uploadImages}
-                      >
-                        salvar
-                      </button>
-                    )}
-                  </div>
-                </section>
-              </OwnerGuard>
             </div>
           </article>
         )}
-        <Footer />
+
+        <OwnerGuard isOwner={isPostUserId}>
+          <section
+            id="postuseractions"
+            //className="outline-0 outline-gray-400 rounded-2xl bg-gray-200 mt-4"
+            className="bg-white rounded-2xl shadow-sm border w-full border-slate-100 p-4 md:p-6"
+          >
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">
+                Adicionar ou remover imagens
+              </h2>
+              <p className="text-xs text-slate-400 mb-2">
+                Gerencie o catálogo de fotos deste anúncio
+              </p>
+
+              <div className="bg-gray-100 rounded gap-y-2 py-2 flex w-full flex-wrap ">
+                {post_imagens[0] !== null &&
+                  post_imagens.map((img, i) => {
+                    const newImg = utils.getUrlImageR2(img.url);
+                    const isActive = img.status === ImageStatus.ACTIVE;
+                    return (
+                      <ImageCardPreview
+                        key={"img-" + i}
+                        image={{ ...img, url: newImg }}
+                        active={isActive}
+                        alertMsg={isActive ? "" : "Pendente!"}
+                        onClick={() => {
+                          usebackdrop.openContent(
+                            <Modal
+                              onConfirm={() => deletarImagem(img)}
+                              onClose={() => usebackdrop.closeContent()}
+                            >
+                              <div className="relative flex ">
+                                <Image
+                                  className="object-contain h-auto w-auto"
+                                  alt=""
+                                  src={utils.getUrlImageR2(img.url)}
+                                  width={60}
+                                  height={60}
+                                  loading="eager"
+                                />
+                              </div>
+                              Deseja remover esta imagem
+                            </Modal>,
+                          );
+                        }}
+                      />
+                    );
+                  })}
+
+                {previewImagens.map((img, index) => {
+                  console.log(img);
+                  img.id = uuidv4();
+                  return (
+                    <ImageCardPreview
+                      key={img.id}
+                      image={img}
+                      active={false}
+                      alertMsg="Salvar"
+                      onClick={() => {
+                        setPreviewImagens((p) => {
+                          const imgToRemove = p.find(
+                            (im) => im.url === img.url,
+                          );
+                          if (imgToRemove) URL.revokeObjectURL(imgToRemove.url);
+                          return p.filter((_, i) => i !== index);
+                        });
+                      }}
+                      onImageClick={() => {
+                        usebackdrop.openContent(
+                          <ImageCropper
+                            image={img.url}
+                            onConfirm={(newim) => {
+                              const url = URL.createObjectURL(newim);
+                              const newImg = {
+                                id: img.id,
+                                file: newim,
+                                url: url,
+                              };
+                              setPreviewImagens((imgs) =>
+                                imgs.map((im) =>
+                                  im.id === img.id ? { ...im, ...newImg } : im,
+                                ),
+                              );
+                            }}
+                          />,
+                        );
+                      }}
+                    />
+                  );
+                })}
+
+                <OwnerGuard
+                  isOwner={post_imagens.length + previewImagens.length < 3}
+                >
+                  <label className="bg-cyan-50 border-dashed border-2 border-cyan-600 w-1/3 flex cursor-pointer rounded text-cyan-600 justify-center items-center shrink-0 min-w-1/3 md:min-w-1/3 min-h-[120]">
+                    <FontAwesomeIcon className="text-3xl " icon={faPlus} />
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      multiple
+                      max={3}
+                      onChange={(e) => selecionarImagens(e)}
+                    />
+                  </label>
+                </OwnerGuard>
+              </div>
+            </div>
+
+            <div className="flex flex-row-reverse py-4">
+              {previewImagens.length > 0 && (
+                <button
+                  className="btn bg-green-700 text-white font-bold hover:bg-green-800"
+                  onClick={uploadImages}
+                >
+                  salvar
+                </button>
+              )}
+            </div>
+          </section>
+        </OwnerGuard>
+        <div className="w-full mt-auto">
+          <Footer />
+        </div>
       </main>
     </>
   );
@@ -458,17 +448,10 @@ export default function DetailsPostPage({ user_id }: Props) {
 
   function ItemTitle() {
     return (
-      <div className="flex  gap-2 items-center w-full mt-2">
-        <OwnerGuard isOwner={isPostUserId}>
-          <IconButton
-            icon={faEdit}
-            className="text-xl text-green-800 cursor-pointer peer"
-            onClick={() => titleRef.current!.focus()}
-          />
-        </OwnerGuard>
+      <div className="flex font-sans font-black gap-2 items-center w-full mt-1">
         <h1
           ref={titleRef}
-          className="focus:outline-2 text-xl  focus:outline-gray-400 text-gray-800 "
+          className="focus:outline-none text-xl border-b-purple-400/0 border-b-2 w-full text-gray-800 focus:border-purple-400 px-4"
           {...(isPostUserId && {
             contentEditable: true,
             suppressContentEditableWarning: true,
@@ -490,19 +473,11 @@ export default function DetailsPostPage({ user_id }: Props) {
 
   function ItemValor() {
     return (
-      <div className=" text-green-700 flex gap-2">
-        <OwnerGuard isOwner={isPostUserId}>
-          <IconButton
-            className="text-xl text-green-800 cursor-pointer"
-            onClick={() => valorRef.current!.focus()}
-            icon={faEdit}
-          />
-        </OwnerGuard>
-
-        <p>
-          R$:
-          <span
-            className="p-2 focus:outline-gray-400 focus:outline-2 text-xl "
+      <div className=" text-emerald-700 flex gap-2 border bg-emerald-50 border-emerald-100 w-full rounded-xl p-3">
+        <div className="w-full">
+          <p className="text-xs font-medium py-1">Preço (R$)</p>
+          <p
+            className=" font-black border-b-2 border-emerald-50 focus:border-emerald-400  w-full  focus:outline-none  text-xl "
             ref={valorRef}
             {...(isPostUserId
               ? {
@@ -528,28 +503,28 @@ export default function DetailsPostPage({ user_id }: Props) {
                 }
               : {})}
           >
-            {utils.formatarMoeda(item.valor.toString())}
-          </span>
-        </p>
+            R$ {utils.formatarMoeda(item.valor.toString())}
+          </p>
+        </div>
       </div>
     );
   }
 
   function ButtonsActions() {
     return (
-      <div className="flex items-center justify-end text-2xl ">
+      <div className="flex items-end h-full justify-end  gap-2 ">
         <a
           target="_blank"
-          className="text-green-700  btn text-2xl hover:text-green-900 hover:bg-gray-300"
+          className=" btn text-white text-center hover:bg-emerald-800 bg-emerald-600 w-full"
           href={`https://wa.me/55${item.phone}?text=ola gostariad e falar com voce`}
         >
-          <FontAwesomeIcon icon={faWhatsapp} />
+          Compartilhar no WhatsApp <FontAwesomeIcon icon={faWhatsapp} />
         </a>
         <button
-          className="text-teal-500 btn text-xl hover:text-teal-700 hover:bg-gray-300"
+          className="text-slate-400 bg-gray-200 btn w-10 hover:text-teal-700 hover:bg-gray-300"
           onClick={copiarLink}
         >
-          <FontAwesomeIcon icon={faShareFromSquare} />
+          <FontAwesomeIcon icon={faShare} />
         </button>
       </div>
     );
@@ -557,20 +532,13 @@ export default function DetailsPostPage({ user_id }: Props) {
 
   function ItemDescription() {
     return (
-      <div className="">
+      <div className="mt-2">
         <div className="flex items-center gap-2">
-          {isPostUserId && (
-            <IconButton
-              className="text-xl text-green-800 cursor-pointer"
-              icon={faEdit}
-              onClick={() => descricaoRef.current!.focus()}
-            />
-          )}
-          <h2 className="text-gray-500">Sobre este item</h2>
+          <h2 className="text-gray-500 text-xs px-4">SOBRE ESTE ITEM</h2>
         </div>
         <p
           ref={descricaoRef}
-          className="focus:outline-2 focus:outline-gray-400 text-gray-700"
+          className="focus:outline-2 block focus:outline-gray-400 text-slate-600 bg-gray-200 p-4 rounded-xl min-h-[120]"
           {...(isPostUserId
             ? {
                 contentEditable: true,
@@ -588,7 +556,7 @@ export default function DetailsPostPage({ user_id }: Props) {
           {item.description}
         </p>
         <OwnerGuard isOwner={isPostUserId}>
-          <div className="border-t-1 border-gray-400 flex justify-end py-4 mt-4">
+          <div className="border-t-1 border-slate-300 flex justify-end py-4 mt-4">
             <button
               type="button"
               disabled={buttonDisabled}

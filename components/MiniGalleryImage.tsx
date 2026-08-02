@@ -27,14 +27,14 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
         id="imagem_principal"
         className="w-full cursor-pointer order-2 
         self-center h-full items-center  flex justify-center
-         border-gray-100     overflow-hidden hover:border-cyan-600 relative border-2"
+         border-gray-300 overflow-hidden hover:border-cyan-600 rounded-r-xl relative border-2 "
       >
         <Image
           alt=""
           src={utils.getUrlImageR2(imgPrincipal)}
           fill
           sizes="70"
-          className={`cursor-zoom-in bg-gray-100 object-contain  rounded-r-xl overflow-hidden `}
+          className={`cursor-zoom-in bg-gray-200  object-contain   overflow-hidden `}
           onClick={onClick}
         />
       </div>

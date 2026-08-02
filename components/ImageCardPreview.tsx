@@ -24,26 +24,27 @@ function ImageCardPreview({
   console.log(active);
   return (
     <div
-      className={`w-fit h-full relative shrink-0 max-w-2/3 text-white ${className}`}
+      className={`relative w-1/3 lg:max-w-1/6 md:max-w-1/4  text-white shrink ${className}`}
     >
-      <RemoveButton />
-      <Card className="relative border-3 h-full border-cyan-600 bg-cyan-200 peer-hover:bg-red-500/40 peer-hover:border-red-500 overflow-hidden">
-        <Image
-          className={
-            (active ? `` : `opacity-40!`) +
-            " rounded-md cursor-pointer h-full w-full  object-cover"
-          }
-          src={image.url}
-          alt=""
-          width={500}
-          height={500}
-          onClick={onImageClick}
-        />
+      <div className={(active ? `` : `opacity-40! `) + `h-full px-1 `}>
+        <RemoveButton />
 
-        <span className="absolute left-0 top-[80%] bg-accent w-full text-center">
+        <Card className="relative  border-2 w-full h-full border-slate-400 bg-slate-200 peer-hover:bg-red-500/40 peer-hover:border-red-500 overflow-hidden ">
+          <Image
+            className={" rounded-md cursor-pointer h-full w-full  object-cover"}
+            src={image.url}
+            alt=""
+            width={500}
+            height={500}
+            onClick={onImageClick}
+          />
+        </Card>
+      </div>
+      <div className="absolute left-0 bottom-0 px-1 w-full ">
+        <span className="bg-accent w-full text-center rounded-b-md  block">
           {alertMsg}
         </span>
-      </Card>
+      </div>
     </div>
   );
 
@@ -51,7 +52,7 @@ function ImageCardPreview({
     return (
       <button
         type="button"
-        className={`z-40 absolute cursor-pointer bg-red-900 hover:bg-red-500 rounded-full h-6 w-6 p-1 -right-2 -top-2 peer flex justify-center `}
+        className={`z-10 absolute cursor-pointer bg-red-700 hover:bg-red-500 rounded-full h-7 w-7 p-1 right-2 top-2 peer flex justify-center items-center`}
         onClick={() => onClick(image)}
       >
         <FontAwesomeIcon icon={faRemove} />
