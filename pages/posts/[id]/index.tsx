@@ -525,9 +525,7 @@ export default function DetailsPostPage({ user_id }: Props) {
   function ButtonEditar() {
     return (
       <OwnerGuard isOwner={isPostUserId}>
-        <div
-          className={"border-t-1  border-slate-300  flex justify-end py-4 mt-4"}
-        >
+        <div className={"  border-slate-300  flex justify-end py-4 mt-4"}>
           <button
             type="button"
             disabled={buttonDisabled}
