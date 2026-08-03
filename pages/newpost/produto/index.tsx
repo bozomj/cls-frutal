@@ -24,6 +24,9 @@ import httpPost from "@/http/post";
 import { PostDBType } from "@/shared/post_types";
 import { ImageDBType } from "@/shared/Image_types";
 import { CategoriaDBType } from "@/shared/categoria_types";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { ImageCardPreview } from "@/components";
+import OwnerGuard from "@/components/guards/OwnerGuard";
 
 const post: PostDBType = {
   title: "",
@@ -82,7 +85,7 @@ export default function Produto() {
       <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center p-2">
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-4 bg-gray-50 rounded p-4 md:w-[480px] m-4 w-full "
+          className="flex flex-col gap-4 bg-gray-50 rounded p-2 md:w-[480px] m-4 w-full "
         >
           <h1 className="text-gray-800 font-bold">Nova Publicação</h1>
           <span className="text-red-800 font-bold h-3">
@@ -94,10 +97,12 @@ export default function Produto() {
           <input
             type="text"
             value={title}
-            placeholder="Titulo"
-            className={`${style.input} ${
-              postError.title ? "outline-2 outline-red-600" : ""
-            } `}
+            placeholder="Insira um titulo"
+            className={`font-sans font-black outline-0 border-b-2 border-b-red-800/0 px-4
+               text-black 
+               focus:border-b-2  focus:border-b-red-800 ${
+                 postError.title ? "outline-2 outline-red-600" : ""
+               }  `}
             onChange={(e) => {
               post.title = e.target.value;
               setTitle(post.title);
@@ -105,11 +110,30 @@ export default function Produto() {
             }}
           />
 
+          <div
+            className="outline-0 text-emerald-700
+                flex flex-col border font-black bg-emerald-50 border-emerald-100 w-full rounded-xl p-4"
+          >
+            <p className="text-xs font-medium py-1">Preço (R$)</p>
+            <input
+              name="valor"
+              type="text"
+              placeholder="R$: 0,00"
+              value={valor}
+              className={`
+                outline-0 
+              focus:border-b-emerald-400 focus:border-b-2 w-full
+              ${postError.valor ? "outline-2 outline-red-600" : ""}`}
+              onChange={(e) => formatarMoeda(e)}
+            />
+          </div>
+
+          <h2 className="text-gray-500 text-xs px-4">SOBRE ESTE ITEM</h2>
           <textarea
-            placeholder="Descrição"
+            placeholder="Insira uma descrição sobre esse item"
             value={description}
-            className={`${style.input} ${
-              postError.description ? "outline-2 outline-red-600" : ""
+            className={`bg-gray-300 text-slate-800 rounded-md border-0 placeholder-slate-600 p-4 outline-gray-400 ${
+              postError.description ? "outline-2  outline-red-600" : ""
             } `}
             onChange={(e) => {
               post.description = e.target.value;
@@ -147,52 +171,54 @@ export default function Produto() {
             </select>
           </div>
 
-          <input
-            name="valor"
-            type="text"
-            placeholder="R$: 0,00"
-            value={valor}
-            className={`${style.input} ${
-              postError.valor ? "outline-2 outline-red-600" : ""
-            }`}
-            onChange={(e) => formatarMoeda(e)}
-          />
-
-          <label className="w-fit">
-            <span
-              className={`${
-                imagens.length >= 3
-                  ? "bg-gray-500 text-gray-800"
-                  : "bg-cyan-700 hover:bg-cyan-400 focus:outline-cyan-400 focus:outline-4 cursor-pointer"
-              } block w-fit p-2 rounded  `}
-              tabIndex={0}
-            >
-              <FontAwesomeIcon className="text-3xl" icon={faImage} />
-            </span>
-            <input
-              accept="image/*"
-              type="file"
-              className="hidden"
-              multiple
-              disabled={imagens.length >= 3}
-              onChange={(e) => selecionarImagens(e)}
-            />
-          </label>
-
           {loading && <LinearProgressIndicator />}
+
           <div
             id="preview"
-            className="flex gap-3 bg-gray-400 p-2 rounded overflow-x-scroll"
+            className="flex w-full bg-gray-200 p-2 rounded  h-46"
           >
-            {imagens.map((e) => {
+            {imagens.map((img) => {
               return (
-                <ImagePreview
-                  key={e.url}
-                  image={e}
-                  onClick={() => removeImagePreview(e)}
+                <ImageCardPreview
+                  key={img.id}
+                  image={img}
+                  alertMsg="Preview"
+                  onClick={() => removeImagePreview(img)}
+                  onImageClick={() => {
+                    let image = img;
+                    usebackdrop.openContent(
+                      <ImageCropper
+                        image={image.url}
+                        onConfirm={(file) => {
+                          const url = URL.createObjectURL(file);
+                          const newImg = { ...image, file, url };
+
+                          setImagens((imgs) =>
+                            imgs.map((img) =>
+                              img.id === image.id ? newImg : img,
+                            ),
+                          );
+                        }}
+                      />,
+                    );
+                  }}
                 />
               );
             })}
+            <OwnerGuard isOwner={imagens.length < 3}>
+              <label className="bg-cyan-50 border-dashed border-2 border-cyan-600 w-1/3 flex cursor-pointer rounded text-cyan-600 justify-center items-center shrink-0 min-w-1/3 md:min-w-1/3 min-h-[120]">
+                <FontAwesomeIcon className="text-3xl" icon={faPlus} />
+
+                <input
+                  accept="image/*"
+                  type="file"
+                  className="hidden"
+                  multiple
+                  disabled={imagens.length >= 3}
+                  onChange={(e) => selecionarImagens(e)}
+                />
+              </label>
+            </OwnerGuard>
           </div>
 
           <div id="actions" className="flex gap-2 items-center">
@@ -204,49 +230,6 @@ export default function Produto() {
     </>
   );
 
-  function ImagePreview({
-    image,
-    onClick,
-  }: {
-    image: ImageDBType;
-    onClick: (image: ImageDBType) => void;
-  }) {
-    return (
-      <div className="relative min-w-2/3  ">
-        <div
-          className="absolute cursor-pointer bg-red-900 hover:bg-red-500 rounded-full h-8 w-8 text-center p-1 -right-2 -top-2 peer "
-          onClick={() => onClick(image)}
-        >
-          X
-        </div>
-        <Card className="border-3 border-cyan-600 bg-cyan-800 peer-hover:bg-red-500/40 peer-hover:border-red-500 min-w-full">
-          <Image
-            className="rounded-md cursor-pointer"
-            src={image.url}
-            alt=""
-            width={150}
-            height={150}
-            loading="eager"
-            onClick={() => {
-              usebackdrop.openContent(
-                <ImageCropper
-                  image={image.url}
-                  onConfirm={(file) => {
-                    const url = URL.createObjectURL(file);
-                    const newImg = { ...image, file, url };
-
-                    setImagens((imgs) =>
-                      imgs.map((img) => (img.id === image.id ? newImg : img)),
-                    );
-                  }}
-                />,
-              );
-            }}
-          />
-        </Card>
-      </div>
-    );
-  }
   async function getCategorias() {
     const categorias = await httpCategoria.getAll();
 
