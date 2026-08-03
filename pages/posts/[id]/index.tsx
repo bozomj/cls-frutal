@@ -4,11 +4,7 @@ import { useRouter } from "next/router";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faImage } from "@fortawesome/free-regular-svg-icons";
-import {
-  faPlus,
-  faShare,
-  faShareFromSquare,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faShare } from "@fortawesome/free-solid-svg-icons";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 
 import { GetServerSidePropsContext } from "next";
@@ -30,10 +26,8 @@ import {
   MiniGalleryImage,
   ImageCardPreview,
   CapitalizeText,
-  LinearProgressIndicator,
   Modal,
   ImageCropper,
-  IconButton,
 } from "@/components";
 import OwnerGuard from "@/components/guards/OwnerGuard";
 import { ImageDBType, ImageStatus } from "@/shared/Image_types";
@@ -88,14 +82,12 @@ export default function DetailsPostPage({ user_id }: Props) {
 
   const getPost = useCallback(
     async (id: string) => {
-      const data = await httpPost.getPostId(id);
+      const result = await httpPost.getPostId(id);
 
-      if (data.length < 1 || data.message) {
+      if (result.length < 1 || result.message) {
         router.replace("/");
         return { message: "Post not found", status: 404 };
       }
-
-      const result = data;
 
       setItem(result);
       setImagens(result.imagens);
@@ -108,19 +100,16 @@ export default function DetailsPostPage({ user_id }: Props) {
 
   useEffect(() => {
     if (!post_id) return;
-
-    async function fetchData() {
-      await getPost(post_id);
-    }
-
-    fetchData();
+    getPost(post_id);
   }, [post_id, getPost]);
-  if (item.status !== PostStatus.ACTIVE) return <></>;
 
   const imagenSAtivas = post_imagens.filter(
     (img) => img.status === ImageStatus.ACTIVE,
   );
-  return (
+
+  return item.status !== PostStatus.ACTIVE ? (
+    <></>
+  ) : (
     <>
       <Head>
         <title>{item.title}</title>
@@ -145,28 +134,19 @@ export default function DetailsPostPage({ user_id }: Props) {
                   post_imagens={imagenSAtivas}
                   imgPrincipal={imgPrincial as string}
                   className="md:max-w-1/2"
-                  onClick={() => {
-                    if (imgPrincial) {
-                      usebackdrop.openContent(
-                        <FullImageView
-                          images={imagenSAtivas}
-                          index={imagemIndex}
-                          visible={true}
-                          onClose={closeFullImages}
-                        />,
-                      );
-                    }
-                  }}
+                  onClick={openFullImage}
                   selectImg={(i) => {
                     setImgPrincipal(post_imagens[i].url);
                     setImagemIndex(i);
                   }}
                 />
 
-                <div className="flex flex-col w-full gap-1">
+                <div className="flex flex-col w-full gap-4">
                   <ItemTitle />
                   <ItemValor />
                   <ItemDescription />
+                  <ButtonEditar />
+                  <VerticalDivider height={1} />
                   <ButtonsActions />
                 </div>
               </section>
@@ -177,7 +157,6 @@ export default function DetailsPostPage({ user_id }: Props) {
         <OwnerGuard isOwner={isPostUserId}>
           <section
             id="postuseractions"
-            //className="outline-0 outline-gray-400 rounded-2xl bg-gray-200 mt-4"
             className="bg-white rounded-2xl shadow-sm border w-full border-slate-100 p-4 md:p-6"
           >
             <div>
@@ -301,6 +280,19 @@ export default function DetailsPostPage({ user_id }: Props) {
       </main>
     </>
   );
+
+  function openFullImage() {
+    if (imgPrincial) {
+      usebackdrop.openContent(
+        <FullImageView
+          images={imagenSAtivas}
+          index={imagemIndex}
+          visible={true}
+          onClose={closeFullImages}
+        />,
+      );
+    }
+  }
 
   function imageUrl(url: string | null) {
     return utils.getUrlImageR2(url);
@@ -451,7 +443,7 @@ export default function DetailsPostPage({ user_id }: Props) {
       <div className="flex font-sans font-black gap-2 items-center w-full mt-1">
         <h1
           ref={titleRef}
-          className="focus:outline-none text-xl border-b-purple-400/0 border-b-2 w-full text-gray-800 focus:border-purple-400 px-4"
+          className="focus:outline-none text-xl border-b-red-700/0 border-b-2 w-full text-gray-800 focus:border-red-700 px-4"
           {...(isPostUserId && {
             contentEditable: true,
             suppressContentEditableWarning: true,
@@ -515,18 +507,41 @@ export default function DetailsPostPage({ user_id }: Props) {
       <div className="flex items-end h-full justify-end  gap-2 ">
         <a
           target="_blank"
-          className=" btn text-white text-center hover:bg-emerald-800 bg-emerald-600 w-full"
+          className=" btn text-white text-center hover:bg-emerald-800 bg-emerald-600 w-full transition duration-300"
           href={`https://wa.me/55${item.phone}?text=ola gostariad e falar com voce`}
         >
           Compartilhar no WhatsApp <FontAwesomeIcon icon={faWhatsapp} />
         </a>
         <button
-          className="text-slate-400 bg-gray-200 btn w-10 hover:text-teal-700 hover:bg-gray-300"
+          className="text-slate-400 transition duration-300 bg-gray-200 btn w-10 hover:text-teal-700 hover:bg-gray-300"
           onClick={copiarLink}
         >
           <FontAwesomeIcon icon={faShare} />
         </button>
       </div>
+    );
+  }
+
+  function ButtonEditar() {
+    return (
+      <OwnerGuard isOwner={isPostUserId}>
+        <div
+          className={"border-t-1  border-slate-300  flex justify-end py-4 mt-4"}
+        >
+          <button
+            type="button"
+            disabled={buttonDisabled}
+            className={` p-2 rounded-md  font-bold  ${
+              !buttonDisabled
+                ? "text-white bg-cyan-600 cursor-pointer"
+                : "bg-gray-500 text-gray-800"
+            }`}
+            onClick={postUpdate}
+          >
+            Editar
+          </button>
+        </div>
+      </OwnerGuard>
     );
   }
 
@@ -546,6 +561,9 @@ export default function DetailsPostPage({ user_id }: Props) {
 
                 onBlur: (e) => {
                   const value = e.currentTarget.innerText;
+
+                  if (value === item.description) return;
+
                   setDataItem({ ...dataItem, description: value });
                   setButtonDisabled(false);
                   setItem((p) => ({ ...p, description: value }));
@@ -555,22 +573,6 @@ export default function DetailsPostPage({ user_id }: Props) {
         >
           {item.description}
         </p>
-        <OwnerGuard isOwner={isPostUserId}>
-          <div className="border-t-1 border-slate-300 flex justify-end py-4 mt-4">
-            <button
-              type="button"
-              disabled={buttonDisabled}
-              className={` p-2 rounded-md  font-bold  ${
-                !buttonDisabled
-                  ? "text-white bg-cyan-600 cursor-pointer"
-                  : "bg-gray-500 text-gray-800"
-              }`}
-              onClick={postUpdate}
-            >
-              Editar
-            </button>
-          </div>
-        </OwnerGuard>
       </div>
     );
   }

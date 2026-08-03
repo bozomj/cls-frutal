@@ -204,7 +204,6 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
                 fill
                 sizes="50"
                 className="object-contain w-10/12"
-                objectPosition="left"
                 alt=""
               />
             </div>

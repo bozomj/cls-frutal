@@ -21,7 +21,6 @@ function ImageCardPreview({
   className,
   onImageClick,
 }: ImageCardPreviewProps) {
-  console.log(active);
   return (
     <div
       className={`relative w-1/3 lg:max-w-1/6 md:max-w-1/4  text-white shrink ${className}`}

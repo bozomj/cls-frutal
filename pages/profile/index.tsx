@@ -115,15 +115,15 @@ const Profile: React.FC = () => {
                   <div key={newImg.url} className="relative min-w-fit ">
                     <button
                       type="button"
-                      className={`absolute z-10 hover:text-green-300  ${
-                        newImg.selected ? "text-green-400" : "text-white"
+                      className={`absolute z-10 hover:text-green-600 hover:border-green-600  ${
+                        newImg.selected ? "text-green-800" : "text-white"
                       } text-3xl bottom-0 left-1`}
                       onClick={() => updateProfileImage(newImg, img.url)}
                     >
                       <FontAwesomeIcon
                         icon={faCircleCheck}
-                        className={`border-3 rounded-full ${
-                          newImg.selected ? "border-green-300" : "border-white"
+                        className={`border-3 rounded-full cursor-pointer  hover:border-green-600  ${
+                          newImg.selected ? "border-green-800" : "border-white"
                         }`}
                         size={"xs"}
                       />
@@ -131,7 +131,7 @@ const Profile: React.FC = () => {
 
                     <ImageCardPreview
                       image={newImg}
-                      className="max-w-full h-36!"
+                      className="max-w-full h-36! min-w-36!"
                       onClick={async (e) => {
                         const deleted =
                           await httpPerfilImages.deleteImageProfile(img);
