@@ -10,7 +10,7 @@ export function useQueryParams() {
   const router = useRouter();
 
   const search = router.query.q ?? "";
-  const limit = Number(router.query.limit ?? 5);
+  const limit = Number(router.query.limit ?? 20);
   const initial = Number(router.query.initial ?? 0);
   return { params: { search, limit, initial } };
 }

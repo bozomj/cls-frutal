@@ -7,7 +7,6 @@ import { useCarrosselImages } from "@/hooks/useCarrosselImages";
 import { usePaginacao } from "@/hooks/usePaginacao";
 import { usePosts } from "@/hooks/usePosts";
 import { QueryParams, useQueryParams } from "@/hooks/useQueryParams";
-import httpImage from "@/http/image";
 
 import httpPost from "@/http/post";
 

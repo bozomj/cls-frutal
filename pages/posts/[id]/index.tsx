@@ -64,6 +64,8 @@ export default function DetailsPostPage({ user_id }: Props) {
   const [imgPrincial, setImgPrincipal] = useState<string>();
   const [imagemIndex, setImagemIndex] = useState<number>(0);
 
+  const [postError, setError] = useState<Record<string, string>>({});
+
   const [item, setItem] = useState(_item);
 
   const [isPostUserId, IsPostUserId] = useState(false);
@@ -445,7 +447,17 @@ export default function DetailsPostPage({ user_id }: Props) {
 
   function ItemTitle() {
     return (
-      <div className="flex font-sans font-black gap-2 items-center w-full mt-1">
+      <div
+        className={
+          (postError.title == "" || postError.title == undefined
+            ? ""
+            : "border-3 rounded-md border-red-800 ") +
+          "flex flex-col font-sans font-black gap-2 items-center w-full mt-1"
+        }
+      >
+        <span className="w-full font-medium text-red-800 px-4">
+          {postError.title ?? ""}
+        </span>
         <h1
           ref={titleRef}
           className="focus:outline-none text-xl border-b-red-700/0 border-b-2 w-full text-gray-800 focus:border-red-700 px-4"
@@ -455,10 +467,16 @@ export default function DetailsPostPage({ user_id }: Props) {
             onInput: () => {},
             onBlur: (e) => {
               const value = e.currentTarget.innerText;
-              setDataItem({ ...dataItem, title: value });
+
               titleRef.current?.focus();
               setButtonDisabled(false);
+              if (value.replace("\n", "") == "") {
+                setError({ ...postError, title: "Insira um Título!" });
+              } else {
+                setError({ ...postError, title: "" });
+              }
               setItem((p) => ({ ...p, title: value }));
+              setDataItem({ ...dataItem, title: value });
             },
           })}
         >
@@ -469,9 +487,20 @@ export default function DetailsPostPage({ user_id }: Props) {
   }
 
   function ItemValor() {
+    console.log(postError.valor != undefined, "valor");
     return (
-      <div className=" text-emerald-700 flex gap-2 border bg-emerald-50 border-emerald-100 w-full rounded-xl p-3">
+      <div
+        className={
+          (postError.valor == "" || postError.valor == undefined
+            ? " "
+            : "border-red-800! border-3! ") +
+          " text-emerald-700 flex gap-2 border bg-emerald-50 border-emerald-100 w-full rounded-xl p-3"
+        }
+      >
         <div className="w-full">
+          <span className="text-red-800 font-medium">
+            {postError.valor ?? ""}
+          </span>
           <p className="text-xs font-medium py-1">Preço (R$)</p>
           <p
             className=" font-black border-b-2 border-emerald-50 focus:border-emerald-400  w-full  focus:outline-none  text-xl "
@@ -492,12 +521,28 @@ export default function DetailsPostPage({ user_id }: Props) {
                     moveCursorToEnd(v.currentTarget);
                   },
                   onBlur: (v) => {
-                    const e = v.currentTarget.innerText;
+                    const e = utils.extractNumberInString(
+                      v.currentTarget.innerText,
+                    );
+                    let n = Number(
+                      utils.stringForDecimalNumber(e).toFixed(2) ?? 0,
+                    );
 
-                    setDataItem((p) => ({ ...p, valor: e }));
+                    if (n <= 0) {
+                      setError({
+                        ...postError,
+                        valor: "O preço nao pode ser menor ou igual a Zero!",
+                      });
+                    } else {
+                      setError({
+                        ...postError,
+                        valor: "",
+                      });
+                    }
+                    setDataItem((p) => ({ ...p, valor: n }));
 
                     setButtonDisabled(false);
-                    setItem((p) => ({ ...p, valor: e }));
+                    setItem((p) => ({ ...p, valor: n }));
                   },
                 }
               : {})}
@@ -556,18 +601,33 @@ export default function DetailsPostPage({ user_id }: Props) {
         <div className="flex items-center gap-2">
           <h2 className="text-gray-500 text-xs px-4">SOBRE ESTE ITEM</h2>
         </div>
+        <span className="text-red-800 px-4 font-medium">
+          {postError.descricao ?? ""}
+        </span>
         <p
           ref={descricaoRef}
-          className="focus:outline-2 block  focus:outline-gray-400 text-slate-600 bg-gray-200 p-4 rounded-xl min-h-[120]"
+          className={
+            (postError.descricao == "" || postError.descricao == undefined
+              ? ""
+              : " border-3 border-red-800 ") +
+            "focus:outline-2 block  focus:outline-gray-400 text-slate-600 bg-gray-200 p-4 rounded-xl min-h-[120]"
+          }
           {...(isPostUserId
             ? {
                 contentEditable: true,
                 suppressContentEditableWarning: true,
 
                 onBlur: (e) => {
-                  const value = e.currentTarget.innerText;
+                  const value = e.currentTarget.innerText.replace("\n", "");
 
                   if (value === item.description) return;
+
+                  value == ""
+                    ? setError({
+                        ...postError,
+                        descricao: "Insira uma descrição!",
+                      })
+                    : setError({ ...postError, descricao: "" });
 
                   setDataItem({ ...dataItem, description: value });
                   setButtonDisabled(false);
