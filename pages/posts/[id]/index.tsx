@@ -157,7 +157,7 @@ export default function DetailsPostPage({ user_id }: Props) {
         <OwnerGuard isOwner={isPostUserId}>
           <section
             id="postuseractions"
-            className="bg-white rounded-2xl shadow-sm border w-full border-slate-100 p-4 md:p-6"
+            className="bg-white rounded-2xl shadow-sm border w-full border-slate-100 p-4 md:p-6 max-w-7xl"
           >
             <div>
               <h2 className="text-lg font-bold text-slate-900">
@@ -167,7 +167,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                 Gerencie o catálogo de fotos deste anúncio
               </p>
 
-              <div className="bg-gray-100 rounded gap-y-2 py-2 flex w-full flex-wrap ">
+              <div className="bg-gray-100 rounded justify-center gap-y-2 py-2 flex w-full flex-wrap ">
                 {post_imagens[0] !== null &&
                   post_imagens.map((img, i) => {
                     const newImg = utils.getUrlImageR2(img.url);
@@ -368,13 +368,18 @@ export default function DetailsPostPage({ user_id }: Props) {
   }
 
   async function postUpdate() {
+    console.log(item);
+    if (Number(item.valor) <= 0) throw "valor nao pode ser zerado!";
+    if (item.title.length < 3) throw "Titulo nao pode ficar em branco!";
+    if (item.description.length < 3) throw "Insira uma descrição!";
+
     try {
       const updated = await httpPost.update({
         id: item.id,
         user_id: item.user_id,
         ...dataItem,
       });
-      console.log(dataItem);
+
       if (updated?.id) {
         usebackdrop.openContent(
           <Alert
@@ -479,6 +484,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                     const e = utils.extractNumberInString(
                       v.currentTarget.innerText,
                     );
+
                     v.currentTarget.innerHTML = utils
                       .stringForDecimalNumber(e)
                       .toFixed(2);
@@ -487,6 +493,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                   },
                   onBlur: (v) => {
                     const e = v.currentTarget.innerText;
+
                     setDataItem((p) => ({ ...p, valor: e }));
 
                     setButtonDisabled(false);
@@ -545,13 +552,13 @@ export default function DetailsPostPage({ user_id }: Props) {
 
   function ItemDescription() {
     return (
-      <div className="mt-2">
+      <div className="mt-2 font-sans">
         <div className="flex items-center gap-2">
           <h2 className="text-gray-500 text-xs px-4">SOBRE ESTE ITEM</h2>
         </div>
         <p
           ref={descricaoRef}
-          className="focus:outline-2 block focus:outline-gray-400 text-slate-600 bg-gray-200 p-4 rounded-xl min-h-[120]"
+          className="focus:outline-2 block  focus:outline-gray-400 text-slate-600 bg-gray-200 p-4 rounded-xl min-h-[120]"
           {...(isPostUserId
             ? {
                 contentEditable: true,

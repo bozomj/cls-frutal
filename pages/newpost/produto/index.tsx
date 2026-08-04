@@ -25,7 +25,7 @@ import { PostDBType } from "@/shared/post_types";
 import { ImageDBType } from "@/shared/Image_types";
 import { CategoriaDBType } from "@/shared/categoria_types";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { ImageCardPreview } from "@/components";
+import { ImageCardPreview, MiniGalleryImage } from "@/components";
 import OwnerGuard from "@/components/guards/OwnerGuard";
 
 const post: PostDBType = {
@@ -82,10 +82,10 @@ export default function Produto() {
   return (
     <>
       <Header />
-      <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center p-2">
+      <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex justify-between gap-2 items-center p-2 ">
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-4 bg-gray-50 rounded p-2 md:w-[480px] m-4 w-full "
+          className="flex flex-col gap-4 bg-gray-50 rounded p-2 md:max-w-7xl m-4 w-full  "
         >
           <h1 className="text-gray-800 font-bold">Nova Publicação</h1>
           <span className="text-red-800 font-bold h-3">
@@ -93,11 +93,10 @@ export default function Produto() {
               ? "Todos os Campos são obrigatorio"
               : ""}
           </span>
-
           <input
             type="text"
             value={title}
-            placeholder="Insira um titulo"
+            placeholder="Título: (clique para inserir)"
             className={`font-sans font-black outline-0 border-b-2 border-b-red-800/0 px-4
                text-black 
                focus:border-b-2  focus:border-b-red-800 ${
@@ -105,11 +104,10 @@ export default function Produto() {
                }  `}
             onChange={(e) => {
               post.title = e.target.value;
+
               setTitle(post.title);
-              console.log(title);
             }}
           />
-
           <div
             className="outline-0 text-emerald-700
                 flex flex-col border font-black bg-emerald-50 border-emerald-100 w-full rounded-xl p-4"
@@ -118,28 +116,34 @@ export default function Produto() {
             <input
               name="valor"
               type="text"
-              placeholder="R$: 0,00"
+              placeholder="R$: 0,00 adicione um valor"
               value={valor}
               className={`
                 outline-0 
               focus:border-b-emerald-400 focus:border-b-2 w-full
               ${postError.valor ? "outline-2 outline-red-600" : ""}`}
-              onChange={(e) => formatarMoeda(e)}
+              onChange={(e) => {
+                formatarMoeda(e);
+                console.log(e.target.value);
+              }}
             />
           </div>
-
-          <h2 className="text-gray-500 text-xs px-4">SOBRE ESTE ITEM</h2>
-          <textarea
-            placeholder="Insira uma descrição sobre esse item"
-            value={description}
-            className={`bg-gray-300 text-slate-800 rounded-md border-0 placeholder-slate-600 p-4 outline-gray-400 ${
-              postError.description ? "outline-2  outline-red-600" : ""
-            } `}
-            onChange={(e) => {
-              post.description = e.target.value;
-              setDescription(post.description);
-            }}
-          />
+          <div className="w-full ">
+            <span className="block text-gray-500 text-xs px-4 w-full">
+              SOBRE ESTE ITEM
+            </span>
+            <textarea
+              placeholder="Insira uma descrição sobre esse item"
+              value={description}
+              className={`bg-gray-300 text-slate-800 rounded-md min-h-36 w-full border-0 placeholder-slate-600 p-4 outline-gray-400 ${
+                postError.description ? "outline-2  outline-red-600" : ""
+              } `}
+              onChange={(e) => {
+                post.description = e.target.value;
+                setDescription(post.description);
+              }}
+            />
+          </div>
           <div className="flex gap-2">
             <select
               name=""
@@ -170,12 +174,10 @@ export default function Produto() {
               })}
             </select>
           </div>
-
           {loading && <LinearProgressIndicator />}
-
           <div
             id="preview"
-            className="flex w-full bg-gray-200 p-2 rounded  h-46"
+            className="flex w-full bg-gray-200 p-2 rounded  h-46 justify-center"
           >
             {imagens.map((img) => {
               return (
@@ -206,7 +208,7 @@ export default function Produto() {
               );
             })}
             <OwnerGuard isOwner={imagens.length < 3}>
-              <label className="bg-cyan-50 border-dashed border-2 border-cyan-600 w-1/3 flex cursor-pointer rounded text-cyan-600 justify-center items-center shrink-0 min-w-1/3 md:min-w-1/3 min-h-[120]">
+              <label className="bg-cyan-50 border-dashed border-2 lg:max-w-1/6 md:max-w-1/4 border-cyan-600 w-1/3 flex cursor-pointer rounded text-cyan-600 justify-center items-center shrink-0  min-h-[120]">
                 <FontAwesomeIcon className="text-3xl" icon={faPlus} />
 
                 <input
@@ -220,7 +222,6 @@ export default function Produto() {
               </label>
             </OwnerGuard>
           </div>
-
           <div id="actions" className="flex gap-2 items-center">
             <ButtonSecondary onClick={() => router.back()} label="Cancelar" />
             <ButtonPrimary label={"Salvar"} onClick={() => {}} />
@@ -248,6 +249,12 @@ export default function Produto() {
   function formatarMoeda(e: React.ChangeEvent<HTMLInputElement>) {
     const input = e.target.value;
     const apenasNumeros = extractNumberInString(input);
+
+    if (apenasNumeros === "00") {
+      setValor("");
+      post.valor = 0;
+      return;
+    }
 
     const numero = stringForDecimalNumber(apenasNumeros);
     const formatado = formatNumberForMoedaString(numero);

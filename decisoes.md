@@ -53,6 +53,8 @@ x mudar ImageCropper para conter os botoes de confirmar e cancelar, confirmar re
 
 - quando adiciona imagem em um post ja aprovado, precisa que o post volte a ficar pendente
 
+- nao deixar salvar ou criar pub com valor zerado
+
 usuarios [
 diego@hotmail.com
 matheus@hotmail.com | senha 12345

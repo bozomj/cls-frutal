@@ -40,7 +40,7 @@ function ImageCardPreview({
         </Card>
       </div>
       <div className="absolute left-0 bottom-0 px-1 w-full ">
-        <span className="bg-accent w-full text-center rounded-b-md  block">
+        <span className="bg-accent w-full text-center rounded-b-md  block ">
           {alertMsg}
         </span>
       </div>
@@ -51,7 +51,7 @@ function ImageCardPreview({
     return (
       <button
         type="button"
-        className={`z-10 absolute cursor-pointer bg-red-700 hover:bg-red-500 rounded-full h-7 w-7 p-1 right-2 top-2 peer flex justify-center items-center`}
+        className={`z-10 absolute cursor-pointer bg-red-700 hover:bg-red-500 rounded-full h-7 w-7 p-1 right-2 top-1 peer flex justify-center items-center`}
         onClick={() => onClick(image)}
       >
         <FontAwesomeIcon icon={faRemove} />
