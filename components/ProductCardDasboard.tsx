@@ -51,9 +51,9 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
             </span>
           </div>
         </div>
-        {/* <VerticalDivider height={1} /> */}
-        <div className="flex w-full  overflow-hidden h-full gap-2 ">
-          <div className=" rounded-xl h-20 relative min-w-1/3">
+
+        <div className="flex w-full  overflow-hidden h-full gap-2 px-2  ">
+          <div className=" rounded-xl h-20 relative min-w-1/3 ">
             <Image
               src={utils.getUrlImageR2(item.imageurl ?? "")}
               fill
@@ -62,7 +62,7 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
               className="object-cover"
             />
           </div>
-          <div className=" flex text-gray-900 flex-col relative min-w-2/3">
+          <div className=" flex text-gray-900 flex-col relative min-w-2/3 justify-between">
             <span className="truncate font-bold text-gray-800">
               {item.title ?? ""}
             </span>
@@ -77,14 +77,17 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
           </div>
         </div>
       </article>
+      <span className="p-2 block">
+        <VerticalDivider height={1} />
+      </span>
       <div
         id="list-actions"
-        className="flex justify-end gap-4 items-center p-2"
+        className="flex justify-end gap-4 items-center pr-4 pb-2"
       >
         <span
           className={
             `${statusColor[item.status].text}  font-bold mr-2 pl-2 text-xs ` +
-            "flex-1 "
+            "flex-1"
           }
         >
           Status: {item.status}

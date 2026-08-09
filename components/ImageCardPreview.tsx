@@ -11,26 +11,35 @@ interface ImageCardPreviewProps {
   onClick?: (image: ImageDBType) => void;
   className?: string;
   onImageClick?: () => void;
+  circle?: boolean;
 }
 
 function ImageCardPreview({
   image,
   active = true,
   alertMsg = "",
+  circle = false,
   onClick,
   className,
   onImageClick,
 }: ImageCardPreviewProps) {
+  const avatar = circle ? " rounded-full! p-0! border-5 " : " ";
   return (
     <div
       className={`relative w-1/3 lg:max-w-1/6 md:max-w-1/4  text-white shrink ${className}`}
     >
       <div className={(active ? `` : `opacity-40! `) + `h-full px-1 `}>
         <RemoveButton />
-
-        <Card className="relative  border-2 w-full h-full border-slate-400 bg-slate-200 peer-hover:bg-red-500/40 peer-hover:border-red-500 overflow-hidden ">
+        <Card
+          className={
+            avatar +
+            " relative  border-2 w-full h-full border-slate-400 bg-slate-200 peer-hover:bg-red-500/40 peer-hover:border-red-500 overflow-hidden "
+          }
+        >
           <Image
-            className={" rounded-md cursor-pointer h-full w-full  object-cover"}
+            className={
+              " rounded-md cursor-pointer h-full w-full  object-cover "
+            }
             src={image.url}
             alt=""
             width={500}
@@ -51,7 +60,7 @@ function ImageCardPreview({
     return (
       <button
         type="button"
-        className={`z-10 absolute cursor-pointer bg-red-700 hover:bg-red-500 rounded-full h-7 w-7 p-1 right-2 top-1 peer flex justify-center items-center`}
+        className={`z-[9] absolute cursor-pointer bg-red-700 hover:bg-red-500 rounded-full h-7 w-7 p-1 right-2 top-1 peer flex justify-center items-center`}
         onClick={() => onClick!(image)}
       >
         <FontAwesomeIcon icon={faRemove} />

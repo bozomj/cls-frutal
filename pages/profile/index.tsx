@@ -56,12 +56,13 @@ const Profile: React.FC = () => {
     <>
       <Header />
 
-      <main className="flex  justify-center bg-gray-200 p-2 text-gray-800 overflow-y-scroll scroll-smooth flex-1">
+      <main className="flex  justify-center bg-gray-200 text-gray-800 overflow-y-scroll scroll-smooth flex-1">
         <div className="w-full md:max-w-7xl ">
           <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
 
-          <section className="flex overflow-hidden gap-2">
+          <section className="flex overflow-x-hidden gap-2 bg-gray-50  p-2">
             <div id="profile" className="flex flex-col gap-2 ">
+              <span className="h-5"></span>
               <div className="relative w-fit">
                 <CircleAvatar
                   size={8}
@@ -105,50 +106,59 @@ const Profile: React.FC = () => {
                 </Link>
               )}
             </div>
-            <div className=" flex gap-2 bg-gray-300 flex-1 h-[11em] overflow-x-auto p-2">
-              {imagemProfile?.map((img: imageProfileType) => {
-                const newImg = {
-                  ...img,
-                  url: utils.getUrlImageR2(img?.url ?? ""),
-                };
-                return (
-                  <div key={newImg.url} className="relative min-w-fit ">
-                    <button
-                      type="button"
-                      className={`absolute z-10 hover:text-green-600 hover:border-green-600  ${
-                        newImg.selected ? "text-green-800" : "text-white"
-                      } text-3xl bottom-0 left-1`}
-                      onClick={() => updateProfileImage(newImg, img.url)}
-                    >
-                      <FontAwesomeIcon
-                        icon={faCircleCheck}
-                        className={`border-3 rounded-full cursor-pointer  hover:border-green-600  ${
-                          newImg.selected ? "border-green-800" : "border-white"
-                        }`}
-                        size={"xs"}
+            <span className="h-44 border-1 border-gray-200 block"></span>
+            <div className="overflow-hidden">
+              <span className="text-xs font-black text-gray-600 h-6">
+                Gerencie fotos do perfil
+              </span>
+              <div className=" flex gap-2  flex-1 h-36 overflow-x-auto ">
+                {imagemProfile?.map((img: imageProfileType) => {
+                  const newImg = {
+                    ...img,
+                    url: utils.getUrlImageR2(img?.url ?? ""),
+                  };
+                  return (
+                    <div key={newImg.url} className="relative w-fit ">
+                      <button
+                        type="button"
+                        className={`absolute z-[9]  hover:text-green-600 hover:border-green-600  ${
+                          newImg.selected
+                            ? "text-green-800"
+                            : "text-green-800/40"
+                        } text-3xl bottom-0 left-1`}
+                        onClick={() => updateProfileImage(newImg, img.url)}
+                      >
+                        <FontAwesomeIcon
+                          icon={faCircleCheck}
+                          className={`border-3  rounded-full cursor-pointer  hover:border-green-600  ${
+                            newImg.selected
+                              ? "border-green-800"
+                              : "border-white"
+                          }`}
+                          size={"xs"}
+                        />
+                      </button>
+                      <ImageCardPreview
+                        image={newImg}
+                        circle={true}
+                        className="max-w-full h-34! min-w-36! "
+                        onClick={async (e) => {
+                          const deleted =
+                            await httpPerfilImages.deleteImageProfile(img);
+
+                          if (deleted.message === "Imagem deletada") {
+                            setImagemProfile((prev) => {
+                              return prev?.filter((im) => im.id !== e.id) ?? [];
+                            });
+                          }
+                        }}
                       />
-                    </button>
-
-                    <ImageCardPreview
-                      image={newImg}
-                      className="max-w-full h-36! min-w-36!"
-                      onClick={async (e) => {
-                        const deleted =
-                          await httpPerfilImages.deleteImageProfile(img);
-
-                        if (deleted.message === "Imagem deletada") {
-                          setImagemProfile((prev) => {
-                            return prev?.filter((im) => im.id !== e.id) ?? [];
-                          });
-                        }
-                      }}
-                    />
-                  </div>
-                );
-              })}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </section>
-
           <section className=" flex flex-col py-4 ">
             {postagens.length < 1 && isLoad ? (
               <Produtos

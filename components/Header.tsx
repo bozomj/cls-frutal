@@ -48,7 +48,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
     bg-white text-primary-dark
       border-b border-gray-300
       flex flex-col gap-2 
-      p-4 relative z-[1] 
+      p-4 relative z-[10] 
       w-full 
       md:items-stretch 
       "
