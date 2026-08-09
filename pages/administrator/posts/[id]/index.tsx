@@ -32,10 +32,9 @@ function PostsAdministrator({ user, post }: Props) {
       <div className=" bg-gray-200   flex justify-center flex-1">
         <div className="w-7xl flex flex-col h-fit gap-2">
           <PostView post={post} />
-
-          <section className="bg-gray-50 rounded-xl shadow-sm shadow-gray-400">
-            <h2 className="px-2 pt-2 font-black">Fotos do anuncio</h2>
-            <p className="px-2 pb-2 text-xs text-slate-400">
+          <section className="px-4 bg-gray-50 rounded-xl shadow-sm shadow-gray-400 py-10">
+            <h2 className=" font-black">Fotos do anuncio</h2>
+            <p className="pb-2 text-xs text-slate-400">
               Gerencie o catálogo de fotos
             </p>
             <div className="flex justify-center bg-gray-100">
@@ -43,7 +42,7 @@ function PostsAdministrator({ user, post }: Props) {
                 return (
                   <div
                     key={img.id}
-                    className="flex flex-col w-1/3 md:w-1/4 lg:w-1/6  gap-1 m-2 border-2 p-3 border-b border-slate-400 bg-gray-50 rounded-xl  "
+                    className="flex flex-col w-1/3 md:w-1/4 lg:w-1/6  gap-1 m-1 border-2 p-3 border-b border-slate-400 bg-gray-50 rounded-xl  "
                   >
                     <div className="relative  h-full w-full ">
                       <Image
@@ -80,12 +79,13 @@ function PostsAdministrator({ user, post }: Props) {
               })}
             </div>
           </section>
+
           <div className="flex  bg-gray-100 shadow-sm shadow-gray-400 p-4 rounded-xl justify-between items-center">
             <div
               className={
-                statePost === PostStatus.ACTIVE
+                (statePost === PostStatus.ACTIVE
                   ? "text-green-900 "
-                  : "text-accent " + "font-black"
+                  : "text-accent ") + "font-black"
               }
             >
               Status: {statePost}
