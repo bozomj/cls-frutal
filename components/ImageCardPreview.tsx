@@ -8,7 +8,7 @@ interface ImageCardPreviewProps {
   image: ImageDBType;
   active?: boolean;
   alertMsg?: string;
-  onClick: (image: ImageDBType) => void;
+  onClick?: (image: ImageDBType) => void;
   className?: string;
   onImageClick?: () => void;
 }
@@ -52,7 +52,7 @@ function ImageCardPreview({
       <button
         type="button"
         className={`z-10 absolute cursor-pointer bg-red-700 hover:bg-red-500 rounded-full h-7 w-7 p-1 right-2 top-1 peer flex justify-center items-center`}
-        onClick={() => onClick(image)}
+        onClick={() => onClick!(image)}
       >
         <FontAwesomeIcon icon={faRemove} />
       </button>

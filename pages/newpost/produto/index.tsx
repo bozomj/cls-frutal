@@ -2,7 +2,7 @@ import Card from "@/components/Card";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Header from "@/components/Header";
 import autenticator from "@/models/autenticator";
-import { faImage } from "@fortawesome/free-regular-svg-icons";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { ChangeEvent, useEffect, useState } from "react";
@@ -14,7 +14,6 @@ import utils from "@/utils";
 import controllerCloudflare from "@/storage/cloudflare/controllerCloudflare";
 import LinearProgressIndicator from "@/components/LinearProgressIndicator";
 import httpCategoria from "@/http/categoria";
-import Image from "next/image";
 
 import ImageCropper from "@/components/ImageCropper";
 
@@ -66,7 +65,7 @@ export default function Produto() {
   }, [categoriasValues.length]);
 
   useEffect(() => {
-    //return funciona como "dispose" do Flutter
+    // return funciona como "dispose" do Flutter
     return () => {
       imagens.forEach((img) => {
         URL.revokeObjectURL(img.url);

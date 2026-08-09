@@ -35,12 +35,13 @@ export default function PostView({ post }: PostViewProps) {
   const usebackdrop = useBackdrop();
 
   return (
-    <article className="flex flex-auto flex-col gap-2 h-full max-w-[40rem] p-4 bg-gray-100 rounded-2xl shadow-sm shadow-gray-400 my-2">
+    <article className="flex flex-auto flex-col gap-2 h-full max-w-7xl p-4 bg-gray-100 rounded-2xl shadow-sm shadow-gray-400 my-2">
       <PostHeader />
 
       <div>
-        <section className="bg-gray-200 rounded-2xl flex-auto p-2">
+        <section className=" rounded-2xl flex flex-col md:flex-row gap-4 p-2">
           <MiniGalleryImage
+            className="md:max-w-1/2"
             post_imagens={post_imagens}
             imgPrincipal={imgPrincial as string}
             onClick={() =>
@@ -58,11 +59,13 @@ export default function PostView({ post }: PostViewProps) {
               setImagemIndex(i);
             }}
           />
-          <ItemTitle />
-          <div className=" flex justify-between items-baseline ">
-            <ItemValor />
+          <div>
+            <ItemTitle />
+            <div className=" flex justify-between items-baseline ">
+              <ItemValor />
+            </div>
+            <ItemDescription />
           </div>
-          <ItemDescription />
         </section>
       </div>
     </article>

@@ -13,10 +13,11 @@ import OwnerGuard from "@/components/guards/OwnerGuard";
 import { PostDetailType } from "@/shared/post_types";
 import { UserDBType } from "@/shared/user_types";
 import imagem from "@/models/imagem";
-import { ImageStatus } from "@/shared/Image_types";
+import { ImageDBType, ImageStatus } from "@/shared/Image_types";
 import httpImage from "@/http/image";
 import Image from "next/image";
 import utils from "@/utils";
+import { ImageCardPreview } from "@/components";
 
 interface Props {
   user: UserDBType;
@@ -29,49 +30,57 @@ function PostsAdministrator({ user, post }: Props) {
 
   return (
     <LayoutPage user={user}>
-      <div className=" bg-gray-200  flex justify-center flex-1">
-        <div className="w-[40rem] flex flex-col h-fit gap-2">
+      <div className=" bg-gray-200   flex justify-center flex-1">
+        <div className="w-7xl flex flex-col h-fit gap-2">
           <PostView post={post} />
-          <h2>Imagens</h2>
-          {imagesPost.map((img) => {
-            return (
-              <div
-                key={img.id}
-                className="flex flex-col gap-2 p-2 border-b border-gray-300 bg-gray-50 rounded-xl shadow-sm shadow-gray-400 "
-              >
-                <div className="relative h-60 w-full">
-                  <Image
-                    src={utils.getUrlImageR2(img.url)}
-                    alt=""
-                    fill
-                    className="object-contain"
-                  />
-                </div>
 
-                <div className="flex justify-between items-center">
-                  <span>Status: {img.status}</span>
-                  <button
-                    className="btn bg-red-600 text-white text-sm"
-                    onClick={async () => {
-                      await httpImage.updateState(
-                        img.id,
-                        ImageStatus.REJECTED,
-                        post.id ?? "",
-                      );
-                      const newImagesPost = imagesPost.filter(
-                        (i) => i.id !== img.id,
-                      );
-                      setImagesPost(newImagesPost);
-                      // Lógica para remover da UI ou recarregar
-                    }}
+          <section className="bg-gray-50 rounded-xl shadow-sm shadow-gray-400">
+            <h2 className="px-2 pt-2 font-black">Fotos do anuncio</h2>
+            <p className="px-2 pb-2 text-xs text-slate-400">
+              Gerencie o catálogo de fotos
+            </p>
+            <div className="flex ">
+              {imagesPost.map((img, i) => {
+                return (
+                  <div
+                    key={img.id}
+                    className="flex flex-col w-1/3 gap-1 m-2 border-2 p-3 border-b border-slate-400 bg-gray-50 rounded-xl  "
                   >
-                    Reprovar Imagem
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+                    <div className="relative  h-full w-full ">
+                      <Image
+                        src={utils.getUrlImageR2(img.url)}
+                        alt=""
+                        width={500}
+                        height={500}
+                        className="object-cover rounded-xl h-full "
+                      />
+                    </div>
 
+                    <div className="flex justify-between items-center">
+                      {/* <span>Status: {img.status}</span> */}
+                      <button
+                        className="btn bg-red-600 text-white text-sm w-full"
+                        onClick={async () => {
+                          await httpImage.updateState(
+                            img.id,
+                            ImageStatus.REJECTED,
+                            post.id ?? "",
+                          );
+                          const newImagesPost = imagesPost.filter(
+                            (i) => i.id !== img.id,
+                          );
+                          setImagesPost(newImagesPost);
+                          // Lógica para remover da UI ou recarregar
+                        }}
+                      >
+                        Reprovar
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
           <div className="flex bg-gray-100 shadow-sm shadow-gray-400 p-4 rounded-xl justify-between items-center">
             <div>Status: {statePost}</div>{" "}
             <div className="flex gap-2">
