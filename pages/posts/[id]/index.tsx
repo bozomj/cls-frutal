@@ -252,7 +252,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                 <OwnerGuard
                   isOwner={post_imagens.length + previewImagens.length < 3}
                 >
-                  <label className="bg-cyan-50 border-dashed border-2 border-cyan-600 w-1/3 flex cursor-pointer rounded text-cyan-600 justify-center items-center shrink-0 min-w-1/3 md:min-w-1/3 min-h-[120]">
+                  <label className="bg-cyan-50 border-dashed border-2 border-cyan-600 w-1/3 flex cursor-pointer rounded text-cyan-600 justify-center items-center shrink-0 md:max-w-1/4 lg:max-w-1/6 min-h-[120]">
                     <FontAwesomeIcon className="text-3xl " icon={faPlus} />
                     <input
                       type="file"

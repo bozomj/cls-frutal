@@ -56,8 +56,8 @@ const Profile: React.FC = () => {
     <>
       <Header />
 
-      <main className="flex  justify-center bg-gray-200 p-4 text-gray-800 overflow-y-scroll scroll-smooth flex-1">
-        <div className="w-full md:w-[40rem]">
+      <main className="flex  justify-center bg-gray-200 p-2 text-gray-800 overflow-y-scroll scroll-smooth flex-1">
+        <div className="w-full md:max-w-7xl ">
           <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
 
           <section className="flex overflow-hidden gap-2">
@@ -149,9 +149,7 @@ const Profile: React.FC = () => {
             </div>
           </section>
 
-          <section></section>
-
-          <section className=" flex flex-col py-4 mt-4">
+          <section className=" flex flex-col py-4 ">
             {postagens.length < 1 && isLoad ? (
               <Produtos
                 postagens={
@@ -164,7 +162,7 @@ const Profile: React.FC = () => {
               <Produtos
                 postagens={postagens}
                 Card={ProductCardDashboard}
-                className="grid-cols-1!"
+                className="grid-cols-1! md:grid-cols-3! p-0! bg-gray-200! shadow shadow-gray-400/0"
               />
             )}
             <Paginacao paginacao={paginacao} />
