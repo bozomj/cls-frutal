@@ -15,17 +15,21 @@ export default router.handler();
 async function deletehandler(req: NextApiRequest, res: NextApiResponse) {
   let userId;
   try {
-    const { id } = autenticator.verifyToken(req.cookies.token || "");
+    const dataToken = autenticator.verifyToken(req.cookies.token || "");
 
-    userId = id;
+    userId = dataToken.id;
   } catch (e) {
     return res.status(401).json({ message: "Unauthorized", cause: e });
   }
 
-  const { id } = req.query ?? "";
+  const { id: postId } = req.query;
+
+  if (!postId) {
+    return res.status(400).json({ message: "ID do post não fornecido" });
+  }
 
   try {
-    const deleted = await Post.deletePost(id as string, userId);
+    const deleted = await Post.deletePost(postId as string, userId);
 
     res.status(201).json({ resultado: deleted });
   } catch (e) {

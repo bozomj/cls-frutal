@@ -50,9 +50,11 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     const post = await Post.create(body);
-
     return res.status(201).json(post);
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message && error.message.includes("obrigatório")) {
+      return res.status(400).json({ error: error.message });
+    }
     return res
       .status(500)
       .json({ message: "erro ao inserir post", cause: error });

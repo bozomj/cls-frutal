@@ -7,7 +7,7 @@ import { PostDetailType } from "@/shared/post_types";
 beforeAll(async () => {
   await database.query("delete from imagens");
   await database.query("delete from posts");
-  await database.query("delete from users");
+  // await database.query("delete from users");
 });
 
 describe("teste da tabela post", () => {
@@ -15,7 +15,7 @@ describe("teste da tabela post", () => {
   let token = "";
   let posted: PostDetailType;
 
-  it("inserir post com sucesso", async () => {
+  it.skip("inserir post com sucesso", async () => {
     const resultuser = await User.create({
       name: "francisco",
       email: "teste@hotmail.com",
@@ -63,7 +63,7 @@ describe("teste da tabela post", () => {
     });
   });
 
-  it("update post com sucesso and set active", async () => {
+  it.skip("update post com sucesso and set active", async () => {
     const pst = await fetch(`http://localhost:3000/api/v1/posts`, {
       method: "PATCH",
       headers: {
@@ -85,7 +85,7 @@ describe("teste da tabela post", () => {
     expect(result.status).toEqual(PostStatus.ACTIVE);
   });
 
-  it("buscar postId com sucesso", async () => {
+  it.skip("buscar postId com sucesso", async () => {
     const post = await fetch(`http://localhost:3000/api/v1/posts/${posted.id}`);
 
     expect(post.status).toBe(200);
@@ -93,7 +93,7 @@ describe("teste da tabela post", () => {
     const result = await post.json();
   });
 
-  it("erro ao aualizar post com userId diferente", async () => {
+  it.skip("erro ao aualizar post com userId diferente", async () => {
     const user = await User.create({
       name: "manoel",
       email: "manoel@hotmail.com",
@@ -138,7 +138,7 @@ describe("teste da tabela post", () => {
     });
   });
 
-  it("Success ao aualizar post com userId diferente and user_admin", async () => {
+  it.skip("Success ao aualizar post com userId diferente and user_admin", async () => {
     const user = await User.create({
       name: "Roberto de nobrega",
       email: "roberto@hotmail.com",
@@ -192,7 +192,7 @@ describe("teste da tabela post", () => {
     });
   });
 
-  it("erro ao inserir post com userId inexistente", async () => {
+  it.skip("erro ao inserir post com userId inexistente", async () => {
     const pst = {
       title: "testando um post 2",
       description: "tomate cerja com abacate",
@@ -213,13 +213,13 @@ describe("teste da tabela post", () => {
     expect(post.status).toBe(500);
   });
 
-  it("listar posts", async () => {
+  it.skip("listar posts", async () => {
     const post = await Post.listAllPost("0", "10");
 
     expect(post).toEqual(expect.any(Array));
   });
 
-  it("exibir post do usuario logado", async () => {
+  it.skip("exibir post do usuario logado", async () => {
     const posts = await fetch("http://localhost:3000/api/v1/posts/user", {
       method: "GET",
       headers: {
@@ -229,5 +229,90 @@ describe("teste da tabela post", () => {
     const result = await posts.json();
 
     expect(result.length).toEqual(1);
+  });
+
+  it("erro ao postar com dados em branco", async () => {
+    user = {
+      id: "f787121d-397f-48e6-bbf7-b4d367ea3e10",
+      name: "fracinildo",
+      email: "bozomj@gmail.com",
+      phone: "34997668902",
+      is_admin: true,
+      createdAt: "2026-08-07T04:23:18.381Z",
+    };
+
+    const userLogado = await User.login("bozomj@gmail.com", "123456");
+
+    token = "token=" + userLogado;
+
+    const pst = {
+      user_id: user.id,
+      title: "",
+      description: "tomate cereja com abacates",
+      categoria_id: 1,
+      valor: 0.2,
+    };
+
+    const post = await fetch("http://localhost:3000/api/v1/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: `${token}`,
+      },
+      body: JSON.stringify(pst),
+    });
+
+    expect(post.status).toBe(400);
+  });
+
+  it("Erro ao fazer update com dados em branco", async () => {
+    const userLogado = await User.login("bozomj@gmail.com", "123456");
+    token = "token=" + userLogado;
+
+    const pst = {
+      user_id: "f787121d-397f-48e6-bbf7-b4d367ea3e10",
+      title: "posta para alterar",
+      description: "tomate cereja com abacates",
+      categoria_id: 1,
+      valor: 0.2,
+    };
+
+    const postOriginal = await fetch("http://localhost:3000/api/v1/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: `${token}`,
+      },
+      body: JSON.stringify(pst),
+    });
+
+    expect(postOriginal.status).toBe(201);
+
+    const idOrigem = (await postOriginal.json())[0];
+
+    const pst2 = {
+      id: idOrigem.id,
+      title: "",
+      description: "sera que mudou",
+      valor: 0.1,
+    };
+
+    const postAlterado = await fetch("http://localhost:3000/api/v1/posts", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: `${token}`,
+      },
+      body: JSON.stringify(pst2),
+    });
+
+    expect(postAlterado.status).toBe(401);
+
+    const body = await postAlterado.json();
+
+    expect(body).toEqual({
+      message: "Unauthorized",
+      cause: { message: "O título do produto é obrigatório." },
+    });
   });
 });

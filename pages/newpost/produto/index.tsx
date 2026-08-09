@@ -126,6 +126,9 @@ export default function Produto() {
                 formatarMoeda(e);
                 console.log(e.target.value);
               }}
+              onBlur={(e) => {
+                console.log(e.currentTarget.value);
+              }}
             />
           </div>
           <div className="w-full ">

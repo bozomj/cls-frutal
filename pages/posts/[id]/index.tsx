@@ -3,7 +3,6 @@ import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faImage } from "@fortawesome/free-regular-svg-icons";
 import { faPlus, faShare } from "@fortawesome/free-solid-svg-icons";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 
@@ -61,6 +60,7 @@ export default function DetailsPostPage({ user_id }: Props) {
   const post_id = router.query.id as string;
 
   const [post_imagens, setImagens] = useState<ImageDBType[]>([]);
+  const [imagenSAtivas, setImagensAtivas] = useState<ImageDBType[]>([]);
   const [imgPrincial, setImgPrincipal] = useState<string>();
   const [imagemIndex, setImagemIndex] = useState<number>(0);
 
@@ -80,8 +80,6 @@ export default function DetailsPostPage({ user_id }: Props) {
   const descricaoRef = useRef<HTMLParagraphElement | null>(null);
   const usebackdrop = useBackdrop();
 
-  const [dataItem, setDataItem] = useState({});
-
   const getPost = useCallback(
     async (id: string) => {
       const result = await httpPost.getPostId(id);
@@ -93,9 +91,18 @@ export default function DetailsPostPage({ user_id }: Props) {
 
       setItem(result);
       setImagens(result.imagens);
-      setImgPrincipal(result.imagens[0]?.url ?? null);
       setImageProfile(result.img_profile ?? null);
       IsPostUserId(result.user_id == user_id);
+
+      let tempImgAtivas = result.imagens.filter(
+        (img: ImageDBType) => img.status === ImageStatus.ACTIVE,
+      );
+
+      setImagensAtivas(tempImgAtivas);
+
+      if (tempImgAtivas.length > 0) {
+        setImgPrincipal(tempImgAtivas[0]?.url ?? null);
+      }
     },
     [user_id, router],
   );
@@ -104,10 +111,6 @@ export default function DetailsPostPage({ user_id }: Props) {
     if (!post_id) return;
     getPost(post_id);
   }, [post_id, getPost]);
-
-  const imagenSAtivas = post_imagens.filter(
-    (img) => img.status === ImageStatus.ACTIVE,
-  );
 
   return item.status !== PostStatus.ACTIVE ? (
     <></>
@@ -379,7 +382,9 @@ export default function DetailsPostPage({ user_id }: Props) {
       const updated = await httpPost.update({
         id: item.id,
         user_id: item.user_id,
-        ...dataItem,
+        title: item.title,
+        description: item.description,
+        valor: parseFloat(item.valor),
       });
 
       if (updated?.id) {
@@ -390,7 +395,7 @@ export default function DetailsPostPage({ user_id }: Props) {
           />,
         );
         setButtonDisabled(true);
-        setItem((p) => ({ ...p, ...dataItem }));
+        setItem((p) => ({ ...p, ...item }));
       }
     } catch (error) {
       console.log(error);
@@ -464,11 +469,12 @@ export default function DetailsPostPage({ user_id }: Props) {
           {...(isPostUserId && {
             contentEditable: true,
             suppressContentEditableWarning: true,
+
             onInput: () => {},
             onBlur: (e) => {
               const value = e.currentTarget.innerText;
 
-              titleRef.current?.focus();
+              // titleRef.current?.focus();
               setButtonDisabled(false);
               if (value.replace("\n", "") == "") {
                 setError({ ...postError, title: "Insira um Título!" });
@@ -476,7 +482,8 @@ export default function DetailsPostPage({ user_id }: Props) {
                 setError({ ...postError, title: "" });
               }
               setItem((p) => ({ ...p, title: value }));
-              setDataItem({ ...dataItem, title: value });
+
+              valorRef.current?.focus();
             },
           })}
         >
@@ -487,7 +494,6 @@ export default function DetailsPostPage({ user_id }: Props) {
   }
 
   function ItemValor() {
-    console.log(postError.valor != undefined, "valor");
     return (
       <div
         className={
@@ -505,53 +511,50 @@ export default function DetailsPostPage({ user_id }: Props) {
           <p
             className=" font-black border-b-2 border-emerald-50 focus:border-emerald-400  w-full  focus:outline-none  text-xl "
             ref={valorRef}
-            {...(isPostUserId
-              ? {
-                  contentEditable: true,
-                  suppressContentEditableWarning: true,
-                  onInput: (v) => {
-                    const e = utils.extractNumberInString(
-                      v.currentTarget.innerText,
-                    );
-
-                    v.currentTarget.innerHTML = utils
-                      .stringForDecimalNumber(e)
-                      .toFixed(2);
-
-                    moveCursorToEnd(v.currentTarget);
-                  },
-                  onBlur: (v) => {
-                    const e = utils.extractNumberInString(
-                      v.currentTarget.innerText,
-                    );
-                    let n = Number(
-                      utils.stringForDecimalNumber(e).toFixed(2) ?? 0,
-                    );
-
-                    if (n <= 0) {
-                      setError({
-                        ...postError,
-                        valor: "O preço nao pode ser menor ou igual a Zero!",
-                      });
-                    } else {
-                      setError({
-                        ...postError,
-                        valor: "",
-                      });
-                    }
-                    setDataItem((p) => ({ ...p, valor: n }));
-
-                    setButtonDisabled(false);
-                    setItem((p) => ({ ...p, valor: n }));
-                  },
-                }
-              : {})}
+            {...(isPostUserId && {
+              contentEditable: true,
+              suppressContentEditableWarning: true,
+              onInput: (v) => onInputValor(v),
+              onBlur: (v) => onBlurValor(v),
+            })}
           >
             R$ {utils.formatarMoeda(item.valor.toString())}
           </p>
         </div>
       </div>
     );
+  }
+
+  function onBlurValor(v: any) {
+    const e = utils.extractNumberInString(v.currentTarget.innerText);
+    let nn = utils.stringForDecimalNumber(e).toFixed(2) ?? 0;
+
+    if (parseFloat(nn) <= 0) {
+      setError({
+        ...postError,
+        valor: "O preço nao pode ser menor ou igual a Zero!",
+      });
+      setButtonDisabled(true);
+    } else {
+      setError({
+        ...postError,
+        valor: "",
+      });
+
+      setButtonDisabled(false);
+    }
+    setItem((p) => ({ ...p, valor: nn }));
+  }
+
+  function onInputValor(v: any) {
+    const e = utils.extractNumberInString(v.currentTarget.innerText);
+
+    const valor = (v.currentTarget.innerHTML = utils
+      .stringForDecimalNumber(e)
+      .toFixed(2)
+      .replace(".", ","));
+
+    moveCursorToEnd(v.currentTarget);
   }
 
   function ButtonsActions() {
@@ -612,29 +615,23 @@ export default function DetailsPostPage({ user_id }: Props) {
               : " border-3 border-red-800 ") +
             "focus:outline-2 block  focus:outline-gray-400 text-slate-600 bg-gray-200 p-4 rounded-xl min-h-[120]"
           }
-          {...(isPostUserId
-            ? {
-                contentEditable: true,
-                suppressContentEditableWarning: true,
+          {...(isPostUserId && {
+            contentEditable: true,
+            suppressContentEditableWarning: true,
 
-                onBlur: (e) => {
-                  const value = e.currentTarget.innerText.replace("\n", "");
+            onBlur: (e) => {
+              const value = e.currentTarget.innerText.replace("\n", "");
 
-                  if (value === item.description) return;
+              setError(
+                value == ""
+                  ? { ...postError, descricao: "Insira uma descrição!" }
+                  : { ...postError, descricao: "" },
+              );
 
-                  value == ""
-                    ? setError({
-                        ...postError,
-                        descricao: "Insira uma descrição!",
-                      })
-                    : setError({ ...postError, descricao: "" });
-
-                  setDataItem({ ...dataItem, description: value });
-                  setButtonDisabled(false);
-                  setItem((p) => ({ ...p, description: value }));
-                },
-              }
-            : {})}
+              setButtonDisabled(false);
+              setItem((p) => ({ ...p, description: value }));
+            },
+          })}
         >
           {item.description}
         </p>

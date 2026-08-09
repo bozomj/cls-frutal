@@ -26,11 +26,30 @@ async function create(pst: PostDetailType) {
     };
   }
 
-  Object.values(pst).forEach((v) => {
-    if (v == "" || v == null) {
-      throw { cause: "campo com valores incorretos", valores: pst };
-    }
-  });
+  // 1. Validação do Usuário
+  if (pst.user_id === undefined || pst.user_id === null) {
+    throw { message: "O ID do usuário é obrigatório." };
+  }
+
+  // 2. Validação do Título (impede strings vazias ou só com espaços)
+  if (!pst.title || pst.title.trim() === "") {
+    throw { message: "O título do produto é obrigatório." };
+  }
+
+  // 3. Validação da Descrição
+  if (!pst.description || pst.description.trim() === "") {
+    throw { message: "A descrição do produto é obrigatória." };
+  }
+
+  // 4. Validação do Valor (barra textualmente o 0, 0.0, negativos e nulos)
+  if (pst.valor === undefined || pst.valor === null || pst.valor <= 0) {
+    throw { message: "O valor do produto deve ser maior que zero." };
+  }
+
+  // 5. Validação da Categoria (como você disse que é sempre de 1 para cima)
+  if (!pst.categoria_id || pst.categoria_id < 1) {
+    throw { message: "Selecione uma categoria válida." };
+  }
 
   const query =
     "INSERT INTO posts (user_id, title, description, valor, categoria_id, status, expires_at) VALUES ($1,$2,$3,$4,$5,$6, NOW() + ($7 || ' days')::interval) RETURNING *;";
@@ -63,6 +82,27 @@ async function update(
   const entries = Object.entries(data).filter(([k]) => allowed.includes(k));
 
   if (!entries.length) return null;
+
+  // 2. Validação do Título (impede strings vazias ou só com espaços)
+  if (data.title != undefined) {
+    if (!data.title || data.title.trim() === "") {
+      throw { message: "O título do produto é obrigatório." };
+    }
+  }
+
+  // 3. Validação da Descrição
+  if (data?.description != undefined) {
+    if (!data.description || data.description.trim() === "") {
+      throw { message: "A descrição do produto é obrigatória." };
+    }
+  }
+
+  // 4. Validação do Valor (barra textualmente o 0, 0.0, negativos e nulos)
+  if (data?.valor != undefined) {
+    if (data.valor === undefined || data.valor === null || data.valor <= 0) {
+      throw { message: "O valor do produto deve ser maior que zero." };
+    }
+  }
 
   const set = entries.map(([k], i) => `${k} = $${i + 1}`).join(", ");
 
@@ -129,7 +169,6 @@ async function listAllPost(initial: string, limit: string) {
 
 async function deletePost(id: string, userId: string) {
   const imagens = await imagem.getByPostID(id);
-
   for (const img of imagens) {
     try {
       await deleteFile(img.url);
@@ -146,6 +185,7 @@ async function deletePost(id: string, userId: string) {
       "delete from posts where id = $1 and user_id = $2 RETURNING *",
       [id, userId],
     );
+    console.log("passou", userId, id);
     return posts;
   } catch (error) {
     throw {
