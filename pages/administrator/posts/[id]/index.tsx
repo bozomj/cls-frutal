@@ -17,7 +17,6 @@ import { ImageDBType, ImageStatus } from "@/shared/Image_types";
 import httpImage from "@/http/image";
 import Image from "next/image";
 import utils from "@/utils";
-import { ImageCardPreview } from "@/components";
 
 interface Props {
   user: UserDBType;
@@ -39,12 +38,12 @@ function PostsAdministrator({ user, post }: Props) {
             <p className="px-2 pb-2 text-xs text-slate-400">
               Gerencie o catálogo de fotos
             </p>
-            <div className="flex ">
+            <div className="flex justify-center bg-gray-100">
               {imagesPost.map((img, i) => {
                 return (
                   <div
                     key={img.id}
-                    className="flex flex-col w-1/3 gap-1 m-2 border-2 p-3 border-b border-slate-400 bg-gray-50 rounded-xl  "
+                    className="flex flex-col w-1/3 md:w-1/4 lg:w-1/6  gap-1 m-2 border-2 p-3 border-b border-slate-400 bg-gray-50 rounded-xl  "
                   >
                     <div className="relative  h-full w-full ">
                       <Image
@@ -59,7 +58,7 @@ function PostsAdministrator({ user, post }: Props) {
                     <div className="flex justify-between items-center">
                       {/* <span>Status: {img.status}</span> */}
                       <button
-                        className="btn bg-red-600 text-white text-sm w-full"
+                        className="btn bg-red-800 hover:bg-red-700 transition duration-500 text-white text-sm w-full"
                         onClick={async () => {
                           await httpImage.updateState(
                             img.id,
@@ -81,8 +80,16 @@ function PostsAdministrator({ user, post }: Props) {
               })}
             </div>
           </section>
-          <div className="flex bg-gray-100 shadow-sm shadow-gray-400 p-4 rounded-xl justify-between items-center">
-            <div>Status: {statePost}</div>{" "}
+          <div className="flex  bg-gray-100 shadow-sm shadow-gray-400 p-4 rounded-xl justify-between items-center">
+            <div
+              className={
+                statePost === PostStatus.ACTIVE
+                  ? "text-green-900 "
+                  : "text-accent " + "font-black"
+              }
+            >
+              Status: {statePost}
+            </div>
             <div className="flex gap-2">
               <OwnerGuard isOwner={!(post.status === PostStatus.ACTIVE)}>
                 <button
@@ -111,7 +118,7 @@ function PostsAdministrator({ user, post }: Props) {
               </OwnerGuard>
               <OwnerGuard isOwner={post.status === PostStatus.ACTIVE}>
                 <button
-                  className="btn bg-red-600 text-white font-bold"
+                  className="btn bg-red-800 hover:bg-red-700 transition duration-500 text-white font-bold"
                   onClick={async () => {
                     post.status = PostStatus.REJECTED;
 

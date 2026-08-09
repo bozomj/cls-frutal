@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useBackdrop } from "@/ui/backdrop/useBackdrop";
 import FullImageView from "../FullImageView";
 import { PostDetailType } from "@/shared/post_types";
+import VerticalDivider from "../VerticalDivider";
 
 export type PostItemType = {
   id: string;
@@ -37,7 +38,7 @@ export default function PostView({ post }: PostViewProps) {
   return (
     <article className="flex flex-auto flex-col gap-2 h-full max-w-7xl p-4 bg-gray-100 rounded-2xl shadow-sm shadow-gray-400 my-2">
       <PostHeader />
-
+      <VerticalDivider height={1} />
       <div>
         <section className=" rounded-2xl flex flex-col md:flex-row gap-4 p-2">
           <MiniGalleryImage
