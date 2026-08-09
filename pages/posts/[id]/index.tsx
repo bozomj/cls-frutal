@@ -373,12 +373,20 @@ export default function DetailsPostPage({ user_id }: Props) {
   }
 
   async function postUpdate() {
-    console.log(item);
     if (Number(item.valor) <= 0) throw "valor nao pode ser zerado!";
     if (item.title.length < 3) throw "Titulo nao pode ficar em branco!";
     if (item.description.length < 3) throw "Insira uma descrição!";
 
     try {
+      usebackdrop.openContent(
+        <Alert
+          msg="Salvando......."
+          onClose={async () => usebackdrop.closeContent()}
+        />,
+      );
+
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       const updated = await httpPost.update({
         id: item.id,
         user_id: item.user_id,
@@ -478,6 +486,7 @@ export default function DetailsPostPage({ user_id }: Props) {
               setButtonDisabled(false);
               if (value.replace("\n", "") == "") {
                 setError({ ...postError, title: "Insira um Título!" });
+                setButtonDisabled(true);
               } else {
                 setError({ ...postError, title: "" });
               }
@@ -622,13 +631,14 @@ export default function DetailsPostPage({ user_id }: Props) {
             onBlur: (e) => {
               const value = e.currentTarget.innerText.replace("\n", "");
 
-              setError(
-                value == ""
-                  ? { ...postError, descricao: "Insira uma descrição!" }
-                  : { ...postError, descricao: "" },
-              );
+              if (value == "") {
+                setError({ ...postError, descricao: "Insira uma descrição!" });
+                setButtonDisabled(true);
+              } else {
+                setError({ ...postError, descricao: "" });
+                setButtonDisabled(false);
+              }
 
-              setButtonDisabled(false);
               setItem((p) => ({ ...p, description: value }));
             },
           })}

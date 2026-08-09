@@ -22,7 +22,7 @@ const Alert: React.FC<AlertProps> = ({ msg, onClose }) => {
         <div className="flex gap-2 justify-end">
           <button
             className="bg-green-800 py-2 px-4 rounded-lg"
-            onClick={() => {
+            onClick={async () => {
               onClose();
             }}
           >
