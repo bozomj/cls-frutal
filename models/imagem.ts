@@ -22,7 +22,13 @@ async function save(url: string, postId: string) {
 
 async function getAll() {
   const result = await database.query(
-    "select post_id, json_agg(imagens.*) as lista_imagens from imagens group by post_id",
+    `SELECT
+    p.id AS post_id,
+    p.title,
+    json_agg(i.*) AS lista_imagens
+FROM posts p
+JOIN imagens i ON i.post_id = p.id 
+GROUP BY p.id, p.title;`,
   );
 
   return result;

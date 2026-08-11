@@ -19,13 +19,13 @@ interface AdminImagePageProps {
 
 const adminImagePage = ({ user }: AdminImagePageProps) => {
   const [postList, setImagens] = useState<
-    { post_id: string; lista_imagens: ImageDBType[] }[]
+    { post_id: string; title: string; lista_imagens: ImageDBType[] }[]
   >([]);
   const [loading, setLoading] = useState(false);
   const backdrop = useBackdrop();
 
   useEffect(getAllImagesPost, []);
-
+  console.log(postList);
   return (
     <LayoutPage user={user}>
       <div className="flex w-full  flex-col gap-4 justify-center">
@@ -36,83 +36,87 @@ const adminImagePage = ({ user }: AdminImagePageProps) => {
                 key={imagens.post_id}
                 className="bg-white p-4 rounded-md  shadow-sm shadow-gray-400"
               >
-                <h3 className="font-bold">{imagens.post_id}</h3>
-                <div className=" gap-4 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
+                <h3 className="font-bold">{imagens.title}</h3>
+                {/* <div className=" gap-4 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))]"> */}
+                <div className=" flex overflow-x-scroll ">
                   {imagens?.lista_imagens?.map((img) => {
                     return (
                       <div
-                        className="min-w-50 p-4 bg-white rounded-md shadow-sm shadow-gray-400"
+                        className={`min-w-3/7 md:min-w-1/3 p-1 ${img.status != ImageStatus.ACTIVE ? " order-1 " : " order-2"} `}
                         key={img.id}
                       >
-                        <div className="min-w-1/5 flex-1 border-2 border-gray-400 relative rounded-md overflow-hidden h-60">
-                          <Image
-                            className="object-contain"
-                            alt=""
-                            src={utils.getUrlImageR2(img.url)}
-                            fill
-                            sizes="150"
-                            loading="eager"
-                          />
-                        </div>
-                        <div className="flex justify-between p-2">
-                          <h3
-                            className={`${img.status === ImageStatus.ACTIVE ? "text-green-700" : "text-gray-400"} font-bold `}
-                          >
-                            {img.status ?? "Sem status"}
-                          </h3>
-                          <ToggleSlide
-                            value={img.status === ImageStatus.ACTIVE}
-                            onChange={async () => {
-                              if (loading) {
-                                backdrop.openContent(
-                                  <Alert
-                                    msg={"Espere a ultima ação ser executada"}
-                                    onClose={() => backdrop.closeContent()}
-                                  />,
+                        <div className=" bg-white rounded-md shadow-sm shadow-gray-400  ">
+                          <div className="min-w-1/5 flex-1 border-2 border-gray-400 relative rounded-md overflow-hidden h-60">
+                            <Image
+                              className="object-contain"
+                              alt=""
+                              src={utils.getUrlImageR2(img.url)}
+                              fill
+                              sizes="150"
+                              loading="eager"
+                            />
+                          </div>
+
+                          <div className="flex justify-between p-2">
+                            <h3
+                              className={`${img.status === ImageStatus.ACTIVE ? "text-green-700" : "text-gray-400"} font-bold `}
+                            >
+                              {img.status ?? "Sem status"}
+                            </h3>
+                            <ToggleSlide
+                              value={img.status === ImageStatus.ACTIVE}
+                              onChange={async () => {
+                                if (loading) {
+                                  backdrop.openContent(
+                                    <Alert
+                                      msg={"Espere a ultima ação ser executada"}
+                                      onClose={() => backdrop.closeContent()}
+                                    />,
+                                  );
+                                  return;
+                                }
+
+                                const newStatus =
+                                  img.status === ImageStatus.ACTIVE
+                                    ? ImageStatus.PENDING
+                                    : ImageStatus.ACTIVE;
+
+                                setLoading(true);
+
+                                await new Promise((r) => setTimeout(r, 100));
+
+                                const updated = await httpImage.updateState(
+                                  img.id,
+                                  newStatus,
+                                  img.post_id ?? "",
                                 );
-                                return;
-                              }
 
-                              const newStatus =
-                                img.status === ImageStatus.ACTIVE
-                                  ? ImageStatus.PENDING
-                                  : ImageStatus.ACTIVE;
+                                if (updated.message) {
+                                  backdrop.openContent(
+                                    <Alert
+                                      msg={updated.message}
+                                      onClose={() => backdrop.closeContent()}
+                                    />,
+                                  );
+                                  setLoading(false);
+                                  return;
+                                }
 
-                              setLoading(true);
-
-                              await new Promise((r) => setTimeout(r, 100));
-
-                              const updated = await httpImage.updateState(
-                                img.id,
-                                newStatus,
-                                img.post_id ?? "",
-                              );
-
-                              if (updated.message) {
-                                backdrop.openContent(
-                                  <Alert
-                                    msg={updated.message}
-                                    onClose={() => backdrop.closeContent()}
-                                  />,
+                                setImagens((prev) =>
+                                  prev.map((imagens) => {
+                                    const nList = imagens.lista_imagens.map(
+                                      (item) =>
+                                        item.id === img.id
+                                          ? { ...item, status: newStatus }
+                                          : item,
+                                    );
+                                    return { ...imagens, lista_imagens: nList };
+                                  }),
                                 );
                                 setLoading(false);
-                                return;
-                              }
-
-                              setImagens((prev) =>
-                                prev.map((imagens) => {
-                                  const nList = imagens.lista_imagens.map(
-                                    (item) =>
-                                      item.id === img.id
-                                        ? { ...item, status: newStatus }
-                                        : item,
-                                  );
-                                  return { ...imagens, lista_imagens: nList };
-                                }),
-                              );
-                              setLoading(false);
-                            }}
-                          />
+                              }}
+                            />
+                          </div>
                         </div>
                       </div>
                     );
