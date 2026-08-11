@@ -6,6 +6,9 @@ import autenticator from "@/models/autenticator";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import router from "next/router";
 import { useUserProvider } from "@/hooks/useUserProvider";
+import { backdrop } from "@/ui/backdrop";
+import { Alert } from "@/components";
+import utils from "@/utils";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -13,6 +16,8 @@ const Login = () => {
   const [error, setError] = useState("");
 
   const { setUser } = useUserProvider();
+
+  const useBackdrop = backdrop.useBackdrop();
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -23,6 +28,12 @@ const Login = () => {
     }
 
     try {
+      useBackdrop.openContent(
+        <Alert msg="Fazendo Login......" onClose={() => {}} />,
+      );
+
+      await utils.sleep(1400);
+
       const response = await fetch("/api/v1/login", {
         method: "POST",
         headers: {
@@ -30,18 +41,28 @@ const Login = () => {
         },
         body: JSON.stringify({ email, password }),
       });
+
       const data = await response.json();
 
       if (data.error) {
         setError("E-mail ou senha inválidos");
+        useBackdrop.closeContent();
       } else {
         setError("");
-        const user = await (await fetch("/api/v1/user")).json();
-        setUser(user);
-        router.push("/");
+        useBackdrop.openContent(
+          <Alert
+            msg="Login realizado com sucesso!"
+            onClose={async () => {
+              const user = await (await fetch("/api/v1/user")).json();
+              setUser(user);
+              useBackdrop.closeContent();
+              router.push("/");
+            }}
+          />,
+        );
       }
     } catch (error) {
-      console.log(error);
+      console.log("Login-Error", error);
     }
   }
 

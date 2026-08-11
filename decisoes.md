@@ -48,10 +48,7 @@ x mudar ImageCropper para conter os botoes de confirmar e cancelar, confirmar re
 - usar url state para paginação
 
 - melhorar funcoes de query no banco para trazer apenas dados que sera usado.
-
-- quando adiciona imagem em um post ja aprovado, precisa que o post volte a ficar pendente
-
-- nao deixar salvar ou criar pub com valor zerado
+  x nao deixar salvar ou criar pub com valor zerado
 - retornar melhor erro para poste com id usuario null
 
 usuarios [

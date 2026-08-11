@@ -5,6 +5,8 @@ import router from "next/router";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import autenticator from "@/models/autenticator";
 import httpUser from "@/http/user";
+import { useBackdrop } from "@/ui/backdrop/useBackdrop";
+import { Alert } from "@/components";
 
 export default function Cadastro() {
   const [error, setError] = useState<Record<string, string>>({});
@@ -14,6 +16,8 @@ export default function Cadastro() {
     const number = e.target.value.replace(/\D/g, "").slice(0, 15);
     setPhonevalue(number);
   };
+
+  const usebackdrop = useBackdrop();
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>): void {
     event.preventDefault();
@@ -50,14 +54,21 @@ export default function Cadastro() {
       handleCreateUser(name, email, password, phone);
     }
 
+    usebackdrop.openContent(
+      <Alert
+        msg="Cadastrando...."
+        onClose={() => {
+          usebackdrop.closeContent();
+        }}
+      />,
+    );
     async function handleCreateUser(
       name: string,
       email: string,
       password: string,
-      phone: string
+      phone: string,
     ) {
       const user = await httpUser.create({ name, email, password, phone });
-
       const data = await user.json();
 
       if (data.status === 201) {
@@ -154,7 +165,7 @@ export default function Cadastro() {
 }
 
 export const getServerSideProps: GetServerSideProps = async (
-  context: GetServerSidePropsContext
+  context: GetServerSidePropsContext,
 ) => {
   const token = context.req.cookies.token || null;
 

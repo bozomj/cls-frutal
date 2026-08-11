@@ -27,7 +27,7 @@ function loadImage(url: string | undefined): Promise<string | undefined> {
 
 export async function getCroppedImg(
   imageSrc: string,
-  crop: CroppedAreaPixelsType
+  crop: CroppedAreaPixelsType,
 ) {
   const image = new Image();
   image.src = imageSrc;
@@ -48,7 +48,7 @@ export async function getCroppedImg(
     0,
     0,
     crop.width,
-    crop.height
+    crop.height,
   );
 
   const blobImage = await new Promise<Blob>((resolve) => {
@@ -132,7 +132,7 @@ function capitalizar(str: string | null) {
 function resizeImageFile(
   file: File,
   maxWidth = 1280,
-  maxSizeKB = 300
+  maxSizeKB = 300,
 ): Promise<File> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -174,7 +174,7 @@ function resizeImageFile(
               {
                 type: "image/webp",
                 lastModified: Date.now(),
-              }
+              },
             );
             resolve(newFile);
           });
@@ -186,6 +186,10 @@ function resizeImageFile(
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
+}
+
+async function sleep(time: number = 1500) {
+  await new Promise((resolve) => setTimeout(resolve, time));
 }
 
 function getUrlImageR2(url: string | null) {
@@ -202,6 +206,8 @@ const utils = {
   formatarMoeda,
   extractNumberInString,
   stringForDecimalNumber,
+
+  sleep,
 
   string: {
     capitalizar,

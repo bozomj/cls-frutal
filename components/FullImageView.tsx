@@ -1,8 +1,13 @@
 import utils from "@/utils";
-import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import {
+  faAngleLeft,
+  faAngleRight,
+  faClose,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import OwnerGuard from "./guards/OwnerGuard";
 
 interface FullImageViewProps {
   images: { url: string }[];
@@ -69,36 +74,50 @@ const FullImageView: React.FC<FullImageViewProps> = ({
         onClose(imagemIndex);
       }}
     >
-      <div className="flex h-full w-full relative">
-        <button
-          className="h-full flex-1 w-[10%] text-5xl absolute left-0 z-[6] cursor-pointer text-white/30 outline-0 hover:text-white/50 md:text-8xl "
-          onClick={(e) => {
-            e.stopPropagation();
-            moveLeft();
-          }}
-        >
-          <FontAwesomeIcon icon={faAngleLeft} />
-        </button>
+      <div className="flex h-full w-full relative items-center">
+        <OwnerGuard isOwner={imagemIndex > 0}>
+          <button
+            className="h-full flex-1 w-[10%] text-5xl absolute left-0 z-[6] cursor-pointer text-white/30 outline-0 hover:text-white/80 md:text-8xl "
+            onClick={(e) => {
+              e.stopPropagation();
+              moveLeft();
+            }}
+          >
+            <FontAwesomeIcon icon={faAngleLeft} />
+          </button>
+        </OwnerGuard>
 
-        <div className="h-full relative flex-4">
+        <div className="h-fit flex-1 relative max-h-full shadow-sm shadow-gray-900 touch-none ">
           <Image
-            className="flex-1"
+            className="bg-blue-400 h-fit  block w-full "
             src={utils.getUrlImageR2(images[imagemIndex]?.url) || ""}
             alt=""
-            fill
+            height={500}
+            width={500}
             sizes="100"
             style={{ objectFit: "contain" }}
+            onClick={(e) => e.stopPropagation()}
           />
+          <button
+            className="absolute cursor-pointer right-2 z-[7] top-2 border-2 w-8 h-8 rounded-full flex justify-center items-center transition duration-300 bg-red-500/50 hover:bg-red-800 hover:border-red-400 shadow-sm shadow-gray-900 "
+            onClick={() => onClose(imagemIndex)}
+          >
+            <FontAwesomeIcon icon={faClose} className="" />
+          </button>
         </div>
-        <button
-          className=" h-full  w-[10%] flex-1 text-5xl absolute z-[6] right-0 cursor-pointer text-white/30 outline-0 hover:text-white/50 md:text-8xl"
-          onClick={(e) => {
-            e.stopPropagation();
-            moveRight();
-          }}
-        >
-          <FontAwesomeIcon icon={faAngleRight} />
-        </button>
+
+        <OwnerGuard isOwner={imagemIndex < images.length - 1}>
+          <button
+            className=" h-full  w-[10%] flex-1 text-5xl absolute z-[6] right-0 cursor-pointer text-white/30 outline-0 hover:text-white/80 md:text-8xl"
+            onClick={(e) => {
+              e.stopPropagation();
+              moveRight();
+              console.log(imagemIndex, images.length);
+            }}
+          >
+            <FontAwesomeIcon icon={faAngleRight} />
+          </button>
+        </OwnerGuard>
       </div>
     </div>
   );
