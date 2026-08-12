@@ -74,7 +74,7 @@ const FullImageView: React.FC<FullImageViewProps> = ({
         onClose(imagemIndex);
       }}
     >
-      <div className="flex h-full w-full relative items-center">
+      <div className="flex h-full w-full relative items-center touch-none">
         <OwnerGuard isOwner={imagemIndex > 0}>
           <button
             className="h-full flex-1 w-[10%] text-5xl absolute left-0 z-[6] cursor-pointer text-white/30 outline-0 hover:text-white/80 md:text-8xl "
@@ -87,24 +87,23 @@ const FullImageView: React.FC<FullImageViewProps> = ({
           </button>
         </OwnerGuard>
 
-        <div className="h-fit flex-1 relative max-h-full shadow-sm shadow-gray-900 touch-none ">
-          <Image
-            className="bg-blue-400 h-fit  block w-full "
-            src={utils.getUrlImageR2(images[imagemIndex]?.url) || ""}
-            alt=""
-            height={500}
-            width={500}
-            sizes="100"
-            style={{ objectFit: "contain" }}
-            onClick={(e) => e.stopPropagation()}
-          />
-          <button
-            className="absolute cursor-pointer right-2 z-[7] top-2 border-2 w-8 h-8 rounded-full flex justify-center items-center transition duration-300 bg-red-500/50 hover:bg-red-800 hover:border-red-400 shadow-sm shadow-gray-900 "
-            onClick={() => onClose(imagemIndex)}
-          >
-            <FontAwesomeIcon icon={faClose} className="" />
-          </button>
-        </div>
+        <Image
+          className="w-full h-fit max-h-full "
+          src={utils.getUrlImageR2(images[imagemIndex]?.url) || ""}
+          alt=""
+          height={500}
+          width={500}
+          sizes="100"
+          style={{ objectFit: "contain" }}
+          onClick={(e) => e.stopPropagation()}
+        />
+
+        <button
+          className="absolute cursor-pointer right-2 z-[7] top-2 border-2 w-8 h-8 rounded-full flex justify-center items-center transition duration-300 bg-red-500/50 hover:bg-red-800 hover:border-red-400 shadow-sm shadow-gray-900 "
+          onClick={() => onClose(imagemIndex)}
+        >
+          <FontAwesomeIcon icon={faClose} className="" />
+        </button>
 
         <OwnerGuard isOwner={imagemIndex < images.length - 1}>
           <button
