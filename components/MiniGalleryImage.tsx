@@ -20,7 +20,6 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
   );
   const usebackdrop = useBackdrop();
 
-  if (!post_imagens) return <></>;
   return (
     <section
       id="lista_imagems"

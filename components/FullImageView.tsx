@@ -76,15 +76,13 @@ const FullImageView: React.FC<FullImageViewProps> = ({
     >
       <div className="flex h-full w-full relative items-center touch-none">
         <OwnerGuard isOwner={imagemIndex > 0}>
-          <button
-            className="h-full flex-1 w-[10%] text-5xl absolute left-0 z-[6] cursor-pointer text-white/30 outline-0 hover:text-white/80 md:text-8xl "
+          <ArrowButton
+            variant="left"
             onClick={(e) => {
               e.stopPropagation();
               moveLeft();
             }}
-          >
-            <FontAwesomeIcon icon={faAngleLeft} />
-          </button>
+          />
         </OwnerGuard>
 
         <Image
@@ -106,20 +104,42 @@ const FullImageView: React.FC<FullImageViewProps> = ({
         </button>
 
         <OwnerGuard isOwner={imagemIndex < images.length - 1}>
-          <button
-            className=" h-full  w-[10%] flex-1 text-5xl absolute z-[6] right-0 cursor-pointer text-white/30 outline-0 hover:text-white/80 md:text-8xl"
+          <ArrowButton
+            variant="right"
             onClick={(e) => {
               e.stopPropagation();
               moveRight();
-              console.log(imagemIndex, images.length);
             }}
-          >
-            <FontAwesomeIcon icon={faAngleRight} />
-          </button>
+          />
         </OwnerGuard>
       </div>
     </div>
   );
 };
+
+type ArrowButtonProps = {
+  onClick: (e: any) => void;
+  variant: "left" | "right";
+};
+
+function ArrowButton({ onClick, variant }: ArrowButtonProps) {
+  const arrow = {
+    left: <FontAwesomeIcon icon={faAngleLeft} />,
+    right: <FontAwesomeIcon icon={faAngleRight} />,
+    position: {
+      left: "left-0",
+      right: "right-0",
+    },
+  };
+
+  return (
+    <button
+      className={`h-fit rounded-full border-white/30 flex-1 w-[10%] text-5xl absolute z-[6] cursor-pointer text-white/50 outline-0 hover:text-white/80 md:text-8xl hover:border-2 transition duration-300 hover:bg-white/10  ${arrow.position[variant]}`}
+      onClick={(e) => onClick(e)}
+    >
+      {arrow[variant]}
+    </button>
+  );
+}
 
 export default FullImageView;
