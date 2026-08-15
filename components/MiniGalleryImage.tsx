@@ -1,22 +1,25 @@
+import { ImageDBType } from "@/shared/Image_types";
+import { useBackdrop } from "@/ui/backdrop/useBackdrop";
 import utils from "@/utils";
 import Image from "next/image";
-import VerticalDivider from "./VerticalDivider";
+import { useState } from "react";
+import FullImageView from "./FullImageView";
 
 interface MiniGalleryImageProps {
-  post_imagens: unknown[];
-  imgPrincipal: string;
+  post_imagens: ImageDBType[];
   className?: string;
-  selectImg: (i: number) => void;
-  onClick: () => void;
 }
 
 const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
-  imgPrincipal,
   post_imagens,
   className,
-  selectImg,
-  onClick,
 }) => {
+  const [imagemIndex, setImagemIndex] = useState<number>(0);
+  const [imgPrincipal, setImagePrincipal] = useState(
+    post_imagens[imagemIndex] ?? {},
+  );
+  const usebackdrop = useBackdrop();
+
   if (!post_imagens) return <></>;
   return (
     <section
@@ -31,11 +34,11 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
       >
         <Image
           alt=""
-          src={utils.getUrlImageR2(imgPrincipal)}
+          src={utils.getUrlImageR2(imgPrincipal.url ?? "")}
           fill
           sizes="70"
           className={`cursor-zoom-in bg-gray-200  object-contain   overflow-hidden `}
-          onClick={onClick}
+          onClick={openFullImage}
         />
       </div>
 
@@ -57,14 +60,9 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
 
             return (
               <div
-                className={`flex-1 justify-center w-full bg-gray-50  shrink h-1/3 ${rounded} overflow-hidden  max-h-1/3 
-                      
-                      hover:border-cyan-600 relative
-                      `}
+                className={`flex-1 justify-center w-full bg-gray-50  shrink h-1/3 ${rounded} overflow-hidden  max-h-1/3 hover:border-cyan-600 relative `}
                 key={img.id}
-                onClick={() => {
-                  selectImg(key);
-                }}
+                onClick={() => selectImg(key)}
               >
                 <Image
                   className={`cursor-pointer object-cover   overflow-hidden
@@ -84,6 +82,32 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
       </div>
     </section>
   );
+
+  function selectImg(index: number) {
+    setImagemIndex(index);
+    setImagePrincipal(post_imagens[index]);
+  }
+
+  function openFullImage() {
+    if (imgPrincipal) {
+      usebackdrop.openContent(
+        <FullImageView
+          images={post_imagens}
+          index={imagemIndex}
+          visible={true}
+          onClose={closeFullImages}
+        />,
+      );
+    }
+  }
+
+  function closeFullImages(i: number) {
+    setImagemIndex(() => {
+      setImagePrincipal(post_imagens[i]);
+      return i;
+    });
+    usebackdrop.closeContent();
+  }
 };
 
 export default MiniGalleryImage;

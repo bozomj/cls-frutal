@@ -21,7 +21,6 @@ import WirePost from "@/wireframes/wirePost";
 import {
   Alert,
   CircleAvatar,
-  FullImageView,
   MiniGalleryImage,
   ImageCardPreview,
   CapitalizeText,
@@ -62,14 +61,10 @@ export default function DetailsPostPage({ user_id }: Props) {
   const [post_imagens, setImagens] = useState<ImageDBType[]>([]);
   const [imagenSAtivas, setImagensAtivas] = useState<ImageDBType[]>([]);
   const [imgPrincial, setImgPrincipal] = useState<string>();
-  const [imagemIndex, setImagemIndex] = useState<number>(0);
-
   const [postError, setError] = useState<Record<string, string>>({});
 
   const [item, setItem] = useState(_item);
-
   const [isPostUserId, IsPostUserId] = useState(false);
-  const [loadingImages, setLoadingImages] = useState(false);
 
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [previewImagens, setPreviewImagens] = useState<ImageDBType[]>([]);
@@ -135,16 +130,7 @@ export default function DetailsPostPage({ user_id }: Props) {
 
             <div>
               <section className=" rounded-2xl flex-auto p-2 gap-4 flex flex-col md:flex-row">
-                <MiniGalleryImage
-                  post_imagens={imagenSAtivas}
-                  imgPrincipal={imgPrincial as string}
-                  className="md:max-w-1/2"
-                  onClick={openFullImage}
-                  selectImg={(i) => {
-                    setImgPrincipal(post_imagens[i].url);
-                    setImagemIndex(i);
-                  }}
-                />
+                <MiniGalleryImage post_imagens={imagenSAtivas} />
 
                 <div className="flex flex-col w-full gap-4">
                   <ItemTitle />
@@ -208,7 +194,6 @@ export default function DetailsPostPage({ user_id }: Props) {
                   })}
 
                 {previewImagens.map((img, index) => {
-                  console.log(img);
                   img.id = uuidv4();
                   return (
                     <ImageCardPreview
@@ -285,19 +270,6 @@ export default function DetailsPostPage({ user_id }: Props) {
       </main>
     </>
   );
-
-  function openFullImage() {
-    if (imgPrincial) {
-      usebackdrop.openContent(
-        <FullImageView
-          images={imagenSAtivas}
-          index={imagemIndex}
-          visible={true}
-          onClose={closeFullImages}
-        />,
-      );
-    }
-  }
 
   function imageUrl(url: string | null) {
     return utils.getUrlImageR2(url);
@@ -414,7 +386,6 @@ export default function DetailsPostPage({ user_id }: Props) {
     const files = e.target.files || [];
 
     if (files) {
-      setLoadingImages(true);
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
 
@@ -430,19 +401,9 @@ export default function DetailsPostPage({ user_id }: Props) {
             ...p,
             { url: imgURL, id: uuidv4(), file: resized },
           ]);
-
-          setLoadingImages(false);
         }
       }
     }
-  }
-
-  function closeFullImages(i: number) {
-    setImagemIndex(() => {
-      setImgPrincipal(post_imagens[i]?.url);
-      return i;
-    });
-    usebackdrop.closeContent();
   }
 
   function PostHeader() {
