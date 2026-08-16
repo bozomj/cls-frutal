@@ -14,5 +14,12 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  mailcatcher:
+    container_name: "mailcatcher"
+    image: "sj26/mailcatcher"
+    ports:
+      - "1025:1025"
+      - "1080:1080"
+
 volumes:
   postgres_data:
