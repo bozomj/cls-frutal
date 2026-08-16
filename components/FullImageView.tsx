@@ -6,7 +6,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import OwnerGuard from "./guards/OwnerGuard";
 
 interface FullImageViewProps {
@@ -56,6 +56,11 @@ const FullImageView: React.FC<FullImageViewProps> = ({
     return () => window.removeEventListener("keydown", keyHandler);
   });
 
+  console.log(images[imagemIndex]);
+  const [w, setW] = useState(0);
+  const [h, setH] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     setImagemIndex(index);
   }, [index]);
@@ -74,7 +79,10 @@ const FullImageView: React.FC<FullImageViewProps> = ({
         onClose(imagemIndex);
       }}
     >
-      <div className="flex h-full w-full relative items-center touch-none">
+      <div
+        ref={ref}
+        className="flex h-full w-full items-center touch-none relative"
+      >
         <OwnerGuard isOwner={imagemIndex > 0}>
           <ArrowButton
             variant="left"
@@ -86,7 +94,7 @@ const FullImageView: React.FC<FullImageViewProps> = ({
         </OwnerGuard>
 
         <Image
-          className="w-full h-fit max-h-full "
+          className="absolute w-full h-fit max-h-full "
           src={utils.getUrlImageR2(images[imagemIndex]?.url) || ""}
           alt=""
           height={500}
