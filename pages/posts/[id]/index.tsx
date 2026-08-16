@@ -161,12 +161,12 @@ export default function DetailsPostPage({ user_id }: Props) {
               <div className="bg-gray-100 rounded justify-center gap-y-2 py-2 flex w-full flex-wrap ">
                 {post_imagens[0] !== null &&
                   post_imagens.map((img, i) => {
-                    const newImg = utils.getUrlImageR2(img.url);
+                    const newImgUrl = utils.getUrlImageR2(img.url);
                     const isActive = img.status === ImageStatus.ACTIVE;
                     return (
                       <ImageCardPreview
                         key={"img-" + i}
-                        image={{ ...img, url: newImg }}
+                        image={{ ...img, url: newImgUrl }}
                         active={isActive}
                         alertMsg={isActive ? "" : "Pendente!"}
                         onClick={() => {
@@ -185,7 +185,7 @@ export default function DetailsPostPage({ user_id }: Props) {
                                   loading="eager"
                                 />
                               </div>
-                              Deseja remover esta imagem
+                              <span>Deseja remover esta imagem</span>
                             </Modal>,
                           );
                         }}

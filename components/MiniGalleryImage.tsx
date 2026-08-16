@@ -26,7 +26,6 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
       className={`flex gap-1 w-full items-cente h-80  ${className} `}
     >
       <div
-        id="imagem_principal"
         className="w-full cursor-pointer order-2 
         self-center h-full items-center  flex justify-center
          border-gray-300 overflow-hidden hover:border-cyan-600 rounded-r-xl relative border-2 "
@@ -42,7 +41,6 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
       </div>
 
       <div
-        id="galeria"
         className="flex flex-col w-2/7 gap-2 order-1 h-full overflow-hidden
         "
       >
@@ -64,8 +62,8 @@ const MiniGalleryImage: React.FC<MiniGalleryImageProps> = ({
                 onClick={() => selectImg(key)}
               >
                 <Image
-                  className={`cursor-pointer object-cover   overflow-hidden
-                     w-full bg-gray-50  h-full ${rounded} overflow-hidden   
+                  className={`cursor-pointer object-cover overflow-hidden
+                     w-full bg-gray-50  h-full ${rounded}   
                       border-2 border-gray-400
                       hover:border-cyan-600 relative
                     `}
