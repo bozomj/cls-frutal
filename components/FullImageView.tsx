@@ -8,9 +8,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import OwnerGuard from "./guards/OwnerGuard";
+import { ImageDBType } from "@/shared/Image_types";
 
 interface FullImageViewProps {
-  images: { url: string }[];
+  images: ImageDBType[];
   index: number;
   visible: boolean;
   onClose: (i: number) => void;
@@ -54,9 +55,9 @@ const FullImageView: React.FC<FullImageViewProps> = ({
     setImagemIndex(index);
   }, [index]);
 
-  if (images.length < 1) return <></>;
-
-  return (
+  return images.length < 1 ? (
+    <></>
+  ) : (
     <div
       id="imgfull"
       className={`
