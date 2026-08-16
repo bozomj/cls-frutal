@@ -8,10 +8,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import OwnerGuard from "./guards/OwnerGuard";
-import { ImageDBType } from "@/shared/Image_types";
 
 interface FullImageViewProps {
-  images: ImageDBType[];
+  images: { url: string }[];
   index: number;
   visible: boolean;
   onClose: (i: number) => void;

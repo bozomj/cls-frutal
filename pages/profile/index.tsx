@@ -106,7 +106,9 @@ const Profile: React.FC = () => {
                 </Link>
               )}
             </div>
+
             <span className="h-44 border-1 border-gray-200 block"></span>
+
             <div className="overflow-hidden">
               <span className="text-xs font-black text-gray-600 h-6">
                 Gerencie fotos do perfil
@@ -159,6 +161,7 @@ const Profile: React.FC = () => {
               </div>
             </div>
           </section>
+
           <section className=" flex flex-col py-4 ">
             {postagens.length < 1 && isLoad ? (
               <Produtos

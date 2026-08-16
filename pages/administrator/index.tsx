@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 import { GetServerSidePropsContext } from "next";
 import LayoutPage from "@/layout/dashboard/layout";
 import { getAdminProps } from "@/lib/hoc";
@@ -16,7 +14,7 @@ const AdministratorPage = ({ user }: Props) => {
         id="container"
         className="flex flex-col gap-1 flex-1 overflow-hidden p-1"
       >
-        teste
+        nada aqui
       </section>
     </LayoutPage>
   );

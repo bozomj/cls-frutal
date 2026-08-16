@@ -13,7 +13,7 @@ import OwnerGuard from "@/components/guards/OwnerGuard";
 import { PostDetailType } from "@/shared/post_types";
 import { UserDBType } from "@/shared/user_types";
 import imagem from "@/models/imagem";
-import { ImageDBType, ImageStatus } from "@/shared/Image_types";
+import { ImageStatus } from "@/shared/Image_types";
 import httpImage from "@/http/image";
 import Image from "next/image";
 import utils from "@/utils";
@@ -32,13 +32,14 @@ function PostsAdministrator({ user, post }: Props) {
       <div className=" bg-gray-200   flex justify-center flex-1">
         <div className="w-7xl flex flex-col h-fit gap-2">
           <PostView post={post} />
+
           <section className="px-4 bg-gray-50 rounded-xl shadow-sm shadow-gray-400 py-10">
             <h2 className=" font-black">Fotos do anuncio</h2>
             <p className="pb-2 text-xs text-slate-400">
               Gerencie o catálogo de fotos
             </p>
             <div className="flex justify-center bg-gray-100">
-              {imagesPost.map((img, i) => {
+              {imagesPost.map((img) => {
                 return (
                   <div
                     key={img.id}
@@ -55,7 +56,6 @@ function PostsAdministrator({ user, post }: Props) {
                     </div>
 
                     <div className="flex justify-between items-center">
-                      {/* <span>Status: {img.status}</span> */}
                       <button
                         className="btn bg-red-800 hover:bg-red-700 transition duration-500 text-white text-sm w-full"
                         onClick={async () => {
@@ -79,8 +79,7 @@ function PostsAdministrator({ user, post }: Props) {
               })}
             </div>
           </section>
-
-          <div className="flex  bg-gray-100 shadow-sm shadow-gray-400 p-4 rounded-xl justify-between items-center">
+          <section className="flex  bg-gray-100 shadow-sm shadow-gray-400 p-4 rounded-xl justify-between items-center">
             <div
               className={
                 (statePost === PostStatus.ACTIVE
@@ -94,24 +93,7 @@ function PostsAdministrator({ user, post }: Props) {
               <OwnerGuard isOwner={!(post.status === PostStatus.ACTIVE)}>
                 <button
                   className="btn bg-green-600 text-white font-bold"
-                  onClick={async () => {
-                    imagesPost.forEach(async (img) => {
-                      await httpImage.updateState(
-                        img.id,
-                        ImageStatus.ACTIVE,
-                        post.id ?? "",
-                      );
-                    });
-
-                    post.status = PostStatus.ACTIVE;
-                    const result = await httpPost.update({
-                      id: post.id || "",
-                      user_id: post.user_id,
-                      status: post.status,
-                    });
-
-                    setStatePost(result.status);
-                  }}
+                  onClick={setPostAprovate}
                 >
                   Aprovar
                 </button>
@@ -119,25 +101,7 @@ function PostsAdministrator({ user, post }: Props) {
               <OwnerGuard isOwner={post.status === PostStatus.ACTIVE}>
                 <button
                   className="btn bg-red-800 hover:bg-red-700 transition duration-500 text-white font-bold"
-                  onClick={async () => {
-                    post.status = PostStatus.REJECTED;
-
-                    post.imagens.forEach(async (img) => {
-                      await httpImage.updateState(
-                        img.id,
-                        ImageStatus.REJECTED,
-                        post.id ?? "",
-                      );
-                    });
-
-                    const result = await httpPost.update({
-                      id: post.id || "",
-                      user_id: post.user_id,
-                      status: post.status,
-                    });
-
-                    setStatePost(result.status);
-                  }}
+                  onClick={setPostReject}
                 >
                   Rejeitar
                 </button>
@@ -146,35 +110,64 @@ function PostsAdministrator({ user, post }: Props) {
               <OwnerGuard isOwner={post.status !== PostStatus.PENDING}>
                 <button
                   className="btn bg-red-400 text-white font-bold"
-                  onClick={async () => {
-                    post.status = PostStatus.PENDING;
-
-                    post.imagens.forEach(async (img) => {
-                      await httpImage.updateState(
-                        img.id,
-                        post.status,
-                        post.id ?? "",
-                      );
-                    });
-
-                    const result = await httpPost.update({
-                      id: post.id || "",
-                      user_id: post.user_id,
-                      status: post.status,
-                    });
-
-                    setStatePost(result.status);
-                  }}
+                  onClick={setPostPending}
                 >
                   Pendente
                 </button>
               </OwnerGuard>
             </div>
-          </div>
+          </section>
         </div>
       </div>
     </LayoutPage>
   );
+
+  async function setPostAprovate() {
+    imagesPost.forEach(async (img) => {
+      await httpImage.updateState(img.id, ImageStatus.ACTIVE, post.id ?? "");
+    });
+
+    post.status = PostStatus.ACTIVE;
+    const result = await httpPost.update({
+      id: post.id || "",
+      user_id: post.user_id,
+      status: post.status,
+    });
+
+    setStatePost(result.status);
+  }
+
+  async function setPostReject() {
+    post.status = PostStatus.REJECTED;
+
+    post.imagens.forEach(async (img) => {
+      await httpImage.updateState(img.id, ImageStatus.REJECTED, post.id ?? "");
+    });
+
+    const result = await httpPost.update({
+      id: post.id || "",
+      user_id: post.user_id,
+      status: post.status,
+    });
+
+    setStatePost(result.status);
+  }
+
+  async function setPostPending() {
+    post.status = PostStatus.PENDING;
+
+    post.imagens.forEach(async (img) => {
+      await httpImage.updateState(img.id, post.status, post.id ?? "");
+    });
+
+    const result = await httpPost.update({
+      id: post.id || "",
+      user_id: post.user_id,
+      status: post.status,
+    });
+
+    setStatePost(result.status);
+  }
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {

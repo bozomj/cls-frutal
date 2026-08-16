@@ -7,6 +7,7 @@ import { useBackdrop } from "@/ui/backdrop/useBackdrop";
 import FullImageView from "../FullImageView";
 import { PostDetailType } from "@/shared/post_types";
 import VerticalDivider from "../VerticalDivider";
+import { ImageDBType } from "@/shared/Image_types";
 
 export type PostItemType = {
   id: string;
@@ -29,7 +30,7 @@ interface PostViewProps {
 }
 
 export default function PostView({ post }: PostViewProps) {
-  const post_imagens = post.imagens;
+  const post_imagens = post.imagens as ImageDBType[];
   const [imgPrincial, setImgPrincipal] = useState<string>(post_imagens[0]?.url);
   const [imagemIndex, setImagemIndex] = useState<number>(0);
 
@@ -44,21 +45,6 @@ export default function PostView({ post }: PostViewProps) {
           <MiniGalleryImage
             className="md:max-w-1/2"
             post_imagens={post_imagens}
-            imgPrincipal={imgPrincial as string}
-            onClick={() =>
-              usebackdrop.openContent(
-                <FullImageView
-                  images={post_imagens}
-                  index={imagemIndex}
-                  visible={true}
-                  onClose={closeFullImages}
-                />,
-              )
-            }
-            selectImg={(i) => {
-              setImgPrincipal(post_imagens[i].url as string);
-              setImagemIndex(i);
-            }}
           />
           <div>
             <ItemTitle />
