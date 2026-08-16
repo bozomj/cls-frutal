@@ -31,35 +31,24 @@ const FullImageView: React.FC<FullImageViewProps> = ({
   };
 
   function moveLeft() {
-    let v = imagemIndex;
-    if (imagemIndex > 0) v = imagemIndex - 1;
-    setImagemIndex(v);
+    if (imagemIndex > 0) setImagemIndex(imagemIndex - 1);
   }
 
   function moveRight() {
-    let v = imagemIndex;
-    if (imagemIndex < images.length - 1) v = imagemIndex + 1;
-    setImagemIndex(v);
+    if (imagemIndex < images.length - 1) setImagemIndex(imagemIndex + 1);
   }
+  const keyHandler = (e: KeyboardEvent) => {
+    const key = e.key as keyof typeof moves;
+    if (key in moves) moves[key]();
+  };
 
   useEffect(() => {
-    const keyHandler = (e: KeyboardEvent) => {
-      const key = e.key as keyof typeof moves;
-      const img = document
-        .getElementById("imgfull")
-        ?.classList.contains("flex");
-      if (img && key in moves) moves[key]();
-    };
-
     window.addEventListener("keydown", keyHandler);
 
-    return () => window.removeEventListener("keydown", keyHandler);
-  });
-
-  console.log(images[imagemIndex]);
-  const [w, setW] = useState(0);
-  const [h, setH] = useState(0);
-  const ref = useRef<HTMLDivElement>(null);
+    return () => {
+      window.removeEventListener("keydown", keyHandler);
+    };
+  }, [imagemIndex]);
 
   useEffect(() => {
     setImagemIndex(index);
@@ -79,10 +68,7 @@ const FullImageView: React.FC<FullImageViewProps> = ({
         onClose(imagemIndex);
       }}
     >
-      <div
-        ref={ref}
-        className="flex h-full w-full items-center touch-none relative"
-      >
+      <div className="flex h-full w-full items-center touch-none relative">
         <OwnerGuard isOwner={imagemIndex > 0}>
           <ArrowButton
             variant="left"
@@ -97,8 +83,7 @@ const FullImageView: React.FC<FullImageViewProps> = ({
           className="absolute w-full h-fit max-h-full "
           src={utils.getUrlImageR2(images[imagemIndex]?.url) || ""}
           alt=""
-          height={500}
-          width={500}
+          fill
           sizes="100"
           style={{ objectFit: "contain" }}
           onClick={(e) => e.stopPropagation()}
