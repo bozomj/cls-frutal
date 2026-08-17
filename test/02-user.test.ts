@@ -1,4 +1,12 @@
 import database from "@/database/database";
+import orchestrator from "./orchestrator";
+import insertCategorias from "@/seeds/insertCategorias";
+
+beforeAll(async () => {
+  await orchestrator.cleanDatabase();
+  await orchestrator.runPendingMigrations();
+  await insertCategorias();
+});
 
 describe("User", () => {
   it("mostrar tabelas", async () => {

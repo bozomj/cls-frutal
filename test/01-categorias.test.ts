@@ -1,14 +1,16 @@
 import database from "@/database/database";
 import categoria from "@/models/categoria";
 import insertCategorias from "@/seeds/insertCategorias";
+import orchestrator from "./orchestrator";
 
 beforeAll(async () => {
-  // await database.query("delete from categorias");
+  await orchestrator.cleanDatabase();
+  await orchestrator.runPendingMigrations();
 });
 
 describe("Categorias", () => {
   it("inserir uma categoria aleatoria", async () => {
-    // await insertCategorias();
+    await insertCategorias();
   });
 
   it("mostrar todas categorias", async () => {

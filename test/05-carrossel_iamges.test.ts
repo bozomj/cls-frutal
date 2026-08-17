@@ -1,10 +1,13 @@
 import database from "@/database/database";
-import autenticator from "@/models/autenticator";
 import carrosselImages from "@/models/carrosselImages";
 import User from "@/models/user";
+import orchestrator from "./orchestrator";
+import insertCategorias from "@/seeds/insertCategorias";
 
 beforeAll(async () => {
-  await database.query("delete from carrossel_images");
+  await orchestrator.cleanDatabase();
+  await orchestrator.runPendingMigrations();
+  await insertCategorias();
 });
 
 describe("Categorias", () => {
@@ -50,13 +53,20 @@ describe("Categorias", () => {
   });
 
   it("Erro ao deletar imagem carrossel no 2r com user comun", async () => {
+    await User.create({
+      name: "Tulio Alcantara",
+      email: "tuliocomun@hotmail.com",
+      phone: "34997668902",
+      password: "123456",
+    });
+
     const user = await fetch("http://localhost:3000/api/v1/login", {
       headers: {
         "Content-Type": "application/json",
       },
       method: "POST",
       body: JSON.stringify({
-        email: "teste@hotmail.com",
+        email: "tuliocomun@hotmail.com",
         password: "123456",
       }),
     });

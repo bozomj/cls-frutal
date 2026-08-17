@@ -1,9 +1,13 @@
 import database from "@/database/database";
 import path from "path";
 import profileImages from "@/models/perfil_images";
+import orchestrator from "./orchestrator";
+import insertCategorias from "@/seeds/insertCategorias";
 
 beforeAll(async () => {
-  await database.query("delete from perfil_images");
+  await orchestrator.cleanDatabase();
+  await orchestrator.runPendingMigrations();
+  await insertCategorias();
 });
 
 describe("teste imagem profile", () => {

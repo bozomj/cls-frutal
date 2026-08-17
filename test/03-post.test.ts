@@ -4,11 +4,13 @@ import Post from "@/models/post";
 import User from "@/models/user";
 import { PostStatus } from "@/shared/post_status";
 import { PostDetailType } from "@/shared/post_types";
+import orchestrator from "./orchestrator";
+import insertCategorias from "@/seeds/insertCategorias";
 
 beforeAll(async () => {
-  await database.query("delete from imagens");
-  await database.query("delete from posts");
-  await database.query("delete from users");
+  await orchestrator.cleanDatabase();
+  await orchestrator.runPendingMigrations();
+  await insertCategorias();
 });
 
 describe("teste da tabela post", () => {

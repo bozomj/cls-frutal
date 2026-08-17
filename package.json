@@ -12,13 +12,18 @@
     "db:up": "docker-compose up -d",
     "db:down": "docker-compose down",
     "db:restart": "docker-compose restart",
-    "test": "jest",
+    "test": "jest --runInBand",
     "test:watch": "jest --watchAll --runInBand --verbose",
     "migrate": "node-pg-migrate",
     "migrate:create": "node-pg-migrate create",
     "migrate:up": "node-pg-migrate up",
     "migrate:down": "node-pg-migrate down",
-    "seed": "ts-node seeds/createAminUser.ts",
+    "seed:admin": "tsx seeds/createAdminUser",
+    "seed:categorias": "tsx seeds/insertCategorias",
+    "seed:prod:categorias": "dotenv -e .env.production -- tsx seeds/insertCategorias",
+    "seed:prod:admin": "dotenv -e .env.production -- tsx seeds/createAdminUser",
+    "seed:prod": "npm run seed:prod:admin && npm run seed:prod:categorias",
+    "seed": "npm run seed:admin && npm run seed:categorias",
     "migrate:dev": "dotenv -e .env.development -- node-pg-migrate up",
     "migrate:prod": "dotenv -e .env.production -- node-pg-migrate up",
     "deploy:prod": "npm run migrate:prod && vercel deploy --prod"
@@ -71,6 +76,8 @@
     "tailwindcss": "^4.1.0",
     "ts-jest": "^29.3.1",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.23.12",
     "typescript": "5.9.3"
   }
 }
