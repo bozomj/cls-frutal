@@ -1,7 +1,7 @@
 exports.up = (pgm) => {
   pgm.addColumn("users", {
     features: {
-      type: "varchar",
+      type: "varchar[]",
       notNull: true,
       default: "{}",
     },

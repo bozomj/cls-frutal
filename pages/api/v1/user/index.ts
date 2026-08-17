@@ -1,8 +1,10 @@
 //endpoint para listar todos os usuários
 
+import activation from "@/models/activation";
 import autenticator from "@/models/autenticator";
 import profileImages from "@/models/perfil_images";
 import User from "@/models/user";
+import { UserDBType } from "@/shared/user_types";
 
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
@@ -36,15 +38,21 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   const password = body.password;
   const phone = body.phone;
 
-  const use = { name: name, email: email, password: password, phone: phone };
+  const use = {
+    name: name,
+    email: email,
+    password: password,
+    phone: phone,
+  } as UserDBType;
 
   try {
     const user = await User.create(use);
+    await activation.sendEmailToUser(use);
 
     const token = autenticator.createToken(user[0].id);
     res.setHeader(
       "Set-Cookie",
-      `token=${token}; HttpOnly; Path=/; Max-Age=3600;`
+      `token=${token}; HttpOnly; Path=/; Max-Age=3600;`,
     );
 
     res.status(201).json({

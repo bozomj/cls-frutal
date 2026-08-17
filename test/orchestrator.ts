@@ -10,7 +10,21 @@ async function deleteAllEmails() {
 }
 
 async function getLastEmail() {
-  return await fetch(`${mailHttpUrl}/messages`);
+  const emailListResponse = await fetch(`${mailHttpUrl}/messages`);
+  const emailListBody = await emailListResponse.json();
+  const lastEmailItem = emailListBody.pop();
+
+  if (!lastEmailItem) {
+    return null;
+  }
+
+  const emailTextResponse = await fetch(
+    `${mailHttpUrl}/messages/${lastEmailItem.id}.plain`,
+  );
+  const emailTextBody = await emailTextResponse.text();
+
+  lastEmailItem.text = emailTextBody;
+  return lastEmailItem;
 }
 
 async function cleanDatabase() {

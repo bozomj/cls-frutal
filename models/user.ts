@@ -89,6 +89,7 @@ const User = {
   ) => {
     try {
       await validateUniqueEmail(userInputValues.email as string);
+      injectDefaultFeaturesInObject(userInputValues);
     } catch (error) {
       throw error;
     }
@@ -100,6 +101,10 @@ const User = {
         message: new Error("Erro ao criar usuário"),
         cause: { CAUSE: error },
       };
+    }
+
+    function injectDefaultFeaturesInObject(userInputValues: any) {
+      userInputValues.features = ["read:activation_token"];
     }
 
     async function validateUniqueEmail(email: string) {
@@ -117,13 +122,14 @@ const User = {
     ) {
       try {
         return await database.query(
-          "INSERT INTO users (name, email, password, is_admin, phone) VALUES (LOWER($1), LOWER($2), $3, $4, $5) RETURNING *;",
+          "INSERT INTO users (name, email, password, is_admin, phone, features) VALUES (LOWER($1), LOWER($2), $3, $4, $5, $6) RETURNING *;",
           [
             userImputValues.name,
             userImputValues.email,
             await password.hashPassword(userInputValues.password as string),
             userImputValues.is_admin || false,
             userImputValues.phone,
+            userImputValues.features,
           ],
         );
       } catch (error) {
