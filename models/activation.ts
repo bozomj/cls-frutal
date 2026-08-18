@@ -5,23 +5,25 @@ import webserver from "@/infra/webserver";
 
 const EXPIRATION_IN_MILLISECONDS = 60 * 15 * 1000; // 15 MINUTES
 
-async function findOneByUserId(userId: string) {
-  console.log(userId);
-  const newToken = await runInsertQuery(userId);
-  return newToken;
+async function findOneValidById(tokenId: string) {
+  const activationTokeObject = await runInsertQuery(tokenId);
+  return activationTokeObject;
 
-  async function runInsertQuery(userId: string) {
+  async function runInsertQuery(tokenId: string) {
     const results = await database.query(
       `SELECT
         *
       FROM
         user_activation_tokens
         WHERE
-         user_id = $1
+         id = $1
+         AND expires_at > NOW()
+         AND used_at IS null
+
         LIMIT
          1
       ;`,
-      [userId],
+      [tokenId],
     );
 
     return results;
@@ -71,7 +73,7 @@ Equipe CLS-CLASSIFICADOS-FRUTAL
 }
 
 const activation = {
-  findOneByUserId,
+  findOneValidById,
   create,
   sendEmailToUser,
 };

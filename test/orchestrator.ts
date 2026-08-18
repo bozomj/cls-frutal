@@ -35,11 +35,17 @@ async function runPendingMigrations() {
   await migrator.runPendingMigrations();
 }
 
+function extractUUID(text: string) {
+  const match = text.match(/[0-9a-fA-F-]{36}/);
+  return match ? match[0] : null;
+}
+
 const orchestrator = {
   deleteAllEmails,
   getLastEmail,
   cleanDatabase,
   runPendingMigrations,
+  extractUUID,
 };
 
 export default orchestrator;

@@ -1,8 +1,7 @@
 import database from "@/database/database";
 import orchestrator from "./orchestrator";
 import activation from "@/models/activation";
-
-const webserver = "http://localhost:3000";
+import webserver from "@/infra/webserver";
 
 beforeAll(async () => {
   await orchestrator.deleteAllEmails();
@@ -21,7 +20,7 @@ describe("Use case: registtration flow (all successfull)", () => {
   test("Create user account", async () => {
     await database.query("delete from users where email <> 'bozomj@gmail.com'");
 
-    const responseUser = await fetch(`${webserver}/api/v1/user`, {
+    const responseUser = await fetch(`${webserver.origin}/api/v1/user`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -47,21 +46,29 @@ describe("Use case: registtration flow (all successfull)", () => {
   test("Receive activation email", async () => {
     const lastEmail = await orchestrator.getLastEmail();
 
-    const activationToken = await activation.findOneByUserId(
-      responseUserBody.id,
-    );
-
     expect(lastEmail.sender).toBe("<contato@bzmj.com.br>");
     expect(lastEmail.recipients[0]).toBe(`<${user.email}>`);
     expect(lastEmail.subject).toBe(
       "Ative seu cadastro em CLS-CLASSIFICADOS-FRUTAL",
     );
-
     expect(lastEmail.text).toContain(user.name);
-    expect(lastEmail.text).toContain(activationToken[0].id);
-    console.log(lastEmail.text);
+
+    const activationTokenId = orchestrator.extractUUID(lastEmail.text);
+
+    expect(lastEmail.text).toContain(
+      `${webserver.origin}/cadastro/ativar/${activationTokenId}`,
+    );
+
+    const activationTokeObject = (
+      await activation.findOneValidById(activationTokenId || "")
+    )[0];
+
+    console.log(activationTokeObject);
+    expect(activationTokeObject.user_id).toBe(responseUserBody.id);
+    expect(activationTokeObject.used_at).toBe(null);
   });
 
+  test("Activation account", async () => {});
   test("Login", async () => {});
   test("get user information", async () => {});
 });
