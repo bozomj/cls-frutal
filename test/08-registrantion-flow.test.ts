@@ -1,5 +1,6 @@
 import database from "@/database/database";
 import orchestrator from "./orchestrator";
+import activation from "@/models/activation";
 
 const webserver = "http://localhost:3000";
 
@@ -15,6 +16,8 @@ describe("Use case: registtration flow (all successfull)", () => {
     phone: "34997668902",
   };
 
+  let responseUserBody: any;
+
   test("Create user account", async () => {
     await database.query("delete from users where email <> 'bozomj@gmail.com'");
 
@@ -27,7 +30,7 @@ describe("Use case: registtration flow (all successfull)", () => {
     });
 
     expect(responseUser.status).toBe(201);
-    const responseUserBody = (await responseUser.json()).user;
+    responseUserBody = (await responseUser.json()).user;
 
     expect(responseUserBody).toEqual({
       id: responseUserBody.id,
@@ -43,16 +46,22 @@ describe("Use case: registtration flow (all successfull)", () => {
 
   test("Receive activation email", async () => {
     const lastEmail = await orchestrator.getLastEmail();
-    console.log(lastEmail);
-    return 0;
+
+    const activationToken = await activation.findOneByUserId(
+      responseUserBody.id,
+    );
 
     expect(lastEmail.sender).toBe("<contato@bzmj.com.br>");
-    expect(lastEmail.recipients[0]).toBe(user.email);
+    expect(lastEmail.recipients[0]).toBe(`<${user.email}>`);
     expect(lastEmail.subject).toBe(
-      "Ative seu cadastro em CLS-CALSSIFICADOS-FRUTAL",
+      "Ative seu cadastro em CLS-CLASSIFICADOS-FRUTAL",
     );
+
     expect(lastEmail.text).toContain(user.name);
+    expect(lastEmail.text).toContain(activationToken[0].id);
+    console.log(lastEmail.text);
   });
+
   test("Login", async () => {});
   test("get user information", async () => {});
 });

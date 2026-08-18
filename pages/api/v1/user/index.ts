@@ -47,7 +47,9 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     const user = await User.create(use);
-    await activation.sendEmailToUser(use);
+    const activationToken = await activation.create(user[0].id);
+
+    await activation.sendEmailToUser(user[0], activationToken[0]);
 
     const token = autenticator.createToken(user[0].id);
     res.setHeader(
