@@ -2,6 +2,7 @@ import { UserDBType } from "@/shared/user_types";
 import mail from "./mail";
 import database from "@/database/database";
 import webserver from "@/infra/webserver";
+import User from "./user";
 
 const EXPIRATION_IN_MILLISECONDS = 60 * 15 * 1000; // 15 MINUTES
 
@@ -26,7 +27,7 @@ async function findOneValidById(tokenId: string) {
       [tokenId],
     );
 
-    return results;
+    return results[0];
   }
 }
 
@@ -72,7 +73,33 @@ Equipe CLS-CLASSIFICADOS-FRUTAL
   console.log(email);
 }
 
+async function activateUserByUserId(userId: string) {
+  const activatedUser = await User.setFeatures(userId, ["create:session"]);
+  return activatedUser;
+}
+
+async function markTokenAsUsed(tokenId: string) {
+  const result = await database.query(
+    `
+    UPDATE
+      user_activation_tokens
+      SET
+        used_at = timezone('utc', now()),
+        updated_at = timezone('utc', now())
+      WHERE
+        id = $1
+      RETURNING
+        *;
+    `,
+    [tokenId],
+  );
+
+  return result[0];
+}
+
 const activation = {
+  activateUserByUserId,
+  markTokenAsUsed,
   findOneValidById,
   create,
   sendEmailToUser,

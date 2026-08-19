@@ -2,6 +2,7 @@ import database from "@/database/database";
 import orchestrator from "./orchestrator";
 import activation from "@/models/activation";
 import webserver from "@/infra/webserver";
+import User from "@/models/user";
 
 beforeAll(async () => {
   await orchestrator.deleteAllEmails();
@@ -16,6 +17,7 @@ describe("Use case: registtration flow (all successfull)", () => {
   };
 
   let responseUserBody: any;
+  let activationTokenId: string | null;
 
   test("Create user account", async () => {
     await database.query("delete from users where email <> 'bozomj@gmail.com'");
@@ -40,6 +42,7 @@ describe("Use case: registtration flow (all successfull)", () => {
       features: ["read:activation_token"],
       phone: user.phone,
       password: responseUserBody.password,
+      updated_at: responseUserBody.updated_at,
     });
   });
 
@@ -53,22 +56,38 @@ describe("Use case: registtration flow (all successfull)", () => {
     );
     expect(lastEmail.text).toContain(user.name);
 
-    const activationTokenId = orchestrator.extractUUID(lastEmail.text);
+    activationTokenId = orchestrator.extractUUID(lastEmail.text);
 
     expect(lastEmail.text).toContain(
       `${webserver.origin}/cadastro/ativar/${activationTokenId}`,
     );
 
-    const activationTokeObject = (
-      await activation.findOneValidById(activationTokenId || "")
-    )[0];
+    const activationTokeObject = await activation.findOneValidById(
+      activationTokenId || "",
+    );
 
-    console.log(activationTokeObject);
     expect(activationTokeObject.user_id).toBe(responseUserBody.id);
     expect(activationTokeObject.used_at).toBe(null);
   });
 
-  test("Activation account", async () => {});
+  test("Activation account", async () => {
+    const activationResponse = await fetch(
+      `${webserver.origin}/api/v1/activations/${activationTokenId}`,
+      {
+        method: "PATCH",
+      },
+    );
+
+    expect(activationResponse.status).toBe(200);
+
+    const activationResponseBody = await activationResponse.json();
+    expect(Date.parse(activationResponseBody.used_at)).not.toBeNaN();
+
+    const activatedUser = await User.findByEmail(user.email);
+    expect(activatedUser[0].features).toEqual(["create:session"]);
+  });
+
   test("Login", async () => {});
+
   test("get user information", async () => {});
 });

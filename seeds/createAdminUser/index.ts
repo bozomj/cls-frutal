@@ -19,15 +19,3 @@ export default async function createAminUser() {
 }
 
 // 2. O PULO DO GATO: Função autoexecutável para quando o script rodar via terminal
-async function run() {
-  console.log("🚀 Iniciando seed de Administrador...");
-  await createAminUser();
-  console.log("🏁 Processo de seed finalizado.");
-  process.exit(0); // Fecha o processo do Node com sucesso
-}
-
-// Executa a função imediatamente ao chamar o arquivo
-run().catch((err) => {
-  console.error("❌ Erro fatal ao executar o seed de admin:", err);
-  process.exit(1); // Fecha o processo avisando que deu erro
-});

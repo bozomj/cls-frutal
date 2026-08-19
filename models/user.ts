@@ -193,6 +193,29 @@ const User = {
     const token = autenticator.createToken(user[0].id);
     return token;
   },
+
+  setFeatures: async (userId: string, features: string[]) => {
+    const updatedUser = await runUpdateQuery(userId, features);
+    return updatedUser;
+
+    async function runUpdateQuery(userId: string, features: string[]) {
+      const results = await database.query(
+        `
+        UPDATE
+          users 
+        SET 
+          features = $2,
+          updated_at = timezone('utc', now())
+        WHERE
+          id = $1
+        RETURNING
+          *;`,
+        [userId, features],
+      );
+
+      return results;
+    }
+  },
 };
 
 export default User;
