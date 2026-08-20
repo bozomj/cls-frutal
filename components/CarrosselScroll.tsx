@@ -96,6 +96,7 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({
             alt=""
             fill
             loading="eager"
+            sizes="60"
           />
         </div>
       </div>

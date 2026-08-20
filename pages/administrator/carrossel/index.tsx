@@ -39,7 +39,7 @@ function CarrosselPageAdmin({ user }: Props) {
   return (
     <LayoutPage user={user}>
       <div className="flex flex-col items-center gap-2 md:max-w-[960px] rounded-xl mx-auto ">
-        <div className="w-full h-60 flex justify-center rounded-xl bg-white p-2 shadow-md shadow-gray-400">
+        <div className="w-full h-40 md:h-60 flex justify-center rounded-xl bg-white p-2 shadow-md shadow-gray-400">
           <CarrosselScroll
             items={imgCarrossel}
             time={1}
@@ -165,6 +165,7 @@ function CarrosselPageAdmin({ user }: Props) {
 
       return (
         <ImageCardPreview
+          key={e.url}
           image={{ ...e, url: nurl } as ImageDBType}
           className="min-w-full h-full object-cover "
           onClick={() => click!(e, index)}
