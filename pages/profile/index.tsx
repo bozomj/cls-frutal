@@ -169,7 +169,7 @@ const Profile: React.FC = () => {
                   [{}, {}, {}, {}, {}, {}, {}, {}, {}] as PostDetailType[]
                 }
                 Card={WireProductCardDashboard}
-                className="grid-cols-1!"
+                className="grid-cols-1! md:grid-cols-3!"
               />
             ) : (
               <Produtos
