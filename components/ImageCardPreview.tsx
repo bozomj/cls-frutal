@@ -29,7 +29,7 @@ function ImageCardPreview({
     <div
       className={`relative w-1/3 lg:max-w-1/6 md:max-w-1/4  text-white shrink ${className}`}
     >
-      <div className={(active ? `` : `opacity-40! `) + `h-full px-1 `}>
+      <div className={(active ? `` : `opacity-40! `) + `h-full p-1 `}>
         <RemoveButton />
         <Card
           className={

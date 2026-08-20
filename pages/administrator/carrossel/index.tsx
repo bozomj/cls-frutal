@@ -54,7 +54,7 @@ function CarrosselPageAdmin({ user }: Props) {
           <p className="text-xs text-slate-400 mb-2">
             Gerencie o catálogo de fotos do Banner
           </p>
-          <div className="grid items-center gap-2 grid-cols-3   p-2 w-full rounded-xl">
+          <div className="grid items-center grid-cols-3 w-full rounded-xl">
             <ImagensCarrossel
               imgs={imgCarrossel}
               database={true}

@@ -38,7 +38,7 @@ const Home: React.FC = () => {
           className="flex  flex-col gap-2 w-full  flex-1 p-2 md:max-w-7xl"
         >
           <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
-          <div className="flex justify-center">
+          <div className="flex h-40 md:h-50 justify-center">
             <CarrosselScroll items={imgCarrossel} time={5} />
           </div>
 
