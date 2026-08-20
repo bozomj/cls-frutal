@@ -11,12 +11,14 @@ interface CarrosselScrollProps {
   items: { url: string }[];
   time: number;
   activeAction?: boolean;
+  className?: string;
 }
 
 const CarrosselScroll: React.FC<CarrosselScrollProps> = ({
   items,
   time,
   activeAction = false,
+  className,
 }) => {
   const [index, setIndex] = useState<number>(0);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -60,7 +62,9 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({
   });
 
   return (
-    <div className="w-full  max-w-3xl h-32 rounded-2xl relative overflow-hidden shadow-sm shadow-gray-400">
+    <div
+      className={`w-full h-full rounded-2xl relative overflow-hidden shadow-sm shadow-gray-400 ${className}`}
+    >
       {activeAction && (
         <ArrowButton
           direction="left"

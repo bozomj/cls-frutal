@@ -1,7 +1,5 @@
 import { GetServerSidePropsContext } from "next";
 
-import { faAdd } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ChangeEvent, useEffect, useState } from "react";
 import utils from "@/utils";
 import InputFile from "@/components/InputFile";
@@ -12,6 +10,10 @@ import LayoutPage from "@/layout/dashboard/layout";
 import { getAdminProps } from "@/lib/hoc";
 import httpCarrosselImage from "@/http/carrossel_image";
 import { UserDBType } from "@/shared/user_types";
+import { ImageCardPreview, LinearProgressIndicator } from "@/components";
+import { ImageDBType } from "@/shared/Image_types";
+import { ButtonPrimary } from "@/components/ui/Buttons";
+import OwnerGuard from "@/components/guards/OwnerGuard";
 
 interface Props {
   user: UserDBType;
@@ -23,6 +25,8 @@ type typeImagePreview = {
 };
 
 function CarrosselPageAdmin({ user }: Props) {
+  const [loadingImages, setLoadingImages] = useState<boolean>(false);
+  const [salvando, setSalvando] = useState<boolean>(false);
   const [imgCarrossel, setImgCarrossel] = useState<[]>([]);
   const [imagensPreviews, setPreviewImagens] = useState<
     typeImagePreview[] | []
@@ -34,38 +38,62 @@ function CarrosselPageAdmin({ user }: Props) {
 
   return (
     <LayoutPage user={user}>
-      <div className="flex flex-col gap-2 md:max-w-[960px] rounded-xl mx-auto bg-white p-2 shadow-md shadow-gray-400">
-        <CarrosselScroll items={imgCarrossel} time={1} />
+      <div className="flex flex-col items-center gap-2 md:max-w-[960px] rounded-xl mx-auto ">
+        <div className="w-full h-60 flex justify-center rounded-xl bg-white p-2 shadow-md shadow-gray-400">
+          <CarrosselScroll
+            items={imgCarrossel}
+            time={1}
+            className="w-9/12! border-4 border-cyan-900/40"
+          />
+        </div>
 
-        <section className="flex flex-col items-center gap-2 ">
-          <h2 className="text-3xl font-bold">Imagens Banner Carrossel</h2>
-          <div className="grid items-center gap-2 grid-cols-[repeat(auto-fit,minmax(250px,1fr))]  bg-gray-300 p-2 w-full">
-            <ImagensCarrossel imgs={imgCarrossel} database={true} />
-          </div>
-        </section>
-
-        <section className="flex flex-col items-center gap-2  ">
-          <h2 className="text-3xl font-bold">Adicionar novas imagens</h2>
-
-          <div
-            id="preview"
-            className="grid items-center gap-2 grid-cols-[repeat(auto-fit,minmax(250px,1fr))]  bg-gray-600 p-2 w-full overflow-x-scroll"
-          >
+        <section className="bg-white rounded-2xl shadow-sm border w-full border-slate-100 p-4 md:p-6 max-w-7xl">
+          <h2 className="text-lg font-bold text-slate-900">
+            Imagens Banner Carrossel
+          </h2>
+          <p className="text-xs text-slate-400 mb-2">
+            Gerencie o catálogo de fotos do Banner
+          </p>
+          <div className="grid items-center gap-2 grid-cols-3   p-2 w-full rounded-xl">
+            <ImagensCarrossel
+              imgs={imgCarrossel}
+              database={true}
+              click={removeCarrosselImage}
+            />
             <ImagensCarrossel
               imgs={imagensPreviews}
               click={removePreviewImage}
+              active={false}
+              alertMsg="SALVAR"
+            />
+
+            <OwnerGuard isOwner={loadingImages}>
+              <div className="w-full top-5">
+                <LinearProgressIndicator />
+              </div>
+            </OwnerGuard>
+            <InputFile
+              onClick={getInputFiles}
+              className="w-full h-full min-h-40 "
             />
           </div>
-        </section>
-
-        <section id="actions" className="flex justify-between items-center">
-          <InputFile onClick={getInputFiles} className="w-15 text-white" />
-          <button
-            className="btn bg-green-500 text-white"
-            onClick={salvarImagens}
+          <div
+            id="actions"
+            className="flex justify-between items-center
+          w-full flex-row-reverse py-4
+          "
           >
-            Salvar
-          </button>
+            <button
+              disabled={imagensPreviews.length === 0}
+              className={`cursor-pointer flex items-center overflow-hidden  rounded-md w-1/3 relative font-bold ${imagensPreviews.length < 1 ? "bg-gray-400 text-gray-600 " : "bg-green-500 text-white"} h-10`}
+              onClick={salvarImagens}
+            >
+              <div
+                className={`absolute min-h-2 h-full bg-cyan-500 transform origin-left animate-loading top-0 ${salvando ? "w-full" : ""} `}
+              ></div>
+              <span className="absolute w-full left-0">Salvar</span>
+            </button>
+          </div>
         </section>
       </div>
     </LayoutPage>
@@ -77,6 +105,7 @@ function CarrosselPageAdmin({ user }: Props) {
   }
 
   async function getInputFiles(e: ChangeEvent<HTMLInputElement>) {
+    setLoadingImages(true);
     const files = e.target.files || [];
 
     if (files.length === 0) return;
@@ -89,9 +118,11 @@ function CarrosselPageAdmin({ user }: Props) {
         setPreviewImagens((prev) => [...prev, { url: imgURL, file: resized }]);
       }
     }
+    setLoadingImages(false);
   }
 
   async function salvarImagens() {
+    setSalvando(true);
     const dataImage = imagensPreviews.map((image) => image.file);
 
     try {
@@ -113,40 +144,35 @@ function CarrosselPageAdmin({ user }: Props) {
 
     setImgCarrossel(data);
     setPreviewImagens([]);
+    setSalvando(false);
   }
 
   function ImagensCarrossel({
     imgs,
     database = false,
+    active = true,
     click,
+    alertMsg,
   }: {
     imgs: [] | typeImagePreview[];
-    click?: (v: unknown, index: number) => void;
+    click?: (v: { url: string }, index: number) => void;
     database?: boolean;
+    active?: boolean;
+    alertMsg?: string;
   }) {
-    const itens = imgs.map((e, index) => (
-      <div
-        key={index}
-        className="relative rounded-md  w-full hover:shadow-md hover:shadow-gray-400"
-      >
-        <button
-          className="peer absolute p-1 bg-red-600 right-0 flex items-center text-white cursor-pointer hover:bg-red-400 rounded-tr-md "
-          onClick={
-            click ? () => click(e, index) : () => removeCarrosselImage(e)
-          }
-        >
-          <FontAwesomeIcon icon={faAdd} />
-        </button>
-        {/*  eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={database ? utils.getUrlImageR2(e?.url ?? "") || "" : e.url}
-          width={10}
-          height={10}
-          alt=""
-          className="block w-full   rounded-md h-full peer-hover:outline-4 peer-hover:outline-red-700 "
+    const itens = imgs.map((e: { url: string }, index) => {
+      const nurl = e.url.includes("http") ? e.url : utils.getUrlImageR2(e.url);
+
+      return (
+        <ImageCardPreview
+          image={{ ...e, url: nurl } as ImageDBType}
+          className="min-w-full h-full object-cover "
+          onClick={() => click!(e, index)}
+          active={active}
+          alertMsg={alertMsg}
         />
-      </div>
-    ));
+      );
+    });
 
     return itens;
   }

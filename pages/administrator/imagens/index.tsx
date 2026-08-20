@@ -25,7 +25,7 @@ const adminImagePage = ({ user }: AdminImagePageProps) => {
   const backdrop = useBackdrop();
 
   useEffect(getAllImagesPost, []);
-  console.log(postList);
+
   return (
     <LayoutPage user={user}>
       <div className="flex w-full  flex-col gap-4 justify-center">

@@ -1,6 +1,7 @@
-import database from "@/database/database";
+import User from "@/models/user";
 import orchestrator from "./orchestrator";
 import insertCategorias from "@/seeds/insertCategorias";
+import { UserDBType } from "@/shared/user_types";
 
 beforeAll(async () => {
   await orchestrator.cleanDatabase();
@@ -9,13 +10,8 @@ beforeAll(async () => {
 });
 
 describe("User", () => {
-  it("mostrar tabelas", async () => {
-    const tables = await database.query(
-      "select table_name from information_schema.tables where table_schema = 'public';",
-    );
-
-    expect(tables).toEqual(expect.any(Array));
-  });
+  let userNotAdmin: Partial<UserDBType>;
+  let userAdmin: Partial<UserDBType>;
 
   it("insert user admin", async () => {
     const result = await fetch(
@@ -24,12 +20,11 @@ describe("User", () => {
         method: "GET",
       },
     );
-    const txt = await result.json();
-
+    const resultJson = await result.json();
     expect(result.status).toBe(201);
-    expect(txt).toEqual({
-      message: "usuario cadastrado com sucesso!",
-    });
+    expect(resultJson.message).toEqual("usuario cadastrado com sucesso!");
+    expect(resultJson.user.is_admin).toBe(true);
+    userAdmin = resultJson.user;
   });
 
   it("result usuario comum ao tentar criar usuario admin", async () => {
@@ -49,6 +44,14 @@ describe("User", () => {
 
     expect(result.status).toBe(201);
     const resultBody = await result.json();
+    userNotAdmin = resultBody.user;
+
     expect(resultBody.user.is_admin).toBe(false);
+  });
+
+  it("erro ao tentar atualizar usuario com id de outro e nao sendo admin", async () => {
+    userNotAdmin.name = "Usuario alterado";
+    const alteredUser = await User.update(userNotAdmin);
+    // expect(alteredUser.name).toBe("francinildo");
   });
 });

@@ -6,34 +6,33 @@ import { UserDBType } from "@/shared/user_types";
 
 dotenv.config({ path: ".env.development" });
 
-const User = {
-  findAll: async () => {
-    try {
-      const result = await database.query(
-        'SELECT id, name, email, phone,  "createdAt" FROM users;',
-      );
-
-      return result;
-    } catch (error) {
-      throw {
-        message: new Error("Erro ao buscar usuários"),
-        cause: { CAUSE: error },
-      };
-    }
-  },
-
-  getTotalUsers: async () => {
+async function findAll() {
+  try {
     const result = await database.query(
-      `
+      'SELECT id, name, email, phone,  "createdAt" FROM users;',
+    );
+
+    return result;
+  } catch (error) {
+    throw {
+      message: new Error("Erro ao buscar usuários"),
+      cause: { CAUSE: error },
+    };
+  }
+}
+
+async function getTotalUsers() {
+  const result = await database.query(
+    `
       SELECT COUNT(*) AS total FROM users;
       `,
-    );
-    return result;
-  },
+  );
+  return result;
+}
 
-  findById: async (id: string) => {
-    const result = await database.query(
-      `
+async function findById(id: string) {
+  const result = await database.query(
+    `
       SELECT users.*, perfil_images.url 
       FROM users 
       LEFT JOIN perfil_images
@@ -41,166 +40,156 @@ const User = {
        AND perfil_images.selected = true
       where users.id = $1;
       `,
-      [id],
-    );
+    [id],
+  );
 
-    if (result < 1) {
-      throw {
-        message: new Error("Usuário não encontrado pelo ID"),
-        cause: result,
-      };
-    }
+  if (result < 1) {
+    throw {
+      message: new Error("Usuário não encontrado pelo ID"),
+      cause: result,
+    };
+  }
 
-    return result;
-  },
+  return result;
+}
 
-  findByName: async (username: string) => {
-    let dbClient;
-    try {
-      dbClient = await database.getNewClient();
-      const result = await database.query(
-        "SELECT * from users where LOWER(name) = $1;",
-        [username],
-      );
-
-      return result;
-    } catch (error) {
-      throw {
-        message: new Error("Erro ao buscar usuário"),
-        cause: { CAUSE: error },
-      };
-    } finally {
-      if (dbClient) {
-        await dbClient.end();
-      }
-    }
-  },
-
-  findByEmail: async (email: string) => {
+async function findByName(username: string) {
+  let dbClient;
+  try {
+    dbClient = await database.getNewClient();
     const result = await database.query(
-      "SELECT * from users where LOWER(email) = LOWER($1) limit 1;",
-      [email],
+      "SELECT * from users where LOWER(name) = $1;",
+      [username],
     );
+
     return result;
-  },
-
-  create: async (
-    userInputValues: Record<string, string | number | boolean>,
-  ) => {
-    try {
-      await validateUniqueEmail(userInputValues.email as string);
-      injectDefaultFeaturesInObject(userInputValues);
-    } catch (error) {
-      throw error;
+  } catch (error) {
+    throw {
+      message: new Error("Erro ao buscar usuário"),
+      cause: { CAUSE: error },
+    };
+  } finally {
+    if (dbClient) {
+      await dbClient.end();
     }
+  }
+}
 
+async function findByEmail(email: string) {
+  const result = await database.query(
+    "SELECT * from users where LOWER(email) = LOWER($1) limit 1;",
+    [email],
+  );
+  return result;
+}
+
+async function create(
+  userInputValues: Record<string, string | number | boolean>,
+) {
+  try {
+    await validateUniqueEmail(userInputValues.email as string);
+    injectDefaultFeaturesInObject(userInputValues);
+  } catch (error) {
+    throw error;
+  }
+
+  try {
+    return await runInsertQuery(userInputValues);
+  } catch (error) {
+    throw {
+      message: new Error("Erro ao criar usuário"),
+      cause: { CAUSE: error },
+    };
+  }
+
+  function injectDefaultFeaturesInObject(userInputValues: any) {
+    userInputValues.features = ["read:activation_token"];
+  }
+
+  async function validateUniqueEmail(email: string) {
+    const user = await User.findByEmail(email);
+    if (user.length > 0) {
+      throw {
+        message: "O email informado já está sendo utilizado",
+        cause: user,
+      };
+    }
+  }
+
+  async function runInsertQuery(
+    userImputValues: Record<string, string | number | boolean>,
+  ) {
     try {
-      return await runInsertQuery(userInputValues);
+      return await database.query(
+        "INSERT INTO users (name, email, password, is_admin, phone, features) VALUES (LOWER($1), LOWER($2), $3, $4, $5, $6) RETURNING *;",
+        [
+          userImputValues.name,
+          userImputValues.email,
+          await password.hashPassword(userInputValues.password as string),
+          userImputValues.is_admin || false,
+          userImputValues.phone,
+          userImputValues.features,
+        ],
+      );
     } catch (error) {
       throw {
-        message: new Error("Erro ao criar usuário"),
+        message: new Error("Erro ao criar usuário - interno"),
         cause: { CAUSE: error },
       };
     }
+  }
+}
 
-    function injectDefaultFeaturesInObject(userInputValues: any) {
-      userInputValues.features = ["read:activation_token"];
-    }
+async function update(user: Partial<UserDBType>) {
+  const entries = { ...user };
+  delete entries.id;
 
-    async function validateUniqueEmail(email: string) {
-      const user = await User.findByEmail(email);
-      if (user.length > 0) {
-        throw {
-          message: "O email informado já está sendo utilizado",
-          cause: user,
-        };
-      }
-    }
-
-    async function runInsertQuery(
-      userImputValues: Record<string, string | number | boolean>,
-    ) {
-      try {
-        return await database.query(
-          "INSERT INTO users (name, email, password, is_admin, phone, features) VALUES (LOWER($1), LOWER($2), $3, $4, $5, $6) RETURNING *;",
-          [
-            userImputValues.name,
-            userImputValues.email,
-            await password.hashPassword(userInputValues.password as string),
-            userImputValues.is_admin || false,
-            userImputValues.phone,
-            userImputValues.features,
-          ],
-        );
-      } catch (error) {
-        throw {
-          message: new Error("Erro ao criar usuário - interno"),
-          cause: { CAUSE: error },
-        };
-      }
-    }
-  },
-
-  update: async (user: Partial<UserDBType>) => {
-    const allowed = ["id", "is_admin"];
-
-    const entries = Object.entries(user).filter(([k]) => allowed.includes(k));
-
-    if (!entries.length) return null;
-
-    const set = entries.map(([k], i) => `${k} = $${i + 1}`).join(", ");
-
-    const values = entries.map(([, v]) => v);
-
-    const query = `
+  const query = `
     UPDATE users
-    SET ${set}
+    SET name = $2, phone = $3
     WHERE id = $1
     RETURNING *;
     `;
 
-    try {
-      return (await database.query(query, [...values]))[0];
-    } catch (error) {
-      throw {
-        message: new Error("Erro ao fazer alteração"),
-        cause: error,
-      };
-    }
-  },
+  try {
+    return (await database.query(query, [user.id, user.name, user.phone]))[0];
+  } catch (error) {
+    throw {
+      message: new Error("Erro ao fazer alteração"),
+      cause: error,
+    };
+  }
+}
 
-  login: async (email: string, senha: string) => {
-    const user = await User.findByEmail(email);
-    if (user.length < 1) {
-      throw {
-        message: new Error("Usuário não encontrado"),
-        cause: { CAUSE: user },
-      };
-    }
+async function login(email: string, senha: string) {
+  const user = await User.findByEmail(email);
+  if (user.length < 1) {
+    throw {
+      message: new Error("Usuário não encontrado"),
+      cause: { CAUSE: user },
+    };
+  }
 
-    const passwordMatch = await password.comparePassword(
-      senha,
-      user[0].password,
-    );
+  const passwordMatch = await password.comparePassword(senha, user[0].password);
 
-    if (!passwordMatch) {
-      throw {
-        message: "Senha incorreta",
-        cause: { passwordMatch: passwordMatch },
-      };
-    }
+  if (!passwordMatch) {
+    throw {
+      message: "Senha incorreta",
+      cause: { passwordMatch: passwordMatch },
+    };
+  }
 
-    const token = autenticator.createToken(user[0].id);
-    return token;
-  },
+  const token = autenticator.createToken(user[0].id);
+  return token;
+}
 
-  setFeatures: async (userId: string, features: string[]) => {
-    const updatedUser = await runUpdateQuery(userId, features);
-    return updatedUser;
+async function setFeatures(userId: string, features: string[]) {
+  const updatedUser = await runUpdateQuery(userId, features);
+  return updatedUser;
 
-    async function runUpdateQuery(userId: string, features: string[]) {
-      const results = await database.query(
-        `
+  async function runUpdateQuery(userId: string, features: string[]) {
+    const results = await database.query(
+      `
         UPDATE
           users 
         SET 
@@ -210,12 +199,23 @@ const User = {
           id = $1
         RETURNING
           *;`,
-        [userId, features],
-      );
+      [userId, features],
+    );
 
-      return results;
-    }
-  },
+    return results;
+  }
+}
+
+const User = {
+  findAll,
+  getTotalUsers,
+  findById,
+  findByName,
+  findByEmail,
+  create,
+  update,
+  login,
+  setFeatures,
 };
 
 export default User;

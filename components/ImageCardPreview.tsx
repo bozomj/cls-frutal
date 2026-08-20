@@ -3,6 +3,7 @@ import Card from "./Card";
 import { faRemove } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import { ImageDBType } from "@/shared/Image_types";
+import OwnerGuard from "./guards/OwnerGuard";
 
 interface ImageCardPreviewProps {
   image: ImageDBType;
@@ -48,11 +49,13 @@ function ImageCardPreview({
           />
         </Card>
       </div>
-      <div className="absolute left-0 bottom-0 px-1 w-full ">
-        <span className="bg-accent w-full text-center rounded-b-md  block ">
-          {alertMsg}
-        </span>
-      </div>
+      <OwnerGuard isOwner={alertMsg.length > 0}>
+        <div className="absolute left-0 bottom-0 px-1 w-full h-2/12 md:h-1/10">
+          <span className="bg-accent text-[1.rem]  w-full rounded-b-md  h-full flex justify-center items-center ">
+            {alertMsg}
+          </span>
+        </div>
+      </OwnerGuard>
     </div>
   );
 
