@@ -123,11 +123,8 @@ export default function Produto() {
               ${postError.valor ? "outline-2 outline-red-600" : ""}`}
               onChange={(e) => {
                 formatarMoeda(e);
-                console.log(e.target.value);
               }}
-              onBlur={(e) => {
-                console.log(e.currentTarget.value);
-              }}
+              onBlur={(e) => {}}
             />
           </div>
           <div className="w-full ">

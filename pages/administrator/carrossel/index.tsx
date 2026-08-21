@@ -10,10 +10,15 @@ import LayoutPage from "@/layout/dashboard/layout";
 import { getAdminProps } from "@/lib/hoc";
 import httpCarrosselImage from "@/http/carrossel_image";
 import { UserDBType } from "@/shared/user_types";
-import { ImageCardPreview, LinearProgressIndicator } from "@/components";
+import {
+  ImageCardPreview,
+  ImageCropper,
+  LinearProgressIndicator,
+} from "@/components";
 import { ImageDBType } from "@/shared/Image_types";
 import { ButtonPrimary } from "@/components/ui/Buttons";
 import OwnerGuard from "@/components/guards/OwnerGuard";
+import { useBackdrop } from "@/ui/backdrop/useBackdrop";
 
 interface Props {
   user: UserDBType;
@@ -32,13 +37,15 @@ function CarrosselPageAdmin({ user }: Props) {
     typeImagePreview[] | []
   >([]);
 
+  const usebackdrop = useBackdrop();
+
   useEffect(() => {
     httpCarrosselImage.getImagesCarrossel().then(setImgCarrossel);
   }, []);
 
   return (
     <LayoutPage user={user}>
-      <div className="flex flex-col items-center gap-2 md:max-w-[960px] rounded-xl mx-auto ">
+      <div className="flex flex-col items-center gap-2 md:max-w-[960px] rounded-xl mx-auto w-full ">
         <div className="w-full h-40 md:h-60 flex justify-center rounded-xl bg-white p-2 shadow-md shadow-gray-400">
           <CarrosselScroll
             items={imgCarrossel}
@@ -65,6 +72,7 @@ function CarrosselPageAdmin({ user }: Props) {
               click={removePreviewImage}
               active={false}
               alertMsg="SALVAR"
+              fromDataBase={false}
             />
 
             <OwnerGuard isOwner={loadingImages}>
@@ -72,10 +80,12 @@ function CarrosselPageAdmin({ user }: Props) {
                 <LinearProgressIndicator />
               </div>
             </OwnerGuard>
-            <InputFile
-              onClick={getInputFiles}
-              className="w-full h-full min-h-40 "
-            />
+            <div className="h-full  w-full relative flex justify-center items-center aspect-video">
+              <InputFile
+                onClick={getInputFiles}
+                className="w-full h-full text-3xl  "
+              />
+            </div>
           </div>
           <div
             id="actions"
@@ -85,7 +95,7 @@ function CarrosselPageAdmin({ user }: Props) {
           >
             <button
               disabled={imagensPreviews.length === 0}
-              className={`cursor-pointer flex items-center overflow-hidden  rounded-md w-1/3 relative font-bold ${imagensPreviews.length < 1 ? "bg-gray-400 text-gray-600 " : "bg-green-500 text-white"} h-10`}
+              className={`cursor-pointer  flex items-center overflow-hidden  rounded-md w-1/3 relative font-bold ${imagensPreviews.length < 1 ? "bg-gray-400 text-gray-600 " : "bg-green-500 text-white"} h-10`}
               onClick={salvarImagens}
             >
               <div
@@ -110,14 +120,44 @@ function CarrosselPageAdmin({ user }: Props) {
 
     if (files.length === 0) return;
 
-    for (const file of files) {
-      if (file.type.startsWith("image/")) {
-        const resized = await utils.imagem.resizeImageFile(file);
-        const imgURL = URL.createObjectURL(resized); // Cria uma URL temporária para o arquivo
+    // 2. Função para processar uma imagem de cada vez
+    async function processarFila(index: number) {
+      // Se chegou ao fim da lista de imagens, para
+      if (index >= files.length) return;
 
-        setPreviewImagens((prev) => [...prev, { url: imgURL, file: resized }]);
-      }
+      const file = files[index];
+      const previewImg = URL.createObjectURL(file);
+
+      // Retorna uma Promise que só resolve quando o onConfirm (ou onClose) for chamado
+      return new Promise((resolve: CallableFunction) => {
+        usebackdrop.openContent(
+          <ImageCropper
+            image={previewImg}
+            aspect={16 / 9}
+            onCancel={(f) => {
+              setPreviewImagens((prev) => [...prev, { url: f, file: file }]);
+
+              resolve();
+              processarFila(index + 1);
+            }}
+            onConfirm={async (f) => {
+              const resized = await utils.imagem.resizeImageFile(f);
+              const imgURL = URL.createObjectURL(resized);
+
+              setPreviewImagens((prev) => [
+                ...prev,
+                { url: imgURL, file: resized },
+              ]);
+
+              resolve(); // Libera a Promise para ir para a próxima imagem
+              processarFila(index + 1); // Chama a próxima imagem da fila
+            }}
+          />,
+        );
+      });
     }
+
+    processarFila(0);
     setLoadingImages(false);
   }
 
@@ -153,12 +193,14 @@ function CarrosselPageAdmin({ user }: Props) {
     active = true,
     click,
     alertMsg,
+    fromDataBase = true,
   }: {
     imgs: [] | typeImagePreview[];
     click?: (v: { url: string }, index: number) => void;
     database?: boolean;
     active?: boolean;
     alertMsg?: string;
+    fromDataBase?: boolean;
   }) {
     const itens = imgs.map((e: { url: string }, index) => {
       const nurl = e.url.includes("http") ? e.url : utils.getUrlImageR2(e.url);
@@ -171,6 +213,27 @@ function CarrosselPageAdmin({ user }: Props) {
           onClick={() => click!(e, index)}
           active={active}
           alertMsg={alertMsg}
+          onImageClick={() => {
+            if (fromDataBase) return;
+            else
+              usebackdrop.openContent(
+                <ImageCropper
+                  aspect={16 / 9}
+                  image={e.url}
+                  onConfirm={async (f) => {
+                    let image = e;
+                    const url = URL.createObjectURL(f);
+                    const newImage = { ...image, file: f, url: url };
+
+                    setPreviewImagens((imgs) => {
+                      return imgs.map((img) => {
+                        return img.url === image.url ? newImage : img;
+                      });
+                    });
+                  }}
+                />,
+              );
+          }}
         />
       );
     });

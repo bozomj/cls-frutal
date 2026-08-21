@@ -82,15 +82,22 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({
       >
         {items.map((e: { url: string }, key: number) => {
           return (
-            <div className="min-w-full relative" key={key}>
-              <Image src={utils.getUrlImageR2(e.url)} alt="" fill sizes="100" />
+            <div className="aspect-video min-w-full relative" key={key}>
+              <Image
+                className="object-cover "
+                src={utils.getUrlImageR2(e.url)}
+                alt=""
+                fill
+                sizes="100"
+              />
             </div>
           );
         })}
         {/* repete a primeira imagem no final para dar ilusão de rolagem infinita */}
 
-        <div className="min-w-full relative">
+        <div className="aspect-video min-w-full relative  bg-accent">
           <Image
+            className=" object-cover "
             key={totalItems}
             src={utils.getUrlImageR2(items[0]?.url)}
             alt=""

@@ -16,9 +16,13 @@ export type CroppedAreaPixelsType = {
 export default function ImageCropper({
   image,
   onConfirm,
+  onCancel,
+  aspect,
 }: {
   image: string;
   onConfirm: (img: File) => void;
+  onCancel?: (img: string) => void;
+  aspect?: number;
 }) {
   const { openContent, closeContent } = backdrop.useBackdrop();
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -33,14 +37,15 @@ export default function ImageCropper({
           if (croppedAreaPixels !== null) {
             const file = await utils.imagem.getCroppedImg(
               image,
-              croppedAreaPixels
+              croppedAreaPixels,
             );
             onConfirm(file);
             closeContent();
           }
         }}
-        onClose={function (): void {
+        onClose={async () => {
           closeContent();
+          onCancel!(image);
         }}
       >
         <div className="relative w-full h-[400px] bg-black">
@@ -48,7 +53,7 @@ export default function ImageCropper({
             image={image}
             crop={crop}
             zoom={zoom}
-            aspect={4 / 5}
+            aspect={aspect ?? 4 / 5}
             onCropChange={setCrop}
             onZoomChange={setZoom}
             onCropComplete={(_, pixels) => {

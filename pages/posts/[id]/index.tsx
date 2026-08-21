@@ -426,15 +426,18 @@ export default function DetailsPostPage({ user_id }: Props) {
           (postError.title == "" || postError.title == undefined
             ? ""
             : " border-b-3 border-red-800 ") +
-          "flex flex-col font-sans font-black gap-2 items-center w-full mt-1"
+          "flex flex-col font-sans  items-center w-full mt-1"
         }
       >
-        <span className="w-full font-medium text-red-800 px-4">
-          {postError.title ?? ""}
-        </span>
+        <div className="flex w-full px-4 gap-1 items-center ">
+          <span className="text-xs text-slate-500 block">Titulo</span>
+          <span className="w-full font-medium text-red-800 ">
+            {postError.title ?? ""}
+          </span>
+        </div>
         <h1
           ref={titleRef}
-          className="focus:outline-none text-xl border-b-red-700/0 border-b-2 w-full text-gray-800 focus:border-red-700 px-4"
+          className="focus:outline-none font-black text-xl border-b-red-700/0 border-b-2 w-full text-gray-700 focus:border-gray-400 px-4"
           {...(isPostUserId && {
             contentEditable: true,
             suppressContentEditableWarning: true,
@@ -581,42 +584,38 @@ export default function DetailsPostPage({ user_id }: Props) {
           )}
         </div>
 
-        <div
+        <p
           className={
             (postError.descricao == "" || postError.descricao == undefined
               ? ""
-              : " border-3 border-red-800 ") +
-            "focus:outline-2 block relative p-2  focus:outline-gray-400 text-slate-600 bg-gray-200 px-4 rounded-xl min-h-[120] border"
+              : "outline-0  border-red-800 ") +
+            "focus:outline-2 block relative p-2  focus:outline-gray-400 text-slate-600 bg-gray-200 px-4 rounded-xl min-h-[120] "
           }
+          ref={descricaoRef}
+          {...(isPostUserId && {
+            contentEditable: true,
+            suppressContentEditableWarning: true,
+
+            onBlur: (e) => {
+              const value = e.currentTarget.innerText.replace("\n", "");
+
+              if (value == "") {
+                setError({
+                  ...postError,
+                  descricao: "INSIRA UMA DESCRIÇÃO!",
+                });
+                setButtonDisabled(true);
+              } else {
+                setError({ ...postError, descricao: "" });
+                setButtonDisabled(false);
+              }
+
+              setItem((p) => ({ ...p, description: value }));
+            },
+          })}
         >
-          <p
-            className=""
-            ref={descricaoRef}
-            {...(isPostUserId && {
-              contentEditable: true,
-              suppressContentEditableWarning: true,
-
-              onBlur: (e) => {
-                const value = e.currentTarget.innerText.replace("\n", "");
-
-                if (value == "") {
-                  setError({
-                    ...postError,
-                    descricao: "INSIRA UMA DESCRIÇÃO!",
-                  });
-                  setButtonDisabled(true);
-                } else {
-                  setError({ ...postError, descricao: "" });
-                  setButtonDisabled(false);
-                }
-
-                setItem((p) => ({ ...p, description: value }));
-              },
-            })}
-          >
-            {item.description}
-          </p>
-        </div>
+          {item.description}
+        </p>
       </div>
     );
   }
