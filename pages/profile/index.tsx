@@ -79,7 +79,7 @@ const Profile: React.FC = () => {
           <section className="flex flex-col rounded-md shadow-md overflow-x-hidden gap-2 bg-gray-50  p-2">
             <Row>
               <Column>
-                <div className="relative w-fit h-full mt-4">
+                <div className="relative w-fit h-full mt-5">
                   <CircleAvatar
                     className="cursor-pointer"
                     size={8}
@@ -99,12 +99,11 @@ const Profile: React.FC = () => {
 
               <HorizontalDivider size={0.5} />
 
-              {/* <span className="h-44 border-1 border-gray-200 block"></span> */}
-              <div className="overflow-hidden">
+              <Column className="overflow-hidden">
                 <span className="text-xs font-black text-gray-600 h-6">
                   Gerencie fotos do perfil
                 </span>
-                <div className=" flex gap-2  flex-1 h-36 overflow-x-auto ">
+                <Row className=" flex-1  overflow-x-auto ">
                   {imagemProfile?.map((img: imageProfileType) => {
                     const newImg = {
                       ...img,
@@ -151,8 +150,8 @@ const Profile: React.FC = () => {
                       </div>
                     );
                   })}
-                </div>
-              </div>
+                </Row>
+              </Column>
             </Row>
 
             <Row>

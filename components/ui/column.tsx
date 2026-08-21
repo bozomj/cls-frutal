@@ -6,7 +6,7 @@ interface ColumnProps {
 
 const Column: React.FC<ColumnProps> = ({ children, className, id }) => {
   return (
-    <div id={id} className={`flex-col flex gap-2 justify-between ${className}`}>
+    <div id={id} className={`flex-col flex ${className}`}>
       {children}
     </div>
   );
