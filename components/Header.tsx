@@ -10,6 +10,7 @@ import Link from "next/link";
 import router from "next/router";
 
 import React, { useEffect, useState } from "react";
+import VerticalDivider from "./VerticalDivider";
 
 interface HeaderProps {
   titulo?: string;
@@ -84,7 +85,6 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
           </Link>
         </div>
       </div>
-
       <section className="flex justify-center items-center gap-4 flex-1 ">
         <div
           className="
@@ -132,6 +132,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
           )}
         </label>
       </section>
+
       <section
         ref={refSlideMenu}
         className={`
@@ -190,20 +191,21 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
             e.stopPropagation();
           }}
         >
-          <div className=" bg-cyan-950 min-h-40 p-2 md:hidden mb-4 ">
+          <div className="flex  min-h-40 p-2 md:hidden">
             <label
               htmlFor="activeSubmenu"
-              className="absolute right-4 cursor-pointer md:hidden  text-white"
+              className="absolute right-4 cursor-pointer md:hidden "
               onClick={closeSlideMenu}
             >
               <FontAwesomeIcon icon={faClose} />
             </label>
-            <div className="relative h-7 w-10/12 ">
+            <div className="relative h-7 w-10/12">
               <Image
                 src={"/img/logo.svg"}
-                fill
+                height={30}
+                width={100}
                 sizes="50"
-                className="object-contain w-10/12"
+                className="object-contain h-full w-fit cursor-pointer"
                 alt=""
               />
             </div>
@@ -215,14 +217,14 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
               h-full
               md:m-auto
               md:items-center
-              md:px-2
+              md:p-2
               md:justify-start
               md:overflow-y-hidden
               md:flex-row  gap-2
               md:static
-              md:py-2
               "
           >
+            <VerticalDivider height={2} className="px-2" />
             <MapItemsMenu />
           </ul>
         </nav>

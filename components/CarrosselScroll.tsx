@@ -95,7 +95,7 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({
         })}
         {/* repete a primeira imagem no final para dar ilusão de rolagem infinita */}
 
-        <div className="aspect-video min-w-full relative  bg-accent">
+        <div className="aspect-video min-w-full relative">
           <Image
             className=" object-cover "
             key={totalItems}

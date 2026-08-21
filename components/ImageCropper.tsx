@@ -45,7 +45,9 @@ export default function ImageCropper({
         }}
         onClose={async () => {
           closeContent();
-          onCancel!(image);
+          if (onCancel) {
+            onCancel(image);
+          }
         }}
       >
         <div className="relative w-full h-[400px] bg-black">
