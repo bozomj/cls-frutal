@@ -47,14 +47,10 @@ function CarrosselPageAdmin({ user }: Props) {
     <LayoutPage user={user}>
       <div className="flex flex-col items-center gap-2 md:max-w-[960px] rounded-xl mx-auto w-full ">
         <div className="w-full h-40 md:h-60 flex justify-center rounded-xl bg-white p-2 shadow-sm shadow-gray-400">
-          <CarrosselScroll
-            items={imgCarrossel}
-            time={1}
-            className="w-9/12! border-4 border-cyan-900/40"
-          />
+          <CarrosselScroll items={imgCarrossel} time={1} className="w-9/12! " />
         </div>
 
-        <section className="bg-white rounded-2xl shadow-sm border w-full border-slate-100 p-4 md:p-6 max-w-7xl">
+        <section className="bg-white rounded-2xl shadow-sm shadow-gray-400 border w-full border-slate-100 p-4 md:p-6 max-w-7xl">
           <h2 className="text-lg font-bold text-slate-900">
             Imagens Banner Carrossel
           </h2>

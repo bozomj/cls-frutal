@@ -55,10 +55,10 @@ const LayoutPage = ({ user, children }: Props) => {
 
   return (
     <>
-      <div className="flex flex-col min-h-0 flex-1 text-gray-800">
+      <div className="flex flex-col  flex-1 text-gray-800">
         <header
           id="lista_usuarios"
-          className="bg-white z-10 shadow-sm shadow-gray-400 "
+          className="bg-white  z-10 shadow-sm shadow-gray-400 "
         >
           <Row className="items-end p-2">
             <CircleAvatar
