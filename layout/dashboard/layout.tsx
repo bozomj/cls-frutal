@@ -16,6 +16,7 @@ import { UserDBType } from "@/shared/user_types";
 import VerticalDivider from "@/components/VerticalDivider";
 import Row from "@/components/ui/row";
 import HorizontalDivider from "@/components/HorizontalDivider";
+import Link from "next/link";
 
 interface Props {
   user: UserDBType;
@@ -61,10 +62,13 @@ const LayoutPage = ({ user, children }: Props) => {
           className="bg-white  z-10 shadow-sm shadow-gray-400 "
         >
           <Row className="items-end p-2">
-            <CircleAvatar
-              imagem={utils.getUrlImageR2(user.url ?? null)}
-              size={5}
-            />
+            <Link href={"/profile"} className="hover:scale-110">
+              <CircleAvatar
+                imagem={utils.getUrlImageR2(user.url ?? null)}
+                size={5}
+                className="hover:w-[200px]"
+              />
+            </Link>
             <p className=" text-xl">{user.name}</p>
             <h1 className="text-center font-bold text-2xl">
               Administrator Page
@@ -73,7 +77,7 @@ const LayoutPage = ({ user, children }: Props) => {
           <VerticalDivider height={1} />
           <nav
             ref={scrollRef}
-            className="flex w-full overflow-x-auto select-none no-drag items-center [&>*]:hover:bg-gray-100"
+            className="flex w-full overflow-y-hidden  overflow-x-auto select-none no-drag items-center [&>*]:hover:bg-gray-100 [&>*]:hover:scale-110"
             onMouseDown={handleMouseDown}
             onMouseLeave={handleMouseLeave}
             onMouseUp={handleMouseUp}
