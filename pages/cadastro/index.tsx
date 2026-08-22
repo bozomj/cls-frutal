@@ -19,7 +19,9 @@ export default function Cadastro() {
 
   const usebackdrop = useBackdrop();
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>): void {
+  async function handleSubmit(
+    event: React.FormEvent<HTMLFormElement>,
+  ): Promise<void> {
     event.preventDefault();
 
     const formData = new FormData(event.target as HTMLFormElement);
@@ -51,7 +53,7 @@ export default function Cadastro() {
     setError(err);
 
     if (!err.isError) {
-      handleCreateUser(name, email, password, phone);
+      await handleCreateUser(name, email, password, phone);
     }
 
     usebackdrop.openContent(
@@ -73,6 +75,7 @@ export default function Cadastro() {
 
       if (data.status === 201) {
         setError({ succes: "Usuario cadastrado com sucesso" });
+
         setTimeout(() => {
           router.replace("/login");
         }, 1000);
