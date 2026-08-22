@@ -97,34 +97,30 @@ function Dashboard() {
                   </div>
                 </div>
                 <nav className="flex flex-col overflow-x-hidden overflow-y-scroll w-full gap-2  h-full md:min-h-fit md:overflow-y-visible relative ">
-                  {Array.from({ length: 10 }).map((_, i) => (
-                    <>
-                      <ListTile
-                        title={user?.name ?? ""}
-                        icon={faUser}
-                        url={`/profile`}
-                        onClick={() => {}}
-                        className="md:hover:bg-gray-400/50  duration-500 rounded md:hover:text-gray-950 touch-none "
-                      />
-                      <li>
-                        <ListTile
-                          title={user?.email ?? ""}
-                          icon={faEnvelope}
-                          onClick={() => {}}
-                          className="md:hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 "
-                        />
-                      </li>
-                      <li>
-                        <ListTile
-                          title="Produtos"
-                          icon={faClipboard}
-                          onClick={() => {}}
-                          url="/newpost"
-                          className="md:hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 "
-                        />
-                      </li>
-                    </>
-                  ))}
+                  <ListTile
+                    title={user?.name ?? ""}
+                    icon={faUser}
+                    url={`/profile`}
+                    onClick={() => {}}
+                    className="md:hover:bg-gray-400/50  duration-500 rounded md:hover:text-gray-950  whitespace-nowrap"
+                  />
+                  <li>
+                    <ListTile
+                      title={user?.email ?? ""}
+                      icon={faEnvelope}
+                      onClick={() => {}}
+                      className="md:hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 whitespace-nowrap"
+                    />
+                  </li>
+                  <li>
+                    <ListTile
+                      title="Produtos"
+                      icon={faClipboard}
+                      onClick={() => {}}
+                      url="/newpost"
+                      className="md:hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 whitespace-nowrap"
+                    />
+                  </li>
                 </nav>
               </section>
             </label>
