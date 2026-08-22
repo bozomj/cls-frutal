@@ -14,10 +14,11 @@ import VerticalDivider from "./VerticalDivider";
 
 interface HeaderProps {
   titulo?: string;
+  className?: string;
   onSubmit?: (event: string) => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
+const Header: React.FC<HeaderProps> = ({ onSubmit, className }) => {
   const [toggle, setToggle] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -45,14 +46,16 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
 
   return (
     <header
-      className="
+      className={`
     bg-white text-primary-dark
       border-b border-gray-300
       flex flex-col gap-2 
       p-4 relative z-[10] 
       w-full 
       md:items-stretch 
-      "
+
+      ${className}
+      `}
     >
       <div className="flex justify-between gap-4 items-start w-full ">
         <Link href={"/"} className=" outline-0 " onClick={() => {}}>
@@ -131,7 +134,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
       <section
         ref={refSlideMenu}
         className={`
-          absolute top-0 left-[-100%] z-[999]
+          absolute top-0 left-[-100%] z-[20]
           w-full h-dvh
           has-[input:checked]:block 
           has-[input:checked]:left-0
@@ -169,7 +172,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
           id="slideMenuItems"
           className={`
           bg-white
-            w-8/12 h-full
+            w-9/10 h-full
             relative z-[11] 
             overflow-hidden
             duration-[600ms]    

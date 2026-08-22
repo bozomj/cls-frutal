@@ -38,13 +38,12 @@ function Dashboard() {
   const produtosRef = useRef<HTMLSpanElement>(null);
 
   return (
-    <>
-      <header className="z-[20]">
-        <Header titulo="Dashboard" />
-      </header>
-      <main className="flex-auto  overflow-y-scroll text-gray-800 bg-gray-300 flex-col flex justify-between  items-center scroll-smooth">
-        <div className="flex-1 flex w-full md:justify-center ">
-          <div className="group bg-gray-50 " tabIndex={0}>
+    <div className="overflow-hidden flex flex-col h-screen">
+      <Header titulo="Dashboard" className="z-[20]" />
+
+      <main className="flex-auto relative  overflow-hidden max-h-full text-gray-800 bg-gray-300 flex-col flex justify-between  items-center scroll-smooth md:overflow-auto">
+        <div className="flex-1 flex w-full md:justify-center h-full md:h-fit md:overflow-visible overflow-y-hidden ">
+          <section className="group bg-gray-50 " tabIndex={0}>
             <label
               htmlFor="menu-toggle"
               className="bg-black/50 absolute md:hidden w-0 group-has-checked:w-screen h-screen z-10 top-0 left-0"
@@ -58,28 +57,30 @@ function Dashboard() {
             <label htmlFor="menu-toggle">
               <section
                 tabIndex={1}
-                className="
-              
-            z-20
+                className=" 
+              [&_a]:pointer-events-none
+              md:[&_a]:pointer-events-auto
+            z-10
             flex flex-col items-start gap-2 
-            fixed  w-[4rem]  h-full p-1 overflow-x-hidden
+            absolute  w-[4rem] h-full  p-1 overflow-hidden
             
             
-          bg-gray-50 border-gray-50 
-            border-r-4 
-            group-has-checked:w-3/4 
+          bg-gray-50
+            group-has-checked:[&_*]:pointer-events-auto
+            group-has-checked:w-9/10 
             md:min-w-[25rem] md:static md:h-auto md:w-fit md:focus:max-w-[25rem] 
-          md:bg-gray-300 md:border-gray-300 md:text-gray-950  
+           md:border-gray-300 md:text-gray-950  
             transition-all duration-500
             "
               >
-                <ul className="flex flex-col w-full gap-2 md:w-[24rem] md:fixed  ">
-                  <span
+                <div className="flex flex-col w-full relative">
+                  <label
+                    htmlFor="menu-toggle"
                     tabIndex={1}
-                    className="self-end cursor-pointer hover:text-cyan-500 invisible group-has-checked:visible md:group-has-checked:invisible"
+                    className="self-end cursor-pointer absolute hover:text-cyan-500 invisible group-has-checked:visible md:group-has-checked:invisible"
                   >
-                    <FontAwesomeIcon icon={faClose} />
-                  </span>
+                    <FontAwesomeIcon className="text-xl p-2" icon={faClose} />
+                  </label>
                   <div
                     className=" group-has-checked:w-[8rem]  group-has-checked:h-[8rem] rounded-full  w-[3rem] h-[3rem]    bg-gray-400 transition-all duration-500
               md:w-[8rem] md:h-[8rem] overflow-hidden border-2 border-white relative
@@ -94,70 +95,83 @@ function Dashboard() {
                       />
                     )}
                   </div>
-                  <ListTile
-                    title={user?.name ?? ""}
-                    icon={faUser}
-                    url={`/profile`}
-                    onClick={() => {}}
-                    className="md:hover:bg-gray-400/50  duration-500 rounded md:hover:text-gray-950 "
-                  />
-                  <li>
-                    <ListTile
-                      title={user?.email ?? ""}
-                      icon={faEnvelope}
-                      onClick={() => {}}
-                      className="md:hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 "
-                    />
-                  </li>
-                  <li>
-                    <ListTile
-                      title="Produtos"
-                      icon={faClipboard}
-                      onClick={() => {}}
-                      url="/newpost"
-                      className="md:hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 "
-                    />
-                  </li>
-                </ul>
+                </div>
+                <nav className="flex flex-col overflow-x-hidden overflow-y-scroll w-full gap-2  h-full md:min-h-fit md:overflow-y-visible relative ">
+                  {Array.from({ length: 10 }).map((_, i) => (
+                    <>
+                      <ListTile
+                        title={user?.name ?? ""}
+                        icon={faUser}
+                        url={`/profile`}
+                        onClick={() => {}}
+                        className="md:hover:bg-gray-400/50  duration-500 rounded md:hover:text-gray-950 touch-none "
+                      />
+                      <li>
+                        <ListTile
+                          title={user?.email ?? ""}
+                          icon={faEnvelope}
+                          onClick={() => {}}
+                          className="md:hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 "
+                        />
+                      </li>
+                      <li>
+                        <ListTile
+                          title="Produtos"
+                          icon={faClipboard}
+                          onClick={() => {}}
+                          url="/newpost"
+                          className="md:hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 "
+                        />
+                      </li>
+                    </>
+                  ))}
+                </nav>
               </section>
             </label>
-          </div>
+          </section>
+
           <section
-            className="flex-1 p-2 w-full  flex flex-col gap-2 scroll-smooth h-full 
-          md:p-2 md:max-w-[40rem]
-          pl-[5rem]
+            className="flex-1 p-1 w-full  flex flex-col gap-2 scroll-smooth 
+          md:p-2 md:max-w-[40rem]  overflow-y-scroll md:overflow-y-visible
+          pl-[5rem] 
           "
           >
-            <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
-            <span className="flex flex-col gap-2">
-              <div className="p-4 rounded-md gap-2 bg-cyan-800 text-white flex items-center  outline-2 outline-cyan-100 ">
-                <Link
-                  href="/newpost"
-                  className="flex gap-2 items-center"
-                  target="blank"
-                  rel="noreferrer"
-                >
-                  <FontAwesomeIcon
-                    icon={faPlus}
-                    className="text-3xl outline-1 p-2 rounded-md outline-cyan-100"
-                  />
-                  <span>Cadastrar Produto</span>
-                </Link>
+            <section className="flex flex-col gap-2">
+              <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
+              <div className="flex flex-col gap-2">
+                <div className="p-4 rounded-md gap-2 bg-cyan-800 text-white flex items-center  outline-2 outline-cyan-100 ">
+                  <Link
+                    href="/newpost"
+                    className="flex gap-2 items-center"
+                    target="blank"
+                    rel="noreferrer"
+                  >
+                    <FontAwesomeIcon
+                      icon={faPlus}
+                      className="text-3xl outline-1 p-2 rounded-md outline-cyan-100"
+                    />
+                    <span>Cadastrar Produto</span>
+                  </Link>
+                </div>
               </div>
-            </span>
 
-            <section className="flex flex-col h-dvh">
               <Produtos
                 Card={ProductCardDashboard}
-                postagens={postagens}
-                className="grid-cols-1!"
+                postagens={[
+                  ...postagens,
+                  ...postagens,
+                  ...postagens,
+                  ...postagens,
+                  ...postagens,
+                ]}
+                className="grid-cols-1! p-1! bg-gray-300/0! shadow-accent/0!"
               />
               <Paginacao paginacao={paginacao} />
             </section>
           </section>
         </div>
       </main>
-    </>
+    </div>
   );
 }
 export default Dashboard;

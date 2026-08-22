@@ -72,7 +72,7 @@ const Profile: React.FC = () => {
     <>
       <Header />
 
-      <main className="flex p-2 justify-center bg-gray-200 text-gray-800 overflow-y-scroll scroll-smooth flex-1">
+      <main className="flex p-2 justify-center bg-gray-200 text-gray-800  scroll-smooth flex-1">
         <div className="w-full md:max-w-7xl ">
           <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
 
@@ -178,7 +178,7 @@ const Profile: React.FC = () => {
               />
             ) : (
               <Produtos
-                postagens={postagens}
+                postagens={[...postagens, ...postagens, ...postagens]}
                 Card={ProductCardDashboard}
                 className="grid-cols-1! md:grid-cols-3! p-0! bg-gray-200! shadow shadow-gray-400/0"
               />
