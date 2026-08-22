@@ -61,11 +61,10 @@ const Header: React.FC<HeaderProps> = ({ onSubmit, className }) => {
         <Link href={"/"} className=" outline-0 " onClick={() => {}}>
           <Image
             src="/img/logo.svg"
-            width={0}
-            height={0}
-            alt={""}
-            priority={true}
-            style={{ width: "240px", height: "auto" }}
+            width={240}
+            height={27}
+            alt={"Logo"}
+            priority
           />
         </Link>
 
