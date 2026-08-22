@@ -1,5 +1,6 @@
 import { CroppedAreaPixelsType } from "@/components/ImageCropper";
 import autenticator from "@/models/autenticator";
+import { PostDBType, PostDetailType } from "@/shared/post_types";
 import { GetServerSidePropsContext } from "next";
 
 function getUrlImage(path?: string): string | undefined {
@@ -105,6 +106,14 @@ function extractNumberInString(str: string): string {
   return str.replace(/\D/g, "");
 }
 
+function parsePostUrl(url: string) {
+  return url.split("-i.");
+}
+
+function createPostUrl(post: PostDetailType) {
+  return `/posts/${post.title.replaceAll(" ", "-")}-i.${post.id}`;
+}
+
 function stringForDecimalNumber(str: string): number {
   return parseInt(str || "0", 10) / 100;
 }
@@ -206,7 +215,8 @@ const utils = {
   formatarMoeda,
   extractNumberInString,
   stringForDecimalNumber,
-
+  parsePostUrl,
+  createPostUrl,
   sleep,
 
   string: {

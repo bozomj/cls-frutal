@@ -32,10 +32,10 @@ const Home: React.FC = () => {
   return (
     <>
       <Header />
-      <main className="flex-auto overflow-y-scroll bg-gray-200 flex-col flex justify-between gap-2 items-center scroll-smooth ">
+      <main className=" flex-auto overflow-y-scroll bg-gray-200 flex-col flex justify-between gap-2 items-center scroll-smooth ">
         <section
           tabIndex={0}
-          className="flex  flex-col gap-2 w-full  flex-1 p-2 md:max-w-7xl"
+          className="flex outline-0 flex-col gap-2 w-full  flex-1 p-2 md:max-w-7xl"
         >
           <span data-scroll-top tabIndex={1} ref={produtosRef}></span>
           <div className="flex w-full  justify-center shadow-sm shadow-gray-400 rounded-xl p-2 bg-gray-50 ">

@@ -63,7 +63,7 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({
 
   return (
     <div
-      className={`w-full h-full rounded-2xl relative overflow-hidden shadow-sm shadow-gray-400 ${className}`}
+      className={`w-full h-full rounded-md relative overflow-hidden shadow-sm shadow-gray-400 ${className}`}
     >
       {activeAction && (
         <ArrowButton

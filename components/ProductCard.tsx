@@ -7,20 +7,20 @@ interface ProductCardProps {
   className?: string;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({
-  item,
-  className,
-}: ProductCardProps) => {
+const ProductCard: React.FC<ProductCardProps> = ({ item, className }) => {
   return (
     <div
       className={`
-        bg-gray-100 border-2 border-gray-100  p-1 rounded-lg flex justify-center transition duration-400
+        bg-white border-2 border-gray-200  p-1 rounded-md flex justify-center transition duration-400
          hover:border-gray-300  text-gray-800 ${className} 
         `}
     >
       <div className="flex flex-col w-full overflow-hidden">
         <span className="text-xs text-right"></span>
-        <a href={`/posts/${item.id}`} target="_blank">
+        <a
+          href={`/posts/${item.title.replaceAll(" ", "-")}-i.${item.id}`}
+          target="_blank"
+        >
           <div className="  flex flex-1 justify-center h-40 relative ">
             <Image
               className="object-contain"
@@ -32,11 +32,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
             />
           </div>
 
-          <div className="flex-1 flex  text-gray-900  w-[100%]  overflow-hidden flex-col py-2">
-            <h2 className="  block whitespace-wrap text-gray-900 truncate">
+          <div className="py-2 overflow-hidden">
+            <h2 className=" block whitespace-wrap text-gray-900 truncate">
               {item.title ?? ""}
             </h2>
-            <span className="h-5 text-green-700 block text-lg">
+            <span className="h-5 text-green-700 block text-base font-medium">
               <span className="text-xs">R$:</span>
               {utils.formatarMoeda(item.valor.toString())}
             </span>

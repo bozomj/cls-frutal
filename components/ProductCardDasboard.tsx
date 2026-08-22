@@ -93,7 +93,7 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
           Status: {item.status}
         </span>
         <a
-          href={`/posts/${item.id}`}
+          href={utils.createPostUrl(item)}
           className="text-green-800 hover:text-green-500 text-xl"
         >
           <FontAwesomeIcon icon={faEdit} />

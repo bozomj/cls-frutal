@@ -34,12 +34,14 @@ import Head from "next/head";
 import { PostStatus } from "@/shared/post_status";
 import Post from "@/models/post";
 import VerticalDivider from "@/components/VerticalDivider";
+import { UUID } from "crypto";
 
 type Props = {
   user_id?: string;
+  post_id: string;
 };
 
-export default function DetailsPostPage({ user_id }: Props) {
+export default function DetailsPostPage({ user_id, post_id }: Props) {
   const _item = {
     id: "",
     title: "",
@@ -56,7 +58,6 @@ export default function DetailsPostPage({ user_id }: Props) {
   };
 
   const router = useRouter();
-  const post_id = router.query.id as string;
 
   const [post_imagens, setImagens] = useState<ImageDBType[]>([]);
   const [imagenSAtivas, setImagensAtivas] = useState<ImageDBType[]>([]);
@@ -624,18 +625,20 @@ export default function DetailsPostPage({ user_id }: Props) {
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   const result = utils.redirectNotToken(ctx, "/");
   const postId = ctx.query.id as string;
-  const post = await Post.getById(postId);
+  const [, id] = utils.parsePostUrl(postId);
+
+  const post = await Post.getById(id);
 
   if (post === null || post!.status !== PostStatus.ACTIVE) {
     ctx.res.statusCode = 404;
     return { notFound: true };
   }
 
-  if ("redirect" in result) return { props: { user_id: null } };
+  if ("redirect" in result) return { props: { user_id: null, post_id: id } };
 
   const { ctx: user_id } = result.props;
 
   return {
-    props: { user_id }, // enviado como props para a página
+    props: { user_id, post_id: id }, // enviado como props para a página
   };
 }

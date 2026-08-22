@@ -55,7 +55,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
       "
     >
       <div className="flex justify-between gap-4 items-start w-full ">
-        <Link href={"/"} className="" onClick={() => {}}>
+        <Link href={"/"} className=" outline-0 " onClick={() => {}}>
           <Image
             src="/img/logo.svg"
             width={0}
@@ -85,14 +85,9 @@ const Header: React.FC<HeaderProps> = ({ onSubmit }) => {
           </Link>
         </div>
       </div>
+
       <section className="flex justify-center items-center gap-4 flex-1 ">
-        <div
-          className="
-        w-full
-        flex flex-col justify-center gap-4
-        md:max-w-8/12
-        "
-        >
+        <div className="w-full flex flex-col justify-center gap-4 md:max-w-8/12">
           <h2 className="hidden text-center text-xl font-bold md:block">
             COMPRE E VENDA NO CLASSIFICADOS FRUTAL
           </h2>
