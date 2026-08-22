@@ -29,6 +29,7 @@ import { QueryParams, useQueryParams } from "@/hooks/useQueryParams";
 
 import httpPost from "@/http/post";
 import { useUserProvider } from "@/hooks/useUserProvider";
+import VerticalDivider from "@/components/VerticalDivider";
 
 function Dashboard() {
   const { user } = useUserProvider().user;
@@ -63,7 +64,8 @@ function Dashboard() {
             z-10
             flex flex-col items-start gap-2 
             absolute  w-[4rem] h-full  p-1 overflow-hidden
-            
+            [&_p]:hidden group-has-checked:[&_p]:block
+            md:[&_p]:block
             
           bg-gray-50
             group-has-checked:[&_*]:pointer-events-auto
@@ -73,7 +75,7 @@ function Dashboard() {
             transition-all duration-500
             "
               >
-                <div className="flex flex-col w-full relative">
+                <div className="flex flex-col w-full relative ">
                   <label
                     htmlFor="menu-toggle"
                     tabIndex={1}
@@ -83,42 +85,44 @@ function Dashboard() {
                   </label>
                   <div
                     className=" group-has-checked:w-[8rem]  group-has-checked:h-[8rem] rounded-full  w-[3rem] h-[3rem]    bg-gray-400 transition-all duration-500
-              md:w-[8rem] md:h-[8rem] overflow-hidden border-2 border-white relative
-              "
+                    md:w-[8rem] md:h-[8rem] overflow-hidden border-2 border-white relative
+                    "
                   >
                     {user?.url && (
                       <Image
                         src={utils.getUrlImageR2(user.url ?? null)}
                         alt=""
                         fill
+                        sizes="70"
                         className="w-full h-full object-cover"
                       />
                     )}
                   </div>
                 </div>
-                <nav className="flex flex-col overflow-x-hidden overflow-y-scroll w-full gap-2  h-full md:min-h-fit md:overflow-y-visible relative ">
-                  <ListTile
-                    title={user?.name ?? ""}
-                    icon={faUser}
-                    url={`/profile`}
-                    onClick={() => {}}
-                    className="md:hover:bg-gray-400/50  duration-500 rounded md:hover:text-gray-950  whitespace-nowrap"
-                  />
-                  <li>
-                    <ListTile
-                      title={user?.email ?? ""}
-                      icon={faEnvelope}
-                      onClick={() => {}}
-                      className="md:hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 whitespace-nowrap"
-                    />
-                  </li>
+                <ListTile
+                  title={user?.name ?? ""}
+                  icon={faUser}
+                  url={`/profile`}
+                  onClick={() => {}}
+                  className="hover:bg-gray-400/50  w-full duration-500 rounded md:hover:text-gray-950  whitespace-nowrap"
+                />
+
+                <ListTile
+                  title={user?.email ?? ""}
+                  icon={faEnvelope}
+                  onClick={() => {}}
+                  className="hover:bg-gray-400/50 w-full duration-500 rounded md:hover:text-gray-950 whitespace-nowrap"
+                />
+
+                <VerticalDivider height={2} isent={8} />
+                <nav className="flex flex-col overflow-x-hidden overflow-y-scroll w-full gap-2  h-full md:min-h-fit md:overflow-y-visible relative  ">
                   <li>
                     <ListTile
                       title="Produtos"
                       icon={faClipboard}
                       onClick={() => {}}
                       url="/newpost"
-                      className="md:hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 whitespace-nowrap"
+                      className="hover:bg-gray-400/50 duration-500 rounded md:hover:text-gray-950 whitespace-nowrap"
                     />
                   </li>
                 </nav>
@@ -153,13 +157,7 @@ function Dashboard() {
 
               <Produtos
                 Card={ProductCardDashboard}
-                postagens={[
-                  ...postagens,
-                  ...postagens,
-                  ...postagens,
-                  ...postagens,
-                  ...postagens,
-                ]}
+                postagens={postagens}
                 className="grid-cols-1! p-1! bg-gray-300/0! shadow-accent/0!"
               />
               <Paginacao paginacao={paginacao} />

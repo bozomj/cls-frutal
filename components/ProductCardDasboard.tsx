@@ -58,6 +58,7 @@ const ProductCardDashboard: React.FC<ProductCardDashboardProps> = ({
               src={utils.getUrlImageR2(item.imageurl ?? "")}
               fill
               alt=""
+              sizes="60"
               loading="eager"
               className="object-cover"
             />

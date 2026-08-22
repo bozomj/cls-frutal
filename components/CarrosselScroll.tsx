@@ -63,7 +63,7 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({
 
   return (
     <div
-      className={`w-full h-full rounded-md relative overflow-hidden shadow-sm shadow-gray-400 ${className}`}
+      className={` aspect-[21/9] rounded-md relative overflow-hidden shadow-sm shadow-gray-400 ${className}`}
     >
       {activeAction && (
         <ArrowButton
@@ -82,7 +82,7 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({
       >
         {items.map((e: { url: string }, key: number) => {
           return (
-            <div className="aspect-video min-w-full relative" key={key}>
+            <div className="min-w-full relative" key={key}>
               <Image
                 className="object-cover "
                 src={utils.getUrlImageR2(e.url)}
@@ -95,7 +95,7 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({
         })}
         {/* repete a primeira imagem no final para dar ilusão de rolagem infinita */}
 
-        <div className="aspect-video min-w-full relative">
+        <div className=" min-w-full relative ">
           <Image
             className=" object-cover "
             key={totalItems}
@@ -114,7 +114,6 @@ const CarrosselScroll: React.FC<CarrosselScrollProps> = ({
           onClick={() => move("right")}
         />
       )}
-
       <PointIndicator index={index} points={totalItems} />
     </div>
   );

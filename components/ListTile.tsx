@@ -31,7 +31,7 @@ const ListTile = ({
           )}
         </span>
 
-        <span className="select-none">{title}</span>
+        <p className="select-none">{title}</p>
       </a>
     </div>
   );

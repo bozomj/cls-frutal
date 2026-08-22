@@ -178,7 +178,7 @@ const Profile: React.FC = () => {
               />
             ) : (
               <Produtos
-                postagens={[...postagens, ...postagens, ...postagens]}
+                postagens={postagens}
                 Card={ProductCardDashboard}
                 className="grid-cols-1! md:grid-cols-3! p-0! bg-gray-200! shadow shadow-gray-400/0"
               />
