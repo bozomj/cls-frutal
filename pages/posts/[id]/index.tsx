@@ -34,7 +34,6 @@ import Head from "next/head";
 import { PostStatus } from "@/shared/post_status";
 import Post from "@/models/post";
 import VerticalDivider from "@/components/VerticalDivider";
-import { UUID } from "crypto";
 
 type Props = {
   user_id?: string;

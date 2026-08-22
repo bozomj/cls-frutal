@@ -13,6 +13,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import utils from "@/utils";
 import { UserDBType } from "@/shared/user_types";
+import VerticalDivider from "@/components/VerticalDivider";
+import Row from "@/components/ui/row";
+import HorizontalDivider from "@/components/HorizontalDivider";
 
 interface Props {
   user: UserDBType;
@@ -52,27 +55,25 @@ const LayoutPage = ({ user, children }: Props) => {
 
   return (
     <>
-      <div className="flex flex-col bg-gray-100 flex-1 text-gray-800">
-        <aside
+      <div className="flex flex-col min-h-0 flex-1 text-gray-800">
+        <header
           id="lista_usuarios"
-          className="flex  flex-col min-w-[20rem]  bg-cyan-950 p-2 text-white gap-4"
+          className="bg-white z-10 shadow-sm shadow-gray-400 "
         >
-          <div className="text-center font-bold text-2xl">
-            Administrator Page
-          </div>
-          <span className="bg-cyan-800 h-[0.1rem]"></span>
-          <div className="flex gap-2 items-center ">
+          <Row className="items-end p-2">
             <CircleAvatar
               imagem={utils.getUrlImageR2(user.url ?? null)}
               size={5}
             />
-            <div className=" text-xl">{user.name}</div>
-          </div>
-          <span className="bg-cyan-800 h-[0.1rem]"></span>
-
-          <ul
+            <p className=" text-xl">{user.name}</p>
+            <h1 className="text-center font-bold text-2xl">
+              Administrator Page
+            </h1>
+          </Row>
+          <VerticalDivider height={1} />
+          <nav
             ref={scrollRef}
-            className="flex w-full overflow-x-auto select-none no-drag items-center"
+            className="flex w-full overflow-x-auto select-none no-drag items-center [&>*]:hover:bg-gray-100"
             onMouseDown={handleMouseDown}
             onMouseLeave={handleMouseLeave}
             onMouseUp={handleMouseUp}
@@ -83,7 +84,7 @@ const LayoutPage = ({ user, children }: Props) => {
               onClick={() => {}}
               title="Home"
               icon={faHome}
-              className="select-none no-drag"
+              className="select-none no-drag "
             />
 
             <ListTile
@@ -121,12 +122,11 @@ const LayoutPage = ({ user, children }: Props) => {
               url="/administrator/imagens"
               onClick={() => {}}
             />
-          </ul>
-        </aside>
-
+          </nav>
+        </header>
         <main
           id="container"
-          className="flex flex-col gap-1 flex-1 overflow-hidden  bg-gray-300 "
+          className="flex p-2 flex-col gap-1 flex-1 overflow-hidden  bg-gray-100 "
         >
           {children}
         </main>

@@ -1,6 +1,6 @@
 import { CroppedAreaPixelsType } from "@/components/ImageCropper";
 import autenticator from "@/models/autenticator";
-import { PostDBType, PostDetailType } from "@/shared/post_types";
+import { PostDetailType } from "@/shared/post_types";
 import { GetServerSidePropsContext } from "next";
 
 function getUrlImage(path?: string): string | undefined {

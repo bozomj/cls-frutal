@@ -46,7 +46,7 @@ function CarrosselPageAdmin({ user }: Props) {
   return (
     <LayoutPage user={user}>
       <div className="flex flex-col items-center gap-2 md:max-w-[960px] rounded-xl mx-auto w-full ">
-        <div className="w-full h-40 md:h-60 flex justify-center rounded-xl bg-white p-2 shadow-md shadow-gray-400">
+        <div className="w-full h-40 md:h-60 flex justify-center rounded-xl bg-white p-2 shadow-sm shadow-gray-400">
           <CarrosselScroll
             items={imgCarrossel}
             time={1}

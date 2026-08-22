@@ -16,7 +16,7 @@ const ListTile = ({
 }) => {
   return (
     <div
-      className={`flex items-center gap-2 p-3  hover:text-cyan-500 ${className} `}
+      className={`flex text-slate-600 items-center gap-2 p-3  hover:text-slate-800 ${className} `}
       onClick={onClick}
     >
       <a
