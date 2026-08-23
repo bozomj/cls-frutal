@@ -538,7 +538,7 @@ export default function DetailsPostPage({ user_id, post_id }: Props) {
           className=" btn text-white text-center hover:bg-emerald-800 bg-emerald-600 w-full transition duration-300"
           href={`https://wa.me/55${item.phone}?text=ola gostariad e falar com voce`}
         >
-          Compartilhar no WhatsApp <FontAwesomeIcon icon={faWhatsapp} />
+          Entrar em contato WhatsApp <FontAwesomeIcon icon={faWhatsapp} />
         </a>
         <button
           className="text-slate-400 transition duration-300 bg-gray-200 btn w-10 hover:text-teal-700 hover:bg-gray-300"
@@ -580,7 +580,7 @@ export default function DetailsPostPage({ user_id, post_id }: Props) {
               {postError.descricao}
             </h2>
           ) : (
-            <h2 className="text-gray-500 text-xs px-4">SOBRE ESTE ITEM</h2>
+            <h2 className="text-gray-500 text-xs px-4">Sobre esse item</h2>
           )}
         </div>
 

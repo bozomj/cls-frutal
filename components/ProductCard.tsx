@@ -17,10 +17,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, className }) => {
     >
       <div className="flex flex-col w-full overflow-hidden">
         <span className="text-xs text-right"></span>
-        <a
-          href={`/posts/${item.title.replaceAll(" ", "-")}-i.${item.id}`}
-          target="_blank"
-        >
+        <a href={`/posts/${item.title.replaceAll(" ", "-")}-i.${item.id}`}>
           <div className="  flex flex-1 justify-center h-40 relative ">
             <Image
               className="object-contain"
