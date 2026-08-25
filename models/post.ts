@@ -344,18 +344,21 @@ async function search(txt: string, initial: string, limit: string | null) {
 async function getPostByStatus(initial: string, limit: string, status: string) {
   try {
     const posts = await database.query(
-      `SELECT * FROM (
-        select distinct on (posts.id)
-         posts.*, 
-         users.phone AS phone,
-         users.name as name,
-         imagens.url as imageUrl
-        from posts
-        left join imagens on imagens.post_id = posts.id
-        LEFT JOIN users ON users.id = posts.user_id
-        where posts.status = $3
-      ) AS sub ORDER BY sub.created_at desc
-       limit $1 offset  $2
+      `SELECT *,
+       COUNT(*) OVER() AS total
+FROM (
+  SELECT DISTINCT ON (posts.id)
+    posts.*, 
+    users.phone AS phone,
+    users.name AS name,
+    imagens.url AS imageUrl
+  FROM posts
+  LEFT JOIN imagens ON imagens.post_id = posts.id
+  LEFT JOIN users ON users.id = posts.user_id
+  WHERE posts.status = $3
+) AS sub
+ORDER BY created_at DESC
+LIMIT $1 OFFSET $2
        `,
       [limit, initial, status],
     );

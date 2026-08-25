@@ -5,7 +5,7 @@ interface PointIndicatorProps {
 
 const PointIndicator: React.FC<PointIndicatorProps> = ({ index, points }) => {
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <div className="absolute left-0 bottom-0 overflow-hidden w-full flex justify-center gap-2 items-center px-4 py-1">
         {Array.from({ length: points }).map((_, i) => (
           <span

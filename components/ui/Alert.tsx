@@ -9,19 +9,19 @@ const Alert: React.FC<AlertProps> = ({ msg, onClose }) => {
   setTimeout(onClose, 1500);
   return (
     <div
-      className={`fixed bg-gray-300/80 h-[100vh] w-full left-0 top-0 z-[9] flex justify-center items-center `}
+      className={`fixed bg-gray-900/30 h-[100vh] w-full left-0 top-0 z-[9] flex justify-center items-center `}
       onClick={() => {
         onClose();
       }}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-cyan-950 rounded m-4 p-2 w-full flex justify-between items-center text-white md:w-[40rem]"
+        className="bg-white rounded m-4 p-2 w-full flex justify-between items-center text-slate-800 md:w-[40rem]"
       >
         <div>{msg}</div>
         <div className="flex gap-2 justify-end">
           <button
-            className="bg-green-800 py-2 px-4 rounded-lg"
+            className="bg-green-800 cursor-pointer text-white py-2 px-4 rounded-lg"
             onClick={async () => {
               onClose();
             }}

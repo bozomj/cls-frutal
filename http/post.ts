@@ -69,7 +69,6 @@ async function delImage(img: unknown) {
   });
 
   const resultBody = await result.json();
-  console.log(resultBody);
 }
 
 async function deletePost(id: string) {

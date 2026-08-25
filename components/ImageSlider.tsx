@@ -1,16 +1,17 @@
 "use client";
 
+import utils from "@/utils";
 import React, { useRef } from "react";
 
 interface ImageItem {
-  src: string;
+  url: string;
 }
 
 interface ImageCarouselProps {
   images: ImageItem[];
 }
 
-const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
+const ImageCarrousel: React.FC<ImageCarouselProps> = ({ images }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const scroll = (direction: "left" | "right") => {
@@ -35,7 +36,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
             itemWidth) %
             containerRef.current.offsetWidth),
 
-        containerRef.current.offsetWidth % itemWidth
+        containerRef.current.offsetWidth % itemWidth,
       );
     }
   };
@@ -55,12 +56,12 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
       >
         {images.map((image) => (
           <div
-            key={image.src}
+            key={image.url}
             className="flex-shrink-0 px-1 w-1/2 sm:w-1/3 md:w-1/3 h-48 sm:h-60 md:h-72 rounded-lg overflow-hidden"
           >
             {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
             <img
-              src={image.src}
+              src={utils.getUrlImageR2(image.url)}
               className="w-full h-full object-cover rounded"
             />
           </div>
@@ -77,4 +78,4 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
   );
 };
 
-export default ImageCarousel;
+export default ImageCarrousel;

@@ -53,12 +53,14 @@ describe("Categorias", () => {
   });
 
   it("Erro ao deletar imagem carrossel no 2r com user comun", async () => {
-    await User.create({
+    const user0 = await User.create({
       name: "Tulio Alcantara",
       email: "tuliocomun@hotmail.com",
       phone: "34997668902",
       password: "123456",
     });
+
+    await User.setFeatures(user0[0].id, ["create:session"]);
 
     const user = await fetch("http://localhost:3000/api/v1/login", {
       headers: {
@@ -88,13 +90,15 @@ describe("Categorias", () => {
   });
 
   it("deletar imagem carrossel no 2r com user admin", async () => {
-    await User.create({
+    const user0 = await User.create({
       name: "Tulio Alcantara",
       email: "tulio@hotmail.com",
       phone: "34997668902",
       password: "123456",
       is_admin: true,
     });
+
+    await User.setFeatures(user0[0].id, ["create:session"]);
 
     const user = await User.login("tulio@hotmail.com", "123456");
 

@@ -14,6 +14,10 @@ import { statusColor } from "@/constants/statusColor";
 import Link from "next/link";
 import { PostDetailType } from "@/shared/post_types";
 import { UserDBType } from "@/shared/user_types";
+import Paginacao from "@/components/Paginacao";
+import { usePaginacao } from "@/hooks/usePaginacao";
+import { useQueryParams } from "@/hooks/useQueryParams";
+import Image from "next/image";
 
 interface Props {
   user: UserDBType;
@@ -25,9 +29,9 @@ function PostsAdministrator({ user }: Props) {
   const [postRejeitados, setPostRejeitados] = useState([]);
 
   useEffect(() => {
-    getPostsPending().then(setPostPending);
-    getPostsAprovados().then(setPostAprovados);
-    getPostsRejeitados().then(setPostRejeitados);
+    getPostsPending();
+    getPostsAprovados();
+    getPostsRejeitados();
   }, []);
 
   return (
@@ -66,6 +70,32 @@ function PostsAdministrator({ user }: Props) {
       </main>
     </LayoutPage>
   );
+
+  async function getPostsPending() {
+    const result = await httpPost.getPostByStatus(
+      "0",
+      "10",
+      PostStatus.PENDING,
+    );
+    setPostPending(result);
+  }
+
+  async function getPostsAprovados() {
+    const result = await httpPost.getPostByStatus("0", "10", PostStatus.ACTIVE);
+
+    setPostAprovados(result);
+  }
+
+  async function getPostsRejeitados() {
+    const result = await httpPost.getPostByStatus(
+      "0",
+      "10",
+
+      PostStatus.ACTIVE,
+    );
+
+    setPostRejeitados(result);
+  }
 }
 
 function ProdCard({
@@ -85,6 +115,15 @@ function ProdCard({
                 statusColor[post.status].border
               }`}
             >
+              <Image
+                width={50}
+                height={50}
+                loading="eager"
+                src={utils.getUrlImageR2(post.imageurl ?? "")}
+                alt={"algo"}
+                style={{ width: "auto" }}
+              />
+
               <div className="flex gap-2 items-baseline">
                 <h2 className="text-gray-800 font-bold text-lg truncate">
                   {post.title}
@@ -100,21 +139,6 @@ function ProdCard({
       })}
     </>
   );
-}
-
-async function getPostsPending() {
-  const result = await httpPost.getPostByStatus("0", "10", PostStatus.PENDING);
-  return result;
-}
-
-async function getPostsAprovados() {
-  const result = await httpPost.getPostByStatus("0", "10", PostStatus.ACTIVE);
-  return result;
-}
-
-async function getPostsRejeitados() {
-  const result = await httpPost.getPostByStatus("0", "10", PostStatus.REJECTED);
-  return result;
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {

@@ -163,12 +163,18 @@ async function update(user: Partial<UserDBType>) {
 
 async function login(email: string, senha: string) {
   const user = await User.findByEmail(email);
-  if (user.length < 1) {
+
+  if (user.length < 1)
     throw {
       message: new Error("Usuário não encontrado"),
       cause: { CAUSE: user },
     };
-  }
+
+  if (!user[0].features.includes("create:session"))
+    throw {
+      message: new Error("Usuario sem permissão, verifique sua ativação!"),
+      cause: user,
+    };
 
   const passwordMatch = await password.comparePassword(senha, user[0].password);
 

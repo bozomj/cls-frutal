@@ -3,9 +3,10 @@ import { useState } from "react";
 type ToggleProps = {
   value: boolean;
   onChange?: (value: boolean) => void | Promise<void>;
+  className?: string;
 };
 
-export function ToggleSlide({ value, onChange }: ToggleProps) {
+export function ToggleSlide({ value, onChange, className }: ToggleProps) {
   const [isLoading, setIsloading] = useState(false);
   return (
     <button
@@ -17,12 +18,12 @@ export function ToggleSlide({ value, onChange }: ToggleProps) {
       }}
       className={`
         relative w-12 h-6 rounded-full transition-colors duration-300
-        ${value ? "bg-green-700" : "bg-gray-400"}
+        ${value ? "bg-green-700" : "bg-gray-400"} ${className}
       `}
     >
       <span
         className={`
-        absolute top-0.5 left-0.5 w-5 h-5 rounded-full
+        absolute top-0.5 left-0.5 w-5 h-5 rounded-full 
         flex items-center justify-center
         transition-transform duration-300
         ${value ? "translate-x-6" : "translate-x-0"}

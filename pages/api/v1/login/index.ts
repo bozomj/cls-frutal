@@ -22,7 +22,7 @@ async function getLogin(req: NextApiRequest, res: NextApiResponse) {
       result: result,
     });
   } catch (error) {
-    res.status(200).json({
+    res.status(401).json({
       status: false,
       result: "Não autorizado",
       cause: error,
@@ -40,7 +40,7 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
 
     res.setHeader(
       "Set-Cookie",
-      `token=${token}; HttpOnly; ${tokenSecure} ; Path=/; Max-Age=3600; SameSite=Lax;`,
+      `token=${token}; HttpOnly; ${tokenSecure} ; Path=/; Max-Age=900; SameSite=Lax;`,
     );
 
     res

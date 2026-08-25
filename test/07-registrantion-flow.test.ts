@@ -3,6 +3,7 @@ import orchestrator from "./orchestrator";
 import activation from "@/models/activation";
 import webserver from "@/infra/webserver";
 import User from "@/models/user";
+import autenticator from "@/models/autenticator";
 
 beforeAll(async () => {
   await orchestrator.deleteAllEmails();
@@ -21,6 +22,9 @@ describe("Use case: registtration flow (all successfull)", () => {
 
   test("Create user account", async () => {
     await database.query("delete from users where email <> 'bozomj@gmail.com'");
+    await User.setFeatures("75bf94ef-537e-4bbf-8177-34ce1f5f67b3", [
+      "create:session",
+    ]);
 
     const responseUser = await fetch(`${webserver.origin}/api/v1/user`, {
       method: "post",
@@ -87,7 +91,21 @@ describe("Use case: registtration flow (all successfull)", () => {
     expect(activatedUser[0].features).toEqual(["create:session"]);
   });
 
-  test("Login", async () => {});
+  test("Login", async () => {
+    const userResult = await fetch(`${webserver.origin}/api/v1/login`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
+
+    expect(userResult.status).toBe(200);
+    const userBody = await userResult.json();
+    const userData = autenticator.verifyToken(userBody.token);
+    console.log(userData);
+    // expect(userBody[0].email).toEqual(user.email);
+  });
 
   test("get user information", async () => {});
 });
