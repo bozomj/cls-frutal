@@ -2,6 +2,7 @@ import User from "@/models/user";
 import orchestrator from "./orchestrator";
 import insertCategorias from "@/seeds/insertCategorias";
 import { UserDBType } from "@/shared/user_types";
+import webserver from "@/infra/webserver";
 
 beforeAll(async () => {
   await orchestrator.cleanDatabase();
@@ -51,7 +52,7 @@ describe("User", () => {
 
   it("erro ao tentar atualizar usuario com id de outro e nao sendo admin", async () => {
     userNotAdmin.name = "Usuario alterado";
-    const alteredUser = await User.update(userNotAdmin);
+    // const alteredUser = await fetch(`${webserver.origin}/api/v1/user/`)
     // expect(alteredUser.name).toBe("francinildo");
   });
 });

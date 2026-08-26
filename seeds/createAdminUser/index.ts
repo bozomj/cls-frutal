@@ -15,7 +15,6 @@ export default async function createAminUser() {
     await User.setFeatures(us[0].id, ["create:session"]);
     console.log("✅ Usuário Administrador criado com sucesso!");
   } catch (error) {
-    console.log(">>>>>| ", error);
     return error;
   }
 }
