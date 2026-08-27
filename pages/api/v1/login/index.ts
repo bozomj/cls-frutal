@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
 import User from "@/models/user";
+import sessions from "@/models/sessions";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
@@ -37,11 +38,16 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     const token = await User.login(email, password);
+    const user = autenticator.verifyToken(token);
 
-    res.setHeader(
-      "Set-Cookie",
+    const refreshToken = (await sessions.createRefreshToken(user.id))[0];
+
+    const seteDias = 7 * 24 * 60 * 60;
+
+    res.setHeader("Set-Cookie", [
       `token=${token}; HttpOnly; ${tokenSecure} ; Path=/; Max-Age=900; SameSite=Lax;`,
-    );
+      `refreshToken=${refreshToken.token} HttpOnly; ${tokenSecure}  Path=/; Max-Age=${seteDias}; SameSite=Lax;`,
+    ]);
 
     res
       .status(200)

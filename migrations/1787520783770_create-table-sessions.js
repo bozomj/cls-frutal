@@ -14,6 +14,7 @@ exports.up = (pgm) => {
     user_id: {
       type: "uuid",
       notNull: true,
+      unique: true,
     },
 
     expires_at: {

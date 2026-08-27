@@ -4,9 +4,11 @@ import activation from "@/models/activation";
 import webserver from "@/infra/webserver";
 import User from "@/models/user";
 import autenticator from "@/models/autenticator";
+import sessions from "@/models/sessions";
 
 beforeAll(async () => {
   await orchestrator.deleteAllEmails();
+  await database.query("delete from sessions");
 });
 
 describe("Use case: registtration flow (all successfull)", () => {
@@ -103,8 +105,30 @@ describe("Use case: registtration flow (all successfull)", () => {
     expect(userResult.status).toBe(200);
     const userBody = await userResult.json();
     const userData = autenticator.verifyToken(userBody.token);
-    console.log(userData);
-    // expect(userBody[0].email).toEqual(user.email);
+
+    const dateLimite = new Date();
+    dateLimite.setDate(dateLimite.getDate() + 6);
+
+    const refresh = (await sessions.getRefreshTokenByUserId(userData.id))[0];
+
+    expect(refresh.user_id).toBe(userData.id);
+    expect(new Date(refresh.expires_at).getTime()).toBeGreaterThan(
+      dateLimite.getTime(),
+    );
+
+    const headers = userResult.headers;
+    const cookies = headers.getSetCookie();
+
+    let list: { [key: string]: string } = {};
+    cookies.map((cookie) => {
+      const str = cookie.replace("=", "-=-");
+      const [nome, valor] = str.split("-=-");
+
+      list[nome] = valor;
+    });
+
+    expect(list.token).toBeTruthy();
+    expect(list.refreshToken).toBeTruthy();
   });
 
   test("get user information", async () => {});
