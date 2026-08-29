@@ -30,8 +30,7 @@ import { QueryParams, useQueryParams } from "@/hooks/useQueryParams";
 import httpPost from "@/http/post";
 import { useUserProvider } from "@/hooks/useUserProvider";
 import VerticalDivider from "@/components/VerticalDivider";
-import autenticator from "@/models/autenticator";
-import sessions from "@/models/sessions";
+import { withAuth } from "@/lib/withAuth";
 
 function Dashboard() {
   const { user } = useUserProvider().user;
@@ -172,14 +171,7 @@ function Dashboard() {
 }
 export default Dashboard;
 
-//executa antes de carregar
-// export const getServerSideProps: GetServerSideProps = async (
-//   context: GetServerSidePropsContext,
-// ) => {
-//   const token = context.req.cookies.token || "";
-
-//   return autenticator.redirectNotToken(context, "/");
-// };
+export const getServerSideProps = withAuth("/login");
 
 const fetcher = (params: QueryParams) => {
   const { initial, limit } = params;

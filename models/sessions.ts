@@ -77,7 +77,14 @@ async function getRefreshTokenByUserId(userId: string) {
   }
 }
 
+async function deleteRefreshToken(token: string) {
+  return await database.query(`DELETE FROM sessions WHERE token = $1;`, [
+    token,
+  ]);
+}
+
 const sessions = {
+  deleteRefreshToken,
   createRefreshToken,
   getRefreshTokenByUserId,
   getRefreshToken,

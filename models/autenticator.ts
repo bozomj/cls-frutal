@@ -37,7 +37,6 @@ function redirectNotToken(ctx: GetServerSidePropsContext, destination: string) {
     };
   } catch (error) {
     return {
-      // props: { ctx: { id: "58faf05c-1535-4fc8-aeab-d32fe59a5ad0" } },
       redirect: {
         destination: destination,
         permanent: false,

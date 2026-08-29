@@ -35,6 +35,11 @@ router.get(async (req, res) => {
   dataFutura.setDate(dataFutura.getDate() + 6);
 
   if (new Date(session.expires_at).getTime() <= dataFutura.getTime()) {
+    await sessions.deleteRefreshToken(session.token);
+    res.setHeader(
+      "Set-Cookie",
+      "refreshToken=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax",
+    );
     return res.status(403).json({
       message: "faça um novo Login",
     });
