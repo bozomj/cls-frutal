@@ -5,12 +5,12 @@ import { faBars } from "@fortawesome/free-solid-svg-icons/faBars";
 import { faXmark } from "@fortawesome/free-solid-svg-icons/faXmark";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
-
 import Link from "next/link";
 import router from "next/router";
 
 import React, { useEffect, useState } from "react";
 import VerticalDivider from "./VerticalDivider";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 
 interface HeaderProps {
   titulo?: string;

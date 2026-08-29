@@ -1,5 +1,6 @@
 import { CroppedAreaPixelsType } from "@/components/ImageCropper";
 import autenticator from "@/models/autenticator";
+import sessions from "@/models/sessions";
 import { PostDetailType } from "@/shared/post_types";
 import { GetServerSidePropsContext } from "next";
 
@@ -69,27 +70,6 @@ function formatarData(data: string) {
   const diaSemana = diasSemana[d.getDay()];
 
   return `${diaSemana} ${dia}/${mes}/${ano}`;
-}
-
-function redirectNotToken(ctx: GetServerSidePropsContext, destination: string) {
-  const token = ctx.req.cookies.token || "";
-
-  try {
-    const auth = autenticator.verifyToken(token);
-
-    return {
-      props: {
-        ctx: auth.id,
-      },
-    };
-  } catch {
-    return {
-      redirect: {
-        destination: destination,
-        permanent: false,
-      },
-    };
-  }
 }
 
 const formatarMoeda = (value: string) => {
@@ -211,7 +191,7 @@ const utils = {
   getUrlImage,
   loadImage,
   formatarData,
-  redirectNotToken,
+
   formatarMoeda,
   extractNumberInString,
   stringForDecimalNumber,

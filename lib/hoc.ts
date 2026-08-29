@@ -5,6 +5,7 @@ import { GetServerSidePropsContext } from "next";
 
 export async function getAdminProps(context: GetServerSidePropsContext) {
   const token = context.req.cookies.token || null;
+  const refreshToken = context.req.cookies.token || null;
   let user;
 
   if (token == null)
@@ -13,7 +14,7 @@ export async function getAdminProps(context: GetServerSidePropsContext) {
   try {
     const auth = autenticator.verifyToken(token);
     const baseUrl = process.env.URLDOMAIN || "http://localhost:3000";
-    // user = (await User.findById(auth.id))[0];
+
     const result = await fetch(baseUrl + "/api/v1/user/id/" + auth.id);
     user = await result.json();
 

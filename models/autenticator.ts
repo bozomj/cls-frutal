@@ -1,4 +1,6 @@
 import jwt from "jsonwebtoken";
+import { GetServerSidePropsContext } from "next";
+import sessions from "./sessions";
 
 function createToken(id: string) {
   const secret = process.env.JWT_SECRET || "";
@@ -22,10 +24,33 @@ async function isAuthenticated() {
   return data;
 }
 
+function redirectNotToken(ctx: GetServerSidePropsContext, destination: string) {
+  const token = ctx.req.cookies.token || "";
+
+  try {
+    const auth = autenticator.verifyToken(token);
+
+    return {
+      props: {
+        ctx: auth.id,
+      },
+    };
+  } catch (error) {
+    return {
+      // props: { ctx: { id: "58faf05c-1535-4fc8-aeab-d32fe59a5ad0" } },
+      redirect: {
+        destination: destination,
+        permanent: false,
+      },
+    };
+  }
+}
+
 const autenticator = {
   createToken,
   verifyToken,
   isAuthenticated,
+  redirectNotToken,
 };
 
 export default autenticator;

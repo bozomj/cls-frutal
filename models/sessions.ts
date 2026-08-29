@@ -39,6 +39,25 @@ async function createRefreshToken(userId: string): Promise<any> {
   }
 }
 
+async function getRefreshToken(token: string) {
+  try {
+    const refreshToken = runQuery(token);
+    return refreshToken;
+  } catch (error) {
+    throw {
+      message: new Error("erro ao buscar token"),
+      cause: error,
+    };
+  }
+
+  async function runQuery(token: string) {
+    return await database.query(
+      `SELECT * FROM sessions WHERE token = $1 limit 1;`,
+      [token],
+    );
+  }
+}
+
 async function getRefreshTokenByUserId(userId: string) {
   try {
     const refreshToken = runQuery(userId);
@@ -61,6 +80,7 @@ async function getRefreshTokenByUserId(userId: string) {
 const sessions = {
   createRefreshToken,
   getRefreshTokenByUserId,
+  getRefreshToken,
 };
 
 export default sessions;

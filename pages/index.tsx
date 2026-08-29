@@ -12,6 +12,9 @@ import httpPost from "@/http/post";
 
 import Footer from "@/layout/FooterLayout";
 import Produtos from "@/layout/produtos/Produtos";
+import autenticator from "@/models/autenticator";
+import sessions from "@/models/sessions";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 
 import { useEffect, useRef } from "react";
 
