@@ -7,14 +7,14 @@ import { useRouter } from "next/router";
 
 export default function ActivationUser(props: any) {
   const router = useRouter();
-  const activationToken = router.query.activationTokenId;
+  // const activationToken = router.query.activationTokenId;
   const { message, status } = props;
 
   return (
     <>
       <Header titulo="Ativar Usuario" />
       <div className=" flex bg-gray-300  flex-col h-screen text-slate-800 p-2">
-        <Alert status={200} />
+        <Alert status={status} />
       </div>
     </>
   );

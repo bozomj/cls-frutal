@@ -18,8 +18,19 @@ export default router.handler();
 
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const id = (req.headers.cookie || "").split("=")[1];
+    const cokies = (req.headers.cookie || "")
+      .replaceAll("HttpOnly", "")
+      .split(";");
 
+    let cookies: Record<string, string> = {};
+    cokies.map((n) => {
+      const [key, value] = n.split("=");
+
+      cookies[key.trim()] = value.trim();
+    });
+
+    const id = cookies.token;
+    console.log("==>>:", cookies);
     const user = autenticator.verifyToken(id);
 
     const users = await User.findById(user.id);
@@ -50,12 +61,6 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
     const activationToken = await activation.create(user[0].id);
 
     await activation.sendEmailToUser(user[0], activationToken[0]);
-
-    // const token = autenticator.createToken(user[0].id);
-    // res.setHeader(
-    //   "Set-Cookie",
-    //   `token=${token}; HttpOnly; Path=/; Max-Age=3600;`,
-    // );
 
     res.status(201).json({
       message: "Usuario criado com sucesso",

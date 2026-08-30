@@ -52,12 +52,11 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
     res
       .status(200)
       .json({ message: "Usuário logado com sucesso", token: token });
-  } catch (error) {
-    console.log("\n\n\n\n", {
-      redirect: error.codeError,
-    });
+  } catch (error: any) {
+    delete error.cause;
+
     if (error.codeError == "01") {
-      res.status(401).json({ error: error.codeError, message: error.message });
+      res.status(401).json(error);
     }
     res.status(401).json({ error: "Usuario nao autorizado" });
   }

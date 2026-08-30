@@ -8,8 +8,6 @@ import utils from "@/utils";
 
 import Produtos from "@/layout/produtos/Produtos";
 
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import ProductCardDashboard from "@/components/ProductCardDasboard";
@@ -41,6 +39,7 @@ import Column from "@/components/ui/column";
 
 import FileButton from "@/components/ui/fileButton";
 import HorizontalDivider from "@/components/HorizontalDivider";
+import { withAuth } from "@/lib/withAuth";
 
 const Profile: React.FC = () => {
   const { user, imagemProfile, setUser, setImagemProfile } = useUser();
@@ -67,6 +66,7 @@ const Profile: React.FC = () => {
       />,
     );
   }
+  console.log(user);
 
   return (
     <>
@@ -273,9 +273,7 @@ const Profile: React.FC = () => {
   }
 };
 
-export const getServerSideProps: GetServerSideProps = async (
-  context: GetServerSidePropsContext,
-) => utils.redirectNotToken(context, "/login");
+export const getServerSideProps = withAuth("/");
 
 export default Profile;
 

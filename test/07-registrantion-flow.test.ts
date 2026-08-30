@@ -73,6 +73,23 @@ describe("Use case: registtration flow (all successfull)", () => {
     expect(activationTokeObject.used_at).toBe(null);
   });
 
+  test("Erro ao logar sem ativar!", async () => {
+    const userResult = await fetch(`${webserver.origin}/api/v1/login`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
+
+    expect(userResult.status).toBe(401);
+    const userBody = await userResult.json();
+    expect(userBody).toEqual({
+      message: "Usuario sem permissão, verifique sua ativação!",
+      codeError: "01",
+    });
+  });
+
   test("Activation account", async () => {
     const activationResponse = await fetch(
       `${webserver.origin}/api/v1/activations/${activationTokenId}`,
@@ -85,13 +102,12 @@ describe("Use case: registtration flow (all successfull)", () => {
 
     const activationResponseBody = await activationResponse.json();
     expect(Date.parse(activationResponseBody.used_at)).not.toBeNaN();
-    console.log(activationResponseBody);
 
     const activatedUser = await User.findByEmail(user.email);
     expect(activatedUser[0].features).toEqual(["create:session"]);
   });
 
-  test("Login", async () => {
+  test("Login com sucesso!", async () => {
     const userResult = await fetch(`${webserver.origin}/api/v1/login`, {
       method: "post",
       headers: {
@@ -127,6 +143,22 @@ describe("Use case: registtration flow (all successfull)", () => {
 
     expect(list.token).toBeTruthy();
     expect(list.refreshToken).toBeTruthy();
+  });
+
+  test("Erro ao tentar ativar novamente a conta", async () => {
+    const activationResponse = await fetch(
+      `${webserver.origin}/api/v1/activations/${activationTokenId}`,
+      {
+        method: "PATCH",
+      },
+    );
+
+    expect(activationResponse.status).toBe(500);
+
+    const activationResponseBody = await activationResponse.json();
+    expect(activationResponseBody).toEqual({
+      message: "Token expirado ou já utilizado",
+    });
   });
 
   test("get user information", async () => {});
