@@ -9,6 +9,8 @@ import sessions from "@/models/sessions";
 beforeAll(async () => {
   await orchestrator.deleteAllEmails();
   await database.query("delete from sessions");
+  await database.query("delete from user_activation_tokens");
+  await database.query("delete from users");
 });
 
 describe("Use case: registtration flow (all successfull)", () => {
@@ -23,11 +25,6 @@ describe("Use case: registtration flow (all successfull)", () => {
   let activationTokenId: string | null;
 
   test("Create user account", async () => {
-    await database.query("delete from users where email <> 'bozomj@gmail.com'");
-    await User.setFeatures("75bf94ef-537e-4bbf-8177-34ce1f5f67b3", [
-      "create:session",
-    ]);
-
     const responseUser = await fetch(`${webserver.origin}/api/v1/user`, {
       method: "post",
       headers: {
@@ -88,6 +85,7 @@ describe("Use case: registtration flow (all successfull)", () => {
 
     const activationResponseBody = await activationResponse.json();
     expect(Date.parse(activationResponseBody.used_at)).not.toBeNaN();
+    console.log(activationResponseBody);
 
     const activatedUser = await User.findByEmail(user.email);
     expect(activatedUser[0].features).toEqual(["create:session"]);

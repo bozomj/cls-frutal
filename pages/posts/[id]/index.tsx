@@ -34,6 +34,7 @@ import Head from "next/head";
 import { PostStatus } from "@/shared/post_status";
 import Post from "@/models/post";
 import VerticalDivider from "@/components/VerticalDivider";
+import autenticator from "@/models/autenticator";
 
 type Props = {
   user_id?: string;
@@ -622,7 +623,8 @@ export default function DetailsPostPage({ user_id, post_id }: Props) {
 }
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-  const result = utils.redirectNotToken(ctx, "/");
+  const result = autenticator.redirectNotToken(ctx, "/");
+
   const postId = ctx.query.id as string;
   const [, id] = utils.parsePostUrl(postId);
 

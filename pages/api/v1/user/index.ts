@@ -51,11 +51,11 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
 
     await activation.sendEmailToUser(user[0], activationToken[0]);
 
-    const token = autenticator.createToken(user[0].id);
-    res.setHeader(
-      "Set-Cookie",
-      `token=${token}; HttpOnly; Path=/; Max-Age=3600;`,
-    );
+    // const token = autenticator.createToken(user[0].id);
+    // res.setHeader(
+    //   "Set-Cookie",
+    //   `token=${token}; HttpOnly; Path=/; Max-Age=3600;`,
+    // );
 
     res.status(201).json({
       message: "Usuario criado com sucesso",

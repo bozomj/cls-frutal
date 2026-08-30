@@ -18,9 +18,8 @@ async function findOneValidById(tokenId: string) {
         user_activation_tokens
         WHERE
          id = $1
-         AND expires_at > NOW()
+         AND expires_at > timezone('utc', NOW())
          AND used_at IS null
-
         LIMIT
          1
       ;`,

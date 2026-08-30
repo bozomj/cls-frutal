@@ -8,7 +8,6 @@ const router = createRouter<NextApiRequest, NextApiResponse>();
 router.get(async (req, res) => {
   const token = req.cookies.token;
 
-  // Já possui token
   if (token) {
     return res.status(200).end();
   }

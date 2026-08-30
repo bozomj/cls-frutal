@@ -172,8 +172,9 @@ async function login(email: string, senha: string) {
 
   if (!user[0].features.includes("create:session"))
     throw {
-      message: new Error("Usuario sem permissão, verifique sua ativação!"),
+      message: "Usuario sem permissão, verifique sua ativação!",
       cause: user,
+      codeError: "01",
     };
 
   const passwordMatch = await password.comparePassword(senha, user[0].password);

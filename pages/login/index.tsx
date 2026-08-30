@@ -45,7 +45,12 @@ const Login = () => {
       const data = await response.json();
 
       if (data.error) {
-        setError("E-mail ou senha inválidos");
+        console.log("DATA:>>", data);
+        if (data.error === "01") {
+          setError(data.message);
+        } else {
+          setError("E-mail ou senha inválidos");
+        }
         useBackdrop.closeContent();
       } else {
         setError("");

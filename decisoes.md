@@ -51,6 +51,8 @@ x mudar ImageCropper para conter os botoes de confirmar e cancelar, confirmar re
   x nao deixar salvar ou criar pub com valor zerado
 - retornar melhor erro para poste com id usuario null
 
+- ao cadastrar esta fazendo login automaticamente sem ativar o usuario
+
 usuarios [
 diego@hotmail.com
 matheus@hotmail.com | senha 12345

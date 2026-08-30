@@ -11,13 +11,22 @@ export default router.handler();
 async function patchHanlder(req: NextApiRequest, res: NextApiResponse) {
   const activationTokenId = req.query.token_id as string;
 
-  const validActivationToken = await activation.findOneValidById(
-    activationTokenId || "",
-  );
-  const usedActivationToken =
-    await activation.markTokenAsUsed(activationTokenId);
+  try {
+    const validActivationToken =
+      await activation.findOneValidById(activationTokenId);
 
-  await activation.activateUserByUserId(validActivationToken.user_id);
+    if (validActivationToken == undefined)
+      throw {
+        message: "Token expirado ou já utilizado",
+      };
 
-  return res.status(200).json(usedActivationToken);
+    const activatedToken = await activation.markTokenAsUsed(activationTokenId);
+    const user = await activation.activateUserByUserId(
+      validActivationToken.user_id,
+    );
+
+    return res.status(200).json(activatedToken);
+  } catch (e) {
+    return res.status(500).json(e);
+  }
 }
