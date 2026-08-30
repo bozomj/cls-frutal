@@ -66,7 +66,6 @@ ${webserver.origin}/cadastro/ativar/${activationToken.id}
 Atenciosamente,
 Equipe CLS-CLASSIFICADOS-FRUTAL
     `,
-    html: `${user.name}, clique no link abaixo para ativar seu cadastro em CLS-CLASSIFICADOS-FRUTAL:`,
   });
 
   console.log(email);

@@ -17,7 +17,7 @@ async function send(mail: {
   to: string;
   subject: string;
   text: string;
-  html: string;
+  html?: string;
 }) {
   await transporter.sendMail({
     from: "<CLS-FRUTAL <contato@bzmj.com.br>",
