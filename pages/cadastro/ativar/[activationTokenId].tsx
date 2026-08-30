@@ -1,6 +1,7 @@
 import { Header } from "@/components";
 import Card from "@/components/Card";
 import ListTile from "@/components/ListTile";
+import webserver from "@/infra/webserver";
 import { faDartLang } from "@fortawesome/free-brands-svg-icons";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
@@ -43,7 +44,7 @@ export const getServerSideProps: GetServerSideProps = async (
   const activationTokenId = queryToken.trim();
 
   const activate = await fetch(
-    `http://localhost:3000/api/v1/activations/${activationTokenId}`,
+    `${webserver.origin}/api/v1/activations/${activationTokenId}`,
     {
       method: "PATCH",
     },
