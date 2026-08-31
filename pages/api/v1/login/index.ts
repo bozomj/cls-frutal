@@ -36,11 +36,14 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
 
   const tokenSecure = process.env.NODE_ENV === "production" ? "Secure" : "";
 
+  let token;
+
   try {
-    const token = await User.login(email, password);
+    token = await User.login(email, password);
     const user = autenticator.verifyToken(token);
 
-    const refreshToken = (await sessions.createRefreshToken(user.id))[0];
+    const refreshTokenDATA = await sessions.createRefreshToken(user.id);
+    const refreshToken = refreshTokenDATA[0];
 
     const seteDias = 7 * 24 * 60 * 60;
 
@@ -54,10 +57,11 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
       .json({ message: "Usuário logado com sucesso", token: token });
   } catch (error: any) {
     delete error.cause;
+    console.log("\n\n", error);
 
     if (error.codeError == "01") {
       res.status(401).json(error);
     }
-    res.status(401).json({ error: "Usuario nao autorizado" });
+    res.status(401).json({ error: "Usuario nao autorizado", cause: error });
   }
 }

@@ -18,27 +18,26 @@ export default router.handler();
 
 async function getHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const cokies = (req.headers.cookie || "")
+    const token = (req.cookies["token"] || "")
       .replaceAll("HttpOnly", "")
-      .split(";");
+      .trim();
+    const refreshToken = (req.cookies["refreshToken"] || "")
+      .replaceAll("HttpOnly", "")
+      .trim();
 
-    let cookies: Record<string, string> = {};
-    cokies.map((n) => {
-      const [key, value] = n.split("=");
-
-      cookies[key.trim()] = value.trim();
-    });
-
-    const id = cookies.token;
-    console.log("==>>:", cookies);
+    const id = token;
     const user = autenticator.verifyToken(id);
 
-    const users = await User.findById(user.id);
+    const users = (await User.findById(user.id))[0];
+
     const imagemProfile = await profileImages.getImagesProfile(user.id);
 
-    res.status(200).json({ user: users[0], imagemProfile });
+    return res.status(200).json({ user: users, imagemProfile });
   } catch (error) {
-    res.status(500).json({ error: "Erro ao buscar usuários", cause: error });
+    console.log(">>>>>>>>>>>>>", error);
+    return res
+      .status(500)
+      .json({ error: "Erro ao buscar usuários", cause: error });
   }
 }
 

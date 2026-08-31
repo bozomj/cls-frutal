@@ -1,4 +1,5 @@
 import database from "@/database/database";
+import { refresh } from "next/cache";
 
 type SessionType = {
   id: string;
@@ -16,26 +17,39 @@ type SessionType = {
 
 async function createRefreshToken(userId: string): Promise<any> {
   const token = crypto.randomUUID();
-
+  let refreshToken;
   try {
-    const refreshToken = runQuery(userId);
+    refreshToken = await runQuery(userId);
+
     return refreshToken;
   } catch (error) {
+    throw error;
     throw {
-      message: new Error("erro ao criar token refresh"),
+      message: "erro ao criar token refresh",
       cause: error,
     };
   }
 
   async function runQuery(userId: string): Promise<any> {
-    return await database.query(
-      `
+    try {
+      await database.query("DELETE FROM sessions WHERE user_id = $1", [userId]);
+
+      const result = await database.query(
+        `
         INSERT INTO sessions (user_id, token, expires_at) 
         VALUES ($1, $2, NOW() + ($3 * INTERVAL '1 day')) 
         RETURNING *;
-      `,
-      [userId, token, "7"],
-    );
+        `,
+        [userId, token, "7"],
+      );
+
+      return result;
+    } catch (e: any) {
+      throw {
+        message: "Erro refreshToken",
+        cause: e,
+      };
+    }
   }
 }
 

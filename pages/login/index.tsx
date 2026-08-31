@@ -44,14 +44,14 @@ const Login = () => {
 
       const data = await response.json();
 
-      if (data.error) {
-        console.log("DATA:>>", data);
-        if (data.error === "01") {
+      if (response.status != 200) {
+        if (data.codeError === "01") {
           setError(data.message);
         } else {
           setError("E-mail ou senha inválidos");
         }
         useBackdrop.closeContent();
+        return;
       } else {
         setError("");
         useBackdrop.openContent(

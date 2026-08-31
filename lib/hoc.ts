@@ -1,26 +1,25 @@
+import webserver from "@/infra/webserver";
 import autenticator from "@/models/autenticator";
 import { UserDBType } from "@/shared/user_types";
 
 import { GetServerSidePropsContext } from "next";
 
 export async function getAdminProps(context: GetServerSidePropsContext) {
-  const token = context.req.cookies.token || null;
-  const refreshToken = context.req.cookies.token || null;
+  const cookieHeader = context.req.headers.cookie || "";
   let user;
 
-  if (token == null)
-    return { redirect: { destination: "/", permanent: false } };
-
   try {
-    const auth = autenticator.verifyToken(token);
-    const baseUrl = process.env.URLDOMAIN || "http://localhost:3000";
+    const result = await fetch(`${webserver.origin}/api/v1/user`, {
+      headers: {
+        Cookie: cookieHeader,
+      },
+    });
+    const resultBody = await result.json();
+    user = resultBody.user;
+    console.log(user);
 
-    const result = await fetch(baseUrl + "/api/v1/user/id/" + auth.id);
-    user = await result.json();
-
-    if (user.is_admin !== true) throw new Error("User is not admin");
+    if (user.is_admin !== true) throw { message: "User is not admin" };
   } catch (error) {
-    console.log({ error: error });
     return {
       redirect: {
         destination: "/",
