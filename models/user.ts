@@ -8,9 +8,7 @@ dotenv.config({ path: ".env.development" });
 
 async function findAll() {
   try {
-    const result = await database.query(
-      'SELECT id, name, email, phone,  "createdAt" FROM users;',
-    );
+    const result = await database.query("SELECT id, name, phone FROM users;");
 
     return result;
   } catch (error) {

@@ -1,5 +1,5 @@
 import webserver from "@/infra/webserver";
-import autenticator from "@/models/autenticator";
+
 import { UserDBType } from "@/shared/user_types";
 
 import { GetServerSidePropsContext } from "next";
@@ -16,7 +16,6 @@ export async function getAdminProps(context: GetServerSidePropsContext) {
     });
     const resultBody = await result.json();
     user = resultBody.user;
-    console.log(user);
 
     if (user.is_admin !== true) throw { message: "User is not admin" };
   } catch (error) {

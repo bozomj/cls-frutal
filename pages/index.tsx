@@ -18,7 +18,7 @@ import { GetServerSideProps, GetServerSidePropsContext } from "next";
 
 import { useEffect, useRef } from "react";
 
-const Home: React.FC = () => {
+const Home = ({ user_id }: { user_id: string }) => {
   const { params } = useQueryParams();
   const { initial, limit } = params;
   const { postagens, total } = usePosts(fetcher, params);
@@ -34,7 +34,7 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <Header />
+      <Header titulo="Home" user_id={user_id} />
       <main className=" flex-auto overflow-y-scroll bg-gray-200 flex-col flex justify-between gap-2 items-center scroll-smooth ">
         <section
           tabIndex={0}
@@ -74,3 +74,22 @@ const fetcher = (params: QueryParams) => {
 };
 
 export default Home;
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  try {
+    const token = context.req.cookies.token || "";
+    const result = autenticator.verifyToken(token);
+
+    return {
+      props: {
+        user_id: result.id || null,
+      },
+    };
+  } catch (error) {
+    return {
+      props: {
+        user_id: null,
+      },
+    };
+  }
+}

@@ -1,4 +1,3 @@
-import autenticator from "@/models/autenticator";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { faClose, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { faBars } from "@fortawesome/free-solid-svg-icons/faBars";
@@ -8,25 +7,30 @@ import Image from "next/image";
 import Link from "next/link";
 import router from "next/router";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import VerticalDivider from "./VerticalDivider";
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
+
 import Head from "next/head";
+import ButtonTextLink from "./ui/ButtonTextLink";
+import IconButton from "./IconButton";
+import ButtonIconLink from "./ui/ButtonIconLink";
+import OwnerGuard from "./guards/OwnerGuard";
 
 interface HeaderProps {
   titulo?: string;
   className?: string;
+  user_id?: string;
   onSubmit?: (event: string) => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onSubmit, className, titulo }) => {
+const Header: React.FC<HeaderProps> = ({
+  onSubmit,
+  className,
+  titulo,
+  user_id = null,
+}) => {
   const [toggle, setToggle] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-
-  const [isAuthenticated, setIsAuthenticated] = useState({
-    status: false,
-    user: null,
-  });
 
   const itemsMenu = [
     { label: "produtos", link: "" },
@@ -34,7 +38,6 @@ const Header: React.FC<HeaderProps> = ({ onSubmit, className, titulo }) => {
     { label: "Eletronicos", link: "" },
   ];
 
-  useEffect(init, []);
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
   const refSlideMenu = React.useRef<HTMLElement>(null);
 
@@ -63,7 +66,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit, className, titulo }) => {
       `}
       >
         <div className="flex justify-between gap-4 items-start w-full ">
-          <Link href={"/"} className=" outline-0 " onClick={() => {}}>
+          <Link href={"/"} className=" outline-0 ">
             <Image
               src="/img/logo.svg"
               width={240}
@@ -73,25 +76,18 @@ const Header: React.FC<HeaderProps> = ({ onSubmit, className, titulo }) => {
             />
           </Link>
 
-          <div className="flex items-start gap-4  ">
-            {isAuthenticated.status ? (
-              <Link
-                href={isAuthenticated.status ? "/dashboard" : "/login"}
-                className="flex items-center gap-2 text-primary-dark hover:text-primary-light transition-colors"
-              >
-                <FontAwesomeIcon icon={faUser} className="text-2xl" />
-              </Link>
-            ) : (
-              ""
-            )}
+          <nav className="flex items-start gap-4  ">
+            <OwnerGuard isOwner={user_id != null}>
+              <ButtonIconLink href="/dashboard " icon={faUser} />
+              <ButtonTextLink href="/api/v1/logout" label="sair" />
+            </OwnerGuard>
 
-            <Link href={isAuthenticated.status ? "/api/v1/logout" : "/login"}>
-              <span className=" md:inline hover:text-primary-light transition-colors ">
-                {isAuthenticated.status ? "Sair" : "Entrar"}
-              </span>
-            </Link>
-          </div>
+            <OwnerGuard isOwner={user_id == null}>
+              <ButtonTextLink href="/login" label="Entar" />
+            </OwnerGuard>
+          </nav>
         </div>
+
         <section className="flex justify-center items-center gap-4 flex-1 ">
           <div className="w-full flex flex-col justify-center gap-4 md:max-w-8/12">
             <h2 className="hidden text-center text-xl font-bold md:block">
@@ -133,6 +129,7 @@ const Header: React.FC<HeaderProps> = ({ onSubmit, className, titulo }) => {
             )}
           </label>
         </section>
+
         <section
           ref={refSlideMenu}
           className={`
@@ -253,10 +250,6 @@ const Header: React.FC<HeaderProps> = ({ onSubmit, className, titulo }) => {
 
   function change() {
     setToggle(!toggle);
-  }
-
-  function init() {
-    autenticator.isAuthenticated().then(setIsAuthenticated);
   }
 };
 

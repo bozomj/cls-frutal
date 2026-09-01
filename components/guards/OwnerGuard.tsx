@@ -4,7 +4,7 @@ type OwnerGuardProps = {
 };
 
 export default function OwnerGuard({ isOwner, children }: OwnerGuardProps) {
-  if (!isOwner) return null;
+  if (!isOwner || null) return null;
 
   return <>{children}</>;
 }

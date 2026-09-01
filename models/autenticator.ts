@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { GetServerSidePropsContext } from "next";
-import sessions from "./sessions";
+import webserver from "@/infra/webserver";
 
 function createToken(id: string) {
   const secret = process.env.JWT_SECRET || "";
@@ -9,14 +9,18 @@ function createToken(id: string) {
 }
 
 function verifyToken(token: string) {
-  const secret = process.env.JWT_SECRET || "";
-  const decoded = jwt.verify(token, secret) as { id: string };
+  try {
+    const secret = process.env.JWT_SECRET || "";
+    const decoded = jwt.verify(token, secret) as { id: string };
 
-  return decoded;
+    return decoded;
+  } catch (e) {
+    throw { message: "erro com o token, token invalido ou ausente!" };
+  }
 }
 
 async function isAuthenticated() {
-  const response = await fetch("/api/v1/login", {
+  const response = await fetch(`${webserver.origin}/api/v1/login`, {
     method: "GET",
   });
   const data = await response.json();
