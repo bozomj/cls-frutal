@@ -14,9 +14,6 @@ import { statusColor } from "@/constants/statusColor";
 import Link from "next/link";
 import { PostDetailType } from "@/shared/post_types";
 import { UserDBType } from "@/shared/user_types";
-import Paginacao from "@/components/Paginacao";
-import { usePaginacao } from "@/hooks/usePaginacao";
-import { useQueryParams } from "@/hooks/useQueryParams";
 import Image from "next/image";
 
 interface Props {
@@ -91,7 +88,7 @@ function PostsAdministrator({ user }: Props) {
       "0",
       "10",
 
-      PostStatus.ACTIVE,
+      PostStatus.REJECTED,
     );
 
     setPostRejeitados(result);

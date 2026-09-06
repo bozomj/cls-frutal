@@ -70,7 +70,7 @@ const Profile: React.FC = () => {
 
   return (
     <>
-      <Header />
+      <Header user_id={user?.id || ""} />
 
       <main className="flex p-2 justify-center bg-gray-200 text-gray-800  scroll-smooth flex-1">
         <div className="w-full md:max-w-7xl ">

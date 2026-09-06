@@ -6,7 +6,6 @@ import type { AppProps } from "next/app";
 
 import BackdropProvider from "@/ui/backdrop/BackdropProvider";
 import { UserProvider } from "@/contexts/userProvider";
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import SessionProvider from "@/components/providers/SessionProvider";
 
 export default function App({ Component, pageProps }: AppProps) {

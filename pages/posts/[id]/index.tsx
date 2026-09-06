@@ -120,7 +120,7 @@ export default function DetailsPostPage({ user_id, post_id }: Props) {
           content={`Por apenas R$ ${item.description}`}
         />
       </Head>
-      <Header />
+      <Header user_id={user_id} />
       <main className="flex-auto overflow-y-scroll bg-gray-300 flex-col flex gap-2 items-center text-black ">
         {!item.id ? (
           <WirePost />

@@ -41,7 +41,7 @@ function Dashboard() {
 
   return (
     <div className="overflow-hidden flex flex-col h-screen">
-      <Header titulo="Dashboard" className="z-[20]" />
+      <Header user_id={user.id} titulo="Dashboard" className="z-[20]" />
 
       <main className="flex-auto relative  overflow-hidden max-h-full text-gray-800 bg-gray-300 flex-col flex justify-between  items-center scroll-smooth md:overflow-auto">
         <div className="flex-1 flex w-full md:justify-center h-full md:h-fit md:overflow-visible overflow-y-hidden ">

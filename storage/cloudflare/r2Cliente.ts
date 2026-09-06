@@ -24,10 +24,11 @@ export async function uploadFile(filePath: string, key: string, type: string) {
       Key: key,
       Body: fileStream,
       ContentType: type,
-    })
+      CacheControl: "public, max-age=2592000, s-maxage=2592000",
+    }),
   );
 
-  return `https://${process.env.CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com/${key}`;
+  // return `https://${process.env.CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com/${key}`;
 }
 
 export async function deleteFile(key: string) {
@@ -36,7 +37,7 @@ export async function deleteFile(key: string) {
       new DeleteObjectCommand({
         Bucket: process.env.CLOUDFLARE_R2_BUCKET!,
         Key: key,
-      })
+      }),
     );
 
     if (deleted.$metadata.httpStatusCode !== 204)
@@ -61,7 +62,7 @@ export async function getFileStream(key: string) {
     new GetObjectCommand({
       Bucket: process.env.CLOUDFLARE_R2_BUCKET!,
       Key: key,
-    })
+    }),
   );
   return result.Body;
 }
