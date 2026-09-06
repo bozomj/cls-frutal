@@ -183,7 +183,7 @@ async function sleep(time: number = 1500) {
 
 function getUrlImageR2(url: string | null) {
   if (url == null || url == undefined) return "/img/images.png";
-  return `https://pub-cf2ec8db2f184d2ab44495473e1c1c12.r2.dev/${url}`;
+  return `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${url}`;
 }
 
 const utils = {
